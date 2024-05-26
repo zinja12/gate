@@ -1,0 +1,17 @@
+{
+    "world_objects": [
+        {
+            "object_identifier": "player",
+            "x_position": 0,
+            "y_position": 0,
+            "scale": 1,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0
+        }
+    ],
+    "world_script": []
+}

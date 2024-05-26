@@ -1,0 +1,45 @@
+{
+   "world_objects":[
+      {
+         "object_identifier":"player",
+         "x_position":310,
+         "y_position":100,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":116.34949,
+         "y_position":317.45993,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":124.28595,
+         "y_position":269.84097,
+         "scale":1
+      },
+      {
+         "object_identifier":"nightmare",
+         "x_position":116.0,
+         "y_position":269.0,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"nightmare",
+         "x_position":316.0,
+         "y_position":469.0,
+         "scale":1.0
+      },
+      {
+         "object_identifier": "level_trigger",
+         "x_position":300,
+         "y_position":-450,
+         "width":200,
+         "height":200,
+         "level_id":"demo1_v2.json"
+      }
+	],
+   "world_script":[
+      
+   ]
+}

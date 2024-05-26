@@ -1,0 +1,2565 @@
+{
+   "camera_bounds": {
+      "object_identifier": "camera_bounds",
+      "x_position": 0,
+      "y_position": 0,
+      "width": 5000,
+      "height": 5000
+   }, 
+   "world_objects":[
+      {
+         "object_identifier":"player",
+         "x_position":310,
+         "y_position":100,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":116.34949,
+         "y_position":317.45993,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":124.28595,
+         "y_position":269.84097,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":140.15894,
+         "y_position":250.79343,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":159.20654,
+         "y_position":204.76175,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":181.42871,
+         "y_position":184.12686,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":213.17468,
+         "y_position":141.2698,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":232.22229,
+         "y_position":103.17459,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":254.44446,
+         "y_position":60.317535,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":278.25397,
+         "y_position":14.285858,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":300.47614,
+         "y_position":-71.42825,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":298.88885,
+         "y_position":-28.571198,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":321.11108,
+         "y_position":-112.69803,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":287.77777,
+         "y_position":-180.95187,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":306.82532,
+         "y_position":-168.25351,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":263.96826,
+         "y_position":-133.33292,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":222.69849,
+         "y_position":-88.88855,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":235.39691,
+         "y_position":-68.25366,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":213.17468,
+         "y_position":-9.523621,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":165.55573,
+         "y_position":69.84134,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":181.42871,
+         "y_position":90.47623,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":87.778076,
+         "y_position":366.66623,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":105.2384,
+         "y_position":396.82492,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":100.4765,
+         "y_position":460.31686,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":97.30188,
+         "y_position":492.06284,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":110.000305,
+         "y_position":504.7612,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":125.87329,
+         "y_position":534.9199,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":151.27008,
+         "y_position":557.1421,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":171.9049,
+         "y_position":577.777,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":197.3017,
+         "y_position":599.99915,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":225.87311,
+         "y_position":628.57056,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":246.508,
+         "y_position":633.3324,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":270.31744,
+         "y_position":625.3959,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":270.31744,
+         "y_position":625.3959,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":278.25397,
+         "y_position":588.88806,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":294.12695,
+         "y_position":590.47534,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":308.41266,
+         "y_position":612.6975,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":325.87292,
+         "y_position":626.98315,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":351.26965,
+         "y_position":630.15784,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":351.26965,
+         "y_position":630.15784,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":381.42834,
+         "y_position":628.57056,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":402.06323,
+         "y_position":604.761,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":432.22192,
+         "y_position":592.0626,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":432.22192,
+         "y_position":592.0626,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":460.79333,
+         "y_position":604.761,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":495.71387,
+         "y_position":601.5864,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":495.71387,
+         "y_position":601.5864,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":513.1742,
+         "y_position":574.6023,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":538.5709,
+         "y_position":544.4437,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":529.04724,
+         "y_position":492.06284,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":502.0631,
+         "y_position":476.18985,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":495.71387,
+         "y_position":442.8566,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":508.41235,
+         "y_position":411.11057,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":505.23767,
+         "y_position":380.95193,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":497.30115,
+         "y_position":339.68216,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":497.30115,
+         "y_position":339.68216,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":511.5869,
+         "y_position":299.99966,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":516.34875,
+         "y_position":265.07907,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":509.99963,
+         "y_position":209.52365,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":509.99963,
+         "y_position":211.11093,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":517.93604,
+         "y_position":180.95224,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":536.5204,
+         "y_position":152.5104,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":557.5946,
+         "y_position":134.69406,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":566.022,
+         "y_position":120.152954,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":573.07825,
+         "y_position":77.14221,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":574.20984,
+         "y_position":54.89215,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":586.5476,
+         "y_position":37.175232,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":603.4186,
+         "y_position":8.251984,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":623.72363,
+         "y_position":-8.04068,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":663.1051,
+         "y_position":-23.13678,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":676.89966,
+         "y_position":-47.23407,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":687.42285,
+         "y_position":-76.02719,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":687.42285,
+         "y_position":-76.02719,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":691.6631,
+         "y_position":-101.516266,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":691.6631,
+         "y_position":-101.516266,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":659.07776,
+         "y_position":-142.12665,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":644.3396,
+         "y_position":-164.0513,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":619.98193,
+         "y_position":-190.54169,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":602.00476,
+         "y_position":-215.57521,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":587.1285,
+         "y_position":-244.24457,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":583.3283,
+         "y_position":-274.72867,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":598.5147,
+         "y_position":-308.3803,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":569.1835,
+         "y_position":-345.1678,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":568.5978,
+         "y_position":-373.73315,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":589.0657,
+         "y_position":-382.091,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":263.1668,
+         "y_position":-248.39862,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":245.18958,
+         "y_position":-273.43216,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":225.49524,
+         "y_position":-304.78104,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":186.75739,
+         "y_position":-335.73944,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":195.49829,
+         "y_position":-374.02185,
+         "scale":1
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":100.0,
+         "y_position":100.0,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":404.0,
+         "y_position":-43.5,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":500.2974,
+         "y_position":-62.793423,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":484.78192,
+         "y_position":-11.361205,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":539.2289,
+         "y_position":-79.20685,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":600.6019,
+         "y_position":-88.49716,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":653.2109,
+         "y_position":-182.5019,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":512.3428,
+         "y_position":-240.85345,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":487.25342,
+         "y_position":-166.54341,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":555.0451,
+         "y_position":-255.32593,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":566.07074,
+         "y_position":-174.17209,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":650.64044,
+         "y_position":-356.9274,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":547.757,
+         "y_position":-439.3983,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":191.79874,
+         "y_position":-205.16713,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":104.47945,
+         "y_position":-167.02406,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":12.293362,
+         "y_position":-133.33936,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":161.02924,
+         "y_position":-163.30275,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":305.35144,
+         "y_position":-350.17972,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":278.05832,
+         "y_position":-531.08246,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":300.41226,
+         "y_position":-486.02234,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":241.5,
+         "y_position":-243.5,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":309.9594,
+         "y_position":-316.02878,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":294.4164,
+         "y_position":-430.7057,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":144.61299,
+         "y_position":-522.17694,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":111.47061,
+         "y_position":-626.86456,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":530.5178,
+         "y_position":-716.0072,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":536.98193,
+         "y_position":-647.60547,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":559.106,
+         "y_position":-568.65106,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":650.50183,
+         "y_position":-667.5322,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":270.21786,
+         "y_position":-702.0345,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":556.8483,
+         "y_position":248.13686,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":567.681,
+         "y_position":141.01314,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":552.0977,
+         "y_position":19.863943,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":722.38116,
+         "y_position":54.893463,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":713.5256,
+         "y_position":261.66833,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":643.12494,
+         "y_position":380.32413,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":616.909,
+         "y_position":491.3871,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":404.2827,
+         "y_position":493.79868,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":259.37714,
+         "y_position":559.78784,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":183.99287,
+         "y_position":518.9857,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":126.43121,
+         "y_position":574.0361,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":33.720688,
+         "y_position":474.13882,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":-53.19198,
+         "y_position":393.9987,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":-76.455574,
+         "y_position":256.75183,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":67.214676,
+         "y_position":173.0005,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":77.50084,
+         "y_position":275.87863,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":-108.64501,
+         "y_position":110.93768,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":-22.815199,
+         "y_position":-17.817272,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"grass",
+         "x_position":126.20496,
+         "y_position":-13.022831,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"ghastly",
+         "x_position":350.0,
+         "y_position":-20.0,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"sign",
+         "x_position":180.0,
+         "y_position":200.0,
+         "scale":1.0,
+         "sign_messages":[
+            "hi! this is a very long message for no reason and no content to it, only testing purposes, very very veryyyyy long message",
+            ":D"
+         ]
+      },
+      {
+         "object_identifier":"marker",
+         "x_position":350.0,
+         "y_position":250.0,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"lamp",
+         "x_position":280.0,
+         "y_position":100.0,
+         "scale":1.0
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":620.7699,
+         "y_position":340.2296,
+         "scale":4.0,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-3.5484924,
+         "y_position":320.80966,
+         "scale":4.0,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":645.42865,
+         "y_position":176,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":645.42865,
+         "y_position":176,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":645.42865,
+         "y_position":176,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":716.7072,
+         "y_position":59.85846,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":716.7072,
+         "y_position":59.85846,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":799.3647,
+         "y_position":-65.24817,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":799.3647,
+         "y_position":-65.24817,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":799.3647,
+         "y_position":-65.24817,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":760.6714,
+         "y_position":-185.28409,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":760.6714,
+         "y_position":-185.28409,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":760.6714,
+         "y_position":-185.28409,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":710.05273,
+         "y_position":-287.1493,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":710.05273,
+         "y_position":-287.1493,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":710.05273,
+         "y_position":-287.1493,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-14.528473,
+         "y_position":83.91559,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-14.528473,
+         "y_position":83.91559,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-14.528473,
+         "y_position":83.91559,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":72.22006,
+         "y_position":134.76239,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":72.22006,
+         "y_position":134.76239,
+         "scale":4,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":995.256,
+         "y_position":90.011536,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":943.333,
+         "y_position":432.31848,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":793.3334,
+         "y_position":624.62573,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-327.81805,
+         "y_position":605.3949,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-327.81805,
+         "y_position":605.3949,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-272.0489,
+         "y_position":53.473022,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-214.35675,
+         "y_position":201.54962,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-227.09204,
+         "y_position":547.6929,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":519.19995,
+         "y_position":385.528,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":530.3357,
+         "y_position":424.96826,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":545.2294,
+         "y_position":479.85376,
+         "scale":1
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":150.2782,
+         "y_position":812.7771,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-31.943604,
+         "y_position":730.5551,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-105.27667,
+         "y_position":608.33325,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-105.27667,
+         "y_position":608.33325,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":542.986,
+         "y_position":833.9617,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":49.645325,
+         "y_position":-14.773987,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":22.159302,
+         "y_position":-110.95929,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":1090.8049,
+         "y_position":-344.79446,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":894.5898,
+         "y_position":-426.34106,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":837.83734,
+         "y_position":-536.13696,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":837.83734,
+         "y_position":-536.13696,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-50.055725,
+         "y_position":-467.4575,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-50.01941,
+         "y_position":-465.63968,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-280.44547,
+         "y_position":-439.20804,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-280.44547,
+         "y_position":-439.20804,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-269.82874,
+         "y_position":-181.1875,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-144.78119,
+         "y_position":-748.34814,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-144.78119,
+         "y_position":-748.34814,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-273.9414,
+         "y_position":-932.3936,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":890.4414,
+         "y_position":-906.5838,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":728.1149,
+         "y_position":-1203.1702,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":728.1149,
+         "y_position":-1203.1702,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":591.647,
+         "y_position":-1479.8156,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":591.647,
+         "y_position":-1479.8156,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":384.33325,
+         "y_position":-1786.638,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":554.0447,
+         "y_position":-1666.3718,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-377.11127,
+         "y_position":-1214.9333,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-600.33936,
+         "y_position":-1374.137,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-600.33936,
+         "y_position":-1374.137,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":1234.49,
+         "y_position":-718.88025,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":1206.6587,
+         "y_position":-1019.2928,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":1086.6238,
+         "y_position":-1383.5571,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":1086.6238,
+         "y_position":-1383.5571,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":953.7186,
+         "y_position":-1720.7388,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-576.5527,
+         "y_position":-1116.8359,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-518.7001,
+         "y_position":-849.75757,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-514.3868,
+         "y_position":-634.11646,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-651.631,
+         "y_position":-313.12646,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-671.1764,
+         "y_position":-108.37622,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-565.29175,
+         "y_position":162.06287,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-565.29175,
+         "y_position":162.06287,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier":"tree",
+         "x_position":-549.5755,
+         "y_position":413.6167,
+         "scale":8,
+         "canopy":true
+      },
+      {
+         "object_identifier": "tree",
+         "x_position": 568.63556,
+         "y_position": -390.89447,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 582.7557,
+         "y_position": -454.26636,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 603.15155,
+         "y_position": -434.67035,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 581.0942,
+         "y_position": -537.32654,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 597.39874,
+         "y_position": -491.4897,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 594.93756,
+         "y_position": -537.60345,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 588.04645,
+         "y_position": -574.39606,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 582.78595,
+         "y_position": -606.60486,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 580.7247,
+         "y_position": -632.72266,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 587.76935,
+         "y_position": -665.17773,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 587.76935,
+         "y_position": -665.17773,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 597.83264,
+         "y_position": -690.9612,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 604.51215,
+         "y_position": -703.2127,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 641.378,
+         "y_position": -706.45087,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 616.33673,
+         "y_position": -727.4927,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 620.2821,
+         "y_position": -761.04004,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 634.141,
+         "y_position": -750.93066,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 635.9562,
+         "y_position": -737.11804,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 638.5094,
+         "y_position": -763.3281,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 627.969,
+         "y_position": -828.7074,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 620.2016,
+         "y_position": -832.3991,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 639.644,
+         "y_position": -783.5475,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 640.2706,
+         "y_position": -829.1462,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 614.98737,
+         "y_position": -862.3012,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 614.12976,
+         "y_position": -905.1771,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 615.368,
+         "y_position": -920.2051,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 622.4433,
+         "y_position": -951.12195,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 600.23236,
+         "y_position": -984.5305,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 564.6086,
+         "y_position": -996.12805,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 569.6231,
+         "y_position": -976.22437,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 500.80597,
+         "y_position": -1031.7822,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 514.8648,
+         "y_position": -1021.2921,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 541.321,
+         "y_position": -1006.43365,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 476.81085,
+         "y_position": -1077.4656,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 484.1325,
+         "y_position": -1096.0773,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 497.20685,
+         "y_position": -1057.8696,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 459.30646,
+         "y_position": -1183.2903,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 472.3808,
+         "y_position": -1145.0828,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 452.63104,
+         "y_position": -1132.3774,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 462.04437,
+         "y_position": -1200.2715,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 469.0583,
+         "y_position": -1234.2646,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 427.0666,
+         "y_position": -1256.5062,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 413.10016,
+         "y_position": -1262.382,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 388.1513,
+         "y_position": -1278.8093,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 352.31232,
+         "y_position": -1301.174,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 333.20837,
+         "y_position": -1333.106,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 321.9491,
+         "y_position": -1357.501,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 327.70172,
+         "y_position": -1377.6201,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 314.8119,
+         "y_position": -1406.5988,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 317.7036,
+         "y_position": -1415.8892,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 310.9972,
+         "y_position": -1443.4529,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 577.6833,
+         "y_position": -957.9207,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 577.653,
+         "y_position": -805.5822,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 197.6452,
+         "y_position": -340.5807,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 197.6452,
+         "y_position": -340.5807,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 197.0299,
+         "y_position": -371.3437,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 194.66101,
+         "y_position": -412.84302,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 175.55707,
+         "y_position": -444.77502,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 188.96973,
+         "y_position": -466.586,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 205.9201,
+         "y_position": -465.3863,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 225.73145,
+         "y_position": -475.0152,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 226.71582,
+         "y_position": -502.73267,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 238.15955,
+         "y_position": -546.047,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 259.386,
+         "y_position": -561.8593,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 224.65442,
+         "y_position": -605.7888,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 192.69171,
+         "y_position": -588.223,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 190.01538,
+         "y_position": -568.1655,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 169.00409,
+         "y_position": -618.52454,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 159.25208,
+         "y_position": -644.4885,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 159.25208,
+         "y_position": -644.4885,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 137.318,
+         "y_position": -664.0538,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 132.27283,
+         "y_position": -685.49554,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 125.381775,
+         "y_position": -722.28815,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 154.14514,
+         "y_position": -745.945,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 170.2649,
+         "y_position": -786.2754,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 111.138245,
+         "y_position": -818.9455,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 108.61572,
+         "y_position": -791.19727,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 113.260925,
+         "y_position": -789.7514,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 116.67572,
+         "y_position": -772.89325,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 110.122925,
+         "y_position": -869.70447,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 98.4021,
+         "y_position": -917.1719,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 68.65411,
+         "y_position": -942.73584,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 37.398865,
+         "y_position": -966.7309,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 9.373718,
+         "y_position": -983.0968,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -11.606812,
+         "y_position": -1031.9176,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -54.828674,
+         "y_position": -961.8086,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -19.174316,
+         "y_position": -948.67285,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 21.802185,
+         "y_position": -900.25195,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 63.20941,
+         "y_position": -830.297,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 78.25275,
+         "y_position": -770.58594,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -47.010925,
+         "y_position": -1080.6433,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -23.877136,
+         "y_position": -1078.0286,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -57.31671,
+         "y_position": -1134.294,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -36.274902,
+         "y_position": -1159.3352,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -69.345215,
+         "y_position": -1197.1428,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -105.89166,
+         "y_position": -1177.9465,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -108.38336,
+         "y_position": -1148.6602,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -120.565735,
+         "y_position": -1219.1997,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -111.98291,
+         "y_position": -1251.6855,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -119.454346,
+         "y_position": -1288.6593,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -102.996155,
+         "y_position": -1312.07,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -116.34747,
+         "y_position": -1364.121,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -138.52771,
+         "y_position": -1395.9915,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -185.31836,
+         "y_position": -1427.3696,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -161.13867,
+         "y_position": -1449.396,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -128.1914,
+         "y_position": -1417.741,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -211.74384,
+         "y_position": -1440.69,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -264.16406,
+         "y_position": -1445.7964,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -304.4329,
+         "y_position": -1458.8398,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -340.02576,
+         "y_position": -1468.8993,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -328.00928,
+         "y_position": -1512.4164,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -362.7409,
+         "y_position": -1556.346,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -369.97015,
+         "y_position": -1533.1198,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -420.32938,
+         "y_position": -1589.0469,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -400.05652,
+         "y_position": -1575.6034,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -461.0905,
+         "y_position": -1626.7007,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -424.51334,
+         "y_position": -1644.3588,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -518.3098,
+         "y_position": -1640.9438,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -499.20587,
+         "y_position": -1609.0118,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -568.4842,
+         "y_position": -1610.7036,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -610.3527,
+         "y_position": -1626.7925,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -682.2766,
+         "y_position": -1606.8887,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -642.4078,
+         "y_position": -1613.8412,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -750.6748,
+         "y_position": -1612.6342,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -459.68726,
+         "y_position": -1604.6058,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -814.90796,
+         "y_position": -1592.884,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -776.5772,
+         "y_position": -1599.8059,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -721.6345,
+         "y_position": -1622.4476,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 313.7572,
+         "y_position": -1478.5103,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 313.7572,
+         "y_position": -1478.5103,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 314.557,
+         "y_position": -1515.4568,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 270.68872,
+         "y_position": -1554.5872,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 316.67944,
+         "y_position": -1563.2009,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 240.91003,
+         "y_position": -1581.6893,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 226.11316,
+         "y_position": -1552.1567,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 173.90833,
+         "y_position": -1546.4962,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 144.25269,
+         "y_position": -1567.4458,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 146.83667,
+         "y_position": -1592.1177,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 179.32251,
+         "y_position": -1583.5349,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 172.58533,
+         "y_position": -1612.6367,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 145.97522,
+         "y_position": -1635.1859,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 134.28516,
+         "y_position": -1681.1151,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 155.29614,
+         "y_position": -1707.6945,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 115.91931,
+         "y_position": -1753.0698,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 110.25903,
+         "y_position": -1728.3363,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 71.09778,
+         "y_position": -1686.0062,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 102.19934,
+         "y_position": -1669.7019,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 80.84961,
+         "y_position": -1736.9806,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 80.84961,
+         "y_position": -1736.9806,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 104.352295,
+         "y_position": -1792.8463,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 133.39258,
+         "y_position": -1802.6599,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 129.67017,
+         "y_position": -1834.8995,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 123.21753,
+         "y_position": -1878.626,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 139.82959,
+         "y_position": -1894.346,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 131.12341,
+         "y_position": -1944.9512,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 152.04224,
+         "y_position": -1976.1449,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 103.74451,
+         "y_position": -1929.0157,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 103.74451,
+         "y_position": -1929.0157,
+         "scale": 1
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 80.73389,
+         "y_position": -1848.5397,
+         "scale": 1
+       },
+       {
+         "object_identifier": "big_tile",
+         "x_position": 50,
+         "y_position": 50,
+         "scale": 3.0
+       },
+       {
+         "object_identifier": "cracked_tile",
+         "x_position": 401.54346,
+         "y_position": -235.63098,
+         "scale": 3
+       },
+       {
+         "object_identifier": "round_tile",
+         "x_position": 405.93652,
+         "y_position": -528.37146,
+         "scale": 3
+       },
+       {
+         "object_identifier": "reg_tile",
+         "x_position": 293.8275,
+         "y_position": -349.78555,
+         "scale": 3
+       },
+       {
+         "object_identifier": "reg_tile",
+         "x_position": 92.76672,
+         "y_position": -1179.8586,
+         "scale": 3
+       },
+       {
+         "object_identifier": "cracked_tile",
+         "x_position": 307.3816,
+         "y_position": -884.75464,
+         "scale": 3
+       },
+       {
+         "object_identifier": "round_tile",
+         "x_position": 211.47119,
+         "y_position": -700.95776,
+         "scale": 3
+       },
+       {
+         "object_identifier": "cracked_tile",
+         "x_position": 111.0094,
+         "y_position": -1635.0671,
+         "scale": 3
+       },
+       {
+         "object_identifier": "big_tile",
+         "x_position": -466.75696,
+         "y_position": -2143.2512,
+         "scale": 3
+       },
+       {
+         "object_identifier": "round_tile",
+         "x_position": -93.921265,
+         "y_position": -1401.6538,
+         "scale": 3
+       },
+       {
+         "object_identifier": "round_tile",
+         "x_position": -17.568604,
+         "y_position": -1319.4109,
+         "scale": 3
+       },
+       {
+         "object_identifier": "reg_tile",
+         "x_position": 158.47498,
+         "y_position": -1542.955,
+         "scale": 3
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 1300.1605,
+         "y_position": -103.27356,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 1367.6603,
+         "y_position": 174.22552,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 1410.1603,
+         "y_position": 449.2246,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 1316.1605,
+         "y_position": 662.7244,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 1172.6606,
+         "y_position": 726.72455,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 968.1611,
+         "y_position": 922.72406,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 696.16187,
+         "y_position": 1117.2236,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": 333.6631,
+         "y_position": 1137.2236,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -13.835815,
+         "y_position": 1117.2236,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -13.835815,
+         "y_position": 1117.2236,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -296.3349,
+         "y_position": 1002.22406,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -554.8352,
+         "y_position": 818.225,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -794.335,
+         "y_position": 588.2257,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -854.83527,
+         "y_position": 270.7267,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -890.83606,
+         "y_position": -6.7731934,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -1075.3362,
+         "y_position": -296.2727,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -915.83716,
+         "y_position": -624.2723,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -881.33716,
+         "y_position": -943.77264,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "tree",
+         "x_position": -875.83704,
+         "y_position": -1244.2732,
+         "scale": 8,
+         "canopy": true
+       },
+       {
+         "object_identifier": "level_trigger",
+         "x_position":300,
+         "y_position":-450,
+         "width":200,
+         "height":200,
+         "level_id":"sandbox2.json"
+       },
+       {
+         "object_identifier":"fence",
+         "x_position":300.0,
+         "y_position":350.0,
+         "scale":1.0,
+         "rotation":36669.3
+      }
+   ],
+   "world_script":[
+      
+   ]
+}

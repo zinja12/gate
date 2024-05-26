@@ -1,0 +1,1365 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
+
+namespace gate
+{
+    public class World
+    {
+        //Game object
+        Game1 game;
+
+        //debug variables
+        float fps;
+
+        //Graphics and game objects
+        GraphicsDeviceManager _graphics;
+        string content_root_directory;
+        ContentManager Content;
+
+        //loaded textures
+        List<string> loaded_textures;
+        //bool loading = false;
+        bool debug_triggers = true;
+
+        string load_file_name = "arena_v1_ids.json", current_level_id;
+        //string load_file_name = "sandbox.json";
+        string save_file_name = "untitled_sandbox.json";
+
+        //objects present in every world
+        Camera camera;
+        Player player;
+        RRect camera_bounds;
+        Vector2 camera_bounds_center;
+
+        //data structures needed in every world
+        List<IEntity> plants;
+        RenderList entities_list;
+        List<IEntity> collision_entities;
+        List<ForegroundEntity> foreground_entities;
+        List<BackgroundEntity> background_entities;
+        List<IEntity> floor_entities;
+        List<ITrigger> triggers;
+        List<IEntity> collision_geometry;
+        List<IAiEntity> enemies;
+        List<IEntity> projectiles;
+        ConditionManager condition_manager;
+
+        //clear variables
+        List<IEntity> entities_to_clear;
+
+        TextBox current_textbox = null;
+        Sign current_sign = null;
+
+        float rotation = 0f;
+        
+        //world variables
+        private float render_distance = 1000f;
+        private int freeze_frames = 0;
+        private bool reload_world = false;
+        //camera world variables
+        private bool camera_shake = false;
+        private float shake_elapsed;
+        private float shake_threshold;
+        private Vector2 shake_offset = Vector2.Zero;
+        private float shake_angle = 1f;
+        private float shake_radius = 5f;
+        private List<int> viewport_points_outside_collider = new List<int>();
+
+        //editor variables
+        private bool editor_active = false, editor_enabled = true;
+        private int selected_object = 1;
+        private float selection_cooldown = 200f, selection_elapsed;
+        private float editor_object_rotation = 0f;
+        //private Dictionary<int, Texture2D> object_map;
+        private Dictionary<int, IEntity> obj_map;
+        private Vector2 mouse_world_position, create_position;
+        private RRect mouse_hitbox;
+        private int previous_scroll_value;
+        private Keys previous_key;
+        //editor tools: (object_placement, object/linkage editor)
+        private int editor_tool_idx, editor_object_idx, editor_tool_count;
+
+        //Random variable
+        private Random random = new Random();
+
+        private UIButton button;
+
+        public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content){
+            //set game objects
+            this.game = game;
+            this._graphics = _graphics;
+            this.content_root_directory = content_root_directory;
+            this.Content = Content;
+
+            //set up camera to draw with
+            camera = new Camera(_graphics.GraphicsDevice.Viewport, Vector2.Zero);
+            camera.Zoom = 1.75f;
+
+            //set up mouse hitbox
+            mouse_hitbox = new RRect(Vector2.Zero, 10, 10);
+            mouse_hitbox.set_color(Color.Pink);
+
+            //init load textures
+            loaded_textures = new List<string>();
+
+            //create list of plants
+            plants = new List<IEntity>();
+            //create list of collision entities
+            collision_entities = new List<IEntity>();
+            //create list of collision geometry
+            collision_geometry = new List<IEntity>();
+            //create list of foreground objects to be used as tree tops, etc
+            foreground_entities = new List<ForegroundEntity>();
+            //create list of background objects to be used as floor pieces
+            background_entities = new List<BackgroundEntity>();
+            //create list of floor objects to be used behind floor pieces
+            floor_entities = new List<IEntity>();
+            //create list of triggers
+            triggers = new List<ITrigger>();
+            //create list of enemies
+            enemies = new List<IAiEntity>();
+            //create list of projectiles
+            projectiles = new List<IEntity>();
+            //create conditions manager
+            condition_manager = new ConditionManager(this);
+
+            //weapons
+            entities_to_clear = new List<IEntity>();
+
+            //create entities list and add player
+            entities_list = new RenderList();
+
+            //load first level
+            load_level(content_root_directory, _graphics, load_file_name);
+
+            /*Editor Initialization*/
+            editor_init();
+
+            //run first sort so everything looks good initially
+            entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+
+            button = new UIButton(new Vector2(200, 200), 30, "button_test");
+        }
+
+        private void editor_init() {
+            /*Editor Initialization*/
+            editor_tool_idx = 0;
+            editor_tool_count = 2;
+            //obj map init
+            obj_map = new Dictionary<int, IEntity>();
+            obj_map.Add(1, new Tree(Vector2.Zero, 1f, Constant.tree_spritesheet, false, -1));
+            obj_map.Add(2, new Grass(Vector2.Zero, 1f, -1));
+            obj_map.Add(3, new Ghastly(Constant.ghastly_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, -1));
+            obj_map.Add(4, new StackedObject("marker", Constant.marker_spritesheet, Vector2.Zero, 1f, 32, 32, 15, Constant.stack_distance, 0f, -1));
+            obj_map.Add(5, new Lamppost(Vector2.Zero, 1f, -1));
+            obj_map.Add(6, new Tile(Vector2.Zero, 1f, Constant.tile_tex, "big_tile", -1));
+            obj_map.Add(7, new Tile(Vector2.Zero, 1f, Constant.tile_tex2, "cracked_tile", -1));
+            obj_map.Add(8, new Tile(Vector2.Zero, 1f, Constant.tile_tex3, "reg_tile", -1));
+            obj_map.Add(9, new Tile(Vector2.Zero, 1f, Constant.tile_tex4, "round_tile", -1));
+            obj_map.Add(10, new Tile(Vector2.Zero, 2f, Constant.tan_tile_tex, "tan_tile", -1));
+            obj_map.Add(11, new Tree(Vector2.Zero, 4f, Constant.tree_spritesheet, true, -1));
+            obj_map.Add(12, new StackedObject("wall", Constant.wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
+            obj_map.Add(13, new StackedObject("fence", Constant.fence_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(14, new InvisibleObject("deathbox", Vector2.Zero, 1f, 48, 48, 0f, -1));
+            obj_map.Add(15, new Nightmare(Constant.nightmare_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "nightmare"));
+            //set obj 14 to visible so we can see it
+            InvisibleObject io = (InvisibleObject)obj_map[14];
+            io.set_debug(true);
+            Nightmare nightmare1 = (Nightmare)obj_map[15];
+            //turn off ai for editor
+            nightmare1.set_behavior_enabled(false);
+        }
+
+        //function to load level files into the world
+        private void load_level(string root_directory, GraphicsDeviceManager _graphics, string level_id) {
+            //set current level id
+            current_level_id = level_id;
+            //load content not specific to an object
+            Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
+            Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");
+            Constant.footprint_tex = Content.Load<Texture2D>("sprites/footprint");
+            Constant.attack_sprites_tex = Content.Load<Texture2D>("sprites/attack_sprites2");
+            Constant.hit_confirm_spritesheet = Content.Load<Texture2D>("sprites/hit_confirm_spritesheet");
+            Constant.slash_confirm_spritesheet = Content.Load<Texture2D>("sprites/slash_confirm_spritesheet");
+            Constant.shadow_tex = Content.Load<Texture2D>("sprites/shadow0");
+            //load fonts
+            Constant.arial = Content.Load<SpriteFont>("fonts/arial");
+            Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
+
+            //debug fps initialization
+            game.fps = new FpsCounter(game, Constant.arial_small, Vector2.Zero);
+            game.fps.Initialize();
+
+            List<string> loaded_obj_identifiers = new List<string>();
+
+            //set up and read level file
+            string file_contents;
+            //set file path and pull all contents
+            var file_path = Path.Combine(root_directory, "levels/" + level_id);
+            Console.WriteLine("loading file path:" + file_path);
+            using (var stream = TitleContainer.OpenStream(file_path)){
+                using (var reader = new StreamReader(stream)){
+                    //pull all contents out of file
+                    file_contents = reader.ReadToEnd();
+                }
+            }
+            /*Read file via json*/
+            GameWorldFile world_file_contents = JsonSerializer.Deserialize<GameWorldFile>(file_contents);
+            //check deserialization
+            if (world_file_contents != null) {
+                //variables to check world file as loading occurs
+                int player_count = 0;
+                //parse camera bounds for level
+                if (world_file_contents.camera_bounds == null) {
+                    Console.WriteLine("here");
+                } else if (world_file_contents.camera_bounds != null) {
+                    GameWorldObject bounds = world_file_contents.camera_bounds;
+                    camera_bounds_center = new Vector2(bounds.x_position, bounds.y_position);
+                    camera_bounds = new RRect(camera_bounds_center, bounds.width, bounds.height);
+                }
+                //Iterate over world objects
+                Dictionary<int, string> unique_obj_id_map = new Dictionary<int, string>();
+                for (int i = 0; i < world_file_contents.world_objects.Count; i++) {
+                    GameWorldObject w_obj = world_file_contents.world_objects[i];
+                    //check if unique object map contains this object id alread (obj ids are meant to be unique)
+                    if (unique_obj_id_map.ContainsKey(w_obj.object_id_num)) {
+                        throw new Exception($"World File Error: two objects with the same object_id_num({w_obj.object_id_num}) found in world file. Object ids are meant to be unique.");
+                    }
+                    //set the key value in the unqiue obj id map
+                    unique_obj_id_map[w_obj.object_id_num] = w_obj.object_identifier;
+                    //check if the loaded objects contains the object we are trying to load, if not add it saying we have loaded the textures
+                    //this is basically to find textures we have not loaded for the editor
+                    if (!loaded_obj_identifiers.Contains(w_obj.object_identifier)) {
+                        loaded_obj_identifiers.Add(w_obj.object_identifier);
+                    }
+                    Vector2 obj_position = new Vector2(w_obj.x_position, w_obj.y_position);
+                    switch (w_obj.object_identifier) {
+                        case "player":
+                            if (player_count > 0) {
+                                throw new Exception("World File Error: Too many player objects found in world file. There can only be one. :)");
+                            }
+                            //load textures for player
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_player_spritesheet6");
+                            check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet5");
+                            check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
+                            //create player object
+                            Player p = new Player(obj_position, w_obj.scale, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, w_obj.object_id_num, this);
+                            entities_list.Add(p);
+                            collision_entities.Add(p);
+                            //make sure to set player reference and increment count
+                            player = p;
+                            player_count++;
+                            break;
+                        case "tree":
+                            //load texture
+                            check_and_load_tex(ref Constant.tree_spritesheet, "sprites/tree_spritesheet5");
+                            Tree t = new Tree(obj_position, w_obj.scale, Constant.tree_spritesheet, w_obj.canopy, w_obj.object_id_num);
+                            if (w_obj.canopy) {
+                                foreground_entities.Add(t);
+                            } else {
+                                entities_list.Add(t);
+                                plants.Add(t);   
+                            }
+                            break;
+                        case "grass":
+                            //load texture
+                            check_and_load_tex(ref Constant.grass_tex, "sprites/grass_0");
+                            Grass g = new Grass(obj_position, w_obj.scale, w_obj.object_id_num);
+                            plants.Add(g);
+                            entities_list.Add(g);
+                            break;
+                        case "sign":
+                            //load texture
+                            check_and_load_tex(ref Constant.sign_tex, "sprites/sign1");
+                            check_and_load_tex(ref Constant.Y_tex, "sprites/Y");
+                            Sign s = new Sign(Constant.sign_tex, obj_position, w_obj.scale, w_obj.sign_messages, w_obj.object_id_num);
+                            entities_list.Add(s);
+                            collision_entities.Add(s);
+                            break;
+                        case "ghastly":
+                            //load texture
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/void_essence1");
+                            Ghastly ghast = new Ghastly(Constant.ghastly_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, w_obj.object_id_num);
+                            entities_list.Add(ghast);
+                            collision_entities.Add(ghast);
+                            break;
+                        case "marker":
+                            //load texture
+                            check_and_load_tex(ref Constant.marker_spritesheet, "sprites/marker_spritesheet5");
+                            StackedObject m = new StackedObject(w_obj.object_identifier, Constant.marker_spritesheet, obj_position, w_obj.scale, 32, 32, 15, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(m);
+                            collision_geometry.Add(m);
+                            break;
+                        case "lamp":
+                            //load texture
+                            check_and_load_tex(ref Constant.lamppost_spritesheet, "sprites/lamppost_spritesheet3");
+                            Lamppost l = new Lamppost(obj_position, w_obj.scale, w_obj.object_id_num);
+                            entities_list.Add(l);
+                            break;
+                        case "big_tile":
+                            //load texture
+                            check_and_load_tex(ref Constant.tile_tex, "sprites/tile3");
+                            Tile tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex, w_obj.object_identifier, w_obj.object_id_num);
+                            background_entities.Add(tile);
+                            break;
+                        case "cracked_tile":
+                            //load texture
+                            check_and_load_tex(ref Constant.tile_tex2, "sprites/tile4");
+                            Tile c_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex2, w_obj.object_identifier, w_obj.object_id_num);
+                            background_entities.Add(c_tile);
+                            break;
+                        case "reg_tile":
+                            //load texture
+                            check_and_load_tex(ref Constant.tile_tex3, "sprites/tile5");
+                            Tile r_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex3, w_obj.object_identifier, w_obj.object_id_num);
+                            background_entities.Add(r_tile);
+                            break;
+                        case "round_tile":
+                            //load texture
+                            check_and_load_tex(ref Constant.tile_tex4, "sprites/tile6");
+                            Tile round_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex4, w_obj.object_identifier, w_obj.object_id_num);
+                            background_entities.Add(round_tile);
+                            break;
+                        case "level_trigger":
+                            LevelTrigger lt = new LevelTrigger(obj_position, w_obj.width, w_obj.height, w_obj.level_id, player, w_obj.object_id_num);
+                            triggers.Add(lt);
+                            break;
+                        case "nightmare":
+                            check_and_load_tex(ref Constant.nightmare_tex, "sprites/test_nightmare_spritesheet2");
+                            check_and_load_tex(ref Constant.nightmare_attack_tex, "sprites/test_nightmare_attacks_spritesheet1");
+                            Nightmare nightmare = new Nightmare(Constant.nightmare_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            entities_list.Add(nightmare);
+                            collision_entities.Add(nightmare);
+                            enemies.Add(nightmare);
+                            break;
+                        case "wall":
+                            check_and_load_tex(ref Constant.wall_tex, "sprites/box_spritesheet1");
+                            StackedObject w = new StackedObject(w_obj.object_identifier, Constant.wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(w);
+                            collision_geometry.Add(w);
+                            break;
+                        case "fence":
+                            check_and_load_tex(ref Constant.fence_spritesheet, "sprites/fence1");
+                            StackedObject f = new StackedObject(w_obj.object_identifier, Constant.fence_spritesheet, obj_position, w_obj.scale, 32, 32, 18, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(f);
+                            collision_geometry.Add(f);
+                            break;
+                        case "tan_tile":
+                            check_and_load_tex(ref Constant.tan_tile_tex, "sprites/tile_tan1");
+                            Tile t_tile = new Tile(obj_position, w_obj.scale, Constant.tan_tile_tex, w_obj.object_identifier, w_obj.object_id_num);
+                            floor_entities.Add(t_tile);
+                            break;
+                        case "deathbox":
+                            //don't need to check and load texture because this object is meant to be invisible/not drawn
+                            InvisibleObject io = new InvisibleObject(w_obj.object_identifier, obj_position, w_obj.scale, 48, 48, w_obj.rotation, w_obj.object_id_num);
+                            collision_geometry.Add(io);
+                            break;
+                        default:
+                            break;
+                    }
+                    //set object_idx to whatever i is for editor current object idx when we get out of the loop
+                    editor_object_idx = i;
+                }
+                //set fellow enemies for all enemies (this is so each entity knows where the others are to avoid overlaps)
+                foreach (IAiEntity ai in enemies) {
+                    ai.set_ai_entities(enemies);
+                }
+                //set up conditions
+                for (int i = 0; i < world_file_contents.conditions.Count; i++) {
+                    GameWorldCondition w_condition = world_file_contents.conditions[i];
+                    editor_object_idx++;
+                    ICondition c = null;
+                    switch (w_condition.object_identifier) {
+                        case "all_enemies_dead_remove_objs":
+                            if (w_condition.enemy_ids == null) {
+                                c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                            } else {
+                                c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    //add created condition to condition manager
+                    condition_manager.add_condition(c);
+                }
+
+                //add to editor object idx to avoid overlap between object idxs
+                editor_object_idx++;
+            } else {
+                throw new Exception("Cannot deserialize JSON world objects!");
+            }
+
+            if (editor_enabled) {
+                //find objects that are not present in the level that we need to load textures for due to editor being active
+                var unloaded_objects = Constant.get_object_identifiers().Where(i => loaded_obj_identifiers.All(i2 => i2 != i));
+                //load textures not present in the level
+                foreach (string i in unloaded_objects) {
+                    switch (i) {
+                        case "player":
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_player_spritesheet6");
+                            check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet5");
+                            check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
+                            break;
+                        case "tree":
+                            check_and_load_tex(ref Constant.tree_spritesheet, "sprites/tree_spritesheet5");
+                            break;
+                        case "grass":
+                            check_and_load_tex(ref Constant.grass_tex, "sprites/grass_0");
+                            break;
+                        case "sign":
+                            check_and_load_tex(ref Constant.sign_tex, "sprites/sign1");
+                            check_and_load_tex(ref Constant.Y_tex, "sprites/Y");
+                            break;
+                        case "ghastly":
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/void_essence1");
+                            break;
+                        case "marker":
+                            check_and_load_tex(ref Constant.marker_spritesheet, "sprites/marker_spritesheet5");
+                            break;
+                        case "lamp":
+                            check_and_load_tex(ref Constant.lamppost_spritesheet, "sprites/lamppost_spritesheet3");
+                            break;
+                        case "big_tile":
+                            check_and_load_tex(ref Constant.tile_tex, "sprites/tile3");
+                            break;
+                        case "cracked_tile":
+                            check_and_load_tex(ref Constant.tile_tex2, "sprites/tile4");
+                            break;
+                        case "reg_tile":
+                            check_and_load_tex(ref Constant.tile_tex3, "sprites/tile5");
+                            break;
+                        case "round_tile":
+                            check_and_load_tex(ref Constant.tile_tex4, "sprites/tile6");
+                            break;
+                        case "nightmare":
+                            check_and_load_tex(ref Constant.nightmare_tex, "sprites/test_nightmare_spritesheet2");
+                            check_and_load_tex(ref Constant.nightmare_attack_tex, "sprites/test_nightmare_attacks_spritesheet1");
+                            break;
+                        case "wall":
+                            check_and_load_tex(ref Constant.wall_tex, "sprites/box_spritesheet1");
+                            break;
+                        case "fence":
+                            check_and_load_tex(ref Constant.fence_spritesheet, "sprites/fence1");
+                            break;
+                        case "tan_tile":
+                            check_and_load_tex(ref Constant.tan_tile_tex, "sprites/tile_tan1");
+                            break;
+                        default:
+                            //don't load anything
+                            Console.WriteLine("unknown object in Constant.get_object_identifiers()");
+                            break;
+                    }
+                }
+                
+                editor_init();
+                Console.WriteLine("initialized editor");
+            }
+
+            Console.WriteLine("Created all world objects");
+
+            //reset camera on level load
+            camera.Rotation = 0f;
+            //sort the entities list once so things are not drawn out of order in terms of depth values
+            entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+            //set reload world to false
+            reload_world = false;
+        }
+
+        private void check_and_load_tex(ref Texture2D tex, string texture_path) {
+            if (!loaded_textures.Contains(texture_path)) {
+                //add to loaded textures
+                loaded_textures.Add(texture_path);
+                tex = this.Content.Load<Texture2D>(texture_path);
+                Console.WriteLine("Loaded texture from path:" + texture_path);
+            }
+        }
+
+        private void unload_level() {
+            Console.WriteLine("clearing and unloading objects...");
+            //clear out all object lists
+            plants.Clear();
+            collision_entities.Clear();
+            foreground_entities.Clear();
+            background_entities.Clear();
+            floor_entities.Clear();
+            collision_geometry.Clear();
+            triggers.Clear();
+            entities_list.Clear();
+            enemies.Clear();
+            projectiles.Clear();
+            condition_manager.clear_conditions();
+            //clear entities
+            clear_entities();
+            //unload content
+            Content.Unload();
+            loaded_textures.Clear();
+        }
+
+        public void Update(GameTime gameTime){
+            //calculate fps
+            fps = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            //handle freeze frames
+            if (freeze_frames >= 0) {
+                freeze_frames--;
+                return;
+            }
+
+            if (reload_world) {
+                Console.WriteLine("reload world!");
+                unload_level();
+                load_level(content_root_directory, _graphics, current_level_id);
+            }
+
+            //handle textbox
+            if (current_sign != null && current_textbox != null) {
+                //update the current sign (which will update the current textbox)
+                current_sign.Update(gameTime, camera.Rotation);
+
+                //check for end of text
+                if (current_textbox.text_ended()) {
+                    //reset textbox
+                    current_textbox.reset();
+                    //remove reference to current_sign and current_textbox
+                    current_sign = null;
+                    current_textbox = null;
+                    //reset the players dash cooldown to avoid input clash
+                    player.reset_dash_cooldown(0f);
+                }
+                //pause the rest of the game world as the player reads the textbox
+                return;
+            }
+
+            //update active entities (also updates some collision entities)
+            for (int i = 0; i < entities_list.get_entities().Count; i++) {
+                IEntity e = entities_list.get_entities()[i];
+                if (e.get_flag().Equals(Constant.ENTITY_ACTIVE)) {
+                    e.Update(gameTime, camera.Rotation);
+                }
+            }
+
+            foreach (IAiEntity e in enemies) {
+                if (e is Nightmare) {
+                    Nightmare n = (Nightmare)e;
+                    if (n.is_dead()) {
+                        entities_to_clear.Add(n);
+                    }
+                }
+            }
+
+            foreach (IEntity e in projectiles) {
+                if (e is Arrow) {
+                    Arrow a = (Arrow)e;
+                    if (a.is_dead()) {
+                        entities_to_clear.Add(e);
+                    }
+                }
+            }
+
+            foreach (IEntity g in collision_geometry) {
+                if (g is InvisibleObject) {
+                    g.Update(gameTime, camera.Rotation);
+                }
+            }
+
+            //update conditions
+            condition_manager.Update(gameTime, camera.Rotation);
+
+            if (player.is_moving()){
+                /*
+                * TODO: potential improvement
+                * Could be to instead of sorting every element, just move the player 
+                * up and down the linked list based on their depth value so as to not 
+                * sort things that don't move like trees
+                * NOTE(5-6-2024):This probably won't work because when rotation happens
+                * we would need to resort everything anyways. However, with a static scene
+                * this approach actually could work well
+                */
+                //Depth sort while player is moving as well
+                entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+
+                //recalculate what objects need to be within render distance
+            }
+
+            #region player_death
+            if (player.get_health() <= 0) {
+                //unload the level and reload it
+                unload_level();
+                load_level(content_root_directory, _graphics, current_level_id);
+            }
+            #endregion
+
+            //handle player idle by rotating the camera slowly
+            if (player.is_idle() && !editor_active) {
+                //update the camera rotation
+                camera.Rotation += 0.0005f;
+                //keep the plants updated (watered lol)
+                for (int i = 0; i < plants.Count; i++){
+                    plants[i].Update(gameTime, camera.Rotation);
+                }
+                foreach (ForegroundEntity f in foreground_entities) {
+                    f.Update(gameTime, camera.Rotation);
+                }
+                //calculate rotation in degrees
+                rotation = MathHelper.ToDegrees(MathHelper.WrapAngle(camera.Rotation));
+                //if the camera is rotating then sort entities for depth
+                entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+            }
+
+            // Camera rotation and zoom controls
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                camera.Zoom += 0.01f;
+            else if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                camera.Zoom -= 0.01f;
+            
+            if (Mouse.GetState().ScrollWheelValue < previous_scroll_value) {
+                camera.Zoom -= 0.1f;
+            } else if (Mouse.GetState().ScrollWheelValue > previous_scroll_value) {
+                camera.Zoom += 0.1f;
+            }
+            previous_scroll_value = Mouse.GetState().ScrollWheelValue;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Left) || GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X < -0.1f) {
+                camera.Rotation += 0.02f;
+                previous_key = Keys.Left;
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.Right) || GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X > 0.1f){
+                camera.Rotation -= 0.02f;
+                previous_key = Keys.Right;
+            }
+
+            //update animations outside of camera rotations
+            foreach (IEntity plant in plants){
+                if (Vector2.Distance(plant.get_base_position(), player.get_base_position()) < render_distance){
+                    plant.update_animation(gameTime);
+                }
+            }
+
+            // updates that need to happen when the camera is moving
+            if (Keyboard.GetState().IsKeyDown(Keys.Left) || 
+                Keyboard.GetState().IsKeyDown(Keys.Right) || 
+                GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X > 0.1f || 
+                GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X < -0.1f) {
+                //update plants
+                update_forest_geometry(gameTime, camera.Rotation);
+                
+                //calculate rotation in degrees
+                rotation = MathHelper.ToDegrees(MathHelper.WrapAngle(camera.Rotation));
+                
+                //if the camera is rotating then sort entities for depth
+                entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+            } else if (Keyboard.GetState().IsKeyDown(Keys.E) && previous_key != Keys.E) {
+                previous_key = Keys.E;
+                //editor mode swap current state
+                editor_active = !editor_active;
+                editor_object_rotation = 0;
+                bool ai_behavior_enabled;
+                //if active
+                if (editor_active) {
+                    //set camera rotation to zero
+                    camera.Rotation = 0f;
+                    //push an update to plants and foreground entities
+                    update_forest_geometry(gameTime, camera.Rotation);
+                    ai_behavior_enabled = false;
+                } else {
+                    ai_behavior_enabled = true;
+                    //set enemies references for all ais
+                    foreach (IAiEntity ai in enemies) {
+                        ai.set_ai_entities(enemies);
+                    }
+                }
+                //re-enable enemy ai
+                foreach (IAiEntity ai in enemies) {
+                    ai.set_behavior_enabled(ai_behavior_enabled);
+                }
+                //push an update to invisible_objects
+                update_invisible_objects(editor_active);
+            }
+            
+            #region editor_code
+            //handle world editing
+            if (editor_active) {
+                //set camera rotation to zero
+                //camera.Rotation = 0f;
+                //increased elapsed for cooldown
+                selection_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                //keep track of mouse position
+
+                mouse_world_position = Vector2.Transform(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Matrix.Invert(camera.Transform));
+                create_position = mouse_world_position;
+                mouse_hitbox.update(rotation, mouse_world_position);
+
+                //keep selected object updated
+                IEntity selected_entity = obj_map[selected_object];
+                selected_entity.set_base_position(mouse_world_position);
+                selected_entity.Update(gameTime, camera.Rotation);
+                
+                //scroll through available editor tools
+                if (Keyboard.GetState().IsKeyDown(Keys.D1) && selection_elapsed >= selection_cooldown) {
+                    editor_tool_idx--;
+                    selection_elapsed = 0f;
+                } else if (Keyboard.GetState().IsKeyDown(Keys.D2) && selection_elapsed >= selection_cooldown) {
+                    editor_tool_idx++;
+                    selection_elapsed = 0f;
+                }
+                //scroll through the objects available
+                if (Keyboard.GetState().IsKeyDown(Keys.I) && selection_elapsed >= selection_cooldown) {
+                    selected_object--;
+                    selection_elapsed = 0f;
+                    editor_object_rotation = 0;
+                } else if (Keyboard.GetState().IsKeyDown(Keys.O) && selection_elapsed >= selection_cooldown) {
+                    selected_object++;
+                    selection_elapsed = 0f;
+                    editor_object_rotation = 0;
+                }
+                
+                //handle object rotation for editor objects
+                if (Keyboard.GetState().IsKeyDown(Keys.OemOpenBrackets)) {
+                    editor_object_rotation += 10f;
+                } else if (Keyboard.GetState().IsKeyDown(Keys.OemCloseBrackets)) {
+                    editor_object_rotation -= 10f;
+                }
+                selected_entity.set_rotation_offset(MathHelper.ToDegrees(editor_object_rotation));
+                
+                //wrap editor tool
+                if (editor_tool_idx >= editor_tool_count) {
+                    Console.WriteLine("wrap selection down");
+                    editor_tool_idx = 0;
+                } else if (editor_tool_idx < 0) {
+                    Console.WriteLine("wrap selection up");
+                    editor_tool_idx = editor_tool_count - 1;
+                }
+                //wrap selected object
+                if (selected_object > obj_map.Count) {
+                    Console.WriteLine("wrap selection down");
+                    selected_object = 1;
+                } else if (selected_object <= 0) {
+                    Console.WriteLine("wrap selection up");
+                    selected_object = obj_map.Count;
+                }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.P)) {
+                    Console.WriteLine("mouse_world_position:" + mouse_world_position);
+                    Console.WriteLine("create_position:" + create_position);
+                }
+
+                if (Mouse.GetState().RightButton == ButtonState.Pressed) {
+                    //context for right mouse button pressed
+                    //check if mouse hitbox is within hitbox for condition
+                    ICondition c = condition_manager.find_condition_colliding(mouse_hitbox);
+                    if (c != null) {
+                        //collision
+                        if (c is EnemiesDeadRemoveObjCondition) {
+                            EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)c;
+                            edroc.set_selected(true);
+                        }
+                    }
+                }
+                
+                //only able to place objects if the editor_tool_idx == 0 (object placement tool)
+                if (editor_tool_idx == 0 && (Keyboard.GetState().IsKeyDown(Keys.M) || Mouse.GetState().LeftButton == ButtonState.Pressed) && selection_elapsed >= selection_cooldown) {
+                    selection_elapsed = 0f;
+                    MouseState mouse_state = Mouse.GetState();
+                    //mouse_world_position = Constant.world_position_transform(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), camera);
+                    previous_key = Keys.M;
+                    //rotate point with rotation value
+                    //create_position = Constant.rotate_point(mouse_world_position, -camera.Rotation, 0f, Constant.direction_down);
+                    Console.WriteLine("mouse_world_position:" + mouse_world_position);
+                    Console.WriteLine("create_position:" + create_position);
+                    switch (selected_object) {
+                        case 1:
+                            Tree t = new Tree(create_position, 1f, Constant.tree_spritesheet, false, editor_object_idx);
+                            plants.Add(t);
+                            entities_list.Add(t);
+                            Console.WriteLine("tree," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 2:
+                            Grass g = new Grass(create_position, 1f, editor_object_idx);
+                            plants.Add(g);
+                            entities_list.Add(g);
+                            Console.WriteLine("grass," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 3:
+                            Ghastly ghast = new Ghastly(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, editor_object_idx);
+                            entities_list.Add(ghast);
+                            collision_entities.Add(ghast);
+                            Console.WriteLine("ghastly," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 4:
+                            StackedObject m = new StackedObject("marker", Constant.marker_spritesheet, create_position, 1f, 32, 32, 15, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            entities_list.Add(m);
+                            collision_geometry.Add(m);
+                            Console.WriteLine("marker," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 5:
+                            Lamppost l = new Lamppost(create_position, 1f, editor_object_idx);
+                            entities_list.Add(l);
+                            Console.WriteLine("lamp," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 6:
+                            Tile tile1 = new Tile(create_position, 3f, Constant.tile_tex, "big_tile", editor_object_idx);
+                            background_entities.Add(tile1);
+                            Console.WriteLine("big_tile," + create_position.X + "," + create_position.Y + ",3");
+                            break;
+                        case 7:
+                            Tile tile2 = new Tile(create_position, 3f, Constant.tile_tex2, "cracked_tile", editor_object_idx);
+                            background_entities.Add(tile2);
+                            Console.WriteLine("cracked_tile," + create_position.X + "," + create_position.Y + ",3");
+                            break;
+                        case 8:
+                            Tile tile3 = new Tile(create_position, 3f, Constant.tile_tex3, "reg_tile", editor_object_idx);
+                            background_entities.Add(tile3);
+                            Console.WriteLine("reg_tile," + create_position.X + "," + create_position.Y + ",3");
+                            break;
+                        case 9:
+                            Tile tile4 = new Tile(create_position, 3f, Constant.tile_tex4, "round_tile", editor_object_idx);
+                            background_entities.Add(tile4);
+                            Console.WriteLine("round_tile," + create_position.X + "," + create_position.Y + ",3");
+                            break;
+                        case 10:
+                            Tile tan_tile = new Tile(create_position, 2f, Constant.tan_tile_tex, "tan_tile", editor_object_idx);
+                            floor_entities.Add(tan_tile);
+                            Console.WriteLine("tan_tile," + create_position.X + "," + create_position.Y + ",2");
+                            break;
+                        case 11:
+                            Tree c = new Tree(create_position, 4f, Constant.tree_spritesheet, true, editor_object_idx);
+                            plants.Add(c);
+                            entities_list.Add(c);
+                            Console.WriteLine("tree," + create_position.X + "," + create_position.Y + ",4,true");
+                            break;
+                        case 12:
+                            StackedObject w = new StackedObject("wall", Constant.wall_tex, create_position, 1f, 32, 32, 8, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            w.Update(gameTime, rotation);
+                            entities_list.Add(w);
+                            collision_geometry.Add(w);
+                            Console.WriteLine("wall," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 13:
+                            StackedObject f = new StackedObject("fence", Constant.fence_spritesheet, create_position, 1f, 32, 32, 18, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            f.Update(gameTime, rotation);
+                            entities_list.Add(f);
+                            collision_geometry.Add(f);
+                            Console.WriteLine("fence," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 14:
+                            InvisibleObject io = new InvisibleObject("deathbox", create_position, 1f, 48, 48, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            io.set_debug(true);
+                            io.Update(gameTime, rotation);
+                            collision_geometry.Add(io);
+                            Console.WriteLine($"deathbox,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
+                            break;
+                        case 15:
+                            Nightmare n = new Nightmare(Constant.nightmare_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "nightmare");
+                            n.set_behavior_enabled(false);
+                            entities_list.Add(n);
+                            collision_entities.Add(n);
+                            enemies.Add(n);
+                            Console.WriteLine($"nightmare,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
+                            break;
+                        default:
+                            break;
+                    }
+                    editor_object_idx++;
+                } else if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.LeftControl) && selection_elapsed >= selection_cooldown) { //Ctrl+S
+                    //pull all world entities from render list (whether or not they're currently being drawn)
+                    List<IEntity> all_world_entities = entities_list.get_all_entities().Keys.ToList();
+                    save_world_level_to_file(all_world_entities, foreground_entities, background_entities);
+                }
+            }
+            #endregion
+
+            //check collisions
+            check_entity_collision(gameTime);
+
+            //clear entities
+            clear_entities();
+
+            //check trigger volumes
+            check_triggers(gameTime, camera.Rotation);
+
+            //shake camera update
+            shake_camera(gameTime);
+
+            //dashing camera shake
+            check_player_dash_camera_shake();
+
+            //update camera
+            if (Keyboard.GetState().IsKeyDown(Keys.N)) {
+                camera.Update(Vector2.Zero);
+            } else {
+                camera.Update(player.get_camera_track_position());
+            }
+
+            button.Update(gameTime, camera.Rotation);
+            if (button.check_clicked(mouse_hitbox, Mouse.GetState().RightButton == ButtonState.Pressed)) {
+                Console.WriteLine("button action!");
+                bool result = button.trigger_action();
+            }
+            
+            //update camera bounds
+            //update_camera_bounds();
+        }
+        
+        #region save_world_file
+        public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities) {
+            List<GameWorldObject> world_objs = new List<GameWorldObject>();
+            List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
+            //iterate over all entities
+            foreach (IEntity e in entities) {
+                world_objs.Add(e.to_world_level_object());
+            }
+            //iterate over foreground entities
+            foreach (ForegroundEntity fe in foreground_entities) {
+                if (fe is Tree) {
+                    Tree tree = (Tree)fe;
+                    world_objs.Add(tree.to_world_level_object());
+                }
+            }
+            //iterate over background entities
+            foreach (BackgroundEntity be in background_entities) {
+                if (be is Tile) {
+                    Tile tile = (Tile)be;
+                    world_objs.Add(tile.to_world_level_object());
+                }
+            }
+            foreach (IEntity fe in floor_entities) {
+                if (fe is Tile) {
+                    Tile tile = (Tile)fe;
+                    world_objs.Add(tile.to_world_level_object());
+                }
+            }
+            //iterate over level triggers
+            foreach (ITrigger t in triggers) {
+                world_objs.Add(t.to_world_level_object());
+            }
+
+            //handle saving collision geometry that is not drawn
+            foreach (IEntity g in collision_geometry) {
+                if (g is InvisibleObject) {
+                    InvisibleObject io = (InvisibleObject)g;
+                    world_objs.Add(io.to_world_level_object());
+                }
+            }
+
+            //handle sorting conditions
+            List<GameWorldCondition> sorted_world_conditions = conditions.OrderBy(c => c.object_id_num).ToList();
+            //sort world objects by numerical id
+            List<GameWorldObject> sorted_world_objs = world_objs.OrderBy (o => o.object_id_num).ToList();
+            
+            //generate GameWorldFile
+            GameWorldFile world_file = new GameWorldFile {
+                world_objects = sorted_world_objs,
+                conditions = sorted_world_conditions,
+                world_script = new List<string>()
+            };
+            //take world file and serialize to Json then write to file
+            string file_contents = JsonSerializer.Serialize(world_file);
+            var file_path = Path.Combine(content_root_directory, "levels/" + save_file_name);
+            Console.WriteLine("saving file:" + file_path);
+
+            //write file
+            File.WriteAllText(file_path, file_contents);
+        }
+        #endregion
+
+        //function to update forest / plant / foreground geometry (basically to populate camera rotation to all these objects in order to get the rotations correct)
+        public void update_forest_geometry(GameTime gameTime, float rotation) {
+            for (int i = 0; i < plants.Count; i++) {
+                plants[i].Update(gameTime, rotation);
+            }
+            foreach (ForegroundEntity f in foreground_entities) {
+                f.Update(gameTime, rotation);
+            }
+        }
+
+        //function to update invisible objects based on editor
+        public void update_invisible_objects(bool visible) {
+            foreach (IEntity e in collision_geometry) {
+                if (e is InvisibleObject) {
+                    InvisibleObject io = (InvisibleObject)e;
+                    io.set_debug(visible);
+                }
+            }
+        }
+
+        //function to check player dash and shake camera
+        private void check_player_dash_camera_shake() {
+            if (player.is_dashing()) {
+                set_camera_shake(10f, 1f, 1f);
+            }
+        }
+        
+        #region collision
+        //function to check collisions with player hitbox/hurtbox
+        public void check_entity_collision(GameTime gameTime) {
+            //check collisions against player hitbox
+            if (player.hitbox_active()) {
+                foreach (IEntity e in collision_entities) {
+                    //check player hitboxes collision with all entity hurtboxes
+                    if (e is Ghastly || e is Nightmare) {
+                        ICollisionEntity ic = (ICollisionEntity)e;
+                        if (ic.is_hurtbox_active()) {
+                            bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
+                            if (collision) {
+                                ic.take_hit(player);
+                                //add to arrows charges for player
+                                player.add_arrow_charge(1);
+                                //freeze frames to add weight to collision
+                                freeze_frames = 2;
+                                //shake the camera
+                                set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //check enemy collisions against player
+            foreach (IEntity e in collision_entities) {
+                //check enemy hitbox collision with player hurtboxes
+                if (e is Nightmare) {
+                    Nightmare n = (Nightmare)e;
+                    if (n.hitbox_active()) {
+                        bool collision = player.check_hurtbox_collisions(n.get_hitbox());
+                        if (collision && player.is_hurtbox_active()) {
+                            player.take_hit(n);
+                            //freeze frames to add weight
+                            //freeze_frames = 2;
+                            //shake the camera
+                            set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                        }
+                    }
+                }
+
+                foreach (IEntity proj in projectiles) {
+                    if (!e.Equals(proj)) {
+                        if (e is Nightmare) {
+                            Nightmare nm = (Nightmare)e;
+                            Arrow a = (Arrow)proj;
+                            bool collision = nm.get_hurtbox().collision(a.get_hitbox());
+                            if (collision) {
+                                nm.take_hit(a);
+                                //if the shot is not a power shot then clear it on impact immediately
+                                //it will be cleared when the speed runs out (dead)
+                                if (!a.is_power_shot()) { entities_to_clear.Add(a); }
+                            }
+                        }
+                    }
+                }
+            }
+
+            //check player interactions with collision_entities
+            foreach (IEntity e in collision_entities) {
+                if (player.interacting()) {
+                    if (e is Sign) {
+                        Sign s = (Sign)e;
+                        bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
+                        if (collision) {
+                            //set sign to display
+                            s.display_textbox();
+                            //set current textbox to correct instance
+                            current_textbox = s.get_textbox();
+                            current_sign = s;
+                        }
+                    }
+                }
+
+                if (e is Sign) { //check if interaction is available and display prompt for signs
+                    Sign s = (Sign)e;
+                    bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
+                    //set available interaction display
+                    s.set_display_interaction(collision);
+                }
+            }
+
+            //check player-geometry collisions
+            foreach (IEntity e in collision_geometry) {
+                if (e is StackedObject) {
+                    StackedObject obj = (StackedObject)e;
+                    bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
+                    if (collision) {
+                        player.resolve_collision_geometry_movement(player.get_direction(), obj);
+                    }
+                }
+
+                if (e is InvisibleObject) {
+                    InvisibleObject io = (InvisibleObject)e;
+                    bool collision = io.check_hitbox_collisions(player.get_hurtbox());
+                    if (collision && !player.is_dashing() && !editor_active) {
+                        Console.WriteLine("death!");
+                        reload_world = true;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        private void check_triggers(GameTime gameTime, float rotation) {
+            bool triggered = false;
+            string level_id = null;
+
+            foreach (ITrigger t in triggers) {
+                t.Update(gameTime, rotation);
+
+                //if trigger volume is triggered then execute specific logic
+                if (t.is_triggered()) {
+                    //check for specific class
+                    if (t is LevelTrigger) {
+                        LevelTrigger lt = (LevelTrigger)t;
+                        level_id = lt.get_level_id();
+                        triggered = true;
+                        break;
+                    }
+                }
+            }
+            
+            // check if level trigger has been set
+            if (triggered) {
+                //transition to new level by unloading
+                unload_level();
+                //load new level
+                load_level(content_root_directory, _graphics, level_id);
+                //set variables back after use
+                triggered = false;
+                level_id = null;
+            }
+        }
+
+        public void clear_entities() {
+            //handle cleaning up weapons
+            foreach (IEntity e in entities_to_clear) {
+                //if this is a collision entity then remove it
+                if (collision_entities.Contains(e)) {
+                    collision_entities.Remove(e);
+                }
+                //remove from collisions geometry
+                if (collision_geometry.Contains(e)) {
+                    collision_geometry.Remove(e);
+                }
+                //remove from plant entities
+                if (plants.Contains(e)) {
+                    plants.Remove(e);
+                }
+                //remove from foreground entities
+                if (e is ForegroundEntity) {
+                    ForegroundEntity fe = (ForegroundEntity)e;
+                    if (foreground_entities.Contains(fe)) {
+                        foreground_entities.Remove(fe);
+                    }
+                }
+                //remove from background entities
+                if (e is BackgroundEntity) {
+                    BackgroundEntity be = (BackgroundEntity)e;
+                    if (background_entities.Contains(be)) {
+                        background_entities.Remove(be);
+                    }
+                }
+                //remove from floor entities
+                if (floor_entities.Contains(e)) {
+                    floor_entities.Remove(e);
+                }
+                //if this is an ai, remove it from enemies
+                if (e is IAiEntity) {
+                    IAiEntity ai = (IAiEntity)e;
+                    enemies.Remove(ai);
+                }
+                //if this is a projectile, remove it from projectiles
+                if (e is Arrow && projectiles.Contains(e)) {
+                    projectiles.Remove(e);
+                }
+                entities_list.Delete_Hard(e);
+            }
+            entities_to_clear.Clear();
+        }
+
+        public void clear_entity(IEntity entity_to_clear) {
+            entities_to_clear.Add(entity_to_clear);
+        }
+
+        public void clear_entity_by_id(int obj_id) {
+            IEntity e = entities_list.get_entity_by_id(obj_id);
+            if (e == null) {
+                Console.WriteLine($"RenderList Entity Not Found: no entity found with corresponding id: {obj_id}");
+                return;
+            }
+            clear_entity(e);
+        }
+
+        //find entity by id (O(n)-time)
+        //search all entities in the world
+        public IEntity find_entity_by_id(int obj_id) {
+            return entities_list.get_entity_by_id(obj_id);
+        }
+
+        public void resize_viewport(GraphicsDeviceManager _graphics) {
+            //update the position of textboxes to fit on the screen
+            Constant.textbox_screen_position = new Vector2(10, _graphics.GraphicsDevice.Viewport.Height - (_graphics.GraphicsDevice.Viewport.Height / 3));
+            float bottom_screen_distance = Constant.window_height - Constant.textbox_screen_position.Y;
+            if (bottom_screen_distance <= 10) {
+                
+            }
+            //update camera viewport
+            camera.set_camera_offset(Vector2.Zero);
+            camera.update_viewport(_graphics.GraphicsDevice.Viewport, Constant.rotate_point(player.base_position, -camera.Rotation, 0f, Constant.direction_down));
+        }
+
+        private void set_camera_shake(float shake_milliseconds, float angle, float radius) {
+            shake_threshold = shake_milliseconds;
+            camera_shake = true;
+            shake_radius = radius;
+            shake_angle = angle;
+        }
+
+        private void shake_camera(GameTime gameTime) {
+            if (shake_elapsed < shake_threshold && camera_shake) {
+                //increase timer
+                shake_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                //shake camera around center point via adding an offset
+                camera.set_camera_offset(new Vector2((float)(Math.Sin(shake_angle) * shake_radius), (float)(Math.Cos(shake_angle) * shake_radius)));
+                shake_radius -= 0.25f;
+                shake_angle += (150 + random.Next(60));
+                if (shake_radius <= 0) { //end camera shake if we exhaust the radius
+                    camera_shake = false;
+                    shake_elapsed = 0;
+                    camera.set_camera_offset(Vector2.Zero);
+                }
+            } else {
+                camera_shake = false;
+                shake_elapsed = 0;
+                camera.set_camera_offset(Vector2.Zero);
+            }
+        }
+
+        public void add_projectile(IEntity projectile_entity) {
+            projectiles.Add(projectile_entity);
+            entities_list.Add(projectile_entity);
+        }
+
+        public bool is_editor_active() {
+            return editor_active;
+        }
+
+        public void Draw(SpriteBatch _spriteBatch){
+            // TODO: Add drawing code here
+
+            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, null,
+                                camera.Transform);
+            //draw floor itself
+            for (int i = 0; i < floor_entities.Count; i++) {
+                floor_entities[i].Draw(_spriteBatch);
+            }
+            //draw background objects (stuff on the floor)
+            for (int i = 0; i < background_entities.Count; i++) {
+                background_entities[i].Draw(_spriteBatch);
+            }
+
+            //draw entities list
+            entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
+
+            //debug triggers
+            if (debug_triggers) {
+                //draw level triggers
+                foreach (ITrigger t in triggers) {
+                    t.Draw(_spriteBatch);
+                }
+                foreach(IEntity i in collision_geometry) {
+                    if (i.get_id().Equals("deathbox")) {
+                        i.Draw(_spriteBatch);
+                    }
+                }
+            }
+
+
+            //draw foreground objects
+            foreach (ForegroundEntity f in foreground_entities) {
+                f.Draw(_spriteBatch);
+            }
+            
+            //draw camera bounds
+            // if (camera_bounds != null && debug_triggers) {
+            //     //draw bounds rectangle
+            //     camera_bounds.draw(_spriteBatch);
+            //     //draw viewport boundary points
+            //     foreach (Vector2 v in camera.get_viewport_boundary_points()) {
+            //         Renderer.FillRectangle(_spriteBatch, v, 10, 10, Color.Blue);
+            //     }
+            // }
+
+            //draw editor elements
+            if (editor_active) {
+                //tool specific draw
+                if (editor_tool_idx == 0) {
+                    //draw preview of object
+                    IEntity selected_entity = obj_map[selected_object];
+                    selected_entity.Draw(_spriteBatch);
+                }
+                
+                Renderer.FillRectangle(_spriteBatch, create_position, 10, 10, Color.Purple);
+                mouse_hitbox.draw(_spriteBatch);
+
+                condition_manager.Draw(_spriteBatch);
+
+                button.Draw(_spriteBatch);
+            }
+            _spriteBatch.End();
+
+            //draw textboxes
+            _spriteBatch.Begin();
+            if (current_sign != null && current_textbox != null) {
+                current_textbox.Draw(_spriteBatch);
+            }
+            _spriteBatch.End();
+
+            //draw UI
+            _spriteBatch.Begin();
+            //display dash charges
+            for (int i = 0; i < player.get_dash_charge(); i++) {
+                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, 0), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Black);
+            }
+            //display attack charges
+            for (int i = 0; i < player.get_attack_charge(); i++) {
+                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, Constant.dash_charge_ui_size + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.White);
+            }
+            //display health
+            for (int i = 0; i < player.get_health(); i++) {
+                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, Constant.dash_charge_ui_size*2 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Red);
+            }
+            //display arrow charges
+            for (int i = 0; i < player.get_arrow_charges(); i++) {
+                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, Constant.dash_charge_ui_size*3 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Blue);
+            }
+
+            _spriteBatch.End();
+
+            //draw text overlays
+            _spriteBatch.Begin();
+            _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, "camera_rotation: " + camera.Rotation, new Vector2(0, 17*2), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, "camera_zoom:" + camera.Zoom, new Vector2(0, 17*3), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, "editor:" + editor_active, new Vector2(0, 17*4), Color.Black);
+            //_spriteBatch.DrawString(Constant.arial_small, "selected_object:" + selected_object, new Vector2(0, 17*5), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, $"selected_object:{selected_object},obj_id:{obj_map[selected_object].get_id()}", new Vector2(0, 17*5), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}", new Vector2(0, 17*6), Color.Black);
+            _spriteBatch.End();
+        }
+    }
+}

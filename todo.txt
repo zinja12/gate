@@ -1,0 +1,236 @@
+ToDo List:
+
+(FEATURES):
+[DONE - but can be improved](FEATURE)fix positions sprites are being drawn at / where their real base positions and draw positions are
+[DONE](FEATURE)start implementing editor features to create forests and maps for the game to take place
+[DONE](FEATURE)start implementing reading of files to load game objects
+[DONE](FEATURE)implement system to exclude far away entities from being added to the render list.
+    - as they become closer add them to the render list
+    - as they become farther away take them out of the render list and add them to not drawn entity list
+    - NOTE: this is dumb, just calculate the distance per object and then don't render them lol
+[DONE](FEATURE)fake 3d objects system / template
+[DONE](FEATURE)player directionality / upgrade to animations?
+[SYSTEM IMPLEMENTED - but need to add more](FEATURE)animations for environment
+[IN PROGRESS]start working on other environment objects like grass, cracked pavement, fences, telephone poles, barriers, etc
+[DONE](FEATURE)implement roll or dash
+[DONE](FEATURE)gamepad support
+[DONE](FEATURE)collision rectangles with rotation
+[DONE](FEATURE)particle system
+[DONE](FEATURE)start working on some enemies
+[DONE](FEATURE)add collision to ghastly
+[DONE](FEATURE)add player directionality
+[DONE](FEATURE)add 8 way player directionality (support for diagonal attacks and movement)
+    - more like 6.5, but close enough lol
+[DONE](FEATURE)add slight velocity to enemies that get hit
+[DONE](FEATURE)add sprites/animations for attacks
+[DONE](FEATURE)add image on collision of hit (almost like a muzzle flash)
+[DONE](FEATURE)combat/hitboxes?
+[DONE](FEATURE)create system in ghastly to create flip between red and white multiple times on hit
+[DONE](FEATURE)add sprite flashing and slight freeze frame on collision hits
+[DONE](FEATURE)start work on system to do text like in nintendo games for dialogue and story? (textboxes)
+[DONE](FEATURE)render entire game to image for better window sizing
+[DONE](FEATURE)add functionality for window resizing
+[DONE](FEATURE)implement entity flagging system for more dynamic entity updating
+[DONE](FEATURE)implement more dynamic level loading (able to declare signs and text, reads and updates entities without having to add a call for it)
+[DONE](FEATURE)move level loading to json from csvs (will be more dynamic with larger objects that need to be created with more fields and more text)
+[DONE](FEATURE)idle player camera rotation
+[DONE](FEATURE)screen shake on hits
+[DONE](FEATURE)rework image on collision of a hit (make it a circle that expands)
+[DONE](FEATURE)add sparks and slash on collision of a hit for better game feel
+[DONE](FEATURE)remove hi text on level floor (lol)
+[DONE](FEATURE)rework game color palette. (Figure out how color palettes work for games)
+[DONE](FEATURE)re-animate and redesign player character
+[DONE](FEATURE)draw shadows under entities
+[DONE - but not well lol](FEATURE)build functionality into editor to preview object placement
+[DONE](FEATURE)generally improve editor
+[DONE](FEATURE)rework level geometry and layout
+[DONE](FEATURE)create forest top object
+[DONE](FEATURE)create tile/cracked tile object for floor to fill voids
+[DONE](FEATURE)create separate render list to only sort and draw what is within 1000 distance
+    -One render list to sort and draw what is close to the player and then another for farther things
+    -then move things in and out of two lists depending on what is close and far
+    -could save some performance here with list sorting since sorting can get really expensive with logs of entities
+[WILL NOT DO - looks stupid](FEATURE)add shadows to trees
+    -maybe small shadows? or really big shadows?
+[DONE](FEATURE)add shadow to sign
+[DONE](FEATURE)have swing count reset variable configurable per weapon
+[DONE](FEATURE)build out multiple levels
+[DONE](FEATURE)level triggers
+    -create an interface to use for triggers
+    -different types of triggers can be possible
+        -level triggers to trigger loading a level
+        -encounter triggers to trigger enemy spawning and creation
+[DONE](FEATURE)create layer of abstraction for collision entities
+    -create an interface to cast to when calling take_hit() and other functions
+[DONE](FEATURE)make key bindings easier to implement in the future by abstracting the keys pressed from Player.cs to Constant.cs
+[DONE](FEATURE)pull interfaces out into their own files for ease of access
+[WLL NOT DO - right now anyways, works mostly fine](FEATURE)redo resizing of window and what is rendered to the screen texture
+[DONE](FEATURE)dash charges / double dashing. Allowing the player to have two dashes saved up in order to speed up gameplay
+[DONE](FEATURE)minimal screen shake on dashes
+    -still needs some improvement, but good for now
+[DONE](FEATURE)add better animation for dashing
+    - maybe just a black blur that aims in the direction of the dash with some effects on either side of dash?
+    - can still use some improvement
+[DONE](FEATURE)idle animations for player character
+    -make sure to remove references to old system containing draw rect for player not walking
+[DONE](FEATURE)create new enemy - nightmare. implement animations for walk and idle and set up some basic AI for swarming and targeting the player
+    - this will help further develop the combat and weapons systems that are needed
+    - maybe even use this as a testing ground for how attack animations will work as well and whether or not we need bigger textures/how to handle that?
+    - want to implement aggro behavior where the enemy won't forget about you unless you get really far away
+    - (done) - only thing left is swarming behavior for different enemies
+    - need to use the enemy as the testing ground for attacks and attack animations
+[DONE](FEATURE)add actual animations for attacking
+[DONE](FEATURE)direction queueing after attacks
+    -feels weird to attack and dash and move in the wrong direction
+    -need to queue up the direction the player is holding during the attack and then dash in that direction once the attack ends
+[DONE - good for now at least](FEATURE)direction queueing for dashes
+    -feels weird to dash, switch directions and then not move that way even if the timing is off slightly
+    -need to queue up the direction the player is holding during the dash and then dash in that direction once the dash ends
+[DONE](FEATURE)reimplement spacing and positions of player hitboxes
+[DONE](FEATURE)implement attack locking
+    -player should not be able to move for at least 3 or 4 frames while attacking
+    -player should move forward slightly in direction of attack
+[DONE](FEATURE)implement camera zooming via scroll wheel on mouse in editor
+[DONE - but not well](FEATURE)collision with objects in the environment
+[DONE - mostly (and fixed drawing correctly)](FEATURE)rework editor to be more useful and robust
+    -and actually works to put objects where you want them to go
+[DONE](FEATURE)create a way to save/write an in game world to json file
+    -make editor more useful
+[DONE](FEATURE)rework textboxes to allow for different message screens in order to enable better story telling
+[DONE](CLEAN-UP)remove old weapon code
+    -need to redo entire attack system
+    -need to also animate second part of attack swing and make it only a two part attack
+    -decent placeholders at least (see Nightmare Hunter on YouTube)
+[DONE](FEATURE)update particle system for puff effects
+    - more controlled particle system
+[DONE](FEATURE)implement dashing over river in demo level
+    - need to add backgrounds for this
+    - or environment assets for the floor to make it feel more real
+    - need to also implement drowning or fall mechanics if not on a platform
+        - deathboxes
+        - aka need to implement a dying state for player
+        - particle effects on defeat / death?
+[DONE](FEATURE)allow for rotation offset when in editor
+    -should be able to choose a rotation for the object in the editor to save alongside for an offset
+[DONE](FEATURE)implement heavy attack and charged heavy attack
+    - include power shot / sweet spot mechanic to make timing more fun
+[DONE - but probably needs more polish](FEATURE)implement enemy (nightmare) attacks including attack animations
+    -this will include animations for attacks as well as adding in how and when nightmares attack
+    -also implement how their hitboxes work
+    -also includes how interactions with player hurtboxes work
+[DONE](FEATURE)implement player health/damage
+[DONE](FEATURE)game AI for ghastly and other types of enemies (make sure to build in a sandbag mode)
+[DONE](FEATURE)player health and damage
+[DONE](FEATURE)implement enemy health/damage
+[DONE](FEATURE)add enemy defeat/death and particle effects on removing enemy from world
+[DONE](FEATURE)add arrows to combat
+[DONE](FEATURE)add bow ready stance for charging arrow to player animation
+[DONE](FEATURE)implement some form of player death
+    - just reload the level or something
+[DONE](FEATURE)object id system on level load and with editor
+    - for linking objects and scripting it will be helpful if each object has it's own unique numerical id
+[](FEATURE)add object linking and scripting for objects to listen to other objects for triggers to execute behavior
+[](FEATURE)add sandbad enemy in first level and move trigger to the right
+[](FEATURE)modify enemy behavior ai to factor in weights for inanimate or environment objects as well as enemies
+[](FEATURE)fix player death
+    -probably need some sort of checkpoint system
+    -or figure out what happens when the player dies
+        -should it be meaningful? gameplay mechanic?
+[](FEATURE)implement erasing/removing objects into editor
+[](FEATURE)create tents sprite stack model
+[](FEATURE)create campfire spritestack model
+[IN PROGRESS](FEATURE)start working on intro level and lead up to town
+[](FEATURE)create fade to black or wipe to black transitions between levels
+[WILL NOT DO - helpful to see things from different angles](FEATURE)set camera rotation to zero while in editor mode
+[](FEATURE)re-create grass as a regular layered object instead of just a sprite
+[LATER](FEATURE)create level bounds
+[LATER](FEATURE)ensure camera does not leave level bounds
+    -can create a collider for the camera and not allow it to leave the collider
+[WILL NOT DO - too complex for the type of game](FEATURE)create weapon system (scythe)
+    -weapons will be entities until picked up
+    -weapon system class to instantiate inside the player class?
+    -make updates World.cs and the editor in order to be able to place objects on the ground
+    -make weapon move on a sin curve while walking to indicate motion
+    -make character swing weapon programatically? (aka just move it to opposite side when attack is pressed)
+        -fix swing artwork to actually look more like complete parabolic swing
+[](FEATURE)create level transitions
+[](FEATURE)create engine to play sounds
+    -different channels for effects?
+    -queue songs/music to play
+[](FEATURE)add kasugai crow character to deliver tutorial story beats?
+    -maybe this comes from a character similar to uncle iroh to deliver wisdom?
+[](FEATURE)add procedural weapons attached to back of player
+[](FEATURE)support for game event scripting (cutscenes, camera pans, etc)
+[](FEATURE)on-demand texture streaming/loading per level
+[IN PROGRESS](FEATURE)start working on tutorial level
+[](FEATURE)start working on different worlds and different color palettes
+[](FEATURE)start working on hub world
+[](FEATURE)add trigger volumes that will cause action like text among other things
+[](FEATURE)add pause functionality (this is a can of worms rn, because it should probably be another screen, not just stopping the game loop)
+    -this is essentially support for screens and menus
+[](FEATURE)add screen/menu for changing key bindings
+[](FEATURE)add level intro scripting
+    -example:
+    {
+         "stage_command": "ON_LEVEL_LOAD",
+         "behavior_command": "CAMERA_ROTATE",
+         "start_value": 0.4,
+         "end_value": 0
+    }
+
+(BUGS):
+[DONE](BUG)fix ghastly hitbox and positioning
+[DONE](BUG)fix slow dashes bug
+[DONE](BUG)workout and fix why the camera doesn't align the viewport to the window properly when resized
+[DONE](BUG)fix window resizing
+[DONE](BUG)fix grass positioning
+[DONE](BUG)UI does not scale to window size during resizing
+[DONE](BUG)fix dashing cooldown
+    -player can just wait out the time to get the first dash back and circumvent the second dash charge
+    -this is because I removed the cooldown check from the if statement for when the player is allowed to activate a dash
+    -fixed by just depleting dash charges on exiting a sign
+[DONE](BUG)fix player attack sprite positioning
+    -need to rotate the attack sprite position around the draw_position
+[DONE](BUG)need to lock attack direction and hitbox while animation plays
+    -player should not be able to switch direction once the attack is initiated
+[DONE](BUG)need to update hitbox position when dashing, not just when the player receives input
+[MIGHT BE GONE?](BUG)camera moves to god knows where when queueing attacks and dodges
+[DONE](BUG)depth sorting issues
+[DONE](BUG)sprites are drawn, but don't rotate properly on level load and don't get fixed until the camera moves
+[DONE](BUG)fix depth sorting issues between 90 and 95 degrees (and -90 and -95 degrees)
+[DONE](BUG)camera rotation and world rotation needs to be reset on level loading
+[DONE](BUG)fix text being drawn off screen in text boxes
+    -need to implement text wrapping for text boxes
+    -also need to add dynamic messages, meaning that the textbox knows what text is cut off and will display it on the next textbox after a button press
+[DONE](BUG)fix how player object handle particle systems
+    - should spawn one in every time a dash happens, loop over particle systems present and draw the ones
+    - remove them from the list if all the particles are dead
+[DONE](BUG)objects do not get saved to the correct position
+    - objects rubberband a bit on saving and loading
+    - most likely due to saving a different position than we're loading to (ex. providing the depth position when saving, while loading that position to the base position)
+[DONE](BUG)objects outside render distance do not get saved to level file when editing
+    - this is due to only the entities within the render distance being saved
+    - need to pull all entities from renderlist instead of just rendered entities
+[DONE](BUG)player position gets set to null if dash button is held down
+    - this is because if you hold down the button it queued up the next dash, and if you weren't holding a direction it would set it to (_h=0,_v=0) which then NaN'd the dash direction vector
+    - have appropriate safeguards in place now
+[DONE](BUG)nightmare animation direction is not correct for all rotation values
+    - rotating the camera plays the wrong animation values
+[](BUG)power shot arrows strike enemies multiple times rather than just once
+    - we don't remove the arrow if it's a power shot on collision
+    - need a way to remember which arrows have already struck once so they don't strike multiple times
+[](BUG)fix rotation for tile objects in editor
+[](BUG)trees do not get properly drawn or saved to expected position
+    - this is partially fixed by saving the proper base position
+    - should go in and separate out get_base_position and get_depth_position as functions
+    - most objects for that matter
+[](BUG)hit textures don't show up in the proper place when camera is rotated
+    -this might be because the update function to properly rotate and stack the sprites at the respective positions doesn't run immediately
+    -should try to populate and rotate the position at least once in the init to potentially avoid this
+[](BUG)resizing window repositions the text boxes, however it does not adjust the size of the box as it should
+[](BUG)optimize? game barely works on microsoft surface
+[](BUG)fix not being able to attack while moving down left and down right (not receiving input at all while holding those directions) - KEYBOARD ONLY ISSUE
+[WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
+[](BUG)fix hit confirm position when hitbox is active
+[](BUG)fix window resizing/resolution adjustment again
+    -need to adjust zoom during window resize in order to compensate for window resizing
