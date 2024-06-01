@@ -29,7 +29,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        string load_file_name = "arena_v1_ids.json", current_level_id;
+        string load_file_name = "test_v1.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -84,6 +84,7 @@ namespace gate
         private RRect mouse_hitbox;
         private int previous_scroll_value;
         private Keys previous_key;
+        private ICondition selected_condition;
         //editor tools: (object_placement, object/linkage editor)
         private int editor_tool_idx, editor_object_idx, editor_tool_count;
 
@@ -176,6 +177,10 @@ namespace gate
             Nightmare nightmare1 = (Nightmare)obj_map[15];
             //turn off ai for editor
             nightmare1.set_behavior_enabled(false);
+            //set up condition in editor
+            obj_map.Add(16, new InvisibleObject("deathbox", Vector2.Zero, 1f, 48, 48, 0f, -1));
+            io = (InvisibleObject)obj_map[16];
+            io.set_debug(true);
         }
 
         //function to load level files into the world
@@ -383,7 +388,7 @@ namespace gate
                     ICondition c = null;
                     switch (w_condition.object_identifier) {
                         case "all_enemies_dead_remove_objs":
-                            if (w_condition.enemy_ids == null) {
+                            if (w_condition.enemy_ids == null || w_condition.enemy_ids.Count == 0) {
                                 c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
                             } else {
                                 c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
@@ -580,7 +585,7 @@ namespace gate
             }
 
             //update conditions
-            condition_manager.Update(gameTime, camera.Rotation);
+            condition_manager.Update(gameTime, camera.Rotation, mouse_hitbox);
 
             if (player.is_moving()){
                 /*
@@ -589,7 +594,7 @@ namespace gate
                 * up and down the linked list based on their depth value so as to not 
                 * sort things that don't move like trees
                 * NOTE(5-6-2024):This probably won't work because when rotation happens
-                * we would need to resort everything anyways. However, with a static scene
+                * we would need to re-sort everything anyways. However, with a static scene
                 * this approach actually could work well
                 */
                 //Depth sort while player is moving as well
@@ -759,19 +764,6 @@ namespace gate
                     Console.WriteLine("mouse_world_position:" + mouse_world_position);
                     Console.WriteLine("create_position:" + create_position);
                 }
-
-                if (Mouse.GetState().RightButton == ButtonState.Pressed) {
-                    //context for right mouse button pressed
-                    //check if mouse hitbox is within hitbox for condition
-                    ICondition c = condition_manager.find_condition_colliding(mouse_hitbox);
-                    if (c != null) {
-                        //collision
-                        if (c is EnemiesDeadRemoveObjCondition) {
-                            EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)c;
-                            edroc.set_selected(true);
-                        }
-                    }
-                }
                 
                 //only able to place objects if the editor_tool_idx == 0 (object placement tool)
                 if (editor_tool_idx == 0 && (Keyboard.GetState().IsKeyDown(Keys.M) || Mouse.GetState().LeftButton == ButtonState.Pressed) && selection_elapsed >= selection_cooldown) {
@@ -873,6 +865,11 @@ namespace gate
                             enemies.Add(n);
                             Console.WriteLine($"nightmare,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
                             break;
+                        case 16:
+                            ICondition cond = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, new List<int>(), create_position);
+                            condition_manager.add_condition(cond);
+                            Console.WriteLine("condition created!");
+                            break;
                         default:
                             break;
                     }
@@ -881,6 +878,50 @@ namespace gate
                     //pull all world entities from render list (whether or not they're currently being drawn)
                     List<IEntity> all_world_entities = entities_list.get_all_entities().Keys.ToList();
                     save_world_level_to_file(all_world_entities, foreground_entities, background_entities);
+                } else if (editor_tool_idx == 1) {
+                    if (Mouse.GetState().RightButton == ButtonState.Pressed) {
+                        //context for right mouse button pressed
+                        //check if mouse hitbox is within hitbox for condition
+                        ICondition c = condition_manager.find_condition_colliding(mouse_hitbox);
+                        if (c != null) {
+                            //collision
+                            if (c is EnemiesDeadRemoveObjCondition) {
+                                EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)c;
+                                edroc.set_selected(true);
+                                selected_condition = edroc;
+                            }
+                        }
+                    
+                        //check for mouse collision with entity here
+                        //update connections if need be based on selected condition and function modes of condition
+                        IEntity ce = find_entity_colliding(mouse_hitbox);
+                        if (ce != null && selected_condition != null) {
+                            //check function mode and connect/disconnect condition
+                            if (selected_condition is EnemiesDeadRemoveObjCondition) {
+                                EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)selected_condition;
+                                int function_mode = edroc.get_function_mode();
+                                if (ce is IAiEntity) {
+                                    //connect or disconnect from enemy ids
+                                    if (function_mode == 0) {
+                                        //connect
+                                        edroc.add_enemy_id_to_check(ce.get_obj_ID_num());
+                                    } else {
+                                        //disconnect
+                                        edroc.remove_enemy_id_from_check(ce.get_obj_ID_num());
+                                    }
+                                } else {
+                                    //connect or disconnect from objs to remove
+                                    if (function_mode == 0) {
+                                        //connect
+                                        edroc.add_obj_to_remove(ce.get_obj_ID_num());
+                                    } else {
+                                        //disconnect
+                                        edroc.remove_obj_to_remove(ce.get_obj_ID_num());
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             #endregion
@@ -1206,6 +1247,24 @@ namespace gate
         //search all entities in the world
         public IEntity find_entity_by_id(int obj_id) {
             return entities_list.get_entity_by_id(obj_id);
+        }
+
+        public IEntity find_entity_colliding(RRect r) {
+            foreach (IEntity e in collision_entities) {
+                //cast to collision entity
+                ICollisionEntity ce = (ICollisionEntity)e;
+                if (ce.get_hurtbox().collision(r)) {
+                    return e;
+                }
+            }
+            foreach (IEntity e in collision_geometry) {
+                //cast to collision entity
+                ICollisionEntity ce = (ICollisionEntity)e;
+                if (ce.get_hurtbox().collision(r)) {
+                    return e;
+                }
+            }
+            return null;
         }
 
         public void resize_viewport(GraphicsDeviceManager _graphics) {

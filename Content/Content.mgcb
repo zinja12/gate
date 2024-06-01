@@ -49,6 +49,9 @@
 #begin levels/demo1_v2_ids.json
 /copy:levels/demo1_v2_ids.json
 
+#begin levels/test_v1.json
+/copy:levels/test_v1.json
+
 #begin sprites/arrow1.png
 /importer:TextureImporter
 /processor:TextureProcessor

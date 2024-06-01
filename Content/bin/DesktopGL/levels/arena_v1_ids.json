@@ -4723,7 +4723,9 @@
                 8,
                 9,
                 10
-            ]
+            ],
+            "x_position": 100,
+            "y_position": 100
         }
     ],
     "world_script": []

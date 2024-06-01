@@ -4,18 +4,20 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace gate
 {
     public interface ICondition {
         string condition_name();
         int condition_id();
-        bool condition();
+        bool condition(GameTime gameTime, float rotation, RRect mouse_hitbox);
         void set_triggered(bool trigger_value);
         bool get_triggered();
         void trigger_behavior();
         Vector2 get_position();
         RRect get_rect();
+        List<RRect> get_sub_boxes();
     }
 
     public class ObjectCondition {
@@ -36,7 +38,11 @@ namespace gate
         private List<int> enemy_ids;
         private List<int> obj_ids_to_remove;
 
-        private bool selected = false, select_mode = true;
+        private bool selected = false;
+
+        private UIButton connect, disconnect;
+        private List<UIButton> buttons;
+        private int function_mode = 0; //0 - connect, 1 - disconnect
 
         private World world;
 
@@ -50,6 +56,12 @@ namespace gate
             
             this.position = position;
             this.rect = new RRect(this.position, size, size);
+            
+            connect = new UIButton(position + new Vector2(0, -30), 10, "c");
+            disconnect = new UIButton(position + new Vector2(20, -30), 10, "d");
+            buttons = new List<UIButton>();
+            buttons.Add(connect);
+            buttons.Add(disconnect);
         }
         
         //certain enemies dead
@@ -62,6 +74,12 @@ namespace gate
 
             this.position = position;
             this.rect = new RRect(this.position, size, size);
+
+            connect = new UIButton(position + new Vector2(0, -30), 10, "c");
+            disconnect = new UIButton(position + new Vector2(20, -30), 10, "d");
+            buttons = new List<UIButton>();
+            buttons.Add(connect);
+            buttons.Add(disconnect);
         }
 
         public Vector2 get_position() {
@@ -84,14 +102,6 @@ namespace gate
             return world;
         }
 
-        public void set_select_mode(bool value) {
-            select_mode = value;
-        }
-
-        public void invert_select_mode() {
-            select_mode = !select_mode;
-        }
-
         public void set_selected(bool value) {
             selected = value;
         }
@@ -99,9 +109,42 @@ namespace gate
         public bool get_selected() {
             return selected;
         }
+
+        public int get_function_mode() {
+            return function_mode;
+        }
+
+        public List<UIButton> get_buttons() {
+            return buttons;
+        }
+
+        public List<RRect> get_sub_boxes() {
+            List<RRect> geometry = new List<RRect>();
+            foreach (UIButton b in get_buttons()) {
+                geometry.Add(b.get_collision_rect());
+            }
+            return geometry;
+        }
         
         //function to check if all enemies (even certain enemies) are dead or not present in the given list
-        public bool condition() {
+        public bool condition(GameTime gameTime, float rotation, RRect mouse_hitbox) {
+            // if we are in edit mode (selected == true) we need to check and update the buttons
+            if (selected) {
+                //update buttons
+                connect.Update(gameTime, rotation);
+                disconnect.Update(gameTime, rotation);
+                //specific logic to handle if they are clicked
+                if (connect.check_clicked(mouse_hitbox, Mouse.GetState().RightButton == ButtonState.Pressed)) {
+                    //set function mode to 0 so we can connect entities to this condition
+                    function_mode = 0;
+                    Console.WriteLine($"function_mode:{function_mode}-connect");
+                } else if (disconnect.check_clicked(mouse_hitbox, Mouse.GetState().RightButton == ButtonState.Pressed)) {
+                    //set function mode to 1 so we can disconnect entities to this condition
+                    function_mode = 1;
+                    Console.WriteLine($"function_mode:{function_mode}-disconnect");
+                }
+            }
+
             // if we need to check for specific enemies then we iterate
             if (enemy_ids.Count > 0) {
                 int count = enemy_ids.Count;
@@ -139,8 +182,16 @@ namespace gate
             obj_ids_to_remove.Add(id);
         }
 
+        public void remove_obj_to_remove(int id) {
+            obj_ids_to_remove.Remove(id);
+        }
+
         public void add_enemy_id_to_check(int id) {
             enemy_ids.Add(id);
+        }
+
+        public void remove_enemy_id_from_check(int id) {
+            enemy_ids.Remove(id);
         }
 
         public List<int> get_enemy_ids() {

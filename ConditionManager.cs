@@ -25,12 +25,12 @@ namespace gate
             }
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public void Update(GameTime gameTime, float rotation, RRect mouse_hitbox) {
             //update all conditions
             foreach (KeyValuePair<int, ICondition> kv in conditions) {
                 int id = kv.Key;
                 ICondition c = kv.Value;
-                bool condition_value = c.condition();
+                bool condition_value = c.condition(gameTime, rotation, mouse_hitbox);
                 if (condition_value) {
                     c.trigger_behavior();
                     c.set_triggered(condition_value);
@@ -54,6 +54,21 @@ namespace gate
                 ICondition c = kv.Value;
                 if (check_collision(c, r)) {
                     return c;
+                }
+            }
+            return null;
+        }
+        
+        //checks all the subboxes that may be colliding with the rect
+        public ICondition find_condition_sub_box_colliding(RRect r) {
+            foreach (KeyValuePair<int, ICondition> kv in conditions) {
+                int id = kv.Key;
+                ICondition c = kv.Value;
+                List<RRect> sub_boxes = c.get_sub_boxes();
+                foreach (RRect sbr in sub_boxes) {
+                    if (sbr.collision(r)) {
+                        return c;
+                    }
                 }
             }
             return null;
@@ -128,8 +143,11 @@ namespace gate
                     }
                     if (edroc.get_selected()) {
                         //display selection options
-                        Renderer.FillRectangle(spriteBatch, c.get_position() + new Vector2(0, -35), 10, 10, Color.Red);
-                        Renderer.FillRectangle(spriteBatch, c.get_position() + new Vector2(15, -35), 10, 10, Color.Blue);
+                        foreach (UIButton b in edroc.get_buttons()) {
+                            b.Draw(spriteBatch);
+                        }
+                        //Renderer.FillRectangle(spriteBatch, c.get_position() + new Vector2(0, -35), 10, 10, Color.Red);
+                        //Renderer.FillRectangle(spriteBatch, c.get_position() + new Vector2(15, -35), 10, 10, Color.Blue);
                     }
                 }
             }

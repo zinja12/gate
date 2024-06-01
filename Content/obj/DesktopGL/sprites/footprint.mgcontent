@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/monogame_projects/gate/Content/sprites/footprint.png</SourceFile>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/footprint.png</SourceFile>
   <SourceTime>2024-03-06T20:28:34.1304659-05:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/monogame_projects/gate/Content/bin/DesktopGL/sprites/footprint.xnb</DestFile>
-  <DestTime>2024-04-06T16:02:11.0892701-04:00</DestTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sprites/footprint.xnb</DestFile>
+  <DestTime>2024-05-31T13:09:46.0073223-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
