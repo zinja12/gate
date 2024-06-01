@@ -91,8 +91,6 @@ namespace gate
         //Random variable
         private Random random = new Random();
 
-        private UIButton button;
-
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content){
             //set game objects
             this.game = game;
@@ -146,8 +144,6 @@ namespace gate
 
             //run first sort so everything looks good initially
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
-
-            button = new UIButton(new Vector2(200, 200), 30, "button_test");
         }
 
         private void editor_init() {
@@ -947,12 +943,6 @@ namespace gate
             } else {
                 camera.Update(player.get_camera_track_position());
             }
-
-            button.Update(gameTime, camera.Rotation);
-            if (button.check_clicked(mouse_hitbox, Mouse.GetState().RightButton == ButtonState.Pressed)) {
-                Console.WriteLine("button action!");
-                bool result = button.trigger_action();
-            }
             
             //update camera bounds
             //update_camera_bounds();
@@ -1376,8 +1366,6 @@ namespace gate
                 mouse_hitbox.draw(_spriteBatch);
 
                 condition_manager.Draw(_spriteBatch);
-
-                button.Draw(_spriteBatch);
             }
             _spriteBatch.End();
 
