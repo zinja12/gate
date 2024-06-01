@@ -216,6 +216,11 @@ ToDo List:
     - have appropriate safeguards in place now
 [DONE](BUG)nightmare animation direction is not correct for all rotation values
     - rotating the camera plays the wrong animation values
+[](BUG)decrease the amount of time between being able to strike an enemy
+    -doesn't feel right to not be able to hit them
+    -feels like the game is ignoring the input
+    -maybe also decrease the amount of time the enemies are in hit-stun to compensate
+    -either that or remove it entirely so that the player forcibly has to dodge or avoid rather than get a hit off to cancel their animation
 [](BUG)power shot arrows strike enemies multiple times rather than just once
     - we don't remove the arrow if it's a power shot on collision
     - need a way to remember which arrows have already struck once so they don't strike multiple times
