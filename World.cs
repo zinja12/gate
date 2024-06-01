@@ -871,6 +871,7 @@ namespace gate
                 } else if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.LeftControl) && selection_elapsed >= selection_cooldown) { //Ctrl+S
                     //pull all world entities from render list (whether or not they're currently being drawn)
                     List<IEntity> all_world_entities = entities_list.get_all_entities().Keys.ToList();
+                    //save
                     save_world_level_to_file(all_world_entities, foreground_entities, background_entities);
                 } else if (editor_tool_idx == 1) {
                     if (Mouse.GetState().RightButton == ButtonState.Pressed) {
@@ -894,6 +895,9 @@ namespace gate
                             if (selected_condition is EnemiesDeadRemoveObjCondition) {
                                 EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)selected_condition;
                                 int function_mode = edroc.get_function_mode();
+                                //this check is to know the difference in what to connect or remove from with regards to the condition
+                                //if we click on an enemy/aientity we probably want that to be the input to the condition
+                                //on the other hand if we don't click on an enemy/aientity then we probably want it to be the output of the condition
                                 if (ce is IAiEntity) {
                                     //connect or disconnect from enemy ids
                                     if (function_mode == 0) {
@@ -948,6 +952,7 @@ namespace gate
         
         #region save_world_file
         public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities) {
+            //set up object lists to save to file
             List<GameWorldObject> world_objs = new List<GameWorldObject>();
             List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
             //iterate over all entities
@@ -968,6 +973,7 @@ namespace gate
                     world_objs.Add(tile.to_world_level_object());
                 }
             }
+            //iterate over background entities
             foreach (IEntity fe in floor_entities) {
                 if (fe is Tile) {
                     Tile tile = (Tile)fe;
@@ -980,6 +986,7 @@ namespace gate
             }
 
             //handle saving collision geometry that is not drawn
+            //(invisible objects)
             foreach (IEntity g in collision_geometry) {
                 if (g is InvisibleObject) {
                     InvisibleObject io = (InvisibleObject)g;
@@ -992,13 +999,13 @@ namespace gate
             //sort world objects by numerical id
             List<GameWorldObject> sorted_world_objs = world_objs.OrderBy (o => o.object_id_num).ToList();
             
-            //generate GameWorldFile
+            //generate GameWorldFile object with all saved objects
             GameWorldFile world_file = new GameWorldFile {
                 world_objects = sorted_world_objs,
                 conditions = sorted_world_conditions,
                 world_script = new List<string>()
             };
-            //take world file and serialize to Json then write to file
+            //take world file and serialize to json then write to file
             string file_contents = JsonSerializer.Serialize(world_file);
             var file_path = Path.Combine(content_root_directory, "levels/" + save_file_name);
             Console.WriteLine("saving file:" + file_path);
