@@ -174,9 +174,7 @@ namespace gate
             //turn off ai for editor
             nightmare1.set_behavior_enabled(false);
             //set up condition in editor
-            obj_map.Add(16, new InvisibleObject("deathbox", Vector2.Zero, 1f, 48, 48, 0f, -1));
-            io = (InvisibleObject)obj_map[16];
-            io.set_debug(true);
+            obj_map.Add(16, new PlaceHolderEntity(Vector2.Zero, "Condition(EDROC)", -1));
         }
 
         //function to load level files into the world
