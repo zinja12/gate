@@ -23,7 +23,7 @@ namespace gate
         private RRect hurtbox;
         private bool hurtbox_active = true;
         private float take_hit_elapsed;
-        private float reactivate_hurtbox_threshold = 800f;
+        private float reactivate_hurtbox_threshold = 400f;
         private Vector2 hit_direction;
         private float hit_speed = 0.03f;
         private float take_hit_color_change_elapsed;
