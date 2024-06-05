@@ -18,7 +18,7 @@ namespace gate
         private int ID;
         private string identifier;
         private const int nightmare_size = 32;
-        private int health = 3;
+        private int health = 4;
 
         private RRect hurtbox;
         private bool hurtbox_active = true;

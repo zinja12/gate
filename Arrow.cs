@@ -108,7 +108,7 @@ namespace gate
             hitbox.update(rotation, draw_position);
         }
 
-        private void add_footprints(GameTime gameTime){
+        private void add_footprints(GameTime gameTime) {
             footprints_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             //check to add footprints
             if (footprints_elapsed >= footprints_delay) {

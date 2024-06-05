@@ -86,9 +86,9 @@ namespace gate
         public static Vector2 dash_charge_ui_screen_position = new Vector2(window_width - (dash_charge_ui_size*2) - 10f, 10f);
 
         /*Camera Constants*/
-        public static float camera_shake_milliseconds = 200f;
+        public static float camera_shake_milliseconds = 300f;
         public static float camera_shake_angle = 1f;
-        public static float camera_shake_hit_radius = 3.5f;
+        public static float camera_shake_hit_radius = 3.8f;
 
         /*Key Bindings*/ //rememeber editor is bound to E
         public static Keys KEY_UP = Keys.W;
