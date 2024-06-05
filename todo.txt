@@ -223,7 +223,7 @@ ToDo List:
     -either that or remove it entirely so that the player forcibly has to dodge or avoid rather than get a hit off to cancel their animation
     -or just give them more health?
     -resolved by decreasing time to next allowable strike and increased health by 1
-[](BUG)power shot arrows strike enemies multiple times rather than just once
+[DONE](BUG)power shot arrows strike enemies multiple times rather than just once
     - we don't remove the arrow if it's a power shot on collision
     - need a way to remember which arrows have already struck once so they don't strike multiple times
 [](BUG)fix rotation for tile objects in editor
