@@ -600,8 +600,8 @@ namespace gate
             if (entity is Arrow) {
                 Arrow a = (Arrow)entity;
                 if (a.is_power_shot()) {
+                    //upgrade the health decrease value if the arrow is a power shot
                     health_decrease_value = 3;
-                    Console.WriteLine("here! power shot");
                 }
                 //don't take damage from an arrow that has already struck (supposed to pass through)
                 if (seen_projectiles.Contains(entity)) return;
