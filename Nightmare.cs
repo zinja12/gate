@@ -81,6 +81,9 @@ namespace gate
         private float hitbox_center_distance = nightmare_size/2;
         private Vector2 hitbox_center;
         private bool ai_behavior_enabled = true;
+
+        //Damage variables
+        List<IEntity> seen_projectiles;
         
         /*PARTICLE SYSTEM*/
         List<ParticleSystem> particle_systems;
@@ -148,6 +151,9 @@ namespace gate
             direction_weights[7] = 0f;
             direction = Vector2.Zero;
             last_direction = direction;
+
+            //damage variables
+            seen_projectiles = new List<IEntity>();
 
             //blues
             blues = new List<Color>();
@@ -590,8 +596,20 @@ namespace gate
         }
 
         public void take_hit(IEntity entity) {
+            int health_decrease_value = 1;
+            if (entity is Arrow) {
+                Arrow a = (Arrow)entity;
+                if (a.is_power_shot()) {
+                    health_decrease_value = 3;
+                    Console.WriteLine("here! power shot");
+                }
+                //don't take damage from an arrow that has already struck (supposed to pass through)
+                if (seen_projectiles.Contains(entity)) return;
+                //add to seen projectiles if we get this far
+                seen_projectiles.Add(entity);
+            }
             //reduce health on hit
-            health--;
+            health -= health_decrease_value;
             if (health <= 0) {
                 particle_systems.Add(new ParticleSystem(Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 5, Constant.red_particles));
             }
