@@ -97,7 +97,7 @@ namespace gate
         public static Keys KEY_RIGHT = Keys.D;
         public static Keys KEY_INTERACT = Keys.Y;
         public static Keys KEY_DASH = Keys.Space;
-        public static Keys KEY_ATTACK = Keys.H;
+        public static Keys KEY_ATTACK = Keys.V;
         public static Keys KEY_HEAVY_ATTACK = Keys.B;
         public static Keys KEY_FIRE = Keys.K;
         public static Keys KEY_AIM = Keys.J;
