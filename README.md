@@ -8,7 +8,7 @@ Codename: The Gate
 - Y - open text / interact
 - WASD - move
 - SPACE - Dash, advance text
-- H - Attack
+- V - Attack
 - N - Heavy Attack / Charged Heavy Attack
 - J - Aim Bow
 - K - Charge/Fire Arrow
