@@ -129,6 +129,8 @@ ToDo List:
     - just reload the level or something
 [DONE](FEATURE)object id system on level load and with editor
     - for linking objects and scripting it will be helpful if each object has it's own unique numerical id
+[DONE](FEATURE)swap inputs for heavy attack and bow
+    - this will make missing the input for firing an arrow harder (if impossible)
 [](FEATURE)add object linking and scripting for objects to listen to other objects for triggers to execute behavior
 [](FEATURE)add sandbad enemy in first level and move trigger to the right
 [](FEATURE)modify enemy behavior ai to factor in weights for inanimate or environment objects as well as enemies
