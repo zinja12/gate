@@ -93,17 +93,20 @@ namespace gate
 
         protected override void Draw(GameTime gameTime)
         {
+            //activate canvas for render target to capture draw calls
             _canvas.Activate();
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             //draw world
             world.Draw(_spriteBatch);
-
+            
+            //draw fps counter
             _spriteBatch.Begin();
             fps.Draw(gameTime);
             _spriteBatch.End();
-
+            
+            //actually draw render target in canvas to the screen
             _canvas.Draw(_spriteBatch);
 
             base.Draw(gameTime);
