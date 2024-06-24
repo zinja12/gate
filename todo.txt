@@ -228,6 +228,8 @@ ToDo List:
 [DONE](BUG)power shot arrows strike enemies multiple times rather than just once
     - we don't remove the arrow if it's a power shot on collision
     - need a way to remember which arrows have already struck once so they don't strike multiple times
+[DONE](BUG)fix window resizing/resolution adjustment again
+    -need to adjust zoom during window resize in order to compensate for window resizing
 [](BUG)fix rotation for tile objects in editor
 [](BUG)trees do not get properly drawn or saved to expected position
     - this is partially fixed by saving the proper base position
@@ -241,5 +243,3 @@ ToDo List:
 [](BUG)fix not being able to attack while moving down left and down right (not receiving input at all while holding those directions) - KEYBOARD ONLY ISSUE
 [WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
 [](BUG)fix hit confirm position when hitbox is active
-[](BUG)fix window resizing/resolution adjustment again
-    -need to adjust zoom during window resize in order to compensate for window resizing
