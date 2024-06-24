@@ -36,7 +36,7 @@ namespace gate
             _graphics.PreferredBackBufferHeight = (int)Constant.window_height;
             _graphics.ApplyChanges();
 
-            _canvas = new Canvas(_graphics.GraphicsDevice, 1280, 720);
+            _canvas = new Canvas(_graphics.GraphicsDevice, (int)Constant.window_width, (int)Constant.window_height);
             _canvas.set_destination_rectangle();
 
             //allow window_resizing
@@ -55,9 +55,6 @@ namespace gate
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            Constant.tree4_tex = Content.Load<Texture2D>("sprites/tree4");
-
             //initialize world after all content is loaded
             world = new World(this, _graphics, Content.RootDirectory, Content);
             world.resize_viewport(_graphics);
@@ -73,10 +70,9 @@ namespace gate
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            //handle updates around the game window and render target
-
+            //world update
             world.Update(gameTime);
-
+            //fps update
             fps.Update(gameTime);
 
             base.Update(gameTime);
