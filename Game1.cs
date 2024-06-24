@@ -15,8 +15,8 @@ namespace gate
 
         //Game world (overseer/manager)
         World world;
-        //Render target that the world is drawn to
-        RenderTarget2D render_target;
+        //Canvas that controls the render target that the world is drawn to
+        Canvas _canvas;
 
         public Game1()
         {
@@ -36,22 +36,17 @@ namespace gate
             _graphics.PreferredBackBufferHeight = (int)Constant.window_height;
             _graphics.ApplyChanges();
 
+            _canvas = new Canvas(_graphics.GraphicsDevice, 1280, 720);
+            _canvas.set_destination_rectangle();
+
             //allow window_resizing
             Window.AllowUserResizing = true;
             //create listener for changing window size
             Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
 
             //initialize render target
-            Console.WriteLine(GraphicsDevice.PresentationParameters.BackBufferWidth);
-            Console.WriteLine(GraphicsDevice.PresentationParameters.BackBufferHeight);
-            render_target = new RenderTarget2D(
-                GraphicsDevice,
-                GraphicsDevice.PresentationParameters.BackBufferWidth,
-                GraphicsDevice.PresentationParameters.BackBufferHeight,
-                false,
-                GraphicsDevice.PresentationParameters.BackBufferFormat,
-                DepthFormat.Depth24
-            );
+            Console.WriteLine($"window_width:{GraphicsDevice.PresentationParameters.BackBufferWidth}");
+            Console.WriteLine($"window_height:{GraphicsDevice.PresentationParameters.BackBufferHeight}");
 
             base.Initialize();
         }
@@ -92,55 +87,24 @@ namespace gate
             //update the world view to match with the window
             Constant.window_width = _graphics.GraphicsDevice.Viewport.Width;
             Constant.window_height = _graphics.GraphicsDevice.Viewport.Height;
-            _graphics.PreferredBackBufferWidth = (int)Constant.window_width;
-            _graphics.PreferredBackBufferHeight = (int)Constant.window_height;
-            _graphics.ApplyChanges();
-            //set render target to a new Render Target with the new params
-            render_target = new RenderTarget2D(
-                GraphicsDevice,
-                GraphicsDevice.PresentationParameters.BackBufferWidth,
-                GraphicsDevice.PresentationParameters.BackBufferHeight,
-                false,
-                GraphicsDevice.PresentationParameters.BackBufferFormat,
-                DepthFormat.Depth24
-            );
-            //update the world camera viewport to match the window
-            world.resize_viewport(_graphics);
             Constant.update_ui_positions_on_screen_size_change();
-        }
-
-        //function to draw world to render target
-        protected void draw_scene_to_texture(SpriteBatch spriteBatch, RenderTarget2D render_target, World world) {
-            // Set the render target
-            GraphicsDevice.SetRenderTarget(render_target);
-
-            GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
-
-            // Draw the scene
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            //draw world
-            world.Draw(spriteBatch);
-
-            // Drop the render target
-            GraphicsDevice.SetRenderTarget(null);
+            _canvas.set_destination_rectangle();
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            draw_scene_to_texture(_spriteBatch, render_target, world);
+            _canvas.Activate();
 
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             //draw world
-            //world.Draw(_spriteBatch);
-            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone);
-            //draw the texture to the screen
-            _spriteBatch.Draw(render_target, new Rectangle(0, 0, (int)Constant.window_width, (int)Constant.window_height), Color.White);
-            _spriteBatch.End();
+            world.Draw(_spriteBatch);
 
             _spriteBatch.Begin();
             fps.Draw(gameTime);
             _spriteBatch.End();
+
+            _canvas.Draw(_spriteBatch);
 
             base.Draw(gameTime);
         }
