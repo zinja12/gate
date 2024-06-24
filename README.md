@@ -21,8 +21,9 @@ Codename: The Gate
 - Right Joystick - Rotate Camera
 - A - Dash, advance text
 - X - Attack
+- Right Trigger - Heavy Attack / Charged Heavy Attack
 - Left Trigger - Aim Bow
-- Right Trigger - Charge/Fire Arrow
+- B - Charge/Fire Arrow
 
 ### Editor
 - E - enter and exit editor

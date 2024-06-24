@@ -229,11 +229,11 @@ namespace gate
                 _h = current_gamepad_state.ThumbSticks.Left.X;
                 _dash = current_gamepad_state.Buttons.A == ButtonState.Pressed ? 1f : 0f;
                 _attack = current_gamepad_state.Buttons.X == ButtonState.Pressed ? 1f : 0f;
-                _heavy_attack = current_gamepad_state.Buttons.B == ButtonState.Pressed ? 1f : 0f;
+                _heavy_attack = current_gamepad_state.Triggers.Right > 0 ? 1f: 0f;
                 _interact = current_gamepad_state.Buttons.Y == ButtonState.Pressed ? 1f : 0f;
                 //trigger has to be at least halfway held down
                 _aim = current_gamepad_state.Triggers.Left > 0 ? 1f : 0f;
-                _fire = current_gamepad_state.Triggers.Right > 0 ? 1f: 0f;
+                _fire = current_gamepad_state.Buttons.B == ButtonState.Pressed ? 1f : 0f;
             }
 
             //if the player is providing input, do not need to check how long they are idle for
@@ -314,7 +314,7 @@ namespace gate
             }
             #endregion
 
-            if (current_gamepad_state.Buttons.B == ButtonState.Released && previous_gamepad_state.Buttons.B == ButtonState.Pressed && attack_charge > 1) {
+            if (current_gamepad_state.Triggers.Right == 0f && previous_gamepad_state.Triggers.Right != 0f && attack_charge > 1) {
                 //trigger heavy attack
                 if (attack_charged_elapsed >= 100f) {
                     if (sweet_spot) {
@@ -338,7 +338,7 @@ namespace gate
             }
 
             //handle inputs for heavy attacks -> check if attack is held down for any amount of time and set animation
-            if (_heavy_attack != 0 && previous_gamepad_state.Buttons.B == ButtonState.Pressed && attack_charge > 1) {
+            if (_heavy_attack != 0 && previous_gamepad_state.Triggers.Right != 0f && attack_charge > 1) {
                 //player has held down the button for at least 2 frames
                 //begin charging attack
                 charging_active = true;
