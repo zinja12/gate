@@ -14,9 +14,22 @@ namespace gate
         private readonly GraphicsDevice _graphicsDevice;
         private Rectangle _destination_rectangle;
 
+        private Effect postprocessing_effect;
+
         public Canvas(GraphicsDevice graphicsDevice, int width, int height) {
             _graphicsDevice = graphicsDevice;
             _target = new RenderTarget2D(_graphicsDevice, width, height);
+            postprocessing_effect = null;
+        }
+
+        public Canvas(GraphicsDevice graphicsDevice, int width, int height, Effect effect) {
+            _graphicsDevice = graphicsDevice;
+            _target = new RenderTarget2D(_graphicsDevice, width, height);
+            postprocessing_effect = effect;
+        }
+
+        public void set_postprocessing_effect(Effect effect) {
+            this.postprocessing_effect = effect;
         }
 
         public void set_destination_rectangle() {
@@ -43,7 +56,8 @@ namespace gate
         public void Draw(SpriteBatch spriteBatch) {
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.Clear(Color.Black);
-            spriteBatch.Begin();
+            if (postprocessing_effect != null) { spriteBatch.Begin(effect: postprocessing_effect); } 
+            else { spriteBatch.Begin(); }
             spriteBatch.Draw(_target, _destination_rectangle, Color.White);
             spriteBatch.End();
         }

@@ -51,9 +51,16 @@ namespace gate
             base.Initialize();
         }
 
+        private void load_fx() {
+            Constant.pixelate_effect = Content.Load<Effect>("fx/pixelate");
+        }
+
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            load_fx();
+            //_canvas.set_postprocessing_effect(Constant.pixelate_effect);
 
             //initialize world after all content is loaded
             world = new World(this, _graphics, Content.RootDirectory, Content);

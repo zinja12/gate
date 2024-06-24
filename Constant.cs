@@ -51,6 +51,8 @@ namespace gate
         public static Texture2D lamppost_spritesheet;
         public static Texture2D tree_spritesheet;
 
+        public static Effect pixelate_effect;
+
         public static Color rich_black = new Color(0,8,7);
         public static Color manatee = new Color(162,163,187);
         public static Color blue_bell = new Color(147,149,211);

@@ -7,6 +7,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/color_palettte/color_palette_gba2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial.spritefont</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial_small.spritefont</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fx/pixelate.fx</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/arrow1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/attack_sprites2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/box_spritesheet1.png</File>
@@ -46,6 +47,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/Y.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

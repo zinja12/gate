@@ -40,6 +40,12 @@
 /processorParam:TextureFormat=Compressed
 /build:fonts/arial_small.spritefont
 
+#begin fx/pixelate.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:fx/pixelate.fx
+
 #begin levels/arena_v1_ids.json
 /copy:levels/arena_v1_ids.json
 

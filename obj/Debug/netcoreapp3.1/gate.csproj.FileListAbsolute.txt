@@ -83,3 +83,4 @@ C:\Users\Shaan\Documents\test_projects\gate\obj\Debug\netcoreapp3.1\gate.dll
 C:\Users\Shaan\Documents\test_projects\gate\obj\Debug\netcoreapp3.1\gate.pdb
 C:\Users\Shaan\Documents\test_projects\gate\obj\Debug\netcoreapp3.1\gate.genruntimeconfig.cache
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\levels\test_v1.json
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\fx\pixelate.xnb
