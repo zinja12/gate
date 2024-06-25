@@ -25,6 +25,12 @@ Codename: The Gate
 - Left Trigger - Aim Bow
 - B - Charge/Fire Arrow
 
+### UI Notes
+Black - Dash Charges
+White - Attack Charges
+Red - Health
+Blue - Arrow Charges
+
 ### Editor
 - E - enter and exit editor
 - I - switch item left
