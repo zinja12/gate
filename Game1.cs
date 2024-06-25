@@ -60,7 +60,7 @@ namespace gate
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             load_fx();
-            //_canvas.set_postprocessing_effect(Constant.pixelate_effect);
+            _canvas.set_postprocessing_effect(Constant.pixelate_effect);
 
             //initialize world after all content is loaded
             world = new World(this, _graphics, Content.RootDirectory, Content);
@@ -104,13 +104,15 @@ namespace gate
             //draw world
             world.Draw(_spriteBatch);
             
+            //actually draw render target in canvas to the screen
+            _canvas.Draw(_spriteBatch);
+
             //draw fps counter
             _spriteBatch.Begin();
             fps.Draw(gameTime);
             _spriteBatch.End();
-            
-            //actually draw render target in canvas to the screen
-            _canvas.Draw(_spriteBatch);
+            //draw world debug and text overlays outside canvas
+            world.DrawTextOverlays(_spriteBatch);
 
             base.Draw(gameTime);
         }

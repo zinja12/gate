@@ -230,7 +230,7 @@ namespace gate
                     GameWorldObject w_obj = world_file_contents.world_objects[i];
                     //check if unique object map contains this object id alread (obj ids are meant to be unique)
                     if (unique_obj_id_map.ContainsKey(w_obj.object_id_num)) {
-                        throw new Exception($"World File Error: two objects with the same object_id_num({w_obj.object_id_num}) found in world file. Object ids are meant to be unique.");
+                        throw new Exception($"World File Error: Two objects with the same object_id_num({w_obj.object_id_num}) found in world file. Object ids are meant to be unique. Tags for objects: {w_obj.object_identifier},{unique_obj_id_map[w_obj.object_id_num]}");
                     }
                     //set the key value in the unqiue obj id map
                     unique_obj_id_map[w_obj.object_id_num] = w_obj.object_identifier;
@@ -1401,7 +1401,9 @@ namespace gate
             }
 
             _spriteBatch.End();
+        }
 
+        public void DrawTextOverlays(SpriteBatch _spriteBatch) {
             //draw text overlays
             _spriteBatch.Begin();
             _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);

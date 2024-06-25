@@ -12,6 +12,9 @@ Texture2D SpriteTexture;
 sampler2D SpriteTextureSampler = sampler_state
 {
 	Texture = <SpriteTexture>;
+	MinFilter = Point;
+    MagFilter = Point;
+    MipFilter = Point;
 };
 
 struct VertexShaderOutput
@@ -23,8 +26,8 @@ struct VertexShaderOutput
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-	float pixels = 64.0f;
-    float pixelation = 0.10f;
+	float pixels = 1700.0f;
+    float pixelation = 3.55f;
     float mx = input.TextureCoordinates.x * pixels;
     float my = input.TextureCoordinates.y * pixels;
 
