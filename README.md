@@ -26,10 +26,10 @@ Codename: The Gate
 - B - Charge/Fire Arrow
 
 ### UI Notes
-Black - Dash Charges
-White - Attack Charges
-Red - Health
-Blue - Arrow Charges
+- Black - Dash Charges
+- White - Attack Charges
+- Red - Health
+- Blue - Arrow Charges
 
 ### Editor
 - E - enter and exit editor
