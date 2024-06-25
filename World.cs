@@ -677,12 +677,18 @@ namespace gate
                     //push an update to plants and foreground entities
                     update_forest_geometry(gameTime, camera.Rotation);
                     ai_behavior_enabled = false;
+
+                    //turn off pixel shader
+                    this.game.set_pixel_shader_active(false);
                 } else {
                     ai_behavior_enabled = true;
                     //set enemies references for all ais
                     foreach (IAiEntity ai in enemies) {
                         ai.set_ai_entities(enemies);
                     }
+
+                    //turn pixel shader back on
+                    this.game.set_pixel_shader_active(true);
                 }
                 //re-enable enemy ai
                 foreach (IAiEntity ai in enemies) {

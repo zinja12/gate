@@ -54,6 +54,15 @@ namespace gate
         private void load_fx() {
             Constant.pixelate_effect = Content.Load<Effect>("fx/pixelate");
         }
+        
+        //TODO: Come up with a better name for this function
+        public void set_pixel_shader_active(bool enabled) {
+            if (enabled) {
+                _canvas.set_postprocessing_effect(Constant.pixelate_effect);
+            } else {
+                _canvas.set_postprocessing_effect(null);
+            }
+        }
 
         protected override void LoadContent()
         {
