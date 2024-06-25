@@ -181,6 +181,8 @@ namespace gate
         private void load_level(string root_directory, GraphicsDeviceManager _graphics, string level_id) {
             //set current level id
             current_level_id = level_id;
+            //load context for fx
+            Constant.pixelate_effect = Content.Load<Effect>("fx/pixelate");
             //load content not specific to an object
             Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
             Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");
@@ -192,6 +194,9 @@ namespace gate
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
+
+            //set pixel shader to active once it has been loaded
+            game.set_pixel_shader_active(true);
 
             //debug fps initialization
             game.fps = new FpsCounter(game, Constant.arial_small, Vector2.Zero);
@@ -492,6 +497,8 @@ namespace gate
 
         private void unload_level() {
             Console.WriteLine("clearing and unloading objects...");
+            //clear effects
+            game.set_pixel_shader_active(false);
             //clear out all object lists
             plants.Clear();
             collision_entities.Clear();
