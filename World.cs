@@ -29,7 +29,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        string load_file_name = "test_v1.json", current_level_id;
+        string load_file_name = "demo1_v2_ids.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -1373,7 +1373,9 @@ namespace gate
                 condition_manager.Draw(_spriteBatch);
             }
             _spriteBatch.End();
+        }
 
+        public void DrawTextOverlays(SpriteBatch _spriteBatch) {
             //draw textboxes
             _spriteBatch.Begin();
             if (current_sign != null && current_textbox != null) {
@@ -1401,9 +1403,7 @@ namespace gate
             }
 
             _spriteBatch.End();
-        }
 
-        public void DrawTextOverlays(SpriteBatch _spriteBatch) {
             //draw text overlays
             _spriteBatch.Begin();
             _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);
