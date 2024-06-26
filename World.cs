@@ -1322,6 +1322,20 @@ namespace gate
         public bool is_editor_active() {
             return editor_active;
         }
+        
+        //function to pull render target of the current game frame from the world
+        public RenderTarget2D get_frame(SpriteBatch spriteBatch) {
+            //set up render target
+            RenderTarget2D target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height);
+            //set render target for graphics device
+            _graphics.GraphicsDevice.SetRenderTarget(target);
+            _graphics.GraphicsDevice.Clear(Color.Black);
+            
+            Draw(spriteBatch);
+            
+            _graphics.GraphicsDevice.SetRenderTarget(null);
+            return target;
+        }
 
         public void Draw(SpriteBatch _spriteBatch){
             // TODO: Add drawing code here
