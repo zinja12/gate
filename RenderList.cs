@@ -74,6 +74,16 @@ namespace gate
             entities.Clear();
             all_entities.Clear();
         }
+
+        public void AddRange(RenderList new_render_list) {
+            //pull all entities from new render list (save to variable to save calling the function every time the loop runs)
+            Dictionary<IEntity, int> new_all_entities = new_render_list.get_all_entities();
+            foreach (KeyValuePair<IEntity, int> kv in new_all_entities) {
+                IEntity e = kv.Key;
+                //add all entities to this render list
+                Add(e);
+            }
+        }
         
         public void sort_list()
         {

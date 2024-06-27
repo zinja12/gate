@@ -232,6 +232,7 @@ ToDo List:
     -need to adjust zoom during window resize in order to compensate for window resizing
 [DONE](BUG)level unloading + loading on level swap causes a crash because of referencing the pixel shader effect after content has been dumped
     -should just need to relocate the loading of the pixel shader to the world instead of the Game1.cs class and then just disable and enable properly it on load and unload
+[](BUG)level transitions do not fade into the next level
 [](BUG)fix rotation for tile objects in editor
 [](BUG)trees do not get properly drawn or saved to expected position
     - this is partially fixed by saving the proper base position

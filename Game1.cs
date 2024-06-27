@@ -60,6 +60,10 @@ namespace gate
             }
         }
 
+        public SpriteBatch get_spriteBatch() {
+            return this._spriteBatch;
+        }
+
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
