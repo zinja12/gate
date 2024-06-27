@@ -173,7 +173,10 @@ namespace gate
             Renderer.FillRectangle(spriteBatch, screen_position, (int)width, (int)height, Color.Black * background_opacity);
             //draw current message
             spriteBatch.DrawString(font, current_msg, screen_position + text_offset, color);
-            //draw continue button
+            //draw continue button for all but the last message screen
+            if (current_msg_screen_idx < msg_screens.Count-1) {
+                spriteBatch.DrawString(font, ">", screen_position + new Vector2(width - 50, height - 80), Color.White);
+            }
         }
     }
 }
