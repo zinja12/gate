@@ -1203,6 +1203,7 @@ namespace gate
             }
         }
         
+        #region level_transitions
         //function to set up transition
         private void set_transition(bool value, string level_id) {
             //set transition to active and set elapsed and next level variables
@@ -1244,6 +1245,7 @@ namespace gate
                 }
             }
         }
+        #endregion
 
         public void clear_entities() {
             //handle cleaning up weapons
