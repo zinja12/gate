@@ -50,6 +50,7 @@ namespace gate
         private Vector2 dash_direction;
         private Vector2 direction_down = new Vector2(0, 1);
         private bool moving = false;
+        private bool movement_disabled = false;
 
         //dash
         private bool dash_active;
@@ -430,79 +431,81 @@ namespace gate
             }
             
             #region Movement
-            //normal movement code
-            if (!dash_active && !attack_active && !heavy_attack_active && !charging_active && !charging_arrow && !aiming) {
-                /*Update player position*/
-                if (_v != 0 || _h != 0){
-                    //Set direction to unit vector of (horizontal input, vertical input)
-                    direction = Vector2.Zero + new Vector2(_h, _v);
-                    //update last direction
-                    last_direction.X = direction.X;
-                    last_direction.Y = direction.Y;
-                    moving = true;
-                } else {
-                    //zero out direction
-                    direction = Vector2.Zero;
-                    moving = false;
-                }
-
-                // rotate direction vector around the origin based on the current camera rotation
-                float x = direction.X * (float)Math.Cos(-rotation) - direction.Y * (float)Math.Sin(-rotation);
-                float y = direction.Y * (float)Math.Cos(-rotation) + direction.X * (float)Math.Sin(-rotation);
-
-                direction = new Vector2(x, y);
-
-                //alter the position based on direction and movement speed
-                base_position += direction * movement_speed;
-                draw_position += direction * movement_speed;
-                //change depth sort position based on draw position regardless of camera rotation
-                depth_sort_position = draw_position + (player_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
-
-                //update attack draw_position to always stay at the same spot rotating the player in the Vector2(-1, -1) direction (example:See RRect.cs update function)
-                attack_draw_position = draw_position + (player_size/2) * new Vector2(-1 * (float)Math.Cos(-rotation) - (-1) * (float)Math.Sin(-rotation), -1 * (float)Math.Cos(-rotation) + (-1) * (float)Math.Sin(-rotation));
-            } else if (dash_active) { //dash movement code
-                //normalize dash direction vector to ensure no slow dashes
-                dash_direction_unit = Vector2.Normalize(dash_direction_unit);
-                //rotate dash_direction_unit based on rotation
-                float x = dash_direction_unit.X * (float)Math.Cos(-rotation) - dash_direction_unit.Y * (float)Math.Sin(-rotation);
-                float y = dash_direction_unit.Y * (float)Math.Cos(-rotation) + dash_direction_unit.X * (float)Math.Sin(-rotation);
-                
-                dash_direction = new Vector2(x, y);
-                dash_direction.Normalize();
-
-                //transform player position
-                base_position += dash_direction * dash_speed;
-                draw_position += dash_direction * dash_speed;
-                attack_draw_position += dash_direction * dash_speed;
-
-                if (Vector2.Distance(dash_start, base_position) > dash_length) {
-                    dash_active = false;
-                }
-                //empty out queued dash direction vars
-                dash_queued = false;
-                if (_dash != 0) {
-                    //ensure that not having input and just holding down the button uses the last direction instead, otherwise it nulls out the player position
-                    if (_h == 0 && _v == 0) {
-                        dash_queued_direction = last_direction;
+            if (!movement_disabled) {
+                //normal movement code
+                if (!dash_active && !attack_active && !heavy_attack_active && !charging_active && !charging_arrow && !aiming) {
+                    /*Update player position*/
+                    if (_v != 0 || _h != 0){
+                        //Set direction to unit vector of (horizontal input, vertical input)
+                        direction = Vector2.Zero + new Vector2(_h, _v);
+                        //update last direction
+                        last_direction.X = direction.X;
+                        last_direction.Y = direction.Y;
+                        moving = true;
                     } else {
-                        dash_queued_direction = new Vector2(_h, _v);
+                        //zero out direction
+                        direction = Vector2.Zero;
+                        moving = false;
                     }
-                    dash_queued_direction.Normalize();
-                    dash_queued = true;
-                }
-            } else if (attack_active || heavy_attack_active) {
-                //normalize direction vector
-                Vector2 dd_unit = new Vector2(last_direction.X, last_direction.Y);
-                dd_unit = Vector2.Normalize(dd_unit);
-                //rotate dash_direction_unit based on rotation
-                float x = dd_unit.X * (float)Math.Cos(-rotation) - dd_unit.Y * (float)Math.Sin(-rotation);
-                float y = dd_unit.Y * (float)Math.Cos(-rotation) + dd_unit.X * (float)Math.Sin(-rotation);
-                dash_direction = new Vector2(x, y);
 
-                //transform player position
-                base_position += dash_direction * Constant.player_attack_movement_speed;
-                draw_position += dash_direction * Constant.player_attack_movement_speed;
-                attack_draw_position += dash_direction * Constant.player_attack_movement_speed;
+                    // rotate direction vector around the origin based on the current camera rotation
+                    float x = direction.X * (float)Math.Cos(-rotation) - direction.Y * (float)Math.Sin(-rotation);
+                    float y = direction.Y * (float)Math.Cos(-rotation) + direction.X * (float)Math.Sin(-rotation);
+
+                    direction = new Vector2(x, y);
+
+                    //alter the position based on direction and movement speed
+                    base_position += direction * movement_speed;
+                    draw_position += direction * movement_speed;
+                    //change depth sort position based on draw position regardless of camera rotation
+                    depth_sort_position = draw_position + (player_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
+
+                    //update attack draw_position to always stay at the same spot rotating the player in the Vector2(-1, -1) direction (example:See RRect.cs update function)
+                    attack_draw_position = draw_position + (player_size/2) * new Vector2(-1 * (float)Math.Cos(-rotation) - (-1) * (float)Math.Sin(-rotation), -1 * (float)Math.Cos(-rotation) + (-1) * (float)Math.Sin(-rotation));
+                } else if (dash_active) { //dash movement code
+                    //normalize dash direction vector to ensure no slow dashes
+                    dash_direction_unit = Vector2.Normalize(dash_direction_unit);
+                    //rotate dash_direction_unit based on rotation
+                    float x = dash_direction_unit.X * (float)Math.Cos(-rotation) - dash_direction_unit.Y * (float)Math.Sin(-rotation);
+                    float y = dash_direction_unit.Y * (float)Math.Cos(-rotation) + dash_direction_unit.X * (float)Math.Sin(-rotation);
+
+                    dash_direction = new Vector2(x, y);
+                    dash_direction.Normalize();
+
+                    //transform player position
+                    base_position += dash_direction * dash_speed;
+                    draw_position += dash_direction * dash_speed;
+                    attack_draw_position += dash_direction * dash_speed;
+
+                    if (Vector2.Distance(dash_start, base_position) > dash_length) {
+                        dash_active = false;
+                    }
+                    //empty out queued dash direction vars
+                    dash_queued = false;
+                    if (_dash != 0) {
+                        //ensure that not having input and just holding down the button uses the last direction instead, otherwise it nulls out the player position
+                        if (_h == 0 && _v == 0) {
+                            dash_queued_direction = last_direction;
+                        } else {
+                            dash_queued_direction = new Vector2(_h, _v);
+                        }
+                        dash_queued_direction.Normalize();
+                        dash_queued = true;
+                    }
+                } else if (attack_active || heavy_attack_active) {
+                    //normalize direction vector
+                    Vector2 dd_unit = new Vector2(last_direction.X, last_direction.Y);
+                    dd_unit = Vector2.Normalize(dd_unit);
+                    //rotate dash_direction_unit based on rotation
+                    float x = dd_unit.X * (float)Math.Cos(-rotation) - dd_unit.Y * (float)Math.Sin(-rotation);
+                    float y = dd_unit.Y * (float)Math.Cos(-rotation) + dd_unit.X * (float)Math.Sin(-rotation);
+                    dash_direction = new Vector2(x, y);
+
+                    //transform player position
+                    base_position += dash_direction * Constant.player_attack_movement_speed;
+                    draw_position += dash_direction * Constant.player_attack_movement_speed;
+                    attack_draw_position += dash_direction * Constant.player_attack_movement_speed;
+                }
             }
             #endregion
 
@@ -531,7 +534,9 @@ namespace gate
             /*END PARTICLE SYSTEMS*/
 
             //update animations for the player
-            update_animation(gameTime);
+            if (!movement_disabled){
+                update_animation(gameTime);
+            }
 
             //update collision and hit/hurt boxes
             hurtbox.update(rotation, draw_position);
@@ -1096,6 +1101,10 @@ namespace gate
 
         public bool is_moving(){
             return moving;
+        }
+
+        public void set_movement_disabled(bool value) {
+            this.movement_disabled = value;
         }
 
         public bool is_input() {

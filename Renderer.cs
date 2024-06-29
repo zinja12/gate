@@ -38,6 +38,19 @@ namespace gate
             spriteBatch.Draw(rect, position, Color.White);
         }
 
+        public static void FillRectangle(SpriteBatch spriteBatch, Vector2 rect_position, int width, int height, Color color, float opacity) 
+        {
+            Texture2D rect = new Texture2D(spriteBatch.GraphicsDevice, width, height);
+
+            Color[] color_data = new Color[width * height];
+            for (int i = 0; i < color_data.Length; i++)
+                color_data[i] = color;
+            rect.SetData(color_data);
+
+            Vector2 position = rect_position;
+            spriteBatch.Draw(rect, position, Color.White * opacity);
+        }
+
         public static Texture2D CreateTexture(GraphicsDevice device, int width,int height, Func<int,Color> paint) {
             //initialize a texture
             Texture2D texture = new Texture2D(device, width, height);

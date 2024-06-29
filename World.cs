@@ -66,7 +66,6 @@ namespace gate
         private bool reload_world = false;
         //level transition variables
         private bool transition_active = false;
-        private RenderTarget2D transition_start_frame, transition_middle_frame, transition_end_frame;
         private string next_level_id = null;
         private float transition_elapsed, transition_threshold = 1000f;
         private float transition_percentage = 0f;
@@ -535,12 +534,6 @@ namespace gate
             //calculate fps
             fps = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            //handle level transitions
-            transition_levels(gameTime);
-            if (transition_active) {
-                return;
-            }
-
             //handle freeze frames
             if (freeze_frames >= 0) {
                 freeze_frames--;
@@ -723,6 +716,9 @@ namespace gate
                 //push an update to invisible_objects
                 update_invisible_objects(editor_active);
             }
+            
+            //keep level transitions updated
+            level_transition(gameTime, game.get_spriteBatch(), next_level_id);
             
             #region editor_code
             //handle world editing
@@ -1199,92 +1195,51 @@ namespace gate
             }
             
             // check if level trigger has been set
-            if (triggered) {
-                //capture current frame of the level for level transition
-                RenderTarget2D current_level_render_target = get_frame(game.get_spriteBatch(), true, this);
-                //capture frame of a black screen for transitioning
-                RenderTarget2D black_frame = get_frame(game.get_spriteBatch(), false, this);
-                //set up new world to pull draw call from using new constructor to load a level immediately
-                Console.WriteLine("LOADING NEXT LEVEL FOR RENDER_TARGET");
-                World new_world = new World(game, _graphics, content_root_directory, Content, level_id);
-                Console.WriteLine("FINISHED LOADING NEXT LEVEL FOR RENDER_TARGET");
-                RenderTarget2D next_level_render_target = get_frame(game.get_spriteBatch(), true, new_world);
-                //set variables to control the fade between one render target and another
-                set_transition(true, level_id, current_level_render_target, black_frame, next_level_render_target); //set transition to active
-
-                //NOTE TO FUTURE SHAAN: basically this function/code should just pass the variables to trigger a transition up to the main world class
-                //basically just set the variables like transition = true, level_to_transition_to = level_id, set the render targets, etc
-                //then when we go back into the update and draw calls we can check those variables to check if we are in transition and then smoothly fade
-                //from the current_target, to black (when we are in this stage, we trigger the level unloading/loading), then fade into the new render target
-                //before finishing up and then stopping the draw call and exposing the fully loaded level underneath
-                // unload_level();
-                // //load new level
-                // load_level(content_root_directory, _graphics, level_id);
-                // //set variables back after use
-                // triggered = false;
-                // level_id = null;
+            if (triggered && !transition_active) {
+                //transition to next level
+                set_transition(true, level_id);
                 triggered = false;
                 return;
             }
         }
         
-        //NOTE: if setting the transition to false, just pass null in for the render targets
-        private void set_transition(bool value, string level_id, RenderTarget2D start_frame, RenderTarget2D transition_frame, RenderTarget2D end_frame) {
+        //function to set up transition
+        private void set_transition(bool value, string level_id) {
+            //set transition to active and set elapsed and next level variables
             transition_active = value;
-            Console.WriteLine($"transition_set to {transition_active}");
-            this.next_level_id = level_id;
-            //set all the frames for the transition
-            this.transition_start_frame = start_frame;
-            this.transition_middle_frame = transition_frame;
-            this.transition_end_frame = end_frame;
+            next_level_id = level_id;
+            transition_elapsed = 0f;
+            player.set_movement_disabled(true);
         }
 
-        private void transition_levels(GameTime gameTime) {
-            //check whether or not the transition field is active (indicating we need to transition to whatever the set next_level_id)
+        public void level_transition(GameTime gameTime, SpriteBatch spriteBatch, string n_level_id) {
+            //calculate how long the transition has taken
+            transition_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            //calculate the percentage based on how long the transition has played
+            transition_percentage = transition_elapsed / transition_threshold;
+            //clamp values to between zero and 1
+            transition_percentage = Math.Clamp(transition_percentage, 0f, 1f);
+            //check for active transition
             if (transition_active) {
-                //increase time we have taken on transition
-                transition_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                //calculate the percentage of transition so we can draw the frame at the correct opacity
-                transition_percentage = transition_elapsed / transition_threshold;
-                //clamp between 0 and 1
-                transition_percentage = Math.Clamp(transition_percentage, 0f, 1f);
-                
-                Console.WriteLine($"transition_time(elapsed/threshold):{transition_elapsed}/{transition_threshold}");
-                Console.WriteLine($"transition_percentage:{transition_percentage}");
-
-                //check if the first part of the transition is complete or not
-                if (!transition1_complete) {
-                    Console.WriteLine($"transition1_complete:{transition1_complete}");
-                    //if first part of transition is not complete, check if we are over the elapsed time threshold
-                    if (transition_elapsed >= transition_threshold) {
-                        Console.WriteLine($"completing transition1, setting transition1 to completed, transition_elapesd = 0");
-                        //if we are over the time threshold, complete transition1
-                        transition1_complete = true;
-                        //set elapsed back to zero for second transition
-                        transition_elapsed = 0f;
-                        transition_percentage = 0f;
-
-                        Console.WriteLine($"LOADING");
-                        unload_level();
-                        if (next_level_id != null) {
-                            load_level(content_root_directory, _graphics, next_level_id);
-                        }
-                    }
+                //handle transition to black (transition1)
+                if (!transition1_complete && transition_elapsed >= transition_threshold) {
+                    transition_elapsed = 0f;
+                    //once the transition time has fully expired we have fully transitioned to a black screen
+                    //unload current level, load next level
+                    unload_level();
+                    load_level(content_root_directory, _graphics, n_level_id);
+                    Update(gameTime);
+                    //set transition 1 to complete
+                    transition1_complete = true;
                 } else {
-                    //second part of the transition
-                    if (transition_elapsed >= transition_threshold) {
-                        Console.WriteLine("completing transition2! dumping all variables");
-                        //set transition elapsed back to zero for next transition
+                    //handle transition out of black (transition 2)
+                    if (transition1_complete && transition_elapsed >= transition_threshold) {
+                        //set transition active to false
                         transition_elapsed = 0f;
-                        transition_percentage = 0f;
-                        //complete full transition
                         transition_active = false;
+                        //set transition1 back to incomplete for next transition
                         transition1_complete = false;
-                        //set the next_level_id back to null
-                        next_level_id = null;
-                        this.transition_start_frame = null;
-                        this.transition_middle_frame = null;
-                        this.transition_end_frame = null;
+                        player.set_movement_disabled(false);
                     }
                 }
             }
@@ -1421,42 +1376,9 @@ namespace gate
         public bool is_editor_active() {
             return editor_active;
         }
-        
-        //function to pull render target of the current game frame from the world
-        public RenderTarget2D get_frame(SpriteBatch spriteBatch, bool render_world, World w) {
-            //set up render target
-            RenderTarget2D target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height);
-            //set render target for graphics device
-            _graphics.GraphicsDevice.SetRenderTarget(target);
-            _graphics.GraphicsDevice.Clear(Color.Black);
-            
-            if (render_world) {
-                w.Draw(spriteBatch);
-            }
-            
-            _graphics.GraphicsDevice.SetRenderTarget(null);
-            return target;
-        }
 
         public void Draw(SpriteBatch _spriteBatch){
             // TODO: Add drawing code here
-            
-            //draw transition
-            if (transition_active) {
-                _graphics.GraphicsDevice.Clear(Color.Black);
-                _spriteBatch.Begin();
-                if (!transition1_complete) {
-                    Console.WriteLine($"DRAWING transition1: ({1-transition_percentage})|({transition_percentage})");
-                    _spriteBatch.Draw(transition_start_frame, Vector2.Zero, Color.White * (1 - transition_percentage));
-                    _spriteBatch.Draw(transition_middle_frame, Vector2.Zero, Color.White * transition_percentage);
-                } else {
-                    Console.WriteLine($"DRAWING transition2: ({1-transition_percentage})|({transition_percentage})");
-                    _spriteBatch.Draw(transition_end_frame, Vector2.Zero, Color.White * transition_percentage);
-                    _spriteBatch.Draw(transition_middle_frame, Vector2.Zero, Color.White * (1 - transition_percentage));
-                }
-                _spriteBatch.End();
-                return;
-            }
 
             _spriteBatch.Begin(SpriteSortMode.Deferred,
                                 BlendState.AlphaBlend,
@@ -1518,6 +1440,20 @@ namespace gate
                 condition_manager.Draw(_spriteBatch);
             }
             _spriteBatch.End();
+
+            //draw transition
+            if (transition_active) {
+                _spriteBatch.Begin();
+                //fill screen with differently faded black depending on which stage of transition we are in
+                if (!transition1_complete) {
+                    //transition to black (transition1)
+                    Renderer.FillRectangle(_spriteBatch, Vector2.Zero, _graphics.GraphicsDevice.PresentationParameters.BackBufferWidth, _graphics.GraphicsDevice.PresentationParameters.BackBufferHeight, Color.Black, transition_percentage);
+                } else {
+                    //transition out of black (transition2)
+                    Renderer.FillRectangle(_spriteBatch, Vector2.Zero, _graphics.GraphicsDevice.PresentationParameters.BackBufferWidth, _graphics.GraphicsDevice.PresentationParameters.BackBufferHeight, Color.Black, (1 - transition_percentage));
+                }
+                _spriteBatch.End();
+            }
         }
 
         public void DrawTextOverlays(SpriteBatch _spriteBatch) {
