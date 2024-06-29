@@ -718,7 +718,9 @@ namespace gate
             }
             
             //keep level transitions updated
-            level_transition(gameTime, game.get_spriteBatch(), next_level_id);
+            if (next_level_id != null) {
+                level_transition(gameTime, game.get_spriteBatch(), next_level_id);
+            }
             
             #region editor_code
             //handle world editing
