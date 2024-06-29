@@ -236,6 +236,7 @@ ToDo List:
     -this probably has something to do with how the secondary frame is being rendered
     -need to find a way to render an arbitrary (next in this case) level to a rendertarget frame for the transition
     -fixed by doing away with render targets. just put a black texture over the screen lol
+[](BUG)level transitions do not work for player death or falling (invisible object collision)
 [](BUG)fix textbox positioning and scale on window resize
 [](BUG)fix rotation for tile objects in editor
 [](BUG)trees do not get properly drawn or saved to expected position
