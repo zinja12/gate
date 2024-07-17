@@ -131,6 +131,9 @@ ToDo List:
     - for linking objects and scripting it will be helpful if each object has it's own unique numerical id
 [DONE](FEATURE)swap inputs for heavy attack and bow
     - this will make missing the input for firing an arrow harder (if impossible)
+[](FEATURE)redo color palette and make more nature art assets
+[](FEATURE)background floor tex + trail textures and add to game
+    -implement some type of ordering for floor textures so trails can go on top of floor textures
 [](FEATURE)add object linking and scripting for objects to listen to other objects for triggers to execute behavior
 [](FEATURE)add sandbad enemy in first level and move trigger to the right
 [](FEATURE)modify enemy behavior ai to factor in weights for inanimate or environment objects as well as enemies

@@ -37,8 +37,9 @@ namespace gate
         private Vector2 rotation_factor;
 
         private int ID;
+        private string tree_identifier;
 
-        public Tree(Vector2 base_position, float scale, Texture2D texture, bool canopy, int ID) {
+        public Tree(Vector2 base_position, float scale, Texture2D texture, bool canopy, string tree_identifier, int ID) {
             this.base_position = base_position;
             this.draw_position = new Vector2(base_position.X - (tree_width / 2), 
                                             base_position.Y - tree_height);
@@ -54,6 +55,7 @@ namespace gate
             this.rotation_factor = this.draw_position;
 
             this.ID = ID;
+            this.tree_identifier = tree_identifier;
         }
 
         public void Update(GameTime gameTime, float rotation) {
@@ -96,7 +98,7 @@ namespace gate
         }
 
         public string get_id() {
-            return "tree";
+            return tree_identifier;
         }
 
         public void set_rotation_offset(float rotation_offset_degrees) {
@@ -118,7 +120,7 @@ namespace gate
             }
 
             return new GameWorldObject {
-                object_identifier = "tree",
+                object_identifier = tree_identifier,
                 object_id_num = get_obj_ID_num(),
                 x_position = base_position.X,
                 y_position = base_position.Y,

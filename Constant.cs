@@ -23,6 +23,7 @@ namespace gate
         public static Texture2D tile_tex4;
         public static Texture2D tree4_tex;
         public static Texture2D tan_tile_tex;
+        public static Texture2D grass_tile_tex;
         public static Texture2D grass_tex;
         public static Texture2D player_tex;
         public static Texture2D player_dash_tex;
@@ -46,6 +47,11 @@ namespace gate
         public static Texture2D rock_spritesheet;
         public static Texture2D grass_spritesheet;
         public static Texture2D Y_tex;
+        public static Texture2D orange_tree;
+        public static Texture2D yellow_tree;
+        public static Texture2D green_tree;
+        public static Texture2D flower_tex;
+        public static Texture2D stacked_grass;
 
         public static Texture2D marker_spritesheet;
         public static Texture2D lamppost_spritesheet;
@@ -144,6 +150,12 @@ namespace gate
             identifiers.Add("wall");
             identifiers.Add("fence");
             identifiers.Add("tan_tile");
+            identifiers.Add("grass_tile");
+            identifiers.Add("orange_tree");
+            identifiers.Add("yellow_tree");
+            identifiers.Add("green_tree");
+            identifiers.Add("flower");
+            identifiers.Add("grass2");
             return identifiers;
         }
 

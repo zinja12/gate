@@ -12,12 +12,18 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/attack_sprites2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/box_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/fence1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/flower1_1_12.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/footprint.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_0.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_redo_7.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_tile1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass1_1_17.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass1_2_17.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/green_tree1_1_26.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/hit_confirm_spritesheet.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/lamppost_spritesheet3.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/marker_spritesheet5.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/orange_tree4_6_26.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/player_spritesheet3.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/shadow0.png</File>
@@ -45,8 +51,16 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/void_essence1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/white_pixel.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/Y.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

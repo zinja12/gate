@@ -29,7 +29,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        string load_file_name = "demo1_v2_ids.json", current_level_id;
+        string load_file_name = "trails_v1.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -164,7 +164,7 @@ namespace gate
             editor_tool_count = 2;
             //obj map init
             obj_map = new Dictionary<int, IEntity>();
-            obj_map.Add(1, new Tree(Vector2.Zero, 1f, Constant.tree_spritesheet, false, -1));
+            obj_map.Add(1, new Tree(Vector2.Zero, 1f, Constant.tree_spritesheet, false, "tree", -1));
             obj_map.Add(2, new Grass(Vector2.Zero, 1f, -1));
             obj_map.Add(3, new Ghastly(Constant.ghastly_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, -1));
             obj_map.Add(4, new StackedObject("marker", Constant.marker_spritesheet, Vector2.Zero, 1f, 32, 32, 15, Constant.stack_distance, 0f, -1));
@@ -174,7 +174,7 @@ namespace gate
             obj_map.Add(8, new Tile(Vector2.Zero, 1f, Constant.tile_tex3, "reg_tile", -1));
             obj_map.Add(9, new Tile(Vector2.Zero, 1f, Constant.tile_tex4, "round_tile", -1));
             obj_map.Add(10, new Tile(Vector2.Zero, 2f, Constant.tan_tile_tex, "tan_tile", -1));
-            obj_map.Add(11, new Tree(Vector2.Zero, 4f, Constant.tree_spritesheet, true, -1));
+            obj_map.Add(11, new Tree(Vector2.Zero, 4f, Constant.tree_spritesheet, true, "tree",  -1));
             obj_map.Add(12, new StackedObject("wall", Constant.wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
             obj_map.Add(13, new StackedObject("fence", Constant.fence_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
             obj_map.Add(14, new InvisibleObject("deathbox", Vector2.Zero, 1f, 48, 48, 0f, -1));
@@ -187,6 +187,15 @@ namespace gate
             nightmare1.set_behavior_enabled(false);
             //set up condition in editor
             obj_map.Add(16, new PlaceHolderEntity(Vector2.Zero, "Condition(EDROC)", -1));
+            obj_map.Add(17, new Tile(Vector2.Zero, 2f, Constant.grass_tile_tex, "grass_tile", -1));
+            //obj_map.Add(18, new Tree(Vector2.Zero, 1f, Constant.orange_tree, false, "orange_tree", -1));
+            obj_map.Add(18, new StackedObject("orange_tree", Constant.orange_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
+            //obj_map.Add(19, new Tree(Vector2.Zero, 1f, Constant.yellow_tree, false, "yellow_tree", -1));
+            obj_map.Add(19, new StackedObject("yellow_tree", Constant.yellow_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
+            //obj_map.Add(20, new Tree(Vector2.Zero, 1f, Constant.green_tree, false, "green_tree", -1));
+            obj_map.Add(20, new StackedObject("green_tree", Constant.green_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
+            obj_map.Add(21, new StackedObject("flower", Constant.flower_tex, Vector2.Zero, 1f, 32, 32, 12, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(22, new StackedObject("grass2", Constant.stacked_grass, Vector2.Zero, 1f, 32, 32, 17, Constant.stack_distance1, 0f, -1));
         }
 
         //function to load level files into the world
@@ -203,6 +212,7 @@ namespace gate
             Constant.hit_confirm_spritesheet = Content.Load<Texture2D>("sprites/hit_confirm_spritesheet");
             Constant.slash_confirm_spritesheet = Content.Load<Texture2D>("sprites/slash_confirm_spritesheet");
             Constant.shadow_tex = Content.Load<Texture2D>("sprites/shadow0");
+            Constant.green_tree = Content.Load<Texture2D>("sprites/green_tree1_1_26");
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
@@ -281,13 +291,34 @@ namespace gate
                         case "tree":
                             //load texture
                             check_and_load_tex(ref Constant.tree_spritesheet, "sprites/tree_spritesheet5");
-                            Tree t = new Tree(obj_position, w_obj.scale, Constant.tree_spritesheet, w_obj.canopy, w_obj.object_id_num);
+                            Tree t = new Tree(obj_position, w_obj.scale, Constant.tree_spritesheet, w_obj.canopy, w_obj.object_identifier, w_obj.object_id_num);
                             if (w_obj.canopy) {
                                 foreground_entities.Add(t);
                             } else {
                                 entities_list.Add(t);
-                                plants.Add(t);   
+                                plants.Add(t);
                             }
+                            break;
+                        case "orange_tree":
+                            //load texture
+                            check_and_load_tex(ref Constant.orange_tree, "sprites/orange_tree4_6_26");
+                            StackedObject otree = new StackedObject(w_obj.object_identifier, Constant.orange_tree, obj_position, w_obj.scale, 64, 64, 26, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(otree);
+                            plants.Add(otree);
+                            break;
+                        case "yellow_tree":
+                            //load texture
+                            check_and_load_tex(ref Constant.yellow_tree, "sprites/yellow_tree1_4_26");
+                            StackedObject ytree = new StackedObject(w_obj.object_identifier, Constant.yellow_tree, obj_position, w_obj.scale, 64, 64, 26, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(ytree);
+                            plants.Add(ytree);
+                            break;
+                        case "green_tree":
+                            //load texture
+                            check_and_load_tex(ref Constant.green_tree, "sprites/green_tree1_1_26");
+                            StackedObject gtree = new StackedObject(w_obj.object_identifier, Constant.green_tree, obj_position, w_obj.scale, 64, 64, 26, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(gtree);
+                            plants.Add(gtree);
                             break;
                         case "grass":
                             //load texture
@@ -377,10 +408,27 @@ namespace gate
                             Tile t_tile = new Tile(obj_position, w_obj.scale, Constant.tan_tile_tex, w_obj.object_identifier, w_obj.object_id_num);
                             floor_entities.Add(t_tile);
                             break;
+                        case "grass_tile":
+                            check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
+                            Tile gt_tile = new Tile(obj_position, w_obj.scale, Constant.grass_tile_tex, w_obj.object_identifier, w_obj.object_id_num);
+                            floor_entities.Add(gt_tile);
+                            break;
                         case "deathbox":
                             //don't need to check and load texture because this object is meant to be invisible/not drawn
                             InvisibleObject io = new InvisibleObject(w_obj.object_identifier, obj_position, w_obj.scale, 48, 48, w_obj.rotation, w_obj.object_id_num);
                             collision_geometry.Add(io);
+                            break;
+                        case "flower":
+                            check_and_load_tex(ref Constant.flower_tex, "sprites/flower1_1_12");
+                            StackedObject fl = new StackedObject(w_obj.object_identifier, Constant.flower_tex, obj_position, w_obj.scale, 32, 32, 12, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(fl);
+                            plants.Add(fl);
+                            break;
+                        case "grass2":
+                            check_and_load_tex(ref Constant.stacked_grass, "sprites/grass1_2_17");
+                            StackedObject g2 = new StackedObject(w_obj.object_identifier, Constant.stacked_grass, obj_position, w_obj.scale, 32, 32, 17, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(g2);
+                            plants.Add(g2);
                             break;
                         default:
                             break;
@@ -436,6 +484,15 @@ namespace gate
                         case "tree":
                             check_and_load_tex(ref Constant.tree_spritesheet, "sprites/tree_spritesheet5");
                             break;
+                        case "orange_tree":
+                            check_and_load_tex(ref Constant.orange_tree, "sprites/orange_tree4_6_26");
+                            break;
+                        case "yellow_tree":
+                            check_and_load_tex(ref Constant.yellow_tree, "sprites/yellow_tree1_4_26");
+                            break;
+                        case "green_tree":
+                            check_and_load_tex(ref Constant.green_tree, "sprites/green_tree1_1_26");
+                            break;
                         case "grass":
                             check_and_load_tex(ref Constant.grass_tex, "sprites/grass_0");
                             break;
@@ -477,9 +534,18 @@ namespace gate
                         case "tan_tile":
                             check_and_load_tex(ref Constant.tan_tile_tex, "sprites/tile_tan1");
                             break;
+                        case "grass_tile":
+                            check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
+                            break;
+                        case "flower":
+                            check_and_load_tex(ref Constant.flower_tex, "sprites/flower1_1_12");
+                            break;
+                        case "grass2":
+                            check_and_load_tex(ref Constant.stacked_grass, "sprites/grass1_2_17");
+                            break;
                         default:
                             //don't load anything
-                            Console.WriteLine("unknown object in Constant.get_object_identifiers()");
+                            Console.WriteLine($"WARNING: unknown object({i}) in Constant.get_object_identifiers()");
                             break;
                     }
                 }
@@ -801,7 +867,7 @@ namespace gate
                     Console.WriteLine("create_position:" + create_position);
                     switch (selected_object) {
                         case 1:
-                            Tree t = new Tree(create_position, 1f, Constant.tree_spritesheet, false, editor_object_idx);
+                            Tree t = new Tree(create_position, 1f, Constant.tree_spritesheet, false, "tree", editor_object_idx);
                             plants.Add(t);
                             entities_list.Add(t);
                             Console.WriteLine("tree," + create_position.X + "," + create_position.Y + ",1");
@@ -855,7 +921,7 @@ namespace gate
                             Console.WriteLine("tan_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;
                         case 11:
-                            Tree c = new Tree(create_position, 4f, Constant.tree_spritesheet, true, editor_object_idx);
+                            Tree c = new Tree(create_position, 4f, Constant.tree_spritesheet, true, "tree", editor_object_idx);
                             plants.Add(c);
                             entities_list.Add(c);
                             Console.WriteLine("tree," + create_position.X + "," + create_position.Y + ",4,true");
@@ -893,6 +959,41 @@ namespace gate
                             ICondition cond = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, new List<int>(), create_position);
                             condition_manager.add_condition(cond);
                             Console.WriteLine("condition created!");
+                            break;
+                        case 17:
+                            Tile gt_tile = new Tile(create_position, 2f, Constant.grass_tile_tex, "grass_tile", editor_object_idx);
+                            floor_entities.Add(gt_tile);
+                            Console.WriteLine("grass_tile," + create_position.X + "," + create_position.Y + ",2");
+                            break;
+                        case 18:
+                            StackedObject otree = new StackedObject("orange_tree", Constant.orange_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            plants.Add(otree);
+                            entities_list.Add(otree);
+                            Console.WriteLine("orange_tree," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 19:
+                            StackedObject ytree = new StackedObject("yellow_tree", Constant.yellow_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            plants.Add(ytree);
+                            entities_list.Add(ytree);
+                            Console.WriteLine("yellow_tree," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 20:
+                            StackedObject gtree = new StackedObject("green_tree", Constant.green_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            plants.Add(gtree);
+                            entities_list.Add(gtree);
+                            Console.WriteLine("green_tree," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 21:
+                            StackedObject fl = new StackedObject("flower", Constant.flower_tex, create_position, 1f, 32, 32, 12, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            plants.Add(fl);
+                            entities_list.Add(fl);
+                            Console.WriteLine("flower," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 22:
+                            StackedObject g2 = new StackedObject("grass2", Constant.stacked_grass, create_position, 1f, 32, 32, 17, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            plants.Add(g2);
+                            entities_list.Add(g2);
+                            Console.WriteLine("grass2," + create_position.X + "," + create_position.Y + ",1");
                             break;
                         default:
                             break;
