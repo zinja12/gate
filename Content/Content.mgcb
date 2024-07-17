@@ -169,18 +169,6 @@
 /processorParam:TextureFormat=Color
 /build:sprites/grass_tile1.png
 
-#begin sprites/grass1_1_17.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/grass1_1_17.png
-
 #begin sprites/grass1_2_17.png
 /importer:TextureImporter
 /processor:TextureProcessor

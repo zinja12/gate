@@ -17,7 +17,6 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_0.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_redo_7.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_tile1.png</File>
-    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass1_1_17.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass1_2_17.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/green_tree1_1_26.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/hit_confirm_spritesheet.png</File>
@@ -54,7 +53,6 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
-    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
