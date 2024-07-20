@@ -35,6 +35,10 @@ namespace gate
         
         private bool update_once = true;
 
+        private bool sway = false;
+        private float sway_elapsed0, sway_elapsed1, sway_elapsed2, sway_threshold = 2000f;
+        private Random random;
+
         private Texture2D texture;
         private string id;
         private int ID;
@@ -64,6 +68,11 @@ namespace gate
             this.ID = ID;
 
             set_rotation_offset(rotation_degrees);
+            
+            random = new Random();
+            sway_elapsed0 = (float)random.Next(0, (int)sway_threshold*2);
+            sway_elapsed1 = (float)random.Next(0, (int)sway_threshold*2);
+            sway_elapsed2 = (float)random.Next(0, (int)sway_threshold*2);
         }
 
         public void Update(GameTime gameTime, float rotation) {
@@ -73,6 +82,16 @@ namespace gate
             if (update_once) {
                 hitbox.update(rotation, draw_position);
                 update_once = false;
+            }
+            
+            //handle sway elapsed
+            if (sway) {
+                sway_elapsed0 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                sway_elapsed1 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                sway_elapsed2 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (sway_elapsed0 >= sway_threshold*2) { sway_elapsed0 = 0f; }
+                if (sway_elapsed1 >= sway_threshold*2) { sway_elapsed1 = 0f; }
+                if (sway_elapsed2 >= sway_threshold*2) { sway_elapsed2 = 0f; }
             }
         }
 
@@ -98,6 +117,10 @@ namespace gate
 
         public int get_obj_ID_num() {
             return this.ID;
+        }
+
+        public void set_sway(bool value) {
+            this.sway = value;
         }
 
         public bool check_hitbox_collisions(RRect collision_rect) {
@@ -147,12 +170,42 @@ namespace gate
         }
 
         public void Draw(SpriteBatch spriteBatch) {
+            //calculate the number of sprites that will be moving (round down to make sure we don't try to access any sprites that are out of bounds)
+            int stack_div3 = (int)Math.Floor((double)stack_count/3);
             //update draw positions so that everything draws in the right direction
+            Vector2 offset = Vector2.Zero;
             for (int i = 0; i < sprite_rectangles.Count; i++) {
+                if (sway) {
+                    if (i < stack_div3) { //first third of the stack
+                        if (sway_elapsed0 < sway_threshold) {
+                            //set offset left
+                            offset.X = 1;
+                        } else if (sway_elapsed0 >= sway_threshold) {
+                            //set offset right
+                            offset.X = -1;
+                        }
+                    } else if (i >= stack_div3 && i < stack_div3*2) { //second third of the stack
+                        if (sway_elapsed1 < sway_threshold) {
+                            //set offset right
+                            offset.X = 1;
+                        } else if (sway_elapsed1 >= sway_threshold) {
+                            //set offset left
+                            offset.X = -1;
+                        }
+                    } else { //last third of the stack
+                        if (sway_elapsed2 < sway_threshold) {
+                            //set offset right
+                            offset.X = -2;
+                        } else if (sway_elapsed2 >= sway_threshold) {
+                            //set offset left
+                            offset.X = 2;
+                        }
+                    }
+                }
                 Vector2 dir = new Vector2(0, -i*stack_distance);
                 Vector2 draw_pos = draw_position + new Vector2(dir.X*(float)Math.Cos(rotation) - dir.Y*(float)Math.Sin(rotation), dir.Y*(float)Math.Cos(rotation) + dir.X*(float)Math.Sin(rotation));
                 float rotation_calc = (-rotation + rotation_offset)/1000;
-                spriteBatch.Draw(texture, draw_pos, sprite_rectangles[i], Color.White, rotation_calc, rotation_point, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, draw_pos+offset, sprite_rectangles[i], Color.White, rotation_calc, rotation_point, scale, SpriteEffects.None, 0f);
             }
             if (debug){
                 hitbox.draw(spriteBatch);

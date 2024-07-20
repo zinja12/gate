@@ -303,13 +303,16 @@ namespace gate
                             //load texture
                             check_and_load_tex(ref Constant.orange_tree, "sprites/orange_tree4_6_26");
                             StackedObject otree = new StackedObject(w_obj.object_identifier, Constant.orange_tree, obj_position, w_obj.scale, 64, 64, 26, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            otree.set_sway(true);
                             entities_list.Add(otree);
                             plants.Add(otree);
+
                             break;
                         case "yellow_tree":
                             //load texture
                             check_and_load_tex(ref Constant.yellow_tree, "sprites/yellow_tree1_4_26");
                             StackedObject ytree = new StackedObject(w_obj.object_identifier, Constant.yellow_tree, obj_position, w_obj.scale, 64, 64, 26, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            ytree.set_sway(true);
                             entities_list.Add(ytree);
                             plants.Add(ytree);
                             break;
@@ -317,6 +320,7 @@ namespace gate
                             //load texture
                             check_and_load_tex(ref Constant.green_tree, "sprites/green_tree1_1_26");
                             StackedObject gtree = new StackedObject(w_obj.object_identifier, Constant.green_tree, obj_position, w_obj.scale, 64, 64, 26, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            gtree.set_sway(true);
                             entities_list.Add(gtree);
                             plants.Add(gtree);
                             break;
@@ -421,6 +425,7 @@ namespace gate
                         case "flower":
                             check_and_load_tex(ref Constant.flower_tex, "sprites/flower1_1_12");
                             StackedObject fl = new StackedObject(w_obj.object_identifier, Constant.flower_tex, obj_position, w_obj.scale, 32, 32, 12, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            fl.set_sway(true);
                             entities_list.Add(fl);
                             plants.Add(fl);
                             break;
