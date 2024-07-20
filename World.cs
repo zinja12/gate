@@ -306,7 +306,6 @@ namespace gate
                             otree.set_sway(true);
                             entities_list.Add(otree);
                             plants.Add(otree);
-
                             break;
                         case "yellow_tree":
                             //load texture
