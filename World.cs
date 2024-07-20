@@ -169,11 +169,11 @@ namespace gate
             obj_map.Add(3, new Ghastly(Constant.ghastly_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, -1));
             obj_map.Add(4, new StackedObject("marker", Constant.marker_spritesheet, Vector2.Zero, 1f, 32, 32, 15, Constant.stack_distance, 0f, -1));
             obj_map.Add(5, new Lamppost(Vector2.Zero, 1f, -1));
-            obj_map.Add(6, new Tile(Vector2.Zero, 1f, Constant.tile_tex, "big_tile", -1));
-            obj_map.Add(7, new Tile(Vector2.Zero, 1f, Constant.tile_tex2, "cracked_tile", -1));
-            obj_map.Add(8, new Tile(Vector2.Zero, 1f, Constant.tile_tex3, "reg_tile", -1));
-            obj_map.Add(9, new Tile(Vector2.Zero, 1f, Constant.tile_tex4, "round_tile", -1));
-            obj_map.Add(10, new Tile(Vector2.Zero, 2f, Constant.tan_tile_tex, "tan_tile", -1));
+            obj_map.Add(6, new Tile(Vector2.Zero, 1f, Constant.tile_tex, "big_tile", (int)DrawWeight.Light, -1));
+            obj_map.Add(7, new Tile(Vector2.Zero, 1f, Constant.tile_tex2, "cracked_tile", (int)DrawWeight.Light, -1));
+            obj_map.Add(8, new Tile(Vector2.Zero, 1f, Constant.tile_tex3, "reg_tile", (int)DrawWeight.Light, -1));
+            obj_map.Add(9, new Tile(Vector2.Zero, 1f, Constant.tile_tex4, "round_tile", (int)DrawWeight.Light, -1));
+            obj_map.Add(10, new Tile(Vector2.Zero, 2f, Constant.tan_tile_tex, "tan_tile", (int)DrawWeight.Medium, -1));
             obj_map.Add(11, new Tree(Vector2.Zero, 4f, Constant.tree_spritesheet, true, "tree",  -1));
             obj_map.Add(12, new StackedObject("wall", Constant.wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
             obj_map.Add(13, new StackedObject("fence", Constant.fence_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
@@ -187,7 +187,7 @@ namespace gate
             nightmare1.set_behavior_enabled(false);
             //set up condition in editor
             obj_map.Add(16, new PlaceHolderEntity(Vector2.Zero, "Condition(EDROC)", -1));
-            obj_map.Add(17, new Tile(Vector2.Zero, 2f, Constant.grass_tile_tex, "grass_tile", -1));
+            obj_map.Add(17, new Tile(Vector2.Zero, 2f, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, -1));
             //obj_map.Add(18, new Tree(Vector2.Zero, 1f, Constant.orange_tree, false, "orange_tree", -1));
             obj_map.Add(18, new StackedObject("orange_tree", Constant.orange_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
             //obj_map.Add(19, new Tree(Vector2.Zero, 1f, Constant.yellow_tree, false, "yellow_tree", -1));
@@ -361,25 +361,25 @@ namespace gate
                         case "big_tile":
                             //load texture
                             check_and_load_tex(ref Constant.tile_tex, "sprites/tile3");
-                            Tile tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex, w_obj.object_identifier, w_obj.object_id_num);
+                            Tile tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex, w_obj.object_identifier, (int)DrawWeight.Light, w_obj.object_id_num);
                             background_entities.Add(tile);
                             break;
                         case "cracked_tile":
                             //load texture
                             check_and_load_tex(ref Constant.tile_tex2, "sprites/tile4");
-                            Tile c_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex2, w_obj.object_identifier, w_obj.object_id_num);
+                            Tile c_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex2, w_obj.object_identifier, (int)DrawWeight.Light, w_obj.object_id_num);
                             background_entities.Add(c_tile);
                             break;
                         case "reg_tile":
                             //load texture
                             check_and_load_tex(ref Constant.tile_tex3, "sprites/tile5");
-                            Tile r_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex3, w_obj.object_identifier, w_obj.object_id_num);
+                            Tile r_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex3, w_obj.object_identifier, (int)DrawWeight.Light, w_obj.object_id_num);
                             background_entities.Add(r_tile);
                             break;
                         case "round_tile":
                             //load texture
                             check_and_load_tex(ref Constant.tile_tex4, "sprites/tile6");
-                            Tile round_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex4, w_obj.object_identifier, w_obj.object_id_num);
+                            Tile round_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex4, w_obj.object_identifier, (int)DrawWeight.Light, w_obj.object_id_num);
                             background_entities.Add(round_tile);
                             break;
                         case "level_trigger":
@@ -408,12 +408,12 @@ namespace gate
                             break;
                         case "tan_tile":
                             check_and_load_tex(ref Constant.tan_tile_tex, "sprites/tile_tan1");
-                            Tile t_tile = new Tile(obj_position, w_obj.scale, Constant.tan_tile_tex, w_obj.object_identifier, w_obj.object_id_num);
+                            Tile t_tile = new Tile(obj_position, w_obj.scale, Constant.tan_tile_tex, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
                             floor_entities.Add(t_tile);
                             break;
                         case "grass_tile":
                             check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
-                            Tile gt_tile = new Tile(obj_position, w_obj.scale, Constant.grass_tile_tex, w_obj.object_identifier, w_obj.object_id_num);
+                            Tile gt_tile = new Tile(obj_position, w_obj.scale, Constant.grass_tile_tex, w_obj.object_identifier, (int)DrawWeight.Heavy, w_obj.object_id_num);
                             floor_entities.Add(gt_tile);
                             break;
                         case "deathbox":
@@ -900,27 +900,27 @@ namespace gate
                             Console.WriteLine("lamp," + create_position.X + "," + create_position.Y + ",1");
                             break;
                         case 6:
-                            Tile tile1 = new Tile(create_position, 3f, Constant.tile_tex, "big_tile", editor_object_idx);
+                            Tile tile1 = new Tile(create_position, 3f, Constant.tile_tex, "big_tile", (int)DrawWeight.Light, editor_object_idx);
                             background_entities.Add(tile1);
                             Console.WriteLine("big_tile," + create_position.X + "," + create_position.Y + ",3");
                             break;
                         case 7:
-                            Tile tile2 = new Tile(create_position, 3f, Constant.tile_tex2, "cracked_tile", editor_object_idx);
+                            Tile tile2 = new Tile(create_position, 3f, Constant.tile_tex2, "cracked_tile", (int)DrawWeight.Light, editor_object_idx);
                             background_entities.Add(tile2);
                             Console.WriteLine("cracked_tile," + create_position.X + "," + create_position.Y + ",3");
                             break;
                         case 8:
-                            Tile tile3 = new Tile(create_position, 3f, Constant.tile_tex3, "reg_tile", editor_object_idx);
+                            Tile tile3 = new Tile(create_position, 3f, Constant.tile_tex3, "reg_tile", (int)DrawWeight.Light, editor_object_idx);
                             background_entities.Add(tile3);
                             Console.WriteLine("reg_tile," + create_position.X + "," + create_position.Y + ",3");
                             break;
                         case 9:
-                            Tile tile4 = new Tile(create_position, 3f, Constant.tile_tex4, "round_tile", editor_object_idx);
+                            Tile tile4 = new Tile(create_position, 3f, Constant.tile_tex4, "round_tile", (int)DrawWeight.Light, editor_object_idx);
                             background_entities.Add(tile4);
                             Console.WriteLine("round_tile," + create_position.X + "," + create_position.Y + ",3");
                             break;
                         case 10:
-                            Tile tan_tile = new Tile(create_position, 2f, Constant.tan_tile_tex, "tan_tile", editor_object_idx);
+                            Tile tan_tile = new Tile(create_position, 2f, Constant.tan_tile_tex, "tan_tile", (int)DrawWeight.Medium, editor_object_idx);
                             floor_entities.Add(tan_tile);
                             Console.WriteLine("tan_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;
@@ -965,7 +965,7 @@ namespace gate
                             Console.WriteLine("condition created!");
                             break;
                         case 17:
-                            Tile gt_tile = new Tile(create_position, 2f, Constant.grass_tile_tex, "grass_tile", editor_object_idx);
+                            Tile gt_tile = new Tile(create_position, 2f, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
                             floor_entities.Add(gt_tile);
                             Console.WriteLine("grass_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;
@@ -1280,7 +1280,6 @@ namespace gate
                 }
             }
         }
-        #endregion
 
         private void check_triggers(GameTime gameTime, float rotation) {
             bool triggered = false;
@@ -1308,6 +1307,13 @@ namespace gate
                 triggered = false;
                 return;
             }
+        }
+        #endregion
+
+        private void add_floor_entity(IEntity e) {
+            floor_entities.Add(e);
+            //sort
+            //floor_entities.OrderByDescending(x => x.get_draw_weight());
         }
         
         #region level_transitions

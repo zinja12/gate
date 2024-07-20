@@ -7,7 +7,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace gate
 {
+    //floor tile draw weights
+    public enum DrawWeight {
+        Light = 1,
+        Medium = 5,
+        Heavy = 10
+    }
+
     public interface BackgroundEntity {
+        //draw weight indicates the order in which the background entities will be drawn (higher draw weight means that they should be drawn towards the back, lighter means they should be drawn towards the front)
+        int get_draw_weight();
         void Draw(SpriteBatch spriteBatch);
     }
 
@@ -21,10 +30,11 @@ namespace gate
         public string identifier;
 
         public float rotation = 0f;
+        public int draw_weight;
 
         private int ID;
 
-        public Tile(Vector2 draw_position, float scale, Texture2D texture, string identifier, int ID) {
+        public Tile(Vector2 draw_position, float scale, Texture2D texture, string identifier, int draw_weight, int ID) {
             this.draw_position = draw_position;
             this.texture = texture;
 
@@ -36,6 +46,10 @@ namespace gate
             this.identifier = identifier;
 
             this.ID = ID;
+        }
+
+        public int get_draw_weight() {
+            return draw_weight;
         }
 
         public void Draw(SpriteBatch spriteBatch) {
