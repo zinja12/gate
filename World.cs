@@ -1108,7 +1108,7 @@ namespace gate
                     world_objs.Add(tile.to_world_level_object());
                 }
             }
-            //iterate over background entities
+            //iterate over floor entities
             foreach (IEntity fe in floor_entities) {
                 if (fe is Tile) {
                     Tile tile = (Tile)fe;
