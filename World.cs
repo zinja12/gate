@@ -1311,8 +1311,9 @@ namespace gate
         #endregion
 
         private void add_floor_entity(FloorEntity e) {
+            //add entity to list
             floor_entities.Add(e);
-            //sort
+            //sort by weight
             floor_entities.OrderByDescending(x => x.get_draw_weight());
         }
         
@@ -1503,6 +1504,8 @@ namespace gate
                                 SamplerState.PointClamp, null, null, null,
                                 camera.Transform);
             //draw floor itself
+            //note: this draws entities in order, meaning our sorting after 
+            //insertion should yield the proper back to front ordering that needs to be drawn
             for (int i = 0; i < floor_entities.Count; i++) {
                 floor_entities[i].Draw(_spriteBatch);
             }
