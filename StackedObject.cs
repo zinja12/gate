@@ -36,7 +36,7 @@ namespace gate
         private bool update_once = true;
 
         private bool sway = false;
-        private float sway_elapsed0, sway_elapsed1, sway_elapsed2, sway_threshold = 2000f;
+        private float sway_elapsed0, sway_elapsed1, sway_elapsed2, sway_threshold = 3000f;
         private Random random;
 
         private Texture2D texture;

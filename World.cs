@@ -45,7 +45,7 @@ namespace gate
         List<IEntity> collision_entities;
         List<ForegroundEntity> foreground_entities;
         List<BackgroundEntity> background_entities;
-        List<IEntity> floor_entities;
+        List<FloorEntity> floor_entities;
         List<ITrigger> triggers;
         List<IEntity> collision_geometry;
         List<IAiEntity> enemies;
@@ -127,7 +127,7 @@ namespace gate
             //create list of background objects to be used as floor pieces
             background_entities = new List<BackgroundEntity>();
             //create list of floor objects to be used behind floor pieces
-            floor_entities = new List<IEntity>();
+            floor_entities = new List<FloorEntity>();
             //create list of triggers
             triggers = new List<ITrigger>();
             //create list of enemies
@@ -409,12 +409,12 @@ namespace gate
                         case "tan_tile":
                             check_and_load_tex(ref Constant.tan_tile_tex, "sprites/tile_tan1");
                             Tile t_tile = new Tile(obj_position, w_obj.scale, Constant.tan_tile_tex, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
-                            floor_entities.Add(t_tile);
+                            add_floor_entity(t_tile);
                             break;
                         case "grass_tile":
                             check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
                             Tile gt_tile = new Tile(obj_position, w_obj.scale, Constant.grass_tile_tex, w_obj.object_identifier, (int)DrawWeight.Heavy, w_obj.object_id_num);
-                            floor_entities.Add(gt_tile);
+                            add_floor_entity(gt_tile);
                             break;
                         case "deathbox":
                             //don't need to check and load texture because this object is meant to be invisible/not drawn
@@ -921,7 +921,7 @@ namespace gate
                             break;
                         case 10:
                             Tile tan_tile = new Tile(create_position, 2f, Constant.tan_tile_tex, "tan_tile", (int)DrawWeight.Medium, editor_object_idx);
-                            floor_entities.Add(tan_tile);
+                            add_floor_entity(tan_tile);
                             Console.WriteLine("tan_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;
                         case 11:
@@ -966,7 +966,7 @@ namespace gate
                             break;
                         case 17:
                             Tile gt_tile = new Tile(create_position, 2f, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
-                            floor_entities.Add(gt_tile);
+                            add_floor_entity(gt_tile);
                             Console.WriteLine("grass_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;
                         case 18:
@@ -1109,7 +1109,7 @@ namespace gate
                 }
             }
             //iterate over floor entities
-            foreach (IEntity fe in floor_entities) {
+            foreach (FloorEntity fe in floor_entities) {
                 if (fe is Tile) {
                     Tile tile = (Tile)fe;
                     world_objs.Add(tile.to_world_level_object());
@@ -1310,10 +1310,10 @@ namespace gate
         }
         #endregion
 
-        private void add_floor_entity(IEntity e) {
+        private void add_floor_entity(FloorEntity e) {
             floor_entities.Add(e);
             //sort
-            //floor_entities.OrderByDescending(x => x.get_draw_weight());
+            floor_entities.OrderByDescending(x => x.get_draw_weight());
         }
         
         #region level_transitions
@@ -1390,8 +1390,11 @@ namespace gate
                     }
                 }
                 //remove from floor entities
-                if (floor_entities.Contains(e)) {
-                    floor_entities.Remove(e);
+                if (e is FloorEntity) {
+                    FloorEntity fe = (FloorEntity)e;
+                    if (floor_entities.Contains(fe)) {
+                        floor_entities.Remove(fe);
+                    }
                 }
                 //if this is an ai, remove it from enemies
                 if (e is IAiEntity) {
