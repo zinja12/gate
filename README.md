@@ -3,6 +3,9 @@
 Untitled Narrative Driven Top Down Game
 Codename: The Gate
 
+## GIFS
+![](https://github.com/zinja12/gate/blob/main/gifs/gategif1_f.gif)
+
 ## Controls
 ### Keyboard
 - Y - open text / interact
