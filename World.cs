@@ -196,6 +196,7 @@ namespace gate
             obj_map.Add(20, new StackedObject("green_tree", Constant.green_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
             obj_map.Add(21, new StackedObject("flower", Constant.flower_tex, Vector2.Zero, 1f, 32, 32, 12, Constant.stack_distance1, 0f, -1));
             obj_map.Add(22, new StackedObject("grass2", Constant.stacked_grass, Vector2.Zero, 1f, 32, 32, 17, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(23, new Tile(Vector2.Zero, 2f, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, -1));
         }
 
         //function to load level files into the world
@@ -434,6 +435,11 @@ namespace gate
                             entities_list.Add(g2);
                             plants.Add(g2);
                             break;
+                        case "trail_tile":
+                            check_and_load_tex(ref Constant.trail_tex, "sprites/trail1");
+                            Tile trail_tile = new Tile(obj_position, w_obj.scale, Constant.trail_tex, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
+                            add_floor_entity(trail_tile);
+                            break;
                         default:
                             break;
                     }
@@ -546,6 +552,9 @@ namespace gate
                             break;
                         case "grass2":
                             check_and_load_tex(ref Constant.stacked_grass, "sprites/grass1_2_17");
+                            break;
+                        case "trail_tile":
+                            check_and_load_tex(ref Constant.trail_tex, "sprites/trail1");
                             break;
                         default:
                             //don't load anything
@@ -1012,6 +1021,11 @@ namespace gate
                             plants.Add(g2);
                             entities_list.Add(g2);
                             Console.WriteLine("grass2," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 23:
+                            Tile trail_tile = new Tile(create_position, editor_object_scale, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, editor_object_idx);
+                            add_floor_entity(trail_tile);
+                            Console.WriteLine("trail_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;
                         default:
                             break;
