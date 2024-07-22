@@ -11,6 +11,7 @@ namespace gate
     public class PlaceHolderEntity : IEntity
     {
         public Vector2 base_position;
+        public float scale;
 
         public static bool debug = true;
         private int ID;
@@ -18,6 +19,7 @@ namespace gate
 
         public PlaceHolderEntity(Vector2 base_position, string id_label, int ID) {
             this.base_position = base_position;
+            this.scale = 1f;
 
             this.ID = ID;
             this.id_label = id_label;
@@ -35,7 +37,11 @@ namespace gate
         }
 
         public float get_scale(){
-            return 1f;
+            return scale;
+        }
+
+        public void set_scale(float scale_value) {
+            this.scale = scale_value;
         }
 
         public string get_flag(){

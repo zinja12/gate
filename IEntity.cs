@@ -12,6 +12,7 @@ namespace gate
         Vector2 get_base_position();
         float get_depth(float rotation) { return Constant.get_object_depth(rotation, get_base_position()); }
         float get_scale();
+        void set_scale(float scale_value);
         string get_flag();
         string get_id();
         void set_base_position(Vector2 base_position);

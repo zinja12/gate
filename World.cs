@@ -84,7 +84,7 @@ namespace gate
         private bool editor_active = false, editor_enabled = true;
         private int selected_object = 1;
         private float selection_cooldown = 200f, selection_elapsed;
-        private float editor_object_rotation = 0f;
+        private float editor_object_rotation = 0f, editor_object_scale = 1f;
         //private Dictionary<int, Texture2D> object_map;
         private Dictionary<int, IEntity> obj_map;
         private Vector2 mouse_world_position, create_position;
@@ -758,6 +758,7 @@ namespace gate
                 //editor mode swap current state
                 editor_active = !editor_active;
                 editor_object_rotation = 0;
+                editor_object_scale = 1f;
                 bool ai_behavior_enabled;
                 //if active
                 if (editor_active) {
@@ -823,10 +824,12 @@ namespace gate
                     selected_object--;
                     selection_elapsed = 0f;
                     editor_object_rotation = 0;
+                    editor_object_scale = 1f;
                 } else if (Keyboard.GetState().IsKeyDown(Keys.O) && selection_elapsed >= selection_cooldown) {
                     selected_object++;
                     selection_elapsed = 0f;
                     editor_object_rotation = 0;
+                    editor_object_scale = 1f;
                 }
                 
                 //handle object rotation for editor objects
@@ -836,6 +839,17 @@ namespace gate
                     editor_object_rotation -= 10f;
                 }
                 selected_entity.set_rotation_offset(MathHelper.ToDegrees(editor_object_rotation));
+                //handle object scale for editor objects
+                if (Keyboard.GetState().IsKeyDown(Keys.OemSemicolon)) {
+                    editor_object_scale += 0.1f;
+                } else if (Keyboard.GetState().IsKeyDown(Keys.OemQuotes)) {
+                    editor_object_scale -= 0.1f;
+                }
+                //prevent negative scale
+                if (editor_object_scale <= 0f) {
+                    editor_object_scale = 0f;
+                }
+                selected_entity.set_scale(editor_object_scale);
                 
                 //wrap editor tool
                 if (editor_tool_idx >= editor_tool_count) {
@@ -920,7 +934,7 @@ namespace gate
                             Console.WriteLine("round_tile," + create_position.X + "," + create_position.Y + ",3");
                             break;
                         case 10:
-                            Tile tan_tile = new Tile(create_position, 2f, Constant.tan_tile_tex, "tan_tile", (int)DrawWeight.Medium, editor_object_idx);
+                            Tile tan_tile = new Tile(create_position, editor_object_scale, Constant.tan_tile_tex, "tan_tile", (int)DrawWeight.Medium, editor_object_idx);
                             add_floor_entity(tan_tile);
                             Console.WriteLine("tan_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;
@@ -965,7 +979,7 @@ namespace gate
                             Console.WriteLine("condition created!");
                             break;
                         case 17:
-                            Tile gt_tile = new Tile(create_position, 2f, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
+                            Tile gt_tile = new Tile(create_position, editor_object_scale, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
                             add_floor_entity(gt_tile);
                             Console.WriteLine("grass_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;

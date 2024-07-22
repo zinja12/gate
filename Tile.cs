@@ -66,6 +66,10 @@ namespace gate
 
         public float get_scale() { return scale; }
 
+        public void set_scale(float scale_value) {
+            this.scale = scale_value;
+        }
+
         public string get_flag() { return Constant.ENTITY_PASSIVE; }
 
         public void set_base_position(Vector2 position) {

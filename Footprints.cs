@@ -98,6 +98,10 @@ namespace gate
             return scale;
         }
 
+        public void set_scale(float scale_value) {
+            this.scale = scale_value;
+        }
+
         public string get_id() {
             return "footprints";
         }

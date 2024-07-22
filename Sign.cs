@@ -145,6 +145,10 @@ namespace gate
             return scale;
         }
 
+        public void set_scale(float scale_value) {
+            this.scale = scale_value;
+        }
+
         public void Draw(SpriteBatch spriteBatch) {
             //draw shadow
             spriteBatch.Draw(Constant.shadow_tex, draw_position, null, Color.Black * 0.5f, -rotation, rotation_point, scale, SpriteEffects.None, 0f);
