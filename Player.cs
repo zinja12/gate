@@ -937,7 +937,7 @@ namespace gate
                 //create new footprint and set elapsed back to 0
                 footprints.Add(new Footprints(depth_sort_position, 1f, Constant.footprint_tex, rotation, 0.5f, 0.01f, Color.Black));
                 //add particle system for puff
-                particle_systems.Add(new ParticleSystem(Constant.rotate_point(draw_position, rotation, 2f, Constant.direction_up), 1, 350f, random.Next(1, 4), 1, 2, Constant.white_particles));
+                particle_systems.Add(new ParticleSystem(Constant.rotate_point(draw_position, rotation, 2f, Constant.direction_down), 1, 350f, random.Next(1, 4), 1, 2, Constant.white_particles));
                 footprints_elapsed = 0;
             }
         }
