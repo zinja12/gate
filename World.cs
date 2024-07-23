@@ -850,9 +850,9 @@ namespace gate
                 selected_entity.set_rotation_offset(MathHelper.ToDegrees(editor_object_rotation));
                 //handle object scale for editor objects
                 if (Keyboard.GetState().IsKeyDown(Keys.OemSemicolon)) {
-                    editor_object_scale += 0.1f;
-                } else if (Keyboard.GetState().IsKeyDown(Keys.OemQuotes)) {
                     editor_object_scale -= 0.1f;
+                } else if (Keyboard.GetState().IsKeyDown(Keys.OemQuotes)) {
+                    editor_object_scale += 0.1f;
                 }
                 //prevent negative scale
                 if (editor_object_scale <= 0f) {
