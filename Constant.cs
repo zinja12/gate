@@ -68,6 +68,7 @@ namespace gate
 
         public static List<Color> green_particles = new List<Color>() {Color.White, Color.Green, Color.Black};
         public static List<Color> red_particles = new List<Color>() {Color.White, Color.Red, Color.Black};
+        public static List<Color> white_particles = new List<Color>() {Color.White, Color.White, Color.White};
 
         //gba color palette
         public static Color sandy = new Color(219,215,182);

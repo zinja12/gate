@@ -23,9 +23,11 @@ namespace gate
         private bool constant_emission;
         private int total_particle_count, current_particle_count;
         private List<Color> particle_colors;
+
+        private int particle_min_scale, particle_max_scale;
         
         //constant emission constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, List<Color> particle_colors) {
+        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int particle_min_scale, int particle_max_scale, List<Color> particle_colors) {
             this.base_position = base_position;
             this.max_speed = max_speed;
             this.random = new Random();
@@ -35,11 +37,13 @@ namespace gate
 
             this.particle_life_duration = particle_life_duration;
             this.constant_emission = true;
+            this.particle_min_scale = particle_min_scale;
+            this.particle_max_scale = particle_max_scale;
             this.particle_colors = particle_colors;
         }
         
         //puff / explosion constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, List<Color> particle_colors) {
+        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors) {
             this.base_position = base_position;
             this.max_speed = max_speed;
             this.random = new Random();
@@ -52,6 +56,8 @@ namespace gate
 
             this.total_particle_count = total_particle_count;
             this.current_particle_count = 0;
+            this.particle_min_scale = particle_min_scale;
+            this.particle_max_scale = particle_max_scale;
             this.particle_colors = particle_colors;
         }
 
@@ -69,10 +75,10 @@ namespace gate
             direction = Constant.rotate_point(direction, rotation, 1f, Constant.direction_up);
             //only add particles if we are constantly emitting particles
             if (constant_emission) {
-                particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, Constant.footprint_tex, (float)random.Next(1, 3), particle_colors));
+                particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, Constant.footprint_tex, (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
             } else {
                 if (current_particle_count < total_particle_count) {
-                    particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, Constant.footprint_tex, (float)random.Next(1, 3), particle_colors));
+                    particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, Constant.footprint_tex, (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
                     current_particle_count++;
                 }
             }

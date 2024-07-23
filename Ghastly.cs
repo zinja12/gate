@@ -62,7 +62,7 @@ namespace gate
             this.rotation_point = new Vector2(texture.Width / 2, texture.Height / 2);
             this.rect_size = texture.Width;
 
-            this.particle_system = new ParticleSystem(this.draw_position, 2, 1000f, Constant.red_particles);
+            this.particle_system = new ParticleSystem(this.draw_position, 2, 1000f, 1, 3, Constant.red_particles);
 
             this.hurtbox = new RRect(this.draw_position, texture.Width, texture.Height);
 
