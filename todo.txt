@@ -131,6 +131,7 @@ ToDo List:
     - for linking objects and scripting it will be helpful if each object has it's own unique numerical id
 [DONE](FEATURE)swap inputs for heavy attack and bow
     - this will make missing the input for firing an arrow harder (if impossible)
+[DONE](FEATURE)create level transitions
 [](FEATURE)add player death/failure animation
 [](FEATURE)redo color palette and make more nature art assets
 [](FEATURE)background floor tex + trail textures and add to game
@@ -159,7 +160,7 @@ ToDo List:
     -make weapon move on a sin curve while walking to indicate motion
     -make character swing weapon programatically? (aka just move it to opposite side when attack is pressed)
         -fix swing artwork to actually look more like complete parabolic swing
-[](FEATURE)create level transitions
+
 [](FEATURE)create engine to play sounds
     -different channels for effects?
     -queue songs/music to play
