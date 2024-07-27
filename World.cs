@@ -63,7 +63,6 @@ namespace gate
         //world variables
         private float render_distance = 1000f;
         private int freeze_frames = 0;
-        private bool reload_world = false;
         //level transition variables
         private bool transition_active = false;
         private string next_level_id = null;
@@ -573,8 +572,6 @@ namespace gate
             camera.Rotation = 0f;
             //sort the entities list once so things are not drawn out of order in terms of depth values
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
-            //set reload world to false
-            reload_world = false;
         }
 
         private void check_and_load_tex(ref Texture2D tex, string texture_path) {
@@ -619,10 +616,9 @@ namespace gate
                 return;
             }
 
-            if (reload_world) {
-                Console.WriteLine("reload world!");
-                unload_level();
-                load_level(content_root_directory, _graphics, current_level_id);
+            //keep level transitions updated
+            if (next_level_id != null) {
+                level_transition(gameTime, game.get_spriteBatch(), next_level_id);
             }
 
             //handle textbox
@@ -697,9 +693,14 @@ namespace gate
 
             #region player_death
             if (player.get_health() <= 0) {
-                //unload the level and reload it
-                unload_level();
-                load_level(content_root_directory, _graphics, current_level_id);
+                //player has died, transition and reload the current level
+                if (!transition_active) {
+                    set_transition(true, current_level_id);
+                }
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.B)) {
+                set_transition(true, current_level_id);
             }
             #endregion
 
@@ -795,11 +796,6 @@ namespace gate
                 }
                 //push an update to invisible_objects
                 update_invisible_objects(editor_active);
-            }
-            
-            //keep level transitions updated
-            if (next_level_id != null) {
-                level_transition(gameTime, game.get_spriteBatch(), next_level_id);
             }
             
             #region editor_code
@@ -1303,7 +1299,10 @@ namespace gate
                     bool collision = io.check_hitbox_collisions(player.get_hurtbox());
                     if (collision && !player.is_dashing() && !editor_active) {
                         Console.WriteLine("death!");
-                        reload_world = true;
+                        //transition to beginning of the level (reload world)
+                        if (!transition_active) {
+                            set_transition(true, current_level_id);
+                        }
                     }
                 }
             }
@@ -1347,6 +1346,8 @@ namespace gate
         
         #region level_transitions
         //function to set up transition
+        //NOTE: make sure that you check for !transition_active before invoking the function,
+        //otherwise the update() will run again and the transition will continually trigger without ever completing, thereby just freezing the game (softlock)
         private void set_transition(bool value, string level_id) {
             //set transition to active and set elapsed and next level variables
             transition_active = value;
