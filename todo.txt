@@ -131,6 +131,7 @@ ToDo List:
     - for linking objects and scripting it will be helpful if each object has it's own unique numerical id
 [DONE](FEATURE)swap inputs for heavy attack and bow
     - this will make missing the input for firing an arrow harder (if impossible)
+[](FEATURE)add player death/failure animation
 [](FEATURE)redo color palette and make more nature art assets
 [](FEATURE)background floor tex + trail textures and add to game
     -implement some type of ordering for floor textures so trails can go on top of floor textures
@@ -239,9 +240,10 @@ ToDo List:
     -this probably has something to do with how the secondary frame is being rendered
     -need to find a way to render an arbitrary (next in this case) level to a rendertarget frame for the transition
     -fixed by doing away with render targets. just put a black texture over the screen lol
-[](BUG)level transitions do not work for player death or falling (invisible object collision)
+[DONE](BUG)level transitions do not work for player death or falling (invisible object collision)
     -this seems like it has something to do with unloading and reloading the level
     -or that the code gets stuck in a loop and never actually unloads or reloads the level to progress past it
+    -needed to just check that the transition was not already active before setting it to active via function call
 [](BUG)fix textbox positioning and scale on window resize
 [](BUG)fix rotation for tile objects in editor
 [](BUG)trees do not get properly drawn or saved to expected position
