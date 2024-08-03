@@ -1508,6 +1508,7 @@ namespace gate
             return entities_list.get_entity_by_id(obj_id);
         }
 
+        //NOTE: TODO: need to update this to search all lists for the entity collision
         public IEntity find_entity_colliding(RRect r) {
             foreach (IEntity e in collision_entities) {
                 //cast to collision entity
