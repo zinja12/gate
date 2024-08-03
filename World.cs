@@ -92,7 +92,7 @@ namespace gate
         private Keys previous_key;
         private ICondition selected_condition;
         //editor tools: (object_placement, object/linkage editor)
-        private int editor_tool_idx, editor_object_idx, editor_tool_count;
+        private int editor_tool_idx, editor_object_idx, editor_tool_count, editor_layer, editor_layer_count;
 
         //Random variable
         private Random random = new Random();
@@ -160,7 +160,9 @@ namespace gate
         private void editor_init() {
             /*Editor Initialization*/
             editor_tool_idx = 0;
-            editor_tool_count = 2;
+            editor_tool_count = 3;
+            editor_layer = 0;
+            editor_layer_count = 2;
             //obj map init
             obj_map = new Dictionary<int, IEntity>();
             obj_map.Add(1, new Tree(Vector2.Zero, 1f, Constant.tree_spritesheet, false, "tree", -1));
@@ -672,6 +674,9 @@ namespace gate
                 }
             }
 
+            //update plants
+            update_forest_geometry(gameTime, camera.Rotation);
+
             //update conditions
             condition_manager.Update(gameTime, camera.Rotation, mouse_hitbox);
 
@@ -755,8 +760,6 @@ namespace gate
                 Keyboard.GetState().IsKeyDown(Keys.Right) || 
                 GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X > 0.1f || 
                 GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X < -0.1f) {
-                //update plants
-                update_forest_geometry(gameTime, camera.Rotation);
                 
                 //calculate rotation in degrees
                 rotation = MathHelper.ToDegrees(MathHelper.WrapAngle(camera.Rotation));
@@ -824,6 +827,14 @@ namespace gate
                     editor_tool_idx++;
                     selection_elapsed = 0f;
                 }
+                //scroll through available editor layers
+                if (Keyboard.GetState().IsKeyDown(Keys.D3) && selection_elapsed >= selection_cooldown) {
+                    editor_layer--;
+                    selection_elapsed = 0f;
+                } else if (Keyboard.GetState().IsKeyDown(Keys.D4) && selection_elapsed >= selection_cooldown) {
+                    editor_layer++;
+                    selection_elapsed = 0f;
+                }
                 //scroll through the objects available
                 if (Keyboard.GetState().IsKeyDown(Keys.I) && selection_elapsed >= selection_cooldown) {
                     selected_object--;
@@ -863,6 +874,12 @@ namespace gate
                 } else if (editor_tool_idx < 0) {
                     Console.WriteLine("wrap selection up");
                     editor_tool_idx = editor_tool_count - 1;
+                }
+                //wrap editor layer
+                if (editor_layer >= editor_layer_count) {
+                    editor_layer = 0;
+                } else if (editor_layer < 0) {
+                    editor_layer = editor_layer_count - 1;
                 }
                 //wrap selected object
                 if (selected_object > obj_map.Count) {
@@ -1077,6 +1094,38 @@ namespace gate
                                     }
                                 }
                             }
+                        }
+                    }
+                } else if (editor_tool_idx == 2) {
+                    //delete tool
+                    if (Mouse.GetState().RightButton == ButtonState.Pressed) {
+                        //can use basic find entity colliding since plants are now stacked objects with collision
+                        //find collision entity
+                        IEntity mouse_collision_entity = find_entity_colliding(mouse_hitbox);
+                        switch (editor_layer) {
+                            case 0:
+                                //floor layer
+                                FloorEntity fe = find_floor_entity_colliding(mouse_hitbox);
+                                if (fe is Tile) {
+                                    Tile t = (Tile)fe;
+                                    if (floor_entities.Contains(fe)) {
+                                        //remove
+                                        clear_entity(t);
+                                    }
+                                }
+                                break;
+                            case 1:
+                                //collision layer
+                                //same thing for all objects with collision
+                                if (collision_geometry.Contains(mouse_collision_entity) || 
+                                    collision_entities.Contains(mouse_collision_entity) || 
+                                    plants.Contains(mouse_collision_entity)) {
+                                    //remove
+                                    clear_entity(mouse_collision_entity);
+                                }
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -1474,6 +1523,31 @@ namespace gate
                     return e;
                 }
             }
+            foreach (IEntity e in plants) {
+                ICollisionEntity ce = (ICollisionEntity)e;
+                if (ce.get_hurtbox().collision(r)) {
+                    return e;
+                }
+            }
+            return null;
+        }
+
+        public FloorEntity find_floor_entity_colliding(RRect r) {
+            //collision by distance tobase position?
+            //since floor entities do not have collision geometry?
+            float distance_threshold = 50f;
+            //loop over floor entities
+            foreach (FloorEntity fe in floor_entities) {
+                //cast to tile
+                if (fe is Tile) {
+                    Tile tile_entity = (Tile)fe;
+                    //calculate distance to tile from mouse_position
+                    if (Vector2.Distance(tile_entity.draw_position, mouse_hitbox.position) < distance_threshold) {
+                        //return
+                        return fe;                        
+                    }
+                }
+            }
             return null;
         }
 
@@ -1582,6 +1656,9 @@ namespace gate
                     //draw preview of object
                     IEntity selected_entity = obj_map[selected_object];
                     selected_entity.Draw(_spriteBatch);
+                } else if (editor_tool_idx == 1) {
+                } else if (editor_tool_idx == 2) {
+                    _spriteBatch.DrawString(Constant.arial_small, $"delete", mouse_hitbox.position, Color.Black);
                 }
                 
                 Renderer.FillRectangle(_spriteBatch, create_position, 10, 10, Color.Purple);
@@ -1644,6 +1721,7 @@ namespace gate
             //_spriteBatch.DrawString(Constant.arial_small, "selected_object:" + selected_object, new Vector2(0, 17*5), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"selected_object:{selected_object},obj_id:{obj_map[selected_object].get_id()}", new Vector2(0, 17*5), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}", new Vector2(0, 17*6), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
             _spriteBatch.End();
         }
     }

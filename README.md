@@ -47,6 +47,8 @@ Codename: The Gate
 - Left Mouse Click - place object
 - 1 - rotate selected editor tool left
 - 2 - rotate selected editor tool right
+- 3 - rotate selected editor layer left
+- 4 - rotate selected editor layer right
 
 Note: Mouse right clicking on condition objects activates their debug tool buttons to connect and disconnect entities to and from the condition
 
