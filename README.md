@@ -54,7 +54,7 @@ Note: Mouse right clicking on condition objects activates their debug tool butto
 
 Note: Right click when in delete mode to delete objects
 
-## Editor Tools
+#### Editor Tools
 - 0 - Placement Tool
 - 1 - Gameplay Condition Edit Tool
 - 2 - Delete Tool
