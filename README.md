@@ -52,6 +52,13 @@ Codename: The Gate
 
 Note: Mouse right clicking on condition objects activates their debug tool buttons to connect and disconnect entities to and from the condition
 
+Note: Right click when in delete mode to delete objects
+
+## Editor Tools
+- 0 - Placement Tool
+- 1 - Gameplay Condition Edit Tool
+- 2 - Delete Tool
+
 ## Screen Rendering
 The game world is rendered to a texture and then drawn to the screen. This is achieved via the canvas class capturing the `_spriteBatch` calls by rendering them to a render target and then passing that to be drawn to the screen. Every time the screen is updated in size the dimensions of the screen are reset and the action is captured so that we can calculate the best fit for the render target in the Canvas.cs class. The viewport for the world does not need to be updated, only the dimensions and fit + position of the render target being drawn to the screen.
 
