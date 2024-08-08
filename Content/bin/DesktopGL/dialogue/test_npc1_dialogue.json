@@ -1,0 +1,13 @@
+{
+    "character_name": "Samyu",
+    "dialogue": [
+        {
+            "speaker": "npc1",
+            "dialogue_line": "hi! i'm so glad you're here!"
+        },
+        {
+            "speaker": "npc1",
+            "dialogue_line": "the village is just a bit further down the trail"
+        }
+    ]
+}

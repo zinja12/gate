@@ -31,8 +31,8 @@ namespace gate
         private int hit_flash_count = 0;
         protected Color draw_color;
 
-        private Vector2 rotation_point;
-        private float scale;
+        protected Vector2 rotation_point;
+        protected float scale;
         protected float rotation = 0.0f, rotation_offset = 0f;
 
         //animation vars
@@ -681,7 +681,7 @@ namespace gate
             health = health_value;
         }
 
-        public void Draw(SpriteBatch spriteBatch) {
+        public virtual void Draw(SpriteBatch spriteBatch) {
             //if dead return
             if (is_dead()) return;
 

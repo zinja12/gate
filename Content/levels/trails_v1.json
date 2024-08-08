@@ -1624,7 +1624,8 @@
             "width": 0,
             "height": 0,
             "level_id": null,
-            "rotation": 0
+            "rotation": 0,
+            "npc_conversation_file_id": "test_npc1_dialogue.json"
         }
     ],
     "conditions": [],

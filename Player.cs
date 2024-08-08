@@ -523,20 +523,7 @@ namespace gate
             attack_cooldown_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             /*PARTICLE SYSTEMS CODE*/
-            //test particle system code
-            foreach (ParticleSystem ps in particle_systems) {
-                ps.Update(gameTime, rotation);
-                //add dead systems to dead list
-                if (ps.is_finished()) {
-                    dead_particle_systems.Add(ps);
-                }
-            }
-            //clear dead particle systems
-            foreach (ParticleSystem ps in dead_particle_systems) {
-                particle_systems.Remove(ps);
-            }
-            dead_particle_systems.Clear();
-            /*END PARTICLE SYSTEMS*/
+            update_particle_systems(gameTime, rotation);
 
             //update animations for the player
             if (!movement_disabled){
@@ -562,6 +549,24 @@ namespace gate
             previous_gamepad_state = current_gamepad_state;
 
             this.center_position = Constant.rotate_point(depth_sort_position, rotation, 16f, Constant.direction_up);
+        }
+
+        public void update_particle_systems(GameTime gameTime, float rotation) {
+            /*PARTICLE SYSTEMS CODE*/
+            //test particle system code
+            foreach (ParticleSystem ps in particle_systems) {
+                ps.Update(gameTime, rotation);
+                //add dead systems to dead list
+                if (ps.is_finished()) {
+                    dead_particle_systems.Add(ps);
+                }
+            }
+            //clear dead particle systems
+            foreach (ParticleSystem ps in dead_particle_systems) {
+                particle_systems.Remove(ps);
+            }
+            dead_particle_systems.Clear();
+            /*END PARTICLE SYSTEMS*/
         }
 
         public void receive_damage(GameTime gameTime) {

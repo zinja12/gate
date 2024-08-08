@@ -26,6 +26,9 @@
 /processorParam:TextureFormat=Color
 /build:color_palettte/color_palette_gba2.png
 
+#begin dialogue/test_npc1_dialogue.json
+/copy:dialogue/test_npc1_dialogue.json
+
 #begin fonts/arial.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

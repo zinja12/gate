@@ -58,6 +58,7 @@ namespace gate
 
         TextBox current_textbox = null;
         Sign current_sign = null;
+        NPC current_npc = null;
 
         float rotation = 0f;
         
@@ -203,6 +204,21 @@ namespace gate
             obj_map.Add(23, new Tile(Vector2.Zero, 2f, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, -1));
         }
 
+        public string read_gameworld_file_contents(string root_dir, string path, string lvl_id) {
+            string file_contents;
+            //set file path and pull all contents
+            var file_path = Path.Combine(root_dir, path + lvl_id);
+            Console.WriteLine("loading file path:" + file_path);
+            //pull file contents from path with stream reader
+            using (var stream = TitleContainer.OpenStream(file_path)){
+                using (var reader = new StreamReader(stream)){
+                    //pull all contents out of file
+                    file_contents = reader.ReadToEnd();
+                }
+            }
+            return file_contents;
+        }
+
         //function to load level files into the world
         public void load_level(string root_directory, GraphicsDeviceManager _graphics, string level_id) {
             //set current level id
@@ -232,17 +248,10 @@ namespace gate
             List<string> loaded_obj_identifiers = new List<string>();
 
             //set up and read level file
-            string file_contents;
-            //set file path and pull all contents
-            var file_path = Path.Combine(root_directory, "levels/" + level_id);
-            Console.WriteLine("loading file path:" + file_path);
-            using (var stream = TitleContainer.OpenStream(file_path)){
-                using (var reader = new StreamReader(stream)){
-                    //pull all contents out of file
-                    file_contents = reader.ReadToEnd();
-                }
-            }
-            /*Read file via json*/
+            string level_file_path = "levels/";
+            string dialogue_file_path = "dialogue/";
+            string file_contents = read_gameworld_file_contents(root_directory, level_file_path, level_id);
+            /*Read object from contents as json*/
             GameWorldFile world_file_contents = JsonSerializer.Deserialize<GameWorldFile>(file_contents);
             //check deserialization
             if (world_file_contents != null) {
@@ -400,8 +409,16 @@ namespace gate
                             enemies.Add(nightmare);
                             break;
                         case "npc":
+                            //check for conversation file specified
+                            GameWorldDialogueFile dialogue_file = null;
+                            if (w_obj.npc_conversation_file_id != null) {
+                                //conversation file specified, read the file
+                                string dialogue_file_contents = read_gameworld_file_contents(root_directory, dialogue_file_path, w_obj.npc_conversation_file_id);
+                                /*Read file via json*/
+                                dialogue_file = JsonSerializer.Deserialize<GameWorldDialogueFile>(dialogue_file_contents);
+                            }
                             //initialize npc as stationary to start
-                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, dialogue_file, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
                             //if there are path points specified then set the path points and set the behavior to loop
                             if (w_obj.npc_path_entity_ids != null && w_obj.npc_path_entity_ids.Count > 0) {
                                 //add all path points to npc
@@ -413,6 +430,7 @@ namespace gate
                             }
                             //add to entities list and npcs
                             entities_list.Add(npc);
+                            collision_entities.Add(npc);
                             npcs.Add(npc);
                             break;
                         case "wall":
@@ -646,17 +664,24 @@ namespace gate
             }
 
             //handle textbox
-            if (current_sign != null && current_textbox != null) {
+            if ((current_sign != null || current_npc != null) && current_textbox != null) {
                 //update the current sign (which will update the current textbox)
-                current_sign.Update(gameTime, camera.Rotation);
+                if (current_sign != null) {
+                    current_sign.Update(gameTime, camera.Rotation);
+                } else if (current_npc != null) {
+                    current_npc.Update(gameTime, camera.Rotation);
+                }
+                player.update_animation(gameTime);
+                player.update_particle_systems(gameTime, camera.Rotation);
 
                 //check for end of text
                 if (current_textbox.text_ended()) {
                     //reset textbox
                     current_textbox.reset();
-                    //remove reference to current_sign and current_textbox
+                    //remove reference to current_sign, current_textbox and current_npc
                     current_sign = null;
                     current_textbox = null;
+                    current_npc = null;
                     //reset the players dash cooldown to avoid input clash
                     player.reset_dash_cooldown(0f);
                 }
@@ -1280,7 +1305,7 @@ namespace gate
             if (player.hitbox_active()) {
                 foreach (IEntity e in collision_entities) {
                     //check player hitboxes collision with all entity hurtboxes
-                    if (e is Ghastly || e is Nightmare) {
+                    if ((e is Ghastly || e is Nightmare) && !(e is NPC)) {
                         ICollisionEntity ic = (ICollisionEntity)e;
                         if (ic.is_hurtbox_active()) {
                             bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
@@ -1345,6 +1370,16 @@ namespace gate
                             current_textbox = s.get_textbox();
                             current_sign = s;
                         }
+                    } else if (e is NPC) {
+                        NPC npc = (NPC)e;
+                        bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
+                        if (collision) {
+                            //set npc to display
+                            npc.display_textbox();
+                            //set current textbox to correct instance
+                            current_textbox = npc.get_textbox();
+                            current_npc = npc;
+                        }
                     }
                 }
 
@@ -1353,6 +1388,11 @@ namespace gate
                     bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
                     //set available interaction display
                     s.set_display_interaction(collision);
+                } else if (e is NPC) {
+                    NPC npc = (NPC)e;
+                    bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
+                    //set available interaction display
+                    npc.set_display_interaction(collision);
                 }
             }
 
@@ -1710,7 +1750,7 @@ namespace gate
         public void DrawTextOverlays(SpriteBatch _spriteBatch) {
             //draw textboxes
             _spriteBatch.Begin();
-            if (current_sign != null && current_textbox != null) {
+            if ((current_sign != null || current_npc != null) && current_textbox != null) {
                 current_textbox.Draw(_spriteBatch);
             }
             _spriteBatch.End();

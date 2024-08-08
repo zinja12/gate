@@ -27,8 +27,15 @@ namespace gate
         protected List<IEntity> path_points;
         protected IEntity current_path_point;
         protected int current_path_point_idx = 0;
+        
+        protected GameWorldDialogueFile conversation_file;
+        protected string npc_name;
+        protected TextBox textbox;
+        protected bool display_text = false, display_interaction = false;
+        protected List<string> messages;
+        protected Vector2 interaction_display_position;
 
-        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, Texture2D hit_texture, Player player, int ID, string identifier) 
+        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, Texture2D hit_texture, Player player, int ID, string identifier) 
             : base(texture, base_position, scale, hit_texture, player, ID, identifier) {
             //NPC constructor
             this.size = size;
@@ -37,6 +44,7 @@ namespace gate
             this.hitbox_center = this.draw_position + new Vector2(hitbox_center_distance, 0);
             nightmare_size = this.size;
             this.draw_color = Color.Green;
+            this.interaction_display_position = new Vector2(depth_sort_position.X, depth_sort_position.Y);
 
             //set appearance direction to down so they are not drawn facing up on initialization
             last_movement_vector_idx = 3;
@@ -44,6 +52,25 @@ namespace gate
             this.current_ai_behavior = initial_ai_behavior;
             movement_speed = 1.2f;
             path_points = new List<IEntity>();
+
+            if (conversation_file != null) {
+                this.conversation_file = conversation_file;
+                this.messages = parse_dialogue_file(this.conversation_file);
+                //initialize textbox
+                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, messages, Constant.textbox_width, Constant.textbox_height, Color.White);
+            }
+        }
+
+        public List<string> parse_dialogue_file(GameWorldDialogueFile dialogue_file) {
+            List<string> msgs = new List<string>();
+            if (dialogue_file != null) {
+                npc_name = dialogue_file.character_name;
+                for (int i = 0; i < dialogue_file.dialogue.Count; i++) {
+                    GameWorldDialogue gw_dialogue = dialogue_file.dialogue[i];
+                    msgs.Add(gw_dialogue.dialogue_line);
+                }
+            }
+            return msgs;
         }
 
         public override void Update(GameTime gameTime, float rotation) {
@@ -58,6 +85,9 @@ namespace gate
             interaction_box.update(rotation, hitbox_center);
             //update animation
             update_animation(gameTime);
+
+            //update textboxes
+            update_npc_textbox(gameTime, rotation);
 
             if (ai_behavior_enabled) {
                 update_movement(rotation);
@@ -180,6 +210,23 @@ namespace gate
             return dot_product_weights.ToArray();
         }
 
+        public void update_npc_textbox(GameTime gameTime, float rotation) {
+            this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-Constant.Y_tex.Height), Constant.direction_down);
+            
+            //if displaying text
+            if (display_text && !textbox.text_ended()) {
+                //update textbox
+                textbox.Update(gameTime);
+            }
+
+            if (textbox.text_ended()) {
+                display_text = false;
+            }
+
+            //update interaction box
+            interaction_box.update(rotation, draw_position);
+        }
+
         public override bool is_aggro() {
             //NPCs are usually never aggro so set to false
             //but maybe we want to enable this behavior in a more complex fashion later on
@@ -209,6 +256,38 @@ namespace gate
             };
         }
 
-        /*Draw is inherited from base class */
+        public void set_display_interaction(bool display_interaction) {
+            this.display_interaction = display_interaction;
+        }
+
+        public bool get_display_interaction() {
+            return display_interaction;
+        }
+
+        public void display_textbox() {
+            display_text = true;
+        }
+        
+        public RRect get_interaction_box() {
+            return interaction_box;
+        }
+
+        public TextBox get_textbox() {
+            return textbox;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch) {
+            //call base draw function
+            base.Draw(spriteBatch);
+
+            //display interaction
+            if (display_interaction && !display_text) {
+                spriteBatch.Draw(Constant.Y_tex, interaction_display_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+            }
+
+            if (DEBUG) {
+                interaction_box.draw(spriteBatch);
+            }
+        }
     }
 }
