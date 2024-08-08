@@ -63,6 +63,10 @@ namespace gate
             set_elapsed(0);
         }
 
+        public float get_delay() {
+            return delay;
+        }
+
         public void Update(GameTime gameTime){
             elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 

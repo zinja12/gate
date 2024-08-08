@@ -49,6 +49,7 @@ namespace gate
         List<ITrigger> triggers;
         List<IEntity> collision_geometry;
         List<IAiEntity> enemies;
+        List<IAiEntity> npcs;
         List<IEntity> projectiles;
         ConditionManager condition_manager;
 
@@ -131,6 +132,8 @@ namespace gate
             triggers = new List<ITrigger>();
             //create list of enemies
             enemies = new List<IAiEntity>();
+            //crease list of npcs
+            npcs = new List<IAiEntity>();
             //create list of projectiles
             projectiles = new List<IEntity>();
             //create conditions manager
@@ -396,6 +399,22 @@ namespace gate
                             collision_entities.Add(nightmare);
                             enemies.Add(nightmare);
                             break;
+                        case "npc":
+                            //initialize npc as stationary to start
+                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            //if there are path points specified then set the path points and set the behavior to loop
+                            if (w_obj.npc_path_entity_ids != null && w_obj.npc_path_entity_ids.Count > 0) {
+                                //add all path points to npc
+                                foreach (int entity_id in w_obj.npc_path_entity_ids) {
+                                    npc.add_path_point(find_entity_by_id(entity_id));
+                                }
+                                //set behavior to loop path
+                                npc.set_ai_behavior(AIBehavior.LoopPath);
+                            }
+                            //add to entities list and npcs
+                            entities_list.Add(npc);
+                            npcs.Add(npc);
+                            break;
                         case "wall":
                             check_and_load_tex(ref Constant.wall_tex, "sprites/box_spritesheet1");
                             StackedObject w = new StackedObject(w_obj.object_identifier, Constant.wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
@@ -447,10 +466,13 @@ namespace gate
                     //set object_idx to whatever i is for editor current object idx when we get out of the loop
                     editor_object_idx = i;
                 }
-                //set fellow enemies for all enemies (this is so each entity knows where the others are to avoid overlaps)
-                foreach (IAiEntity ai in enemies) {
-                    ai.set_ai_entities(enemies);
-                }
+                //gather all ai entities
+                List<IAiEntity> all_ai_entities = new List<IAiEntity>();
+                foreach (IAiEntity ai in enemies) { all_ai_entities.Add(ai); }
+                foreach (IAiEntity ai in npcs) { all_ai_entities.Add(ai); }
+                //set fellow enemies for all ais (this is so each entity knows where the others are to avoid overlaps)
+                foreach (IAiEntity ai in enemies) { ai.set_ai_entities(all_ai_entities); }
+                foreach (IAiEntity ai in npcs) { ai.set_ai_entities(all_ai_entities); }
                 //set up conditions
                 for (int i = 0; i < world_file_contents.conditions.Count; i++) {
                     GameWorldCondition w_condition = world_file_contents.conditions[i];
@@ -642,6 +664,7 @@ namespace gate
                 return;
             }
 
+            //UPDATE RENDERLIST ENTITIES
             //update active entities (also updates some collision entities)
             for (int i = 0; i < entities_list.get_entities().Count; i++) {
                 IEntity e = entities_list.get_entities()[i];

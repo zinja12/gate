@@ -10,38 +10,40 @@ namespace gate
 {
     public class Nightmare : IEntity, ICollisionEntity, IAiEntity
     {
-        public Vector2 base_position;
-        public Vector2 draw_position;
-        public Vector2 attack_draw_position;
-        public Vector2 depth_sort_position;
+        protected Vector2 base_position;
+        protected Vector2 draw_position;
+        protected Vector2 attack_draw_position;
+        protected Vector2 depth_sort_position;
         
         private int ID;
-        private string identifier;
-        private const int nightmare_size = 32;
+        protected string identifier;
+        protected int nightmare_size;
         private int health = 4;
 
-        private RRect hurtbox;
+        protected RRect hurtbox;
         private bool hurtbox_active = true;
         private float take_hit_elapsed;
         private float reactivate_hurtbox_threshold = 400f;
-        private Vector2 hit_direction;
+        protected Vector2 hit_direction;
         private float hit_speed = 0.03f;
         private float take_hit_color_change_elapsed;
         private float color_change_threshold = 200f;
         private int hit_flash_count = 0;
-        private Color draw_color = Color.White;
+        protected Color draw_color;
 
         private Vector2 rotation_point;
         private float scale;
-        private float rotation = 0.0f, rotation_offset = 0f;
+        protected float rotation = 0.0f, rotation_offset = 0f;
 
         //animation vars
-        private Animation idle_animation, 
+        protected Animation idle_animation, 
             walk_animation,
             attack_animation;
-        private float idle_animation_duration = 300f;
-        private float walk_animation_duration = 170f;
-        private float attack_animation_duration = 120f;
+        protected float idle_animation_duration = 300f;
+        protected float walk_animation_duration = 170f;
+        protected float attack_animation_duration = 120f;
+        protected float animation_movement_swap_elapsed = 0f, animation_movement_swap_threshold = 150f;
+        protected int animation_case = 0;
 
         private Texture2D texture;
         private Texture2D hit_texture;
@@ -58,17 +60,17 @@ namespace gate
         private float noise_angle = 1f;
 
         /*AI Behavior Variables*/
-        private List<Vector2> movement_directions;
+        protected List<Vector2> movement_directions;
         private Vector2 current_movement_direction = Vector2.Zero;
-        private float[] direction_weights = new float[8];
-        private int movement_vector_idx;
+        protected float[] direction_weights = new float[8];
+        protected int movement_vector_idx;
         //direction vectors
-        private Vector2 direction;
-        private Vector2 last_direction;
+        protected Vector2 direction;
+        protected Vector2 last_direction;
         Vector2 goal_vector;
-        private int last_movement_vector_idx;
-        private bool moving = false;
-        private float movement_speed = 1.5f;
+        protected int last_movement_vector_idx;
+        protected bool moving = false;
+        protected float movement_speed = 1.5f;
         //circling variables
         private int circle_direction = 0;
         private bool circling = false;
@@ -77,35 +79,40 @@ namespace gate
         private float hitbox_deactivate_elapsed;
         private bool melee_attack = false;
         private float melee_attack_hitbox_active_threshold = 500f, hitbox_deactivate_threshold = 200f;
-        private RRect hitbox;
-        private float hitbox_center_distance = nightmare_size/2;
-        private Vector2 hitbox_center;
-        private bool ai_behavior_enabled = true;
+        protected RRect hitbox;
+        protected float hitbox_center_distance;
+        protected Vector2 hitbox_center;
+        protected bool ai_behavior_enabled = true;
+        protected float striking_distance = 55f;
 
         //Damage variables
         List<IEntity> seen_projectiles;
         
         /*PARTICLE SYSTEM*/
-        List<ParticleSystem> particle_systems;
-        List<ParticleSystem> dead_particle_systems;
+        protected List<ParticleSystem> particle_systems;
+        protected List<ParticleSystem> dead_particle_systems;
         
         private float engagement_distance = Constant.nightmare_engagement_distance;
 
         private Player player; // player var for use in AI behavior
-        private Random random;
+        protected Random random;
 
-        private List<IAiEntity> enemies;
+        protected List<IAiEntity> enemies;
         
         public static bool DEBUG = false;
         
         public List<Color> blues;
 
         private float previous_rotation = 0f;
-        private float angle;
+        protected float angle;
 
-        private GameTime gt;
+        protected GameTime gt;
 
         public Nightmare(Texture2D texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier) {
+            this.nightmare_size = 32;
+            this.hitbox_center_distance = nightmare_size/2;
+            this.draw_color = Color.White;
+
             this.texture = texture;
             this.base_position = base_position;
             this.draw_position = new Vector2(base_position.X - (nightmare_size / 2), 
@@ -178,9 +185,14 @@ namespace gate
             //particle system code
             this.particle_systems = new List<ParticleSystem>();
             this.dead_particle_systems = new List<ParticleSystem>();
+
+            //set appearance direction to down so they are not drawn facing up on initialization
+            this.last_movement_vector_idx = 1;
+            //offset the start of the animation slightly for each entity so they all do not start with the same animation frames (animation syncing)
+            idle_animation.set_elapsed((float)random.Next(0, (int)idle_animation_duration-1));
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public virtual void Update(GameTime gameTime, float rotation) {
             if (is_dead()) return;
 
             gt = gameTime;
@@ -268,7 +280,7 @@ namespace gate
             previous_rotation = rotation;
         }
 
-        public void update_movement(float rotation) {
+        public virtual void update_movement(float rotation) {
             if (circling && !melee_attack) {
                 //start attack timer
                 attack_timer_elapsed += (float)gt.ElapsedGameTime.TotalMilliseconds;
@@ -284,7 +296,7 @@ namespace gate
                 }
             }
             
-            if (!melee_attack){
+            if (!melee_attack) {
                 if (Vector2.Distance(get_base_position(), player.get_base_position()) < engagement_distance) {
                     //enemy aggro'd so set new engagement distance
                     engagement_distance = Constant.nightmare_aggro_engagement_distance;
@@ -333,7 +345,7 @@ namespace gate
         }
 
         //loop over potential movement directions and assign weights/scores to which direction will move towards the goal
-        public float[] assign_weights(Vector2[] movement_directions, IEntity goal_entity, bool ignore_circling) {
+        public virtual float[] assign_weights(Vector2[] movement_directions, IEntity goal_entity, bool ignore_circling) {
             // array list for dot product weights
             List<float> dot_product_weights = new List<float>();
             // loop over vectors and calculate the dot product
@@ -342,7 +354,7 @@ namespace gate
                 movement_directions[i].Normalize();
                 float weight = 0f;
                 //if the player is within striking distance (55f) we can start to prioritize horizontal movemnet to circle around the player for better strafing hits
-                if (Vector2.Distance(get_base_position(), goal_entity.get_base_position()) <= 55f && !ignore_circling) {
+                if (Vector2.Distance(get_base_position(), goal_entity.get_base_position()) <= striking_distance && !ignore_circling) {
                     circling = true;
                     //note: need to calculate the dot product with the normal vector as the goal rather than just the player because we want to be moving perpendicular to the goal rather than directly towards it
                     //calculate normal(s)
@@ -390,7 +402,7 @@ namespace gate
         }
 
         //basically just pick the best/largest weight/score and that is the direction that we should be going
-        public int select_best_weight(float[] weights) {
+        public virtual int select_best_weight(float[] weights) {
             // set the max weight to the first value, so we always have a best weight
             float max_weight = weights[0];
             int max_weight_idx = 0;
@@ -407,11 +419,18 @@ namespace gate
         }
 
         public void update_animation(GameTime gameTime) {
+            //calculate angle
             angle = MathHelper.ToDegrees((float)Math.Atan2(direction.Y, direction.X));
             //update walk animation if moving
             if (moving) {
                 //update animation for movement
-                switch (Constant.TranslateAngleToCompassDirection(angle, MathHelper.ToDegrees(rotation))) {
+                int calculated_animation_case = Constant.TranslateAngleToCompassDirection(angle, MathHelper.ToDegrees(rotation));
+                //handle animation sticking so that animations don't rubber-band as quickly leading to jank
+                if (calculated_animation_case != animation_case && animation_movement_swap_elapsed >= animation_movement_swap_threshold) {
+                    animation_case = calculated_animation_case;
+                    animation_movement_swap_elapsed = 0f;
+                }
+                switch (animation_case) {
                     case 0: //up - north
                         walk_animation.set_y_offset((int)nightmare_size*3);
                         break;
@@ -509,6 +528,8 @@ namespace gate
                 //keep idle animation updated when not moving
                 idle_animation.Update(gameTime);
             }
+            //increase animation timer
+            animation_movement_swap_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
         }
 
         public void update_hitbox_position(int direction_idx) {
@@ -531,7 +552,7 @@ namespace gate
             return moving;
         }
 
-        public bool is_aggro() {
+        public virtual bool is_aggro() {
             //enemy is only aggro when it is moving which is basically only when it's engagement distance is set to the aggro engagement distance
             return engagement_distance == Constant.nightmare_aggro_engagement_distance;
         }
@@ -567,7 +588,7 @@ namespace gate
             rotation_offset = radians_offset;
         }
 
-        public GameWorldObject to_world_level_object() {
+        public virtual GameWorldObject to_world_level_object() {
             return new GameWorldObject {
                 object_identifier = identifier,
                 object_id_num = get_obj_ID_num(),

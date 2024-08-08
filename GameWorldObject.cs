@@ -22,5 +22,6 @@ namespace gate
         public float height { get; set; }
         public string level_id { get; set; }
         public float rotation { get; set; }
+        public List<int> npc_path_entity_ids { get; set; }
     }
 }
