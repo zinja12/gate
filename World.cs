@@ -418,7 +418,7 @@ namespace gate
                                 dialogue_file = JsonSerializer.Deserialize<GameWorldDialogueFile>(dialogue_file_contents);
                             }
                             //initialize npc as stationary to start
-                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, dialogue_file, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, dialogue_file, w_obj.npc_conversation_file_id, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
                             //if there are path points specified then set the path points and set the behavior to loop
                             if (w_obj.npc_path_entity_ids != null && w_obj.npc_path_entity_ids.Count > 0) {
                                 //add all path points to npc

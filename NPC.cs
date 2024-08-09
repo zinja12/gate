@@ -29,13 +29,14 @@ namespace gate
         protected int current_path_point_idx = 0;
         
         protected GameWorldDialogueFile conversation_file;
+        protected string conversation_file_path_id;
         protected string npc_name;
         protected TextBox textbox;
         protected bool display_text = false, display_interaction = false;
         protected List<string> messages;
         protected Vector2 interaction_display_position;
 
-        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, Texture2D hit_texture, Player player, int ID, string identifier) 
+        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, int ID, string identifier) 
             : base(texture, base_position, scale, hit_texture, player, ID, identifier) {
             //NPC constructor
             this.size = size;
@@ -54,6 +55,7 @@ namespace gate
             path_points = new List<IEntity>();
 
             if (conversation_file != null) {
+                this.conversation_file_path_id = conversation_file_path_id;
                 this.conversation_file = conversation_file;
                 this.messages = parse_dialogue_file(this.conversation_file);
                 //initialize textbox
@@ -252,7 +254,9 @@ namespace gate
                 x_position = base_position.X,
                 y_position = base_position.Y,
                 scale = get_scale(),
-                rotation = get_rotation_offset()
+                rotation = get_rotation_offset(),
+                npc_path_entity_ids = path_points.ConvertAll(e => e.get_obj_ID_num()),
+                npc_conversation_file_id = conversation_file_path_id
             };
         }
 
