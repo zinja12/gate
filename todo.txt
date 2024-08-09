@@ -245,6 +245,9 @@ ToDo List:
     -this seems like it has something to do with unloading and reloading the level
     -or that the code gets stuck in a loop and never actually unloads or reloads the level to progress past it
     -needed to just check that the transition was not already active before setting it to active via function call
+[DONE](BUG)fix not being able to attack while moving down left and down right (not receiving input at all while holding those directions) - KEYBOARD ONLY ISSUE
+    -this is an issue with monogame for some reason just not being able to process the input with the H key
+    -fixed by just swapping the attack input to V
 [](BUG)fix textbox positioning and scale on window resize
 [](BUG)fix rotation for tile objects in editor
 [](BUG)trees do not get properly drawn or saved to expected position
@@ -256,6 +259,5 @@ ToDo List:
     -should try to populate and rotate the position at least once in the init to potentially avoid this
 [](BUG)resizing window repositions the text boxes, however it does not adjust the size of the box as it should
 [](BUG)optimize? game barely works on microsoft surface
-[](BUG)fix not being able to attack while moving down left and down right (not receiving input at all while holding those directions) - KEYBOARD ONLY ISSUE
 [WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
 [](BUG)fix hit confirm position when hitbox is active
