@@ -1453,7 +1453,7 @@ namespace gate
             //add entity to list
             floor_entities.Add(e);
             //sort by weight
-            floor_entities.OrderByDescending(x => x.get_draw_weight());
+            floor_entities = floor_entities.OrderByDescending(x => x.get_draw_weight()).ToList();
         }
         
         #region level_transitions

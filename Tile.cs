@@ -50,6 +50,7 @@ namespace gate
             this.identifier = identifier;
 
             this.ID = ID;
+            this.draw_weight = draw_weight;
         }
 
         public int get_draw_weight() {
