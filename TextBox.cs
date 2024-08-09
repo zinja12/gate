@@ -17,8 +17,8 @@ namespace gate
         private Vector2 box_title_offset = new Vector2(0, -20);
 
         private SpriteFont font;
-        private List<string> msgs;
-        private List<List<string>> msg_screens;
+        private List<(string, string)> msgs;
+        private List<(string, List<string>)> speaker_msg_screens;
         private string current_msg;
         private int current_msg_index, current_msg_screen_idx;
         private float width, height;
@@ -33,7 +33,7 @@ namespace gate
         private float background_opacity = 0.8f;
         private float max_line_width;
 
-        public TextBox(Vector2 screen_position, SpriteFont font, List<string> msgs, string box_title_name, float width, float height, Color color) {
+        public TextBox(Vector2 screen_position, SpriteFont font, List<(string, string)> msgs, string box_title_name, float width, float height, Color color) {
             this.screen_position = screen_position;
             this.font = font;
             this.msgs = msgs;
@@ -48,12 +48,14 @@ namespace gate
             }
 
             //build msg screens
-            msg_screens = msgs_to_msg_screens(font, msgs, max_line_width);
+            speaker_msg_screens = msgs_to_msg_screens2(font, msgs, max_line_width);
+            //msg_screens = msgs_to_msg_screens(font, msgs, max_line_width);
 
             //set the current message
             current_msg_index = 0;
             current_msg_screen_idx = 0;
-            current_msg = msg_screens[current_msg_screen_idx][current_msg_index];
+            //current_msg = msg_screens[current_msg_screen_idx][current_msg_index];
+            current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
             
             this.box_title_name = box_title_name;
         }
@@ -87,16 +89,16 @@ namespace gate
             //increment index
             ++current_msg_index;
             //check and handle out of bounds
-            if (current_msg_index >= msg_screens[current_msg_screen_idx].Count) {   
+            if (current_msg_index >= speaker_msg_screens[current_msg_screen_idx].Item2.Count) {   
                 ++current_msg_screen_idx;
                 current_msg_index = 0;
             }
-            if (current_msg_screen_idx >= msg_screens.Count) {
+            if (current_msg_screen_idx >= speaker_msg_screens.Count) {
                 end_of_text = true;
                 return "";
             }
             //pull message based on current index
-            return msg_screens[current_msg_screen_idx][current_msg_index];
+            return speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
         }
 
         private int key_down(Keys key) {
@@ -119,7 +121,7 @@ namespace gate
             end_of_text = false;
             current_msg_index = 0;
             current_msg_screen_idx = 0;
-            current_msg = msg_screens[current_msg_screen_idx][current_msg_index];
+            current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
         }
 
         //NOTE: going with list of lists here because messages will be formed like thoughts, meaning we can't just concat all the messages together
@@ -130,6 +132,16 @@ namespace gate
             //loop over messages provided and wrap text + produce msg screens to iterate through in sign
             foreach (string message in messages) {
                 msg_screens_list.Add(msg_to_msg_screens(sf, message, max_line_width));
+            }
+            return msg_screens_list;
+        }
+
+        public List<(string, List<string>)> msgs_to_msg_screens2(SpriteFont sf, List<(string, string)> messages, float max_line_width) {
+            List<(string, List<string>)> msg_screens_list = new List<(string, List<string>)>();
+            foreach (var tuple in messages) {
+                string speaker = tuple.Item1;
+                string message = tuple.Item2;
+                msg_screens_list.Add((speaker, msg_to_msg_screens(sf, message, max_line_width)));
             }
             return msg_screens_list;
         }
@@ -177,13 +189,11 @@ namespace gate
             //draw rectangle as backdrop for text
             Renderer.FillRectangle(spriteBatch, screen_position, (int)width, (int)height, Color.Black * background_opacity);
             //draw box title
-            if (box_title_name != null) {
-                spriteBatch.DrawString(Constant.arial_small, box_title_name, screen_position + box_title_offset, color);
-            }
+            spriteBatch.DrawString(Constant.arial_small, speaker_msg_screens[current_msg_screen_idx].Item1, screen_position + box_title_offset, color);
             //draw current message
             spriteBatch.DrawString(font, current_msg, screen_position + text_offset, color);
             //draw continue button for all but the last message screen
-            if (current_msg_screen_idx < msg_screens.Count-1) {
+            if (current_msg_screen_idx < speaker_msg_screens.Count-1) {
                 spriteBatch.DrawString(font, ">", screen_position + new Vector2(width - 50, height - 80), Color.White);
             }
         }

@@ -33,7 +33,7 @@ namespace gate
         protected string npc_name;
         protected TextBox textbox;
         protected bool display_text = false, display_interaction = false;
-        protected List<string> messages;
+        protected List<(string, string)> speaker_messages;
         protected Vector2 interaction_display_position;
 
         public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, int ID, string identifier) 
@@ -57,22 +57,24 @@ namespace gate
             if (conversation_file != null) {
                 this.conversation_file_path_id = conversation_file_path_id;
                 this.conversation_file = conversation_file;
-                this.messages = parse_dialogue_file(this.conversation_file);
+                this.speaker_messages = parse_dialogue_file(this.conversation_file);
                 //initialize textbox
-                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, messages, npc_name, Constant.textbox_width, Constant.textbox_height, Color.White);
+                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, speaker_messages, npc_name, Constant.textbox_width, Constant.textbox_height, Color.White);
             }
         }
 
-        public List<string> parse_dialogue_file(GameWorldDialogueFile dialogue_file) {
-            List<string> msgs = new List<string>();
+        public List<(string, string)> parse_dialogue_file(GameWorldDialogueFile dialogue_file) {
+            //Create list of tuples to hold speaker and message
+            List<(string, string)> speaker_messages = new List<(string, string)>();
             if (dialogue_file != null) {
                 npc_name = dialogue_file.character_name;
                 for (int i = 0; i < dialogue_file.dialogue.Count; i++) {
                     GameWorldDialogue gw_dialogue = dialogue_file.dialogue[i];
-                    msgs.Add(gw_dialogue.dialogue_line);
+                    //add speaker and dialogue to speaker messages for textbox to handle
+                    speaker_messages.Add((gw_dialogue.speaker, gw_dialogue.dialogue_line));
                 }
             }
-            return msgs;
+            return speaker_messages;
         }
 
         public override void Update(GameTime gameTime, float rotation) {

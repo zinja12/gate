@@ -24,7 +24,8 @@ namespace gate
 
         private TextBox textbox;
         private bool display_text = false, display_interaction = false;
-        List<string> messages;
+        List<(string, string)> messages;
+        List<string> raw_messages;
 
         private Texture2D texture;
 
@@ -45,12 +46,22 @@ namespace gate
 
             this.interaction_box = new RRect(this.draw_position, texture.Width*1.5f, texture.Height*1.5f);
 
-            this.messages = messages;
+            this.raw_messages = messages;
+            this.messages = add_sign_speaker_to_messages(messages);
 
             //initialize textbox
-            textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, messages, "sign", Constant.textbox_width, Constant.textbox_height, Color.White);
+            textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, this.messages, "sign", Constant.textbox_width, Constant.textbox_height, Color.White);
 
             this.ID = ID;
+        }
+
+        public List<(string, string)> add_sign_speaker_to_messages(List<string> messages) {
+            List<(string, string)> speaker_messages = new List<(string, string)>();
+            string speaker = "Sign";
+            foreach (string msg in messages) {
+                speaker_messages.Add((speaker, msg));
+            }
+            return speaker_messages;
         }
 
         public void Update(GameTime gameTime, float rotation) {
@@ -137,7 +148,7 @@ namespace gate
                 y_position = get_base_position().Y,
                 scale = get_scale(),
                 rotation = get_rotation_offset(),
-                sign_messages = messages
+                sign_messages = raw_messages
             };
         }
 
