@@ -8,6 +8,14 @@
         {
             "speaker": "Samyu",
             "dialogue_line": "the village is just a bit further down the trail"
+        },
+        {
+            "speaker": "Shaan",
+            "dialogue_line": "hey thanks man, i'll head that way then"
+        },
+        {
+            "speaker": "Shaan",
+            "dialogue_line": "bye!"
         }
     ]
 }
