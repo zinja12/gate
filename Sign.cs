@@ -48,7 +48,7 @@ namespace gate
             this.messages = messages;
 
             //initialize textbox
-            textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, messages, Constant.textbox_width, Constant.textbox_height, Color.White);
+            textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, messages, "sign", Constant.textbox_width, Constant.textbox_height, Color.White);
 
             this.ID = ID;
         }

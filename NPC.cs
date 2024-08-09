@@ -57,7 +57,7 @@ namespace gate
                 this.conversation_file = conversation_file;
                 this.messages = parse_dialogue_file(this.conversation_file);
                 //initialize textbox
-                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, messages, Constant.textbox_width, Constant.textbox_height, Color.White);
+                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, messages, npc_name, Constant.textbox_width, Constant.textbox_height, Color.White);
             }
         }
 

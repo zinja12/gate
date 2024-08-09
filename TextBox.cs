@@ -14,6 +14,7 @@ namespace gate
         public Vector2 screen_position;
 
         private Vector2 text_offset = new Vector2(30, 20);
+        private Vector2 box_title_offset = new Vector2(0, -20);
 
         private SpriteFont font;
         private List<string> msgs;
@@ -24,13 +25,15 @@ namespace gate
         private Color color;
         private bool end_of_text = false;
 
+        private string box_title_name;
+
         private float advance_message_elapsed;
         private float advance_message_cooldown = 500f;
 
         private float background_opacity = 0.8f;
         private float max_line_width;
 
-        public TextBox(Vector2 screen_position, SpriteFont font, List<string> msgs, float width, float height, Color color) {
+        public TextBox(Vector2 screen_position, SpriteFont font, List<string> msgs, string box_title_name, float width, float height, Color color) {
             this.screen_position = screen_position;
             this.font = font;
             this.msgs = msgs;
@@ -51,6 +54,8 @@ namespace gate
             current_msg_index = 0;
             current_msg_screen_idx = 0;
             current_msg = msg_screens[current_msg_screen_idx][current_msg_index];
+            
+            this.box_title_name = box_title_name;
         }
 
         public void Update(GameTime gameTime) {
@@ -171,6 +176,10 @@ namespace gate
         public void Draw(SpriteBatch spriteBatch) {
             //draw rectangle as backdrop for text
             Renderer.FillRectangle(spriteBatch, screen_position, (int)width, (int)height, Color.Black * background_opacity);
+            //draw box title
+            if (box_title_name != null) {
+                spriteBatch.DrawString(Constant.arial_small, box_title_name, screen_position + box_title_offset, color);
+            }
             //draw current message
             spriteBatch.DrawString(font, current_msg, screen_position + text_offset, color);
             //draw continue button for all but the last message screen
