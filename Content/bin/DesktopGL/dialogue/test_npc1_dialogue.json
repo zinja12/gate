@@ -2,12 +2,20 @@
     "character_name": "Samyu",
     "dialogue": [
         {
-            "speaker": "npc1",
+            "speaker": "Samyu",
             "dialogue_line": "hi! i'm so glad you're here!"
         },
         {
-            "speaker": "npc1",
+            "speaker": "Samyu",
             "dialogue_line": "the village is just a bit further down the trail"
+        },
+        {
+            "speaker": "Shaan",
+            "dialogue_line": "hey thanks man, i'll head that way then"
+        },
+        {
+            "speaker": "Shaan",
+            "dialogue_line": "bye!"
         }
     ]
 }

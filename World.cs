@@ -202,6 +202,7 @@ namespace gate
             obj_map.Add(21, new StackedObject("flower", Constant.flower_tex, Vector2.Zero, 1f, 32, 32, 12, Constant.stack_distance1, 0f, -1));
             obj_map.Add(22, new StackedObject("grass2", Constant.stacked_grass, Vector2.Zero, 1f, 32, 32, 17, Constant.stack_distance1, 0f, -1));
             obj_map.Add(23, new Tile(Vector2.Zero, 2f, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, -1));
+            obj_map.Add(24, new Tile(Vector2.Zero, 2f, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, -1));
         }
 
         public string read_gameworld_file_contents(string root_dir, string path, string lvl_id) {
@@ -478,6 +479,11 @@ namespace gate
                             Tile trail_tile = new Tile(obj_position, w_obj.scale, Constant.trail_tex, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
                             add_floor_entity(trail_tile);
                             break;
+                        case "sand_tile":
+                            check_and_load_tex(ref Constant.trail_tex, "sprites/sand1");
+                            Tile sand_tile = new Tile(obj_position, w_obj.scale, Constant.sand_tex, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
+                            add_floor_entity(sand_tile);
+                            break;
                         default:
                             break;
                     }
@@ -596,6 +602,9 @@ namespace gate
                             break;
                         case "trail_tile":
                             check_and_load_tex(ref Constant.trail_tex, "sprites/trail1");
+                            break;
+                        case "sand_tile":
+                            check_and_load_tex(ref Constant.sand_tex, "sprites/sand1");
                             break;
                         default:
                             //don't load anything
@@ -1087,6 +1096,11 @@ namespace gate
                             Tile trail_tile = new Tile(create_position, editor_object_scale, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, editor_object_idx);
                             add_floor_entity(trail_tile);
                             Console.WriteLine("trail_tile," + create_position.X + "," + create_position.Y + ",2");
+                            break;
+                        case 24:
+                            Tile sand_tile = new Tile(create_position, editor_object_scale, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, editor_object_idx);
+                            add_floor_entity(sand_tile);
+                            Console.WriteLine("sand_tile," + create_position.X + "," + create_position.Y + ",2");
                             break;
                         default:
                             break;
