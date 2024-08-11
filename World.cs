@@ -1688,7 +1688,9 @@ namespace gate
             //note: this draws entities in order, meaning our sorting after 
             //insertion should yield the proper back to front ordering that needs to be drawn
             for (int i = 0; i < floor_entities.Count; i++) {
-                floor_entities[i].Draw(_spriteBatch);
+                if (Vector2.Distance(floor_entities[i].get_base_position(), player.get_base_position()) < render_distance) {
+                    floor_entities[i].Draw(_spriteBatch);
+                }
             }
             //draw background objects (stuff on the floor)
             for (int i = 0; i < background_entities.Count; i++) {

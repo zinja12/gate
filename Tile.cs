@@ -21,6 +21,7 @@ namespace gate
     public interface FloorEntity {
         //draw weight indicates the order in which the background entities will be drawn (higher draw weight means that they should be drawn towards the back, lighter means they should be drawn towards the front)
         int get_draw_weight();
+        Vector2 get_base_position();
         void Draw(SpriteBatch spriteBatch);
     }
 
