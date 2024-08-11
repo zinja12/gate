@@ -1694,7 +1694,9 @@ namespace gate
             }
             //draw background objects (stuff on the floor)
             for (int i = 0; i < background_entities.Count; i++) {
-                background_entities[i].Draw(_spriteBatch);
+                if (Vector2.Distance(background_entities[i].get_base_position(), player.get_base_position()) < render_distance) {
+                    background_entities[i].Draw(_spriteBatch);
+                }
             }
 
             //draw entities list

@@ -15,6 +15,7 @@ namespace gate
     }
 
     public interface BackgroundEntity {
+        Vector2 get_base_position();
         void Draw(SpriteBatch spriteBatch);
     }
 
