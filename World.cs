@@ -193,11 +193,8 @@ namespace gate
             //set up condition in editor
             obj_map.Add(16, new PlaceHolderEntity(Vector2.Zero, "Condition(EDROC)", -1));
             obj_map.Add(17, new Tile(Vector2.Zero, 2f, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, -1));
-            //obj_map.Add(18, new Tree(Vector2.Zero, 1f, Constant.orange_tree, false, "orange_tree", -1));
             obj_map.Add(18, new StackedObject("orange_tree", Constant.orange_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
-            //obj_map.Add(19, new Tree(Vector2.Zero, 1f, Constant.yellow_tree, false, "yellow_tree", -1));
             obj_map.Add(19, new StackedObject("yellow_tree", Constant.yellow_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
-            //obj_map.Add(20, new Tree(Vector2.Zero, 1f, Constant.green_tree, false, "green_tree", -1));
             obj_map.Add(20, new StackedObject("green_tree", Constant.green_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
             obj_map.Add(21, new StackedObject("flower", Constant.flower_tex, Vector2.Zero, 1f, 32, 32, 12, Constant.stack_distance1, 0f, -1));
             obj_map.Add(22, new StackedObject("grass2", Constant.stacked_grass, Vector2.Zero, 1f, 32, 32, 17, Constant.stack_distance1, 0f, -1));
