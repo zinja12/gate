@@ -480,7 +480,7 @@ namespace gate
                             add_floor_entity(trail_tile);
                             break;
                         case "sand_tile":
-                            check_and_load_tex(ref Constant.trail_tex, "sprites/sand1");
+                            check_and_load_tex(ref Constant.sand_tex, "sprites/sand1");
                             Tile sand_tile = new Tile(obj_position, w_obj.scale, Constant.sand_tex, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
                             add_floor_entity(sand_tile);
                             break;
