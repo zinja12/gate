@@ -295,6 +295,13 @@ namespace gate
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             //create player object
                             Player p = new Player(obj_position, w_obj.scale, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, w_obj.object_id_num, this);
+                            //read world file player attributes to help initialize player
+                            if (world_file_contents.player_attributes != null) {
+                                //iterate over player attributes and set active variable for attribute
+                                foreach (GameWorldPlayerAttribute pa in world_file_contents.player_attributes) {
+                                    p.set_attribute(pa.identifier, pa.active);
+                                }
+                            }
                             entities_list.Add(p);
                             collision_entities.Add(p);
                             //make sure to set player reference and increment count

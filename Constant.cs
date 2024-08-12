@@ -163,7 +163,6 @@ namespace gate
             identifiers.Add("grass2");
             identifiers.Add("trail_tile");
             identifiers.Add("sand_tile");
-            identifiers.Add("tombstone");
             identifiers.Add("sword");
             return identifiers;
         }

@@ -1,5 +1,19 @@
 {
     "camera_bounds": null,
+    "player_attributes": [
+        {
+            "identifier": "sword",
+            "active": true
+        },
+        {
+            "identifier": "dash",
+            "active": false
+        },
+        {
+            "identifier": "bow",
+            "active": true
+        }
+    ],
     "world_objects": [
         {
             "object_identifier": "player",

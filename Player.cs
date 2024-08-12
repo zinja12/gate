@@ -146,6 +146,11 @@ namespace gate
         List<ParticleSystem> particle_systems;
         List<ParticleSystem> dead_particle_systems;
 
+        //player attributes
+        bool sword_attribute = false;
+        bool dash_attribute = false;
+        bool bow_attribute = false;
+
         private int ID;
 
         //random
@@ -297,12 +302,12 @@ namespace gate
                 a.update_aim(aim_orbit, aim_orbit - draw_position);
                 arrow.Update(gameTime, rotation);
             }
-            if (_aim > 0 && arrow_charge > 0) {
+            if (_aim > 0 && arrow_charge > 0 && bow_attribute) {
                 aiming = true;
             } else {
                 aiming = false;
             }
-            if (aiming && _fire > 0 && arrow_charge > 0) {
+            if (aiming && _fire > 0 && arrow_charge > 0 && bow_attribute) {
                 charging_arrow = true;
                 arrow_charge_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 power_shot_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -344,7 +349,7 @@ namespace gate
             }
 
             //handle inputs for heavy attacks -> check if attack is held down for any amount of time and set animation
-            if (_heavy_attack != 0 && previous_gamepad_state.Triggers.Right != 0f && attack_charge > 1) {
+            if (_heavy_attack != 0 && previous_gamepad_state.Triggers.Right != 0f && attack_charge > 1 && sword_attribute) {
                 //player has held down the button for at least 2 frames
                 //begin charging attack
                 charging_active = true;
@@ -375,7 +380,7 @@ namespace gate
 
             //set dash to active
             //meaning: if the player has pressed dash, and the dash currently is not active and if the last direction they held is not zero vector and the time since last dash is greater than the cooldown then dash
-            if (_dash != 0 && !dash_active && last_direction != Vector2.Zero && dash_charge > 0 && !attack_active && !heavy_attack_active) {
+            if (_dash != 0 && !dash_active && last_direction != Vector2.Zero && dash_charge > 0 && !attack_active && !heavy_attack_active && dash_attribute) {
                 //set dash to active
                 dash_active = true;
                 //lock dash direction and start position
@@ -409,7 +414,7 @@ namespace gate
             }
 
             //attack code
-            if (_attack != 0 && !attack_active && attack_charge > 0) {
+            if (_attack != 0 && !attack_active && attack_charge > 0 && sword_attribute) {
                 attack_active = true;
                 attack_cooldown_elapsed = 0;
                 attack_charge--;
@@ -1235,6 +1240,23 @@ namespace gate
 
         public int get_arrow_charges() {
             return arrow_charge;
+        }
+
+        public void set_attribute(string attribute_id, bool value) {
+            switch (attribute_id) {
+                case "sword":
+                    sword_attribute = value;
+                    break;
+                case "dash":
+                    dash_attribute = value;
+                    break;
+                case "bow":
+                    bow_attribute = value;
+                    break;
+                default:
+                    //do nothing
+                    break;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch) {
