@@ -200,6 +200,7 @@ namespace gate
             obj_map.Add(22, new StackedObject("grass2", Constant.stacked_grass, Vector2.Zero, 1f, 32, 32, 17, Constant.stack_distance1, 0f, -1));
             obj_map.Add(23, new Tile(Vector2.Zero, 2f, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, -1));
             obj_map.Add(24, new Tile(Vector2.Zero, 2f, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, -1));
+            obj_map.Add(25, new StackedObject("sword", Constant.sword_tex, Vector2.Zero, 1f, 16, 16, 22, Constant.stack_distance1, 0f, -1));
         }
 
         public string read_gameworld_file_contents(string root_dir, string path, string lvl_id) {
@@ -481,6 +482,12 @@ namespace gate
                             Tile sand_tile = new Tile(obj_position, w_obj.scale, Constant.sand_tex, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
                             add_floor_entity(sand_tile);
                             break;
+                        case "sword":
+                            check_and_load_tex(ref Constant.sword_tex, "sprites/sword1_22");
+                            StackedObject sword = new StackedObject(w_obj.object_identifier, Constant.sword_tex, obj_position, w_obj.scale, 16, 16, 22, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(sword);
+                            collision_entities.Add(sword);
+                            break;
                         default:
                             break;
                     }
@@ -602,6 +609,9 @@ namespace gate
                             break;
                         case "sand_tile":
                             check_and_load_tex(ref Constant.sand_tex, "sprites/sand1");
+                            break;
+                        case "sword":
+                            check_and_load_tex(ref Constant.sword_tex, "sprites/sword1_22");
                             break;
                         default:
                             //don't load anything
@@ -1098,6 +1108,12 @@ namespace gate
                             Tile sand_tile = new Tile(create_position, editor_object_scale, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, editor_object_idx);
                             add_floor_entity(sand_tile);
                             Console.WriteLine("sand_tile," + create_position.X + "," + create_position.Y + ",2");
+                            break;
+                        case 25:
+                            StackedObject sword = new StackedObject("sword", Constant.sword_tex, create_position, 1f, 16, 16, 22, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            entities_list.Add(sword);
+                            collision_entities.Add(sword);
+                            Console.WriteLine("sword," + create_position.X + "," + create_position.Y + ",1");
                             break;
                         default:
                             break;

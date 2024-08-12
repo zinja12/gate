@@ -54,6 +54,8 @@ namespace gate
         public static Texture2D stacked_grass;
         public static Texture2D trail_tex;
         public static Texture2D sand_tex;
+        public static Texture2D tombstone_tex;
+        public static Texture2D sword_tex;
 
         public static Texture2D marker_spritesheet;
         public static Texture2D lamppost_spritesheet;
@@ -161,6 +163,8 @@ namespace gate
             identifiers.Add("grass2");
             identifiers.Add("trail_tile");
             identifiers.Add("sand_tile");
+            identifiers.Add("tombstone");
+            identifiers.Add("sword");
             return identifiers;
         }
 
