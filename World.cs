@@ -1355,6 +1355,16 @@ namespace gate
                         }
                     }
                 }
+            } else if (player.interacting()) {
+                foreach (IEntity e in collision_entities) {
+                    if (e is StackedObject && player.get_attribute_active(e.get_id()) == false) {
+                        player.set_attribute(e.get_id(), true);
+                        //remove sword once picked up
+                        if (e.get_id().Equals("sword")) {
+                            clear_entity(e);
+                        }
+                    }
+                }
             }
 
             //check enemy collisions against player

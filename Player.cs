@@ -1259,6 +1259,19 @@ namespace gate
             }
         }
 
+        public bool get_attribute_active(string attribute_id) {
+            switch (attribute_id) {
+                case "sword":
+                    return sword_attribute;
+                case "dash":
+                    return dash_attribute;
+                case "bow":
+                    return bow_attribute;
+                default:
+                    return false;
+            }
+        }
+
         public void Draw(SpriteBatch spriteBatch) {
             //draw footprints
             foreach (Footprints f in footprints) {
