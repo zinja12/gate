@@ -1357,19 +1357,6 @@ namespace gate
                         }
                     }
                 }
-            } 
-            
-            //TODO: this code needs to be revised to remove the correct entity
-            if (player.interacting()) {
-                foreach (IEntity e in collision_entities) {
-                    if (e is StackedObject && player.get_attribute_active(e.get_id()) == false) {
-                        player.set_attribute(e.get_id(), true);
-                        //remove sword once picked up
-                        if (e.get_id().Equals("sword")) {
-                            clear_entity(e);
-                        }
-                    }
-                }
             }
 
             //check enemy collisions against player
@@ -1442,6 +1429,15 @@ namespace gate
                     bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
                     //set available interaction display
                     npc.set_display_interaction(collision);
+                } else if (e is StackedObject) {
+                    StackedObject stacked_object = (StackedObject)e;
+                    bool collision = player.check_hurtbox_collisions(stacked_object.get_hurtbox());
+                    if (collision && player.interacting()) {
+                        if ((e.get_id().Equals("sword") || e.get_id().Equals("bow") || e.get_id().Equals("dash")) && player.get_attribute_active(e.get_id()) == false) {
+                            player.set_attribute(e.get_id(), true);
+                            clear_entity(e);
+                        }
+                    }
                 }
             }
 
