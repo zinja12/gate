@@ -1243,6 +1243,7 @@ namespace gate
         #region save_world_file
         public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities) {
             //set up object lists to save to file
+            List<GameWorldPlayerAttribute> player_attribute_list = player.to_world_player_attributes_object();
             List<GameWorldObject> world_objs = new List<GameWorldObject>();
             List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
             //iterate over all entities
@@ -1291,6 +1292,7 @@ namespace gate
             
             //generate GameWorldFile object with all saved objects
             GameWorldFile world_file = new GameWorldFile {
+                player_attributes = player_attribute_list,
                 world_objects = sorted_world_objs,
                 conditions = sorted_world_conditions,
                 world_script = new List<string>()
@@ -1355,7 +1357,10 @@ namespace gate
                         }
                     }
                 }
-            } else if (player.interacting()) {
+            } 
+            
+            //TODO: this code needs to be revised to remove the correct entity
+            if (player.interacting()) {
                 foreach (IEntity e in collision_entities) {
                     if (e is StackedObject && player.get_attribute_active(e.get_id()) == false) {
                         player.set_attribute(e.get_id(), true);

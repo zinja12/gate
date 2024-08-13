@@ -1190,6 +1190,23 @@ namespace gate
             };
         }
 
+        public List<GameWorldPlayerAttribute> to_world_player_attributes_object() {
+            return new List<GameWorldPlayerAttribute>() {
+                new GameWorldPlayerAttribute {
+                    identifier = "sword",
+                    active = sword_attribute
+                },
+                new GameWorldPlayerAttribute {
+                    identifier = "dash",
+                    active = dash_attribute
+                },
+                new GameWorldPlayerAttribute {
+                    identifier = "bow",
+                    active = bow_attribute
+                }
+            };
+        }
+
         private int key_down(KeyboardState current_keyboard_state, Keys key) {
             if (current_keyboard_state.IsKeyDown(key))
                 return 1;
