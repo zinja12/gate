@@ -1410,6 +1410,8 @@ namespace gate
                         NPC npc = (NPC)e;
                         bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
                         if (collision) {
+                            //orient npc to target for speaking
+                            npc.orient_to_target(player.get_base_position(), camera.Rotation);
                             //set npc to display
                             npc.display_textbox();
                             //set current textbox to correct instance
@@ -1430,6 +1432,7 @@ namespace gate
                     //set available interaction display
                     npc.set_display_interaction(collision);
                 } else if (e is StackedObject) {
+                    //interactions with picking up weapons
                     StackedObject stacked_object = (StackedObject)e;
                     bool collision = player.check_hurtbox_collisions(stacked_object.get_hurtbox());
                     if (collision && player.interacting()) {

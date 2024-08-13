@@ -94,7 +94,7 @@ namespace gate
         
         private float engagement_distance = Constant.nightmare_engagement_distance;
 
-        private Player player; // player var for use in AI behavior
+        protected Player player; // player var for use in AI behavior
         protected Random random;
 
         protected List<IAiEntity> enemies;
@@ -500,26 +500,26 @@ namespace gate
                     case 0: //up
                         idle_animation.set_y_offset((int)nightmare_size*9);
                         break;
-                    case 1: //down
-                        idle_animation.set_y_offset((int)nightmare_size*8);
-                        break;
-                    case 2: //left
-                        idle_animation.set_y_offset((int)nightmare_size*6);
-                        break;
-                    case 3: //right
+                    case 1: //up right
                         idle_animation.set_y_offset((int)nightmare_size*7);
                         break;
-                    case 4: //up right
+                    case 2: //right
                         idle_animation.set_y_offset((int)nightmare_size*7);
                         break;
-                    case 5: //up left
-                        idle_animation.set_y_offset((int)nightmare_size*6);
-                        break;
-                    case 6: //down right
+                    case 3: //down right
                         idle_animation.set_y_offset((int)nightmare_size*11);
                         break;
-                    case 7: //down left
+                    case 4: //down
+                        idle_animation.set_y_offset((int)nightmare_size*8);
+                        break;
+                    case 5: //down left
                         idle_animation.set_y_offset((int)nightmare_size*10);
+                        break;
+                    case 6: //left
+                        idle_animation.set_y_offset((int)nightmare_size*6);
+                        break;
+                    case 7: //up left
+                        idle_animation.set_y_offset((int)nightmare_size*6);
                         break;
                     default:
                         Console.WriteLine("Nightmare AI: Default movement vector case.");

@@ -1,0 +1,17 @@
+{
+    "character_name": "SwordKeeper",
+    "dialogue": [
+        {
+            "speaker": "SwordKeeper",
+            "dialogue_line": "this monument is for the our fellow warriors dedeicated to seva"
+        },
+        {
+            "speaker": "SwordKeeper",
+            "dialogue_line": "one day, should you succeed, the sword you choose will find it's resting place here again"
+        },
+        {
+            "speaker": "Shaan",
+            "dialogue_line": "no pressure then..."
+        }
+    ]
+}

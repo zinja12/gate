@@ -35,6 +35,11 @@ namespace gate
         protected bool display_text = false, display_interaction = false;
         protected List<(string, string)> speaker_messages;
         protected Vector2 interaction_display_position;
+        
+        //NPC orient to direction variables
+        protected int direction_case = -1;
+        protected Vector2 direction_to_target = Vector2.Zero;
+        protected float target_angle = 0f;
 
         public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, int ID, string identifier) 
             : base(texture, base_position, scale, hit_texture, player, ID, identifier) {
@@ -231,6 +236,17 @@ namespace gate
             interaction_box.update(rotation, draw_position);
         }
 
+        public void orient_to_target(Vector2 target, float rotation) {
+            //calculate rotated direction to target
+            Vector2 direction_to_target = Constant.rotate_point(target - get_base_position(), rotation, 1, Constant.direction_up);
+            //calculate angle from direction
+            target_angle = MathHelper.ToDegrees((float)Math.Atan2(direction_to_target.Y, direction_to_target.X));
+            //translate angle to direction case for animation
+            direction_case = Constant.TranslateAngleToCompassDirection(target_angle, MathHelper.ToDegrees(rotation));
+            //set last movement vector idx to direction case and let update animation handle the animation swap (in parent class)
+            last_movement_vector_idx = direction_case;
+        }
+
         public override bool is_aggro() {
             //NPCs are usually never aggro so set to false
             //but maybe we want to enable this behavior in a more complex fashion later on
@@ -293,6 +309,8 @@ namespace gate
 
             if (DEBUG) {
                 interaction_box.draw(spriteBatch);
+                spriteBatch.DrawString(Constant.arial_small, $"orientation_to_target:{direction_case}", get_base_position(), Color.Red);
+                Renderer.DrawALine(spriteBatch, Constant.pixel, 1, Color.Red, 1, get_base_position(), get_base_position() + direction_to_target*50);
             }
         }
     }

@@ -4469,6 +4469,21 @@
             "rotation": 139228.75,
             "npc_path_entity_ids": null,
             "npc_conversation_file_id": null
+        },
+        {
+            "object_identifier": "npc",
+            "object_id_num": 297,
+            "x_position": 1701.7943,
+            "y_position": 234.53275,
+            "scale": 1,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0,
+            "npc_path_entity_ids": [],
+            "npc_conversation_file_id": "swordkeeper_dialogue1.json"
         }
     ],
     "conditions": [],
