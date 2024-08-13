@@ -1,7 +1,7 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
 "C:/Users/Shaan/Documents/test_projects/gate/Content/color_palettte/color_palette_gba2.png","C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/color_palettte/color_palette_gba2.xnb","TextureProcessor","Texture2DContent",5612,7680085,0.249063
 "C:/Users/Shaan/Documents/test_projects/gate/Content/dialogue/swordkeeper_dialogue1.json","C:\Users\Shaan\Documents\test_projects\gate\Content\bin\DesktopGL\Content\dialogue/swordkeeper_dialogue1.json","CopyItem","File",521,521,0.0012406
-"C:/Users/Shaan/Documents/test_projects/gate/Content/dialogue/test_npc1_dialogue.json","C:\Users\Shaan\Documents\test_projects\gate\Content\bin\DesktopGL\Content\dialogue/test_npc1_dialogue.json","CopyItem","File",726,726,0.0012498
+"C:/Users/Shaan/Documents/test_projects/gate/Content/dialogue/test_npc1_dialogue.json","C:\Users\Shaan\Documents\test_projects\gate\Content\bin\DesktopGL\Content\dialogue/test_npc1_dialogue.json","CopyItem","File",726,726,0.0012861
 "C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial.spritefont","C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fonts/arial.xnb","FontDescriptionProcessor","SpriteFontContent",2008,267298,0.0897063
 "C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial_small.spritefont","C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fonts/arial_small.xnb","FontDescriptionProcessor","SpriteFontContent",2008,21538,0.0110231
 "C:/Users/Shaan/Documents/test_projects/gate/Content/fx/pixelate.fx","C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fx/pixelate.xnb","EffectProcessor","CompiledEffectContent",1009,703,0.327497

@@ -379,7 +379,7 @@ namespace gate
             }
 
             //set dash to active
-            //meaning: if the player has pressed dash, and the dash currently is not active and if the last direction they held is not zero vector and the time since last dash is greater than the cooldown then dash
+            //meaning: if the player has pressed dash, and the dash currently is not active and if the last direction they held is not zero vector and the time since last dash is greater than the cooldown then dash and they have the dash attribute active
             if (_dash != 0 && !dash_active && last_direction != Vector2.Zero && dash_charge > 0 && !attack_active && !heavy_attack_active && dash_attribute) {
                 //set dash to active
                 dash_active = true;
@@ -903,7 +903,7 @@ namespace gate
             }
 
             //if player is dashing then update dash animation
-            if (is_dashing() || dash_active) {
+            if (is_dashing()) {
                 dash_animation.Update(gameTime);
             }
 
@@ -1049,12 +1049,32 @@ namespace gate
         }
 
         public void resolve_collision_geometry_movement(Vector2 current_direction, ICollisionEntity entity) {
+            //handle player dashing into collision geometry
+            if (is_dashing() || is_attacking()) {
+                //dash direction is used for dashing (tiny dash / player movement on attacking - like lunging)
+                //stop dashing
+                //zero out all dash movement variables added to position variables
+                dash_active = false;
+                dash_direction_unit = Vector2.Zero;
+                dash_direction = Vector2.Zero;
+                dash_queued = false;
+                attack_active = false;
+                heavy_attack_active = false;
+                attack_cooldown_elapsed = 0;
+            }
+            //resolve collision movement
+            //center of collision entity hurtbox
             Vector2 center = entity.get_hurtbox().position;
+            //base position for player
             Vector2 base_pos = get_base_position();
+            //calculate direction between the two
             Vector2 center_to_player = base_pos - center;
+            //normalize
             center_to_player.Normalize();
+            //move player back along vector exact amount they're trying to move
             base_position += center_to_player * movement_speed;
             draw_position += center_to_player * movement_speed;
+            attack_draw_position += center_to_player * movement_speed;
         }
 
         public RRect get_future_hurtbox() {
@@ -1228,6 +1248,10 @@ namespace gate
 
         public bool is_dashing() {
             return dash_active;
+        }
+
+        public bool is_attacking() {
+            return attack_active || heavy_attack_active;
         }
 
         public void reset_dash_cooldown(float elapsed_value) {
