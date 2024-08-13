@@ -1,21 +1,25 @@
 {
-    "character_name": "Samyu",
+    "character_name": "C",
     "dialogue": [
         {
-            "speaker": "Samyu",
-            "dialogue_line": "hi! i'm so glad you're here!"
+            "speaker": "C",
+            "dialogue_line": "you know, it's quite nice here by the water"
         },
         {
-            "speaker": "Samyu",
-            "dialogue_line": "the village is just a bit further down the trail"
+            "speaker": "C",
+            "dialogue_line": "maybe it will be nice to take a break from everything that's happening"
         },
         {
-            "speaker": "Shaan",
-            "dialogue_line": "hey thanks man, i'll head that way then"
+            "speaker": "S",
+            "dialogue_line": "i'm still worried though"
         },
         {
-            "speaker": "Shaan",
-            "dialogue_line": "bye!"
+            "speaker": "C",
+            "dialogue_line": "yeah... but things take time. sometimes you just have to let it marinate. some time away might help"
+        },
+        {
+            "speaker": "S",
+            "dialogue_line": "right..."
         }
     ]
 }
