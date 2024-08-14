@@ -1069,9 +1069,15 @@ namespace gate
             //normalize
             center_to_player.Normalize();
             //move player back along vector exact amount they're trying to move
-            base_position += center_to_player * movement_speed;
-            draw_position += center_to_player * movement_speed;
-            attack_draw_position += center_to_player * movement_speed;
+            if (!is_attacking()) {
+                base_position += center_to_player * movement_speed;
+                draw_position += center_to_player * movement_speed;
+                attack_draw_position += center_to_player * movement_speed;
+            } else {
+                base_position += center_to_player * Constant.player_attack_movement_speed;
+                draw_position += center_to_player * Constant.player_attack_movement_speed;
+                attack_draw_position += center_to_player * Constant.player_attack_movement_speed;
+            }
         }
 
         public RRect get_future_hurtbox() {
