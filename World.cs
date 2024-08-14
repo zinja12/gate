@@ -201,6 +201,7 @@ namespace gate
             obj_map.Add(23, new Tile(Vector2.Zero, 2f, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, -1));
             obj_map.Add(24, new Tile(Vector2.Zero, 2f, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, -1));
             obj_map.Add(25, new StackedObject("sword", Constant.sword_tex, Vector2.Zero, 1f, 16, 16, 22, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(26, new StackedObject("box", Constant.box_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
         }
 
         public string read_gameworld_file_contents(string root_dir, string path, string lvl_id) {
@@ -451,6 +452,12 @@ namespace gate
                             entities_list.Add(f);
                             collision_geometry.Add(f);
                             break;
+                        case "box":
+                            check_and_load_tex(ref Constant.box_spritesheet, "sprites/box1_2_18");
+                            StackedObject box = new StackedObject(w_obj.object_identifier, Constant.box_spritesheet, obj_position, w_obj.scale, 32, 32, 18, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(box);
+                            collision_geometry.Add(box);
+                            break;
                         case "tan_tile":
                             check_and_load_tex(ref Constant.tan_tile_tex, "sprites/tile_tan1");
                             Tile t_tile = new Tile(obj_position, w_obj.scale, Constant.tan_tile_tex, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
@@ -619,6 +626,9 @@ namespace gate
                             break;
                         case "sword":
                             check_and_load_tex(ref Constant.sword_tex, "sprites/sword1_22");
+                            break;
+                        case "box":
+                            check_and_load_tex(ref Constant.box_spritesheet, "sprites/box1_2_18");
                             break;
                         default:
                             //don't load anything
@@ -1122,6 +1132,13 @@ namespace gate
                             collision_entities.Add(sword);
                             Console.WriteLine("sword," + create_position.X + "," + create_position.Y + ",1");
                             break;
+                        case 26:
+                            StackedObject box = new StackedObject("box", Constant.box_spritesheet, create_position, 1f, 32, 32, 18, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            box.Update(gameTime, rotation);
+                            entities_list.Add(box);
+                            collision_geometry.Add(box);
+                            Console.WriteLine("box," + create_position.X + "," + create_position.Y + ",1");
+                            break;
                         default:
                             break;
                     }
@@ -1451,6 +1468,20 @@ namespace gate
                     bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
                     if (collision) {
                         player.resolve_collision_geometry_movement(player.get_direction(), obj);
+                    }
+
+                    if (player.hitbox_active()) {
+                        ICollisionEntity ic = (ICollisionEntity)e;
+                        //don't need to check if hurtbox is active, it's an inanimate object, it should always be active
+                        bool hitbox_collision = player.check_hitbox_collisions(ic.get_hurtbox());
+                        if (hitbox_collision) {
+                            if (e.get_id().Equals("box")) {
+                                //remove box
+                                clear_entity(e);
+                                //shake the camera
+                                set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                            }
+                        }
                     }
                 }
 
