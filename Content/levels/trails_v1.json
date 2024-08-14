@@ -3,7 +3,7 @@
     "player_attributes": [
         {
             "identifier": "sword",
-            "active": false
+            "active": true
         },
         {
             "identifier": "dash",

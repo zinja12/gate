@@ -99,6 +99,10 @@ namespace gate
         //Random variable
         private Random random = new Random();
 
+        /*PARTICLE SYSTEM*/
+        private List<ParticleSystem> particle_systems;
+        private List<ParticleSystem> dead_particle_systems;
+
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content) {
             //set game objects
             this.game = game;
@@ -154,6 +158,10 @@ namespace gate
 
             //run first sort so everything looks good initially
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+
+            //initialize particle systems for world effects
+            this.particle_systems = new List<ParticleSystem>();
+            this.dead_particle_systems = new List<ParticleSystem>();
         }
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content, string level_id) : this(game, _graphics, content_root_directory, Content) {
@@ -1231,6 +1239,9 @@ namespace gate
             }
             #endregion
 
+            //update particle systems
+            update_world_particle_systems(gameTime, camera.Rotation);
+
             //check collisions
             check_entity_collision(gameTime);
 
@@ -1255,6 +1266,25 @@ namespace gate
             
             //update camera bounds
             //update_camera_bounds();
+        }
+        
+        /*PARTICLE SYSTEMS CODE*/
+        public void update_world_particle_systems(GameTime gameTime, float rotation) {
+            //update and manage world particle systems
+            foreach (ParticleSystem ps in particle_systems) {
+                ps.Update(gameTime, rotation);
+                //add dead systems to dead list
+                if (ps.is_finished()) {
+                    dead_particle_systems.Add(ps);
+                }
+            }
+            //clear dead particle systems
+            foreach (ParticleSystem ps in dead_particle_systems) {
+                //remove from original list
+                particle_systems.Remove(ps);
+            }
+            //clear
+            dead_particle_systems.Clear();
         }
         
         #region save_world_file
@@ -1476,6 +1506,8 @@ namespace gate
                         bool hitbox_collision = player.check_hitbox_collisions(ic.get_hurtbox());
                         if (hitbox_collision) {
                             if (e.get_id().Equals("box")) {
+                                //add particles for effect
+                                particle_systems.Add(new ParticleSystem(Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 5, 1, 3, Constant.white_particles));
                                 //remove box
                                 clear_entity(e);
                                 //shake the camera
@@ -1762,6 +1794,11 @@ namespace gate
                 if (Vector2.Distance(background_entities[i].get_base_position(), player.get_base_position()) < render_distance) {
                     background_entities[i].Draw(_spriteBatch);
                 }
+            }
+            
+            /*PARTICLE SYSTEMS*/
+            foreach (ParticleSystem ps in particle_systems) {
+                ps.Draw(_spriteBatch);
             }
 
             //draw entities list
