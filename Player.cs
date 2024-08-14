@@ -1050,7 +1050,7 @@ namespace gate
 
         public void resolve_collision_geometry_movement(Vector2 current_direction, ICollisionEntity entity) {
             //handle player dashing into collision geometry
-            if (is_dashing() || is_attacking()) {
+            if (is_dashing()) {
                 //dash direction is used for dashing (tiny dash / player movement on attacking - like lunging)
                 //stop dashing
                 //zero out all dash movement variables added to position variables
@@ -1058,9 +1058,6 @@ namespace gate
                 dash_direction_unit = Vector2.Zero;
                 dash_direction = Vector2.Zero;
                 dash_queued = false;
-                attack_active = false;
-                heavy_attack_active = false;
-                attack_cooldown_elapsed = 0;
             }
             //resolve collision movement
             //center of collision entity hurtbox
