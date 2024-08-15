@@ -1795,14 +1795,14 @@ namespace gate
                     background_entities[i].Draw(_spriteBatch);
                 }
             }
-            
+
+            //draw entities list
+            entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
+
             /*PARTICLE SYSTEMS*/
             foreach (ParticleSystem ps in particle_systems) {
                 ps.Draw(_spriteBatch);
             }
-
-            //draw entities list
-            entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
 
             //debug triggers
             if (debug_triggers) {
