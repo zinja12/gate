@@ -169,6 +169,7 @@ namespace gate
             load_level(content_root_directory, _graphics, level_id);
         }
 
+        #region editor_initialization
         private void editor_init() {
             /*Editor Initialization*/
             editor_tool_idx = 0;
@@ -211,6 +212,7 @@ namespace gate
             obj_map.Add(25, new StackedObject("sword", Constant.sword_tex, Vector2.Zero, 1f, 16, 16, 22, Constant.stack_distance1, 0f, -1));
             obj_map.Add(26, new StackedObject("box", Constant.box_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
         }
+        #endregion
 
         public string read_gameworld_file_contents(string root_dir, string path, string lvl_id) {
             string file_contents;
@@ -227,6 +229,7 @@ namespace gate
             return file_contents;
         }
 
+        #region load_level
         //function to load level files into the world
         public void load_level(string root_directory, GraphicsDeviceManager _graphics, string level_id) {
             //set current level id
@@ -657,6 +660,7 @@ namespace gate
             //sort the entities list once so things are not drawn out of order in terms of depth values
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
         }
+        #endregion
 
         private void check_and_load_tex(ref Texture2D tex, string texture_path) {
             if (!loaded_textures.Contains(texture_path)) {
@@ -731,6 +735,7 @@ namespace gate
                 return;
             }
 
+            #region update render entities
             //UPDATE RENDERLIST ENTITIES
             //update active entities (also updates some collision entities)
             for (int i = 0; i < entities_list.get_entities().Count; i++) {
@@ -739,6 +744,7 @@ namespace gate
                     e.Update(gameTime, camera.Rotation);
                 }
             }
+            #endregion
 
             foreach (IAiEntity e in enemies) {
                 if (e is Nightmare) {
