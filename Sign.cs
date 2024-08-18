@@ -50,7 +50,7 @@ namespace gate
             this.messages = add_sign_speaker_to_messages(messages);
 
             //initialize textbox
-            textbox = new TextBox(Constant.textbox_screen_position, Constant.arial_mid_reg, this.messages, "sign", Constant.textbox2_width, Constant.textbox2_height, Color.White, Color.Black);
+            textbox = new TextBox(Constant.textbox_screen_position, Constant.arial_mid_reg, this.messages, "sign", Constant.textbox_width, Constant.textbox_height, Color.White, Color.Black);
 
             this.ID = ID;
         }
@@ -132,7 +132,7 @@ namespace gate
         }
 
         public Vector2 get_overhead_position() {
-            Vector2 overhead_position = Constant.rotate_point(interaction_display_position, rotation, (-Constant.textbox2_height/2), Constant.direction_down);
+            Vector2 overhead_position = Constant.rotate_point(interaction_display_position, rotation, (-Constant.textbox_height/2), Constant.direction_down);
             return overhead_position;
         }
 

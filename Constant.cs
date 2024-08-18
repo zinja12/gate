@@ -94,14 +94,11 @@ namespace gate
         //position of textboxes on the screen
         //NOTE: this Vector changes based on the size of the window
         public static Vector2 textbox_screen_position = new Vector2(10, window_height - (window_height/3));
-        public static float textbox_width = window_width - 20, textbox_height = 230;
+        public static float textbox_width = 500, textbox_height = 150;
 
         /*UI CONSTANTS CONFIG*/
         public static int dash_charge_ui_size = 30;
         public static Vector2 dash_charge_ui_screen_position = new Vector2(window_width - (dash_charge_ui_size*2) - 10f, 10f);
-
-        public static int textbox2_width = 500;
-        public static int textbox2_height = 150;
 
         /*Camera Constants*/
         public static float camera_shake_milliseconds = 300f;
