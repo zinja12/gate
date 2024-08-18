@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fonts/arial_small.spritefont</SourceFile>
-  <SourceTime>2024-08-14T22:25:08.1562766-04:00</SourceTime>
-  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/fonts/arial_small.xnb</DestFile>
-  <DestTime>2024-08-17T14:05:16.0610666-04:00</DestTime>
+  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fonts/arial_mid_reg.spritefont</SourceFile>
+  <SourceTime>2020-08-10T12:17:28-04:00</SourceTime>
+  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/fonts/arial_mid_reg.xnb</DestFile>
+  <DestTime>2024-08-17T14:05:15.9896007-04:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

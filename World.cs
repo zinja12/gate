@@ -245,6 +245,7 @@ namespace gate
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
+            Constant.arial_mid_reg = Content.Load<SpriteFont>("fonts/arial_mid_reg");
 
             //set pixel shader to active once it has been loaded
             game.set_pixel_shader_active(true);
@@ -1447,6 +1448,10 @@ namespace gate
                         Sign s = (Sign)e;
                         bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
                         if (collision) {
+                            //calculate screen textbox position
+                            Vector2 textbox_screen_position = Constant.world_position_to_screen_position(s.get_overhead_position(), camera);
+                            //set textbox screen position
+                            s.get_textbox().set_position(textbox_screen_position);
                             //set sign to display
                             s.display_textbox();
                             //set current textbox to correct instance
@@ -1459,6 +1464,9 @@ namespace gate
                         if (collision) {
                             //orient npc to target for speaking
                             npc.orient_to_target(player.get_base_position(), camera.Rotation);
+                            //calculate screen textbox position from overhead position of npc
+                            Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
+                            npc.get_textbox().set_position(screen_position);
                             //set npc to display
                             npc.display_textbox();
                             //set current textbox to correct instance
@@ -1852,6 +1860,15 @@ namespace gate
             }
             _spriteBatch.End();
 
+            //draw textboxes without camera matrix (screen positioning)
+            //however, this is still drawing to the render target under point filtering so it will come out stylized
+            _spriteBatch.Begin();
+            //draw textboxes on screen
+            if ((current_sign != null || current_npc != null) && current_textbox != null) {
+                current_textbox.Draw(_spriteBatch);
+            }
+            _spriteBatch.End();
+
             //draw transition
             if (transition_active) {
                 _spriteBatch.Begin();
@@ -1868,13 +1885,6 @@ namespace gate
         }
 
         public void DrawTextOverlays(SpriteBatch _spriteBatch) {
-            //draw textboxes
-            _spriteBatch.Begin();
-            if ((current_sign != null || current_npc != null) && current_textbox != null) {
-                current_textbox.Draw(_spriteBatch);
-            }
-            _spriteBatch.End();
-
             //draw UI
             _spriteBatch.Begin();
             //display dash charges

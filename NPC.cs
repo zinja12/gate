@@ -64,7 +64,7 @@ namespace gate
                 this.conversation_file = conversation_file;
                 this.speaker_messages = parse_dialogue_file(this.conversation_file);
                 //initialize textbox
-                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial, speaker_messages, npc_name, Constant.textbox_width, Constant.textbox_height, Color.White);
+                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial_mid_reg, speaker_messages, npc_name, Constant.textbox2_width, Constant.textbox2_height, Color.White, Color.Black);
             }
         }
 
@@ -296,6 +296,11 @@ namespace gate
 
         public TextBox get_textbox() {
             return textbox;
+        }
+
+        public Vector2 get_overhead_position() {
+            Vector2 overhead_position = Constant.rotate_point(interaction_display_position, rotation, (-Constant.textbox2_height/2), Constant.direction_down);
+            return overhead_position;
         }
 
         public override void Draw(SpriteBatch spriteBatch) {

@@ -80,6 +80,7 @@ namespace gate
 
         public static SpriteFont arial;
         public static SpriteFont arial_small;
+        public static SpriteFont arial_mid_reg;
 
         //Reference directions in relation to the game world
         public static Vector2 direction_down = new Vector2(0, 1);
@@ -98,6 +99,9 @@ namespace gate
         /*UI CONSTANTS CONFIG*/
         public static int dash_charge_ui_size = 30;
         public static Vector2 dash_charge_ui_screen_position = new Vector2(window_width - (dash_charge_ui_size*2) - 10f, 10f);
+
+        public static int textbox2_width = 500;
+        public static int textbox2_height = 150;
 
         /*Camera Constants*/
         public static float camera_shake_milliseconds = 300f;
@@ -240,9 +244,15 @@ namespace gate
             return new_tex;
         }
 
+        //screen to world position
         public static Vector2 world_position_transform(Vector2 position, Camera camera)
         {
             return Vector2.Transform(position, Matrix.Invert(camera.Transform));
+        }
+
+        //world to screen position
+        public static Vector2 world_position_to_screen_position(Vector2 position, Camera camera) {
+            return Vector2.Transform(position, camera.Transform);
         }
 
         public static void update_ui_positions_on_screen_size_change() {

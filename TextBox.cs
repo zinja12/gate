@@ -11,35 +11,35 @@ namespace gate
 {
     public class TextBox
     {
-        public Vector2 screen_position;
+        public Vector2 position;
 
-        private Vector2 text_offset = new Vector2(30, 20);
-        private Vector2 box_title_offset = new Vector2(0, -20);
+        protected Vector2 text_offset = new Vector2(30, 20);
+        protected Vector2 box_title_offset = new Vector2(0, -50);
 
-        private SpriteFont font;
-        private List<(string, string)> msgs;
-        private List<(string, List<string>)> speaker_msg_screens;
-        private string current_msg;
-        private int current_msg_index, current_msg_screen_idx;
-        private float width, height;
-        private Color color;
-        private bool end_of_text = false;
+        protected SpriteFont font;
+        protected List<(string, string)> msgs;        protected List<(string, List<string>)> speaker_msg_screens;
+        protected string current_msg;
+        protected int current_msg_index, current_msg_screen_idx;
+        protected float width, height;
+        protected Color box_color, text_color;
+        protected bool end_of_text = false;
 
-        private string box_title_name;
+        protected string box_title_name;
 
-        private float advance_message_elapsed;
-        private float advance_message_cooldown = 500f;
+        protected float advance_message_elapsed;
+        protected float advance_message_cooldown = 500f;
 
-        private float background_opacity = 0.8f;
-        private float max_line_width;
+        protected float background_opacity = 0.8f;
+        protected float max_line_width;
 
-        public TextBox(Vector2 screen_position, SpriteFont font, List<(string, string)> msgs, string box_title_name, float width, float height, Color color) {
-            this.screen_position = screen_position;
+        public TextBox(Vector2 position, SpriteFont font, List<(string, string)> msgs, string box_title_name, float width, float height, Color box_color, Color text_color) {
+            this.position = position;
             this.font = font;
             this.msgs = msgs;
             this.width = width;
             this.height = height;
-            this.color = color;
+            this.box_color = box_color;
+            this.text_color = text_color;
             this.max_line_width = width - 20;
 
             //Cannot have a text box without text
@@ -60,7 +60,7 @@ namespace gate
             this.box_title_name = box_title_name;
         }
 
-        public void Update(GameTime gameTime) {
+        public virtual void Update(GameTime gameTime) {
             //check for input so that the player can advance to the next message
             int input;
             if (!GamePad.GetState(PlayerIndex.One).IsConnected) { //keyboard input
@@ -101,14 +101,14 @@ namespace gate
             return speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
         }
 
-        private int key_down(Keys key) {
+        protected int key_down(Keys key) {
             if (Keyboard.GetState().IsKeyDown(key))
                 return 1;
             else
                 return 0;
         }
 
-        private int button_A_pressed() {
+        protected int button_A_pressed() {
             //ternary operator to check if A is pressed
             return GamePad.GetState(PlayerIndex.One).Buttons.A == ButtonState.Pressed ? 1 : 0;
         }
@@ -185,16 +185,20 @@ namespace gate
             return msg_screens;
         }
 
-        public void Draw(SpriteBatch spriteBatch) {
+        public void set_position(Vector2 position) {
+            this.position = position;
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch) {
             //draw rectangle as backdrop for text
-            Renderer.FillRectangle(spriteBatch, screen_position, (int)width, (int)height, Color.Black * background_opacity);
+            Renderer.FillRectangle(spriteBatch, position, (int)width, (int)height, box_color * background_opacity);
             //draw box title
-            spriteBatch.DrawString(Constant.arial_small, speaker_msg_screens[current_msg_screen_idx].Item1, screen_position + box_title_offset, color);
+            spriteBatch.DrawString(Constant.arial_mid_reg, speaker_msg_screens[current_msg_screen_idx].Item1, position + box_title_offset, box_color);
             //draw current message
-            spriteBatch.DrawString(font, current_msg, screen_position + text_offset, color);
+            spriteBatch.DrawString(font, current_msg, position + text_offset, text_color);
             //draw continue button for all but the last message screen
             if (current_msg_screen_idx < speaker_msg_screens.Count-1) {
-                spriteBatch.DrawString(font, ">", screen_position + new Vector2(width - 50, height - 80), Color.White);
+                spriteBatch.DrawString(font, ">", position + new Vector2(width - 50, height - 80), text_color);
             }
         }
     }
