@@ -139,6 +139,15 @@ namespace gate
         public static string ENTITY_ACTIVE = "active"; //players, enemies, collision geometry entities
         public static string ENTITY_PASSIVE = "passive"; //plants, grass, environment entities
 
+        public static List<string> projectile_collision_identifiers = new List<string>() {
+            "fence",
+            "sign",
+            "lamp",
+            "marker",
+            "wall",
+            "box"
+        };
+
         /*EDITOR*/
         public static List<string> get_object_identifiers() {
             List<string> identifiers = new List<string>();

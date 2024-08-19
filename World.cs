@@ -80,6 +80,8 @@ namespace gate
         private float shake_angle = 1f;
         private float shake_radius = 5f;
         private List<int> viewport_points_outside_collider = new List<int>();
+        float camera_gamepad_h_input = 0f;
+        private bool player_camera_rotate_enabled = true, camera_invert = false;
 
         //editor variables
         private bool editor_active = false, editor_enabled = true;
@@ -755,6 +757,7 @@ namespace gate
                 }
             }
 
+            //handle clearing arrows
             foreach (IEntity e in projectiles) {
                 if (e is Arrow) {
                     Arrow a = (Arrow)e;
@@ -835,13 +838,28 @@ namespace gate
             }
             previous_scroll_value = Mouse.GetState().ScrollWheelValue;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Left) || GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X < -0.1f) {
-                camera.Rotation += 0.02f;
-                previous_key = Keys.Left;
-            }
-            else if (Keyboard.GetState().IsKeyDown(Keys.Right) || GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X > 0.1f){
-                camera.Rotation -= 0.02f;
-                previous_key = Keys.Right;
+            //
+            if (player_camera_rotate_enabled) {
+                if (!GamePad.GetState(PlayerIndex.One).IsConnected) { //keyboard camera rotation control
+                    if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
+                        camera.Rotation += 0.02f;
+                        previous_key = Keys.Left;
+                    } else if (Keyboard.GetState().IsKeyDown(Keys.Right)) {
+                        camera.Rotation -= 0.02f;
+                        previous_key = Keys.Right;
+                    }
+                } else {
+                    //gamepad connected
+                    //pull gamepad right thumbstick value
+                    camera_gamepad_h_input = GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X;
+                    //clamp to range between -0.02f and +0.02f
+                    camera_gamepad_h_input *= 0.02f;
+                    //add to rotation
+                    camera.Rotation -= camera_invert ? -camera_gamepad_h_input : camera_gamepad_h_input;
+                    //set previous key for editor
+                    if (camera_gamepad_h_input < 0) previous_key = Keys.Left;
+                    else if (camera_gamepad_h_input > 0) previous_key = Keys.Right;
+                }
             }
 
             //update animations outside of camera rotations
@@ -1430,6 +1448,7 @@ namespace gate
                     }
                 }
 
+                //handle projectile collisions
                 foreach (IEntity proj in projectiles) {
                     if (!e.Equals(proj)) {
                         if (e is Nightmare) {
@@ -1527,6 +1546,8 @@ namespace gate
                                 //shake the camera
                                 set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
                             }
+                            //add arrow charge because we hit something
+                            player.add_arrow_charge(1);
                         }
                     }
                 }
@@ -1539,6 +1560,32 @@ namespace gate
                         //transition to beginning of the level (reload world)
                         if (!transition_active) {
                             set_transition(true, current_level_id);
+                        }
+                    }
+                }
+            }
+
+            //check projectile collision against geometry
+            //TODO: why isn't collision geometry a collection of icollisionentity?
+            foreach (IEntity e in collision_geometry) {
+                foreach (IEntity proj in projectiles) {
+                    //make sure we are not checking the same entity
+                    if (!e.Equals(proj)) {
+                        if (e is StackedObject) {
+                            //check only for collisions with certain defined collision entities
+                            if (Constant.projectile_collision_identifiers.Contains(e.get_id())) {
+                                StackedObject so = (StackedObject)e;
+                                if (proj is Arrow) {
+                                    Arrow a = (Arrow)proj;
+                                    bool collision = so.get_hurtbox().collision(a.get_hitbox());
+                                    if (collision) {
+                                        a.move_arrow(Vector2.Zero);
+                                        //if the shot is not a power shot then clear it on impact immediately
+                                        //it will be cleared when the speed runs out (dead)
+                                        if (!a.is_power_shot()) { entities_to_clear.Add(a); }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -1777,6 +1824,10 @@ namespace gate
                 shake_elapsed = 0;
                 camera.set_camera_offset(Vector2.Zero);
             }
+        }
+
+        public void set_camera_rotation_enabled(bool value) {
+            this.player_camera_rotate_enabled = value;
         }
 
         public void add_projectile(IEntity projectile_entity) {

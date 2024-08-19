@@ -130,7 +130,7 @@ namespace gate
             this.angle_offset = direction_angle + ((float)Math.PI*0.5f);
         }
 
-        private void move_arrow(Vector2 direction) {
+        public void move_arrow(Vector2 direction) {
             base_position += (direction * arrow_speed) * speed_multiplier;
             draw_position += (direction * arrow_speed) * speed_multiplier;
             depth_sort_position = draw_position + (arrow_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
