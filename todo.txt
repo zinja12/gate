@@ -252,11 +252,12 @@ ToDo List:
     -should just need to stop dash if collision is encountered
     -move player back the same amount as movement speed should the player be colliding
 [DONE](BUG)fix textbox positioning and scale on window resize
-[](BUG)fix rotation for tile objects in editor
-[](BUG)trees do not get properly drawn or saved to expected position
+[DONE](BUG)trees do not get properly drawn or saved to expected position
     - this is partially fixed by saving the proper base position
     - should go in and separate out get_base_position and get_depth_position as functions
     - most objects for that matter
+    - this was resolved with the new saving system and instead saving the base_position, base_position was swapped for depth_sort_position, this remedied object placement since we were saving a different position than where they were being placed 
+[](BUG)fix rotation for tile objects in editor
 [](BUG)hit textures don't show up in the proper place when camera is rotated
     -this might be because the update function to properly rotate and stack the sprites at the respective positions doesn't run immediately
     -should try to populate and rotate the position at least once in the init to potentially avoid this
