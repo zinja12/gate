@@ -132,8 +132,10 @@ ToDo List:
 [DONE](FEATURE)swap inputs for heavy attack and bow
     - this will make missing the input for firing an arrow harder (if impossible)
 [DONE](FEATURE)create level transitions
+[DONE](FEATURE)redo color palette and make more nature art assets
+[DONE](FEATURE)implement erasing/removing objects into editor
+[DONE](FEATURE)create fade to black or wipe to black transitions between levels
 [](FEATURE)add player death/failure animation
-[](FEATURE)redo color palette and make more nature art assets
 [](FEATURE)background floor tex + trail textures and add to game
     -implement some type of ordering for floor textures so trails can go on top of floor textures
 [](FEATURE)add object linking and scripting for objects to listen to other objects for triggers to execute behavior
@@ -143,11 +145,9 @@ ToDo List:
     -probably need some sort of checkpoint system
     -or figure out what happens when the player dies
         -should it be meaningful? gameplay mechanic?
-[](FEATURE)implement erasing/removing objects into editor
 [](FEATURE)create tents sprite stack model
 [](FEATURE)create campfire spritestack model
 [IN PROGRESS](FEATURE)start working on intro level and lead up to town
-[](FEATURE)create fade to black or wipe to black transitions between levels
 [WILL NOT DO - helpful to see things from different angles](FEATURE)set camera rotation to zero while in editor mode
 [](FEATURE)re-create grass as a regular layered object instead of just a sprite
 [LATER](FEATURE)create level bounds
