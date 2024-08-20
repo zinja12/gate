@@ -838,7 +838,7 @@ namespace gate
             }
             previous_scroll_value = Mouse.GetState().ScrollWheelValue;
 
-            //
+            //flag to allow or disallow players rotating the camera
             if (player_camera_rotate_enabled) {
                 if (!GamePad.GetState(PlayerIndex.One).IsConnected) { //keyboard camera rotation control
                     if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
