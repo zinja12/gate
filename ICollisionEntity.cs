@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace gate
 {
     public interface ICollisionEntity {
-        void take_hit(IEntity entity);
+        void take_hit(IEntity entity, int damage);
         RRect get_hurtbox();
         bool is_hurtbox_active();
     }

@@ -616,7 +616,7 @@ namespace gate
             return health <= 0 && time_since_death >= 500f;
         }
 
-        public void take_hit(IEntity entity) {
+        public void take_hit(IEntity entity, int damage) {
             int health_decrease_value = 1;
             if (entity is Arrow) {
                 Arrow a = (Arrow)entity;
@@ -683,6 +683,10 @@ namespace gate
 
         public virtual Emotion get_emotion_trait() {
             return Emotion.Fear;
+        }
+
+        public int get_damage() {
+            return 1;
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {

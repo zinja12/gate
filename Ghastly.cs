@@ -171,7 +171,7 @@ namespace gate
             };
         }
 
-        public void take_hit(IEntity entity) {
+        public void take_hit(IEntity entity, int damage) {
             //turn off hurt box for a bit
             hurtbox_active = false;
             //calculate hit direction

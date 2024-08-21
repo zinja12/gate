@@ -95,7 +95,7 @@ namespace gate
             return hitbox.collision(collision_rect);
         }
 
-        public void take_hit(IEntity entity) {}
+        public void take_hit(IEntity entity, int damage) {}
 
         public RRect get_hurtbox() {
             return hitbox;

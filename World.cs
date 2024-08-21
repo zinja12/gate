@@ -1423,7 +1423,7 @@ namespace gate
                         if (ic.is_hurtbox_active()) {
                             bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
                             if (collision) {
-                                ic.take_hit(player);
+                                ic.take_hit(player, 1);
                                 //add to arrows charges for player
                                 player.add_arrow_charge(1);
                                 //freeze frames to add weight to collision
@@ -1444,7 +1444,7 @@ namespace gate
                     if (n.hitbox_active()) {
                         bool collision = player.check_hurtbox_collisions(n.get_hitbox());
                         if (collision && player.is_hurtbox_active()) {
-                            player.take_hit(n);
+                            player.take_hit(n, n.get_damage());
                             //freeze frames to add weight
                             //freeze_frames = 2;
                             //shake the camera
@@ -1461,7 +1461,7 @@ namespace gate
                             Arrow a = (Arrow)proj;
                             bool collision = nm.get_hurtbox().collision(a.get_hitbox());
                             if (collision) {
-                                nm.take_hit(a);
+                                nm.take_hit(a, 1);
                                 //if the shot is not a power shot then clear it on impact immediately
                                 //it will be cleared when the speed runs out (dead)
                                 if (!a.is_power_shot()) { entities_to_clear.Add(a); }

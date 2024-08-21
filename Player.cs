@@ -681,7 +681,7 @@ namespace gate
             }
         }
 
-        public void take_hit(IEntity entity) {
+        public void take_hit(IEntity entity, int damage) {
             //set hitstun
             hitstun_active = true;
             //handle emotion transfer
@@ -694,7 +694,7 @@ namespace gate
                 }
             }
             //reduce health on hit
-            health--;
+            health -= damage;
             //turn off hurt box for a bit
             hurtbox_active = false;
             //calculate hit direction
