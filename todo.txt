@@ -135,6 +135,7 @@ ToDo List:
 [DONE](FEATURE)redo color palette and make more nature art assets
 [DONE](FEATURE)implement erasing/removing objects into editor
 [DONE](FEATURE)create fade to black or wipe to black transitions between levels
+[](FEATURE)add sandbag to test out combat
 [](FEATURE)add player death/failure animation
 [](FEATURE)background floor tex + trail textures and add to game
     -implement some type of ordering for floor textures so trails can go on top of floor textures
