@@ -83,7 +83,7 @@ namespace gate
         protected float hitbox_center_distance;
         protected Vector2 hitbox_center;
         protected bool ai_behavior_enabled = true;
-        protected float striking_distance = 55f;
+        protected float striking_distance = 35f;
 
         //Damage variables
         List<IEntity> seen_projectiles;
@@ -679,6 +679,10 @@ namespace gate
 
         public void set_health(int health_value) {
             health = health_value;
+        }
+
+        public virtual Emotion get_emotion_trait() {
+            return Emotion.Fear;
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {

@@ -8,6 +8,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace gate
 {
+    //emotions
+    //each emotion affects gameplay differently
+    //need to figure out if there's some gameplay that you can do to get rid of them quickly (pick ups / item inventory like talismans in Elden Ring?)
+    public enum Emotion {
+        Fear = 0, //movement speed reduction - stop moving for it to go away more quickly
+        Anxiety = 1, //attack power reduction - 
+        Calm = 2 //normal
+    }
+    
     public class Constant
     {
         //window title
@@ -57,6 +66,8 @@ namespace gate
         public static Texture2D tombstone_tex;
         public static Texture2D sword_tex;
         public static Texture2D box_spritesheet;
+
+        public static Texture2D fear_tex, anxiety_tex;
 
         public static Texture2D marker_spritesheet;
         public static Texture2D lamppost_spritesheet;
@@ -127,6 +138,7 @@ namespace gate
         public static float nightmare_aggro_engagement_distance = 500f;
 
         /*PLAYER CONFIG*/
+        public static int player_dash_charge = 2, player_attack_charge = 2, player_arrow_charge = 2, player_max_arrows = 2;
         public static float player_dash_cooldown = 800f;
         public static float player_doubledash_cooldown = 800f;
         public static float player_dash_speed = 6.5f;
@@ -134,6 +146,14 @@ namespace gate
         public static float player_attack_cooldown = 600f;
         public static float player_doubleattack_cooldown = 800f;
         public static float player_attack_movement_speed = 0.5f;
+
+        public static Dictionary<int, (Texture2D, Color)> emotion_texture_map;
+        public static Dictionary<int, (Texture2D, Color)> generate_emotion_texture_map() {
+            Dictionary<int, (Texture2D, Color)> tex_map = new Dictionary<int, (Texture2D, Color)>();
+            tex_map.Add((int)Emotion.Fear, (Constant.fear_tex, Color.Pink));
+            tex_map.Add((int)Emotion.Anxiety, (anxiety_tex, Color.Cyan));
+            return tex_map;
+        }
 
         /*ENTITY FLAGS*/
         public static string ENTITY_ACTIVE = "active"; //players, enemies, collision geometry entities

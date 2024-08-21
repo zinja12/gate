@@ -15,5 +15,6 @@ namespace gate
         void set_ai_entities(List<IAiEntity> enemies);
         int get_ID_num();
         void set_behavior_enabled(bool value);
+        Emotion get_emotion_trait();
     }
 }

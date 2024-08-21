@@ -18,6 +18,7 @@ namespace gate
         public Vector2 camera_track_position;
         public Vector2 center_position;
         public Vector2 aim_orbit;
+        public Vector2 emotion_display_position;
 
         //rotation
         private Vector2 rotation_point;
@@ -43,7 +44,7 @@ namespace gate
         private float footprints_delay = 300f;
 
         //movement and input
-        private float movement_speed = 2.0f;
+        private float base_movement_speed = 2.0f, movement_speed = 2.0f, fear_movement_speed = 0.8f;
         private float _v, _h, _dash, _attack, _interact, _heavy_attack, _fire, _aim;
         private Vector2 direction;
         private Vector2 last_direction;
@@ -51,10 +52,11 @@ namespace gate
         private Vector2 direction_down = new Vector2(0, 1);
         private bool moving = false;
         private bool movement_disabled = false;
+        private bool hitstun_active = false;
 
         //dash
         private bool dash_active;
-        private int dash_charge = 2;
+        private int dash_charge = Constant.player_dash_charge;
         private Vector2 dash_direction_unit;
         private Vector2 dash_start;
         private Vector2 dash_queued_direction;
@@ -91,7 +93,7 @@ namespace gate
         private float take_hit_elapsed;
         private float reactivate_hurtbox_threshold = 800f;
         private Vector2 hit_direction;
-        private float hit_speed = 0.03f;
+        private float hit_speed = 0.015f;
         private float take_hit_color_change_elapsed;
         private float color_change_threshold = 200f;
         private int hit_flash_count = 0;
@@ -110,7 +112,7 @@ namespace gate
 
         //attack vars
         private bool attack_active, heavy_attack_active, charging_active, aiming, charging_arrow;
-        private int attack_charge = 2;
+        private int attack_charge = Constant.player_attack_charge;
         private float attack_cooldown = Constant.player_attack_cooldown;
         private float attack_cooldown_elapsed = Constant.player_attack_cooldown;
         private float doubleattack_cooldown = Constant.player_doubleattack_cooldown;
@@ -126,7 +128,7 @@ namespace gate
 
         //arrow vars
         IEntity arrow;
-        private int arrow_charge = 2, max_arrows = 2;
+        private int arrow_charge = Constant.player_arrow_charge, max_arrows = Constant.player_max_arrows;
         private float power_shot_elapsed = 0f, power_shot_start_threshold = 500, power_shot_duration = 650f;
         private bool power_shot = false;
         private Color power_shot_color = Color.Red;
@@ -151,6 +153,10 @@ namespace gate
         bool dash_attribute = false;
         bool bow_attribute = false;
 
+        //player emotion
+        private Emotion current_emotion;
+        private float emotion_elapsed = 0f, emotion_elapsed_threshold = 2500f;
+
         private int ID;
 
         //random
@@ -166,6 +172,7 @@ namespace gate
             this.attack_draw_position = new Vector2(draw_position.X - (player_size / 2), draw_position.Y - (player_size / 2));
             this.depth_sort_position = this.draw_position + new Vector2(0, player_size/2);
             this.camera_track_position = base_position;
+            this.emotion_display_position = new Vector2(depth_sort_position.X, depth_sort_position.Y);
             this.scale = scale;
             this.rotation_point = new Vector2(player_size / 2, player_size /2);
             //initialize animations with their appropriate starting frames on the spritesheets
@@ -207,6 +214,9 @@ namespace gate
             //hit textures
             this.hit_texture = Constant.hit_confirm_spritesheet;
             this.hit_texture_rotation_point = new Vector2(hit_texture.Width/2, hit_texture.Height/2);
+
+            //set initial emotion
+            this.current_emotion = Emotion.Calm;
 
             this.ID = ID;
 
@@ -441,7 +451,7 @@ namespace gate
             }
             
             #region Movement
-            if (!movement_disabled) {
+            if (!movement_disabled && !hitstun_active) {
                 //normal movement code
                 if (!dash_active && !attack_active && !heavy_attack_active && !charging_active && !charging_arrow && !aiming) {
                     /*Update player position*/
@@ -541,6 +551,9 @@ namespace gate
             update_hitbox_position(gameTime, _v, _h);
             hitbox.update(rotation, hitbox_center);
 
+            //update emotion state
+            update_emotion_state(gameTime);
+
             //set camera track position
             if (camera_tracking_X) {
                 camera_track_position.X = base_position.X;
@@ -554,6 +567,7 @@ namespace gate
             previous_gamepad_state = current_gamepad_state;
 
             this.center_position = Constant.rotate_point(depth_sort_position, rotation, 16f, Constant.direction_up);
+            this.emotion_display_position = Constant.rotate_point(draw_position, rotation, -(player_size/2), Constant.direction_down);
         }
 
         public void update_particle_systems(GameTime gameTime, float rotation) {
@@ -572,6 +586,47 @@ namespace gate
             }
             dead_particle_systems.Clear();
             /*END PARTICLE SYSTEMS*/
+        }
+
+        public void update_emotion_state(GameTime gameTime) {
+            //handle emotion reset + cooldown
+            emotion_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (emotion_elapsed >= emotion_elapsed_threshold && current_emotion != Emotion.Calm) {
+                set_emotion(Emotion.Calm);
+            }
+        }
+
+        public void set_emotion(Emotion e) {
+            //set current emotion and reset cooldown
+            current_emotion = e;
+            emotion_elapsed = 0f;
+
+            //handle setting emotion behavior
+            switch(current_emotion) {
+                case Emotion.Fear:
+                    //fear reduces movement speed for all actions (minus attacking)
+                    movement_speed = fear_movement_speed;
+                    dash_speed = Constant.player_dash_speed/2;
+                    dash_length = Constant.player_dash_length/2;
+                    break;
+                case Emotion.Anxiety:
+                    //anxiety reduces charges for player resources temporarily?
+                    dash_charge = dash_charge == 0 ? 0 : Constant.player_dash_charge/2;
+                    attack_charge = attack_charge == 0 ? 0 : Constant.player_attack_charge/2;
+                    arrow_charge = arrow_charge == 0 ? 0 : Constant.player_arrow_charge/2;
+                    break;
+                case Emotion.Calm:
+                    //calm is defaults
+                    movement_speed = base_movement_speed;
+                    dash_speed = Constant.player_dash_speed;
+                    dash_length = Constant.player_dash_length;
+                    dash_charge = Constant.player_dash_charge;
+                    attack_charge = Constant.player_attack_charge;
+                    arrow_charge = Constant.player_arrow_charge;
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void receive_damage(GameTime gameTime) {
@@ -600,8 +655,10 @@ namespace gate
                 idle_animation.reset_animation();
             }
             if (take_hit_elapsed >= reactivate_hurtbox_threshold) {
+                //elapsed
                 hurtbox_active = true;
                 take_hit_elapsed = 0;
+                hitstun_active = false;
             }
             if (take_hit_color_change_elapsed >= color_change_threshold) {
                 draw_color = Color.White;
@@ -625,6 +682,17 @@ namespace gate
         }
 
         public void take_hit(IEntity entity) {
+            //set hitstun
+            hitstun_active = true;
+            //handle emotion transfer
+            if (entity is IAiEntity) {
+                IAiEntity ai = (IAiEntity)entity;
+                Emotion emotion_trait = ai.get_emotion_trait();
+                if (emotion_trait != Emotion.Calm) {
+                    //set player emtion trait
+                    set_emotion(emotion_trait);
+                }
+            }
             //reduce health on hit
             health--;
             //turn off hurt box for a bit
@@ -1314,6 +1382,18 @@ namespace gate
             }
         }
 
+        public Emotion get_player_emote() {
+            return current_emotion;
+        }
+
+        public void set_player_emotion(Emotion emote) {
+            this.current_emotion = emote;
+        }
+
+        public bool in_hitstun() {
+            return hitstun_active;
+        }
+
         public void Draw(SpriteBatch spriteBatch) {
             //draw footprints
             foreach (Footprints f in footprints) {
@@ -1355,6 +1435,11 @@ namespace gate
             } else { //draw call for stationary (draw this if the player is not moving) / idle animation if the player is not moving
                 //draw player
                 spriteBatch.Draw(Constant.player_tex, draw_position, idle_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+            }
+
+            //draw current emotion
+            if (current_emotion != Emotion.Calm) {
+                spriteBatch.Draw(Constant.emotion_texture_map[(int)current_emotion].Item1, emotion_display_position, null, Constant.emotion_texture_map[(int)current_emotion].Item2, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
             }
 
             //draw arrow (TEMP)

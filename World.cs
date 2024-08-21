@@ -29,7 +29,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        string load_file_name = "trails_v1.json", current_level_id;
+        string load_file_name = "arena_v1_ids.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -251,6 +251,11 @@ namespace gate
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
             Constant.arial_mid_reg = Content.Load<SpriteFont>("fonts/arial_mid_reg");
+            //load emotions
+            Constant.fear_tex = Content.Load<Texture2D>("sprites/fear_anger");
+            Constant.anxiety_tex = Content.Load<Texture2D>("sprites/anxiety");
+            //set up texture map once textures are loaded
+            Constant.emotion_texture_map = Constant.generate_emotion_texture_map();
 
             //set pixel shader to active once it has been loaded
             game.set_pixel_shader_active(true);

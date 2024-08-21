@@ -3,7 +3,23 @@
     "dialogue": [
         {
             "speaker": "C",
-            "dialogue_line": "you know, it's quite nice here by the water"
+            "dialogue_line": "dude, I know you just laid off..."
+        },
+        {
+            "speaker": "C",
+            "dialogue_line": "but don't you think this is a bit of an overcorrection?"
+        },
+        {
+            "speaker": "C",
+            "dialogue_line": "this isn't exactly what I had in mind when I said to be flexible and take more Ls"
+        },
+        {
+            "speaker": "S",
+            "dialogue_line": "yeah, but this is me being flexible. i'm trying something new"
+        },
+        {
+            "speaker": "C",
+            "dialogue_line": "yeah... but things take time. sometimes you just have to let it marinate"
         },
         {
             "speaker": "C",
@@ -11,15 +27,7 @@
         },
         {
             "speaker": "S",
-            "dialogue_line": "i'm still worried though"
-        },
-        {
-            "speaker": "C",
-            "dialogue_line": "yeah... but things take time. sometimes you just have to let it marinate. some time away might help"
-        },
-        {
-            "speaker": "S",
-            "dialogue_line": "right..."
+            "dialogue_line": "yeah, sure. maybe right after this"
         }
     ]
 }

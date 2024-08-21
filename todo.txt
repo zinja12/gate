@@ -256,7 +256,8 @@ ToDo List:
     - this is partially fixed by saving the proper base position
     - should go in and separate out get_base_position and get_depth_position as functions
     - most objects for that matter
-    - this was resolved with the new saving system and instead saving the base_position, base_position was swapped for depth_sort_position, this remedied object placement since we were saving a different position than where they were being placed 
+    - this was resolved with the new saving system and instead saving the base_position, base_position was swapped for depth_sort_position, this remedied object placement since we were saving a different position than where they were being placed
+[DONE](BUG)player can still move while in hitstun (taking hit)
 [](BUG)fix rotation for tile objects in editor
 [](BUG)hit textures don't show up in the proper place when camera is rotated
     -this might be because the update function to properly rotate and stack the sprites at the respective positions doesn't run immediately

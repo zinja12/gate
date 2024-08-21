@@ -303,6 +303,10 @@ namespace gate
             return overhead_position;
         }
 
+        public override Emotion get_emotion_trait() {
+            return Emotion.Calm;
+        }
+
         public override void Draw(SpriteBatch spriteBatch) {
             //call base draw function
             base.Draw(spriteBatch);
