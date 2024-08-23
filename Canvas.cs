@@ -14,22 +14,41 @@ namespace gate
         private readonly GraphicsDevice _graphicsDevice;
         private Rectangle _destination_rectangle;
 
-        private Effect postprocessing_effect;
+        private List<Effect> postprocessing_effects;
+        private RenderTarget2D _intermediateTarget1, _intermediateTarget2;
+        private RenderTarget2D current_source, current_destination;
+        private RenderTarget2D temp;
 
-        public Canvas(GraphicsDevice graphicsDevice, int width, int height) {
+        private float downsampleFactor;
+        private RenderTarget2D _downsampledTarget;
+
+        public Canvas(GraphicsDevice graphicsDevice, int width, int height, float downsampleFactor = 1.0f) {
             _graphicsDevice = graphicsDevice;
-            _target = new RenderTarget2D(_graphicsDevice, width, height);
-            postprocessing_effect = null;
+            this.downsampleFactor = downsampleFactor;
+
+            int downsampledWidth = (int)(width / downsampleFactor);
+            int downsampledHeight = (int)(height / downsampleFactor);
+
+            _target = new RenderTarget2D(_graphicsDevice, downsampledWidth, downsampledHeight);
+            _intermediateTarget1 = new RenderTarget2D(_graphicsDevice, downsampledWidth, downsampledHeight);
+            _intermediateTarget2 = new RenderTarget2D(_graphicsDevice, downsampledWidth, downsampledHeight);
+
+            _downsampledTarget = new RenderTarget2D(_graphicsDevice, downsampledWidth, downsampledHeight);
+
+            postprocessing_effects = new List<Effect>();
         }
 
-        public Canvas(GraphicsDevice graphicsDevice, int width, int height, Effect effect) {
-            _graphicsDevice = graphicsDevice;
-            _target = new RenderTarget2D(_graphicsDevice, width, height);
-            postprocessing_effect = effect;
+        public Canvas(GraphicsDevice graphicsDevice, int width, int height, List<Effect> effects, float downsampleFactor = 1.0f) 
+            : this(graphicsDevice, width, height, downsampleFactor) {
+            postprocessing_effects = effects;
         }
 
-        public void set_postprocessing_effect(Effect effect) {
-            this.postprocessing_effect = effect;
+        public void add_postprocessing_effect(Effect effect) {
+            postprocessing_effects.Add(effect);
+        }
+    
+        public void clear_postprocessing_effects() {
+            postprocessing_effects.Clear();
         }
 
         public void set_destination_rectangle() {
@@ -49,16 +68,34 @@ namespace gate
         }
 
         public void Activate() {
-            _graphicsDevice.SetRenderTarget(_target);
+            _graphicsDevice.SetRenderTarget(_downsampledTarget);
             _graphicsDevice.Clear(Color.DarkGray);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
+            current_source = _downsampledTarget;
+            current_destination = _intermediateTarget1;
+
+            foreach (Effect e in postprocessing_effects) {
+                _graphicsDevice.SetRenderTarget(current_destination);
+                _graphicsDevice.Clear(Color.Transparent);
+                spriteBatch.Begin(effect: e);
+                spriteBatch.Draw(current_source, _target.Bounds, Color.White);
+                spriteBatch.End();
+
+                // Ping-pong the buffers
+                temp = current_source;
+                current_source = current_destination;
+                current_destination = (current_destination == _intermediateTarget1) ? _intermediateTarget2 : _intermediateTarget1;
+            }
+
+            // Set the render target back to null to render to the screen
             _graphicsDevice.SetRenderTarget(null);
             _graphicsDevice.Clear(Color.Black);
-            if (postprocessing_effect != null) { spriteBatch.Begin(effect: postprocessing_effect); } 
-            else { spriteBatch.Begin(); }
-            spriteBatch.Draw(_target, _destination_rectangle, Color.White);
+
+            // Draw the upscaled image to the screen
+            spriteBatch.Begin();
+            spriteBatch.Draw(current_source, _destination_rectangle, Color.White);
             spriteBatch.End();
         }
     }

@@ -36,7 +36,7 @@ namespace gate
             _graphics.PreferredBackBufferHeight = (int)Constant.window_height;
             _graphics.ApplyChanges();
 
-            _canvas = new Canvas(_graphics.GraphicsDevice, (int)Constant.window_width, (int)Constant.window_height);
+            _canvas = new Canvas(_graphics.GraphicsDevice, (int)Constant.window_width, (int)Constant.window_height, 1.0f);
             _canvas.set_destination_rectangle();
 
             //allow window_resizing
@@ -54,9 +54,9 @@ namespace gate
         //TODO: Come up with a better name for this function
         public void set_pixel_shader_active(bool enabled) {
             if (enabled) {
-                _canvas.set_postprocessing_effect(Constant.pixelate_effect);
+                _canvas.add_postprocessing_effect(Constant.pixelate_effect);
             } else {
-                _canvas.set_postprocessing_effect(null);
+                //_canvas.set_postprocessing_effect(null);
             }
         }
 
@@ -72,7 +72,7 @@ namespace gate
             world = new World(this, _graphics, Content.RootDirectory, Content);
             world.resize_viewport(_graphics);
 
-            _canvas.set_postprocessing_effect(Constant.pixelate_effect);
+            _canvas.add_postprocessing_effect(Constant.pixelate_effect);
 
             //debug fps initialization
             fps = new FpsCounter(this, Constant.arial_small, Vector2.Zero);

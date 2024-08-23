@@ -63,7 +63,7 @@ namespace gate
         float rotation = 0f;
         
         //world variables
-        private float render_distance = 1000f;
+        private float render_distance = 600;
         private int freeze_frames = 0;
         //level transition variables
         private bool transition_active = false;
@@ -238,6 +238,8 @@ namespace gate
             current_level_id = level_id;
             //load context for fx
             Constant.pixelate_effect = Content.Load<Effect>("fx/pixelate");
+            Constant.pixelate_effect.Parameters["pixels"].SetValue(Constant.pixels);
+            Constant.pixelate_effect.Parameters["pixelation"].SetValue(Constant.pixelation);
             //load content not specific to an object
             Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
             Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");

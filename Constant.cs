@@ -147,6 +147,10 @@ namespace gate
         public static float player_doubleattack_cooldown = 800f;
         public static float player_attack_movement_speed = 0.5f;
 
+        /*SHADERS*/
+        public static float pixels = 1700.0f;
+        public static float pixelation = 3.55f;
+
         public static Dictionary<int, (Texture2D, Color)> emotion_texture_map;
         public static Dictionary<int, (Texture2D, Color)> generate_emotion_texture_map() {
             Dictionary<int, (Texture2D, Color)> tex_map = new Dictionary<int, (Texture2D, Color)>();
