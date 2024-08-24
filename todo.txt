@@ -136,6 +136,10 @@ ToDo List:
 [DONE](FEATURE)implement erasing/removing objects into editor
 [DONE](FEATURE)create fade to black or wipe to black transitions between levels
 [](FEATURE)add sandbag to test out combat
+[](FEATURE)add generic flat  sprite object vs stacked object
+[](FEATURE)modify particle systems to take in texture for particles as parameter
+    -or even a list of particles to use
+[](FEATURE)modify particle systems to be able to emit on a line as well as a point
 [](FEATURE)add player death/failure animation
 [](FEATURE)background floor tex + trail textures and add to game
     -implement some type of ordering for floor textures so trails can go on top of floor textures
