@@ -16,7 +16,6 @@ namespace gate
         public List<Particle> dead_particles;
 
         private Random random;
-        private float frame_mod = 10;
         private int max_speed;
 
         private float particle_life_duration;
