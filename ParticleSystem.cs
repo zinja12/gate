@@ -62,10 +62,6 @@ namespace gate
         }
 
         public void Update(GameTime gameTime, float rotation) {
-            //generate a particle every 10th frame
-            if ((float)gameTime.ElapsedGameTime.TotalMilliseconds % frame_mod == 0) {
-                
-            }
             //generate new particle
             float speed = (float)random.Next(1, max_speed);
             speed /= 3;
