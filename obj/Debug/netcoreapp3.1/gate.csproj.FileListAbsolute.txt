@@ -204,3 +204,7 @@ C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\anxiety.xnb
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\fear_anger.xnb
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\fx\scanlines.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\fx\scanlines.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\fonts\arial_mid_reg.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\anxiety.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\fear_anger.xnb

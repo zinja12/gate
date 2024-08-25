@@ -48,25 +48,9 @@ namespace gate
         }
         
         //puff / explosion constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures) {
-            this.base_position = base_position;
-            this.max_speed = max_speed;
-            this.random = new Random();
-
-            this.particles = new List<Particle>();
-            this.dead_particles = new List<Particle>();
-
-            this.particle_life_duration = particle_life_duration;
+        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures) 
+            : this(base_position, max_speed, particle_life_duration, particle_min_scale, particle_max_scale, particle_colors, particle_textures) {
             this.constant_emission = false;
-            this.particle_min_scale = particle_min_scale;
-            this.particle_max_scale = particle_max_scale;
-            this.particle_colors = particle_colors;
-            this.particle_textures = particle_textures;
-
-            if (particle_textures.Count() == 0) {
-                throw new Exception("Particle System requires particle textures. No particle textures provided in particle_textures list parameter. particle_textures parameter is empty.");
-            }
-
             this.total_particle_count = total_particle_count;
             this.current_particle_count = 0;
         }
