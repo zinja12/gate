@@ -22,11 +22,12 @@ namespace gate
         private bool constant_emission;
         private int total_particle_count, current_particle_count;
         private List<Color> particle_colors;
+        private List<Texture2D> particle_textures;
 
         private int particle_min_scale, particle_max_scale;
         
         //constant emission constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int particle_min_scale, int particle_max_scale, List<Color> particle_colors) {
+        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures) {
             this.base_position = base_position;
             this.max_speed = max_speed;
             this.random = new Random();
@@ -39,10 +40,15 @@ namespace gate
             this.particle_min_scale = particle_min_scale;
             this.particle_max_scale = particle_max_scale;
             this.particle_colors = particle_colors;
+            this.particle_textures = particle_textures;
+
+            if (particle_textures.Count() == 0) {
+                throw new Exception("Particle System requires particle textures. No particle textures provided in particle_textures list parameter. particle_textures parameter is empty.");
+            }
         }
         
         //puff / explosion constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors) {
+        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures) {
             this.base_position = base_position;
             this.max_speed = max_speed;
             this.random = new Random();
@@ -52,12 +58,17 @@ namespace gate
 
             this.particle_life_duration = particle_life_duration;
             this.constant_emission = false;
-
-            this.total_particle_count = total_particle_count;
-            this.current_particle_count = 0;
             this.particle_min_scale = particle_min_scale;
             this.particle_max_scale = particle_max_scale;
             this.particle_colors = particle_colors;
+            this.particle_textures = particle_textures;
+
+            if (particle_textures.Count() == 0) {
+                throw new Exception("Particle System requires particle textures. No particle textures provided in particle_textures list parameter. particle_textures parameter is empty.");
+            }
+
+            this.total_particle_count = total_particle_count;
+            this.current_particle_count = 0;
         }
 
         public void Update(GameTime gameTime, float rotation) {
@@ -70,10 +81,12 @@ namespace gate
             direction = Constant.rotate_point(direction, rotation, 1f, Constant.direction_up);
             //only add particles if we are constantly emitting particles
             if (constant_emission) {
-                particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, Constant.footprint_tex, (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
+                //generate new particle
+                particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
             } else {
+                //generate particle up to certain amount specified
                 if (current_particle_count < total_particle_count) {
-                    particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, Constant.footprint_tex, (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
+                    particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
                     current_particle_count++;
                 }
             }
@@ -96,6 +109,20 @@ namespace gate
 
         public void set_position(Vector2 position) {
             this.base_position = position;
+        }
+
+        public void add_particle_texture(Texture2D tex) {
+            particle_textures.Add(tex);
+        }
+
+        public Texture2D get_random_texture() {
+            //do not need to generate a random number if the list is just 1 texture
+            if (particle_textures.Count() == 1){
+                return particle_textures[0];
+            }
+
+            //index into list randomly to pull next texture
+            return particle_textures[random.Next(0, particle_textures.Count())];
         }
 
         public bool is_finished() {

@@ -81,6 +81,7 @@ namespace gate
         public static Color maximum_blue_purple = new Color(179,183,238);
         public static Color ghost_white = new Color(251,249,255);
 
+        /*Particle parameters*/
         public static List<Color> green_particles = new List<Color>() {Color.White, Color.Green, Color.Black};
         public static List<Color> red_particles = new List<Color>() {Color.White, Color.Red, Color.Black};
         public static List<Color> white_particles = new List<Color>() {Color.White, Color.White, Color.White};
