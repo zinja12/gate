@@ -10,7 +10,8 @@ namespace gate
 
     public class ParticleSystem
     {
-        public Vector2 base_position;
+        public Vector2 base_position, end_position;
+        private Vector2? dir;
 
         public List<Particle> particles;
         public List<Particle> dead_particles;
@@ -27,7 +28,7 @@ namespace gate
         private int particle_min_scale, particle_max_scale;
         
         //constant emission constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures) {
+        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) {
             this.base_position = base_position;
             this.max_speed = max_speed;
             this.random = new Random();
@@ -42,17 +43,26 @@ namespace gate
             this.particle_colors = particle_colors;
             this.particle_textures = particle_textures;
 
+            this.dir = direction;
+
             if (particle_textures.Count() == 0) {
                 throw new Exception("Particle System requires particle textures. No particle textures provided in particle_textures list parameter. particle_textures parameter is empty.");
             }
         }
         
         //puff / explosion constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures) 
-            : this(base_position, max_speed, particle_life_duration, particle_min_scale, particle_max_scale, particle_colors, particle_textures) {
+        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) 
+            : this(base_position, max_speed, particle_life_duration, particle_min_scale, particle_max_scale, particle_colors, particle_textures, direction) {
             this.constant_emission = false;
             this.total_particle_count = total_particle_count;
             this.current_particle_count = 0;
+        }
+        
+        //constant emission line constructor
+        public ParticleSystem(Vector2 start_position, Vector2 end_position, int max_speed, float particle_life_duration, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) 
+            : this(start_position, max_speed, particle_life_duration, particle_min_scale, particle_max_scale, particle_colors, particle_textures, direction) {
+            this.constant_emission = true;
+            this.end_position = end_position;
         }
 
         public void Update(GameTime gameTime, float rotation) {
@@ -60,13 +70,21 @@ namespace gate
             float speed = (float)random.Next(1, max_speed);
             speed /= 3;
             //TODO: need to continually rotate direction based on rotation of the world/camera
-            Vector2 direction = new Vector2((float)random.Next(-100, 100), (float)random.Next(-100, 0));
+            Vector2 direction = dir.HasValue ? dir.Value : new Vector2((float)random.Next(-100, 100), (float)random.Next(-100, 0));
+            //normalize and rotate
             direction = Vector2.Normalize(direction);
             direction = Constant.rotate_point(direction, rotation, 1f, Constant.direction_up);
             //only add particles if we are constantly emitting particles
             if (constant_emission) {
-                //generate new particle
-                particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
+                //line emission
+                if (end_position != null) {
+                    //pick random point on the line between start and end point
+                    //emit from that point
+                    particles.Add(new Particle(random_point_on_line(base_position, end_position), direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
+                } else {
+                    //generate new particle from single point
+                    particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
+                }
             } else {
                 //generate particle up to certain amount specified
                 if (current_particle_count < total_particle_count) {
@@ -107,6 +125,18 @@ namespace gate
 
             //index into list randomly to pull next texture
             return particle_textures[random.Next(0, particle_textures.Count())];
+        }
+
+        public Vector2 random_point_on_line(Vector2 start, Vector2 end) {
+            //calculate the vector from one to the other
+            Vector2 line = end - start;
+            //normalize
+            line.Normalize();
+            //generate random magnitude between 1 and the distance between the two
+            float distance = Vector2.Distance(start, end);
+            int magnitude = random.Next(1, (int)distance);
+            //return line * random magnitude to give a random point on the line
+            return line * magnitude;
         }
 
         public bool is_finished() {
