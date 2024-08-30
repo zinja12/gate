@@ -19,16 +19,19 @@ namespace gate
         private Random random;
         private int max_speed;
 
-        private float particle_life_duration;
+        private float particle_life_duration, frequency;
         private bool constant_emission;
         private int total_particle_count, current_particle_count;
         private List<Color> particle_colors;
         private List<Texture2D> particle_textures;
 
         private int particle_min_scale, particle_max_scale;
-        
+
+        private bool in_world;
+        private int frame_count = 0;
+
         //constant emission constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) {
+        public ParticleSystem(bool in_world, Vector2 base_position, int max_speed, float particle_life_duration, float frequency, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) {
             this.base_position = base_position;
             this.max_speed = max_speed;
             this.random = new Random();
@@ -48,19 +51,22 @@ namespace gate
             if (particle_textures.Count() == 0) {
                 throw new Exception("Particle System requires particle textures. No particle textures provided in particle_textures list parameter. particle_textures parameter is empty.");
             }
+
+            this.in_world = in_world;
+            this.frequency = frequency;
         }
         
         //puff / explosion constructor
-        public ParticleSystem(Vector2 base_position, int max_speed, float particle_life_duration, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) 
-            : this(base_position, max_speed, particle_life_duration, particle_min_scale, particle_max_scale, particle_colors, particle_textures, direction) {
+        public ParticleSystem(bool in_world, Vector2 base_position, int max_speed, float particle_life_duration, int frequency, int total_particle_count, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) 
+            : this(in_world, base_position, max_speed, particle_life_duration, frequency, particle_min_scale, particle_max_scale, particle_colors, particle_textures, direction) {
             this.constant_emission = false;
             this.total_particle_count = total_particle_count;
             this.current_particle_count = 0;
         }
         
         //constant emission line constructor
-        public ParticleSystem(Vector2 start_position, Vector2 end_position, int max_speed, float particle_life_duration, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) 
-            : this(start_position, max_speed, particle_life_duration, particle_min_scale, particle_max_scale, particle_colors, particle_textures, direction) {
+        public ParticleSystem(bool in_world, Vector2 start_position, Vector2 end_position, int max_speed, float particle_life_duration, int frequency, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) 
+            : this(in_world, start_position, max_speed, particle_life_duration, frequency, particle_min_scale, particle_max_scale, particle_colors, particle_textures, direction) {
             this.constant_emission = true;
             this.end_position = end_position;
         }
@@ -73,18 +79,23 @@ namespace gate
             Vector2 direction = dir.HasValue ? dir.Value : new Vector2((float)random.Next(-100, 100), (float)random.Next(-100, 0));
             //normalize and rotate
             direction = Vector2.Normalize(direction);
-            direction = Constant.rotate_point(direction, rotation, 1f, Constant.direction_up);
+            //rotate the direction vector as needed depending on whether this is an in world effect vs a screen effect
+            if (in_world) {
+                direction = Constant.rotate_point(direction, rotation, 1f, Constant.direction_up);
+            }
             //only add particles if we are constantly emitting particles
             if (constant_emission) {
                 //line emission
-                if (end_position != null) {
+                if (end_position != null && frame_count % frequency == 0) {
                     //pick random point on the line between start and end point
                     //emit from that point
                     particles.Add(new Particle(random_point_on_line(base_position, end_position), direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
+                    frame_count = 0;
                 } else {
                     //generate new particle from single point
                     particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
                 }
+                frame_count++;
             } else {
                 //generate particle up to certain amount specified
                 if (current_particle_count < total_particle_count) {

@@ -1547,7 +1547,7 @@ namespace gate
                         if (hitbox_collision) {
                             if (e.get_id().Equals("box")) {
                                 //add particles for effect
-                                particle_systems.Add(new ParticleSystem(Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 5, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
                                 //remove box
                                 clear_entity(e);
                                 //shake the camera

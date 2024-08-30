@@ -632,7 +632,7 @@ namespace gate
             //reduce health on hit
             health -= health_decrease_value;
             if (health <= 0) {
-                particle_systems.Add(new ParticleSystem(Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 5, 1, 3, Constant.red_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 1, 5, 1, 3, Constant.red_particles, new List<Texture2D>() { Constant.footprint_tex }));
             }
             //turn off hurt box for a bit
             hurtbox_active = false;

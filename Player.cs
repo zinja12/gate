@@ -340,7 +340,7 @@ namespace gate
                 if (attack_charged_elapsed >= 100f) {
                     if (sweet_spot) {
                         //add particle flair if player hits a sweet spot
-                        particle_systems.Add(new ParticleSystem(Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 5, 1, 3, Constant.red_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 1, 5, 1, 3, Constant.red_particles, new List<Texture2D>() { Constant.footprint_tex }));
                     }
                     heavy_attack_active = true;
                     attack_cooldown_elapsed = 0;
@@ -417,7 +417,7 @@ namespace gate
                     dash_cooldown = doubledash_cool_down;
                 }
                 //add particle system on dash
-                particle_systems.Add(new ParticleSystem(Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 5, 1, 3, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 1, 5, 1, 3, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
             } else if (dash_cooldown_elapsed >= dash_cooldown) { //reset dash_charge if the player has not dashed in the required cooldown
                 dash_charge = 2;
                 dash_cooldown = Constant.player_dash_cooldown;
@@ -1015,7 +1015,7 @@ namespace gate
                 //create new footprint and set elapsed back to 0
                 footprints.Add(new Footprints(depth_sort_position, 1f, Constant.footprint_tex, rotation, 0.5f, 0.01f, Color.Black));
                 //add particle system for puff
-                particle_systems.Add(new ParticleSystem(Constant.rotate_point(draw_position, rotation, 2f, Constant.direction_down), 1, 350f, random.Next(1, 4), 1, 2, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(draw_position, rotation, 2f, Constant.direction_down), 1, 350f, 1, random.Next(1, 4), 1, 2, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
                 footprints_elapsed = 0;
             }
         }
