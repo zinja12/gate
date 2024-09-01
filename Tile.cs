@@ -60,7 +60,7 @@ namespace gate
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(texture, draw_position, null, Color.White, rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, draw_position, null, Color.White, rotation/1000, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
 
         public Vector2 get_base_position() { return draw_position; }
