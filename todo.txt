@@ -264,10 +264,11 @@ ToDo List:
     - this was resolved with the new saving system and instead saving the base_position, base_position was swapped for depth_sort_position, this remedied object placement since we were saving a different position than where they were being placed
 [DONE](BUG)player can still move while in hitstun (taking hit)
 [DONE](BUG)fix rotation for tile objects in editor
+[DONE](BUG)resizing window repositions the text boxes, however it does not adjust the size of the box as it should
+    -fixed with in world text boxes
 [](BUG)hit textures don't show up in the proper place when camera is rotated
     -this might be because the update function to properly rotate and stack the sprites at the respective positions doesn't run immediately
     -should try to populate and rotate the position at least once in the init to potentially avoid this
-[](BUG)resizing window repositions the text boxes, however it does not adjust the size of the box as it should
 [](BUG)optimize? game barely works on microsoft surface
 [WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
 [](BUG)fix hit confirm position when hitbox is active
