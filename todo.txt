@@ -266,9 +266,11 @@ ToDo List:
 [DONE](BUG)fix rotation for tile objects in editor
 [DONE](BUG)resizing window repositions the text boxes, however it does not adjust the size of the box as it should
     -fixed with in world text boxes
+[](BUG)fix collision with multiple entities at once
+    -this might just be as simple as just ignoring the movement rather than moving the player back on their line
+[WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
 [](BUG)hit textures don't show up in the proper place when camera is rotated
     -this might be because the update function to properly rotate and stack the sprites at the respective positions doesn't run immediately
     -should try to populate and rotate the position at least once in the init to potentially avoid this
 [](BUG)optimize? game barely works on microsoft surface
-[WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
 [](BUG)fix hit confirm position when hitbox is active
