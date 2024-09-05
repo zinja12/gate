@@ -83,6 +83,7 @@ namespace gate
         //collision and hitboxes
         private RRect hurtbox;
         private RRect hitbox;
+        private RRect future_hurtbox;
         private Vector2 hitbox_center;
         private Vector2 hitbox_draw_position;
         private float hitbox_center_distance = player_size/2;
@@ -109,6 +110,8 @@ namespace gate
         private Vector2 hit_noise_position_offset = Vector2.Zero;
         private float noise_radius = 10f;
         private float noise_angle = 1f;
+
+        Dictionary<IEntity, bool> collision_geometry_map;
 
         //attack vars
         private bool attack_active, heavy_attack_active, charging_active, aiming, charging_arrow;
@@ -221,6 +224,8 @@ namespace gate
             this.ID = ID;
 
             this.random = new Random();
+
+            collision_geometry_map = new Dictionary<IEntity, bool>();
 
             //world variable reference
             this.world = world;
@@ -473,13 +478,20 @@ namespace gate
                     float y = direction.Y * (float)Math.Cos(-rotation) + direction.X * (float)Math.Sin(-rotation);
 
                     direction = new Vector2(x, y);
-
-                    //alter the position based on direction and movement speed
-                    base_position += direction * movement_speed;
-                    draw_position += direction * movement_speed;
+                    
+                    (IEntity, bool) fcd = future_collision_detected();
+                    if (!fcd.Item2) {
+                        //alter the position based on direction and movement speed
+                        base_position += direction * movement_speed;
+                        draw_position += direction * movement_speed;
+                    } /*else {
+                        //collision, need to calculate resultant directions
+                        Vector2 resultant = calculate_resultant_vector(fcd.Item1, direction);
+                        base_position += resultant * movement_speed;
+                        draw_position += resultant * movement_speed;
+                    }*/
                     //change depth sort position based on draw position regardless of camera rotation
                     depth_sort_position = draw_position + (player_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
-
                     //update attack draw_position to always stay at the same spot rotating the player in the Vector2(-1, -1) direction (example:See RRect.cs update function)
                     attack_draw_position = draw_position + (player_size/2) * new Vector2(-1 * (float)Math.Cos(-rotation) - (-1) * (float)Math.Sin(-rotation), -1 * (float)Math.Cos(-rotation) + (-1) * (float)Math.Sin(-rotation));
                 } else if (dash_active) { //dash movement code
@@ -550,6 +562,7 @@ namespace gate
             //if the attack is active lock the hurtbox from moving
             update_hitbox_position(gameTime, _v, _h);
             hitbox.update(rotation, hitbox_center);
+            future_hurtbox = get_future_hurtbox();
 
             //update emotion state
             update_emotion_state(gameTime);
@@ -1156,9 +1169,46 @@ namespace gate
             // } else if (attack_active) {
             //     draw = draw_position + dash_direction * movement_speed;
             // }
-            RRect future_hurtbox = new RRect(draw, player_size, player_size);
+            future_hurtbox = new RRect(draw, player_size/2, player_size);
             future_hurtbox.update(rotation, draw);
             return future_hurtbox;
+        }
+
+        public (IEntity, bool) future_collision_detected() {
+            foreach (KeyValuePair<IEntity, bool> kv in collision_geometry_map) {
+                if (kv.Value) {
+                    return (kv.Key, true);
+                }
+            }
+            return (null, false);
+        }
+
+        public Vector2 calculate_resultant_vector(IEntity e, Vector2 direction) {
+            if (e is ICollisionEntity) {
+                ICollisionEntity ic = (ICollisionEntity)e;
+                //center of collision entity hurtbox
+                Vector2 center = ic.get_hurtbox().position;
+                //base position for player
+                Vector2 base_pos = get_base_position();
+                //calculate direction between the two
+                Vector2 center_to_player = base_pos - center;
+                //normalize
+                center_to_player.Normalize();
+
+                //center_to_player = Constant.rotate_point(center_to_player, rotation, 1f, Constant.direction_up);
+                
+                Vector2 collision_tangent = new Vector2(-center_to_player.Y, center_to_player.X);
+                float normal_component = Vector2.Dot(direction, center_to_player);
+                float tangent_component = Vector2.Dot(direction, collision_tangent);
+
+                Vector2 resolved_direction = collision_tangent * tangent_component;
+                return resolved_direction;
+            }
+            return direction * -1;
+        }
+
+        public void set_collision_geometry_map(Dictionary<IEntity, bool> map) {
+            this.collision_geometry_map = map;
         }
 
         public bool check_hurtbox_collisions(RRect collision_rect) {
@@ -1450,17 +1500,19 @@ namespace gate
             //draw debug info
             if (DEBUG){
                 //Draw positions
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Blue, 1f, base_position, base_position + new Vector2(0, -20));
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.White, 1f, draw_position + rotation_point, draw_position + rotation_point + new Vector2(0, -10));
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Yellow, 1f, depth_sort_position, depth_sort_position + new Vector2(0, -10));
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Purple, 1f, attack_draw_position, attack_draw_position + new Vector2(0, -10));
+                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Blue, 1f, base_position, base_position + new Vector2(0, -20));
+                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.White, 1f, draw_position + rotation_point, draw_position + rotation_point + new Vector2(0, -10));
+                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Yellow, 1f, depth_sort_position, depth_sort_position + new Vector2(0, -10));
+                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Purple, 1f, attack_draw_position, attack_draw_position + new Vector2(0, -10));
                 //Draw collision information
                 hurtbox.draw(spriteBatch);
-                hitbox.draw(spriteBatch);
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Orange, 1f, draw_position, draw_position + new Vector2(0, -20));
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Red, 1f, hitbox_center, hitbox_center + new Vector2(0, -5));
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Gold, 1f, hitbox_draw_position, hitbox_draw_position + new Vector2(0, -5));
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Magenta, 1f, center_position, center_position + new Vector2(0, -10));
+                //hitbox.draw(spriteBatch);
+                future_hurtbox.set_color(Color.Pink);
+                future_hurtbox.draw(spriteBatch);
+                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Orange, 1f, draw_position, draw_position + new Vector2(0, -20));
+                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Red, 1f, hitbox_center, hitbox_center + new Vector2(0, -5));
+                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Gold, 1f, hitbox_draw_position, hitbox_draw_position + new Vector2(0, -5));
+                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Magenta, 1f, center_position, center_position + new Vector2(0, -10));
                 spriteBatch.DrawString(Constant.arial, "" + attack_charge, attack_draw_position, Color.Black, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);
                 spriteBatch.DrawString(Constant.arial, $"charging:{charging_active}", attack_draw_position + new Vector2(0, 10), Color.Black, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);
                 spriteBatch.DrawString(Constant.arial, $"charging_elapsed:{attack_charged_elapsed}", attack_draw_position + new Vector2(0, 20), Color.Black, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);

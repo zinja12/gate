@@ -29,7 +29,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        string load_file_name = "trails_v1.json", current_level_id;
+        public string load_file_name = "trails_v1.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -52,6 +52,7 @@ namespace gate
         List<IAiEntity> npcs;
         List<IEntity> projectiles;
         ConditionManager condition_manager;
+        Dictionary<IEntity, bool> collision_geometry_map;
 
         //clear variables
         List<IEntity> entities_to_clear;
@@ -145,6 +146,8 @@ namespace gate
             projectiles = new List<IEntity>();
             //create conditions manager
             condition_manager = new ConditionManager(this);
+            //create dict for collision map for level geometry
+            collision_geometry_map = new Dictionary<IEntity, bool>();
 
             //weapons
             entities_to_clear = new List<IEntity>();
@@ -393,6 +396,7 @@ namespace gate
                             StackedObject m = new StackedObject(w_obj.object_identifier, Constant.marker_spritesheet, obj_position, w_obj.scale, 32, 32, 15, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(m);
                             collision_geometry.Add(m);
+                            collision_geometry_map[m] = false;
                             break;
                         case "lamp":
                             //load texture
@@ -466,18 +470,21 @@ namespace gate
                             StackedObject w = new StackedObject(w_obj.object_identifier, Constant.wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(w);
                             collision_geometry.Add(w);
+                            collision_geometry_map[w] = false;
                             break;
                         case "fence":
                             check_and_load_tex(ref Constant.fence_spritesheet, "sprites/fence1");
                             StackedObject f = new StackedObject(w_obj.object_identifier, Constant.fence_spritesheet, obj_position, w_obj.scale, 32, 32, 18, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(f);
                             collision_geometry.Add(f);
+                            collision_geometry_map[f] = false;
                             break;
                         case "box":
                             check_and_load_tex(ref Constant.box_spritesheet, "sprites/box1_2_18");
                             StackedObject box = new StackedObject(w_obj.object_identifier, Constant.box_spritesheet, obj_position, w_obj.scale, 32, 32, 18, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(box);
                             collision_geometry.Add(box);
+                            collision_geometry_map[box] = false;
                             break;
                         case "tan_tile":
                             check_and_load_tex(ref Constant.tan_tile_tex, "sprites/tile_tan1");
@@ -696,6 +703,7 @@ namespace gate
             enemies.Clear();
             projectiles.Clear();
             condition_manager.clear_conditions();
+            collision_geometry_map.Clear();
             //clear entities
             clear_entities();
             //unload content
@@ -1049,6 +1057,7 @@ namespace gate
                             StackedObject m = new StackedObject("marker", Constant.marker_spritesheet, create_position, 1f, 32, 32, 15, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
                             entities_list.Add(m);
                             collision_geometry.Add(m);
+                            collision_geometry_map[m] = false;
                             Console.WriteLine("marker," + create_position.X + "," + create_position.Y + ",1");
                             break;
                         case 5:
@@ -1092,6 +1101,7 @@ namespace gate
                             w.Update(gameTime, rotation);
                             entities_list.Add(w);
                             collision_geometry.Add(w);
+                            collision_geometry_map[w] = false;
                             Console.WriteLine("wall," + create_position.X + "," + create_position.Y + ",1");
                             break;
                         case 13:
@@ -1099,6 +1109,7 @@ namespace gate
                             f.Update(gameTime, rotation);
                             entities_list.Add(f);
                             collision_geometry.Add(f);
+                            collision_geometry_map[f] = false;
                             Console.WriteLine("fence," + create_position.X + "," + create_position.Y + ",1");
                             break;
                         case 14:
@@ -1106,6 +1117,7 @@ namespace gate
                             io.set_debug(true);
                             io.Update(gameTime, rotation);
                             collision_geometry.Add(io);
+                            collision_geometry_map[io] = false;
                             Console.WriteLine($"deathbox,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
                             break;
                         case 15:
@@ -1177,6 +1189,7 @@ namespace gate
                             box.Update(gameTime, rotation);
                             entities_list.Add(box);
                             collision_geometry.Add(box);
+                            collision_geometry_map[box] = false;
                             Console.WriteLine("box," + create_position.X + "," + create_position.Y + ",1");
                             break;
                         default:
@@ -1536,9 +1549,10 @@ namespace gate
                 if (e is StackedObject) {
                     StackedObject obj = (StackedObject)e;
                     bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
-                    if (collision) {
-                        player.resolve_collision_geometry_movement(player.get_direction(), obj);
-                    }
+                    collision_geometry_map[e] = collision;
+                    // if (collision) {
+                    //     player.resolve_collision_geometry_movement(player.get_direction(), obj);
+                    // }
 
                     if (player.hitbox_active()) {
                         ICollisionEntity ic = (ICollisionEntity)e;
@@ -1571,6 +1585,7 @@ namespace gate
                     }
                 }
             }
+            player.set_collision_geometry_map(collision_geometry_map);
 
             //check projectile collision against geometry
             //TODO: why isn't collision geometry a collection of icollisionentity?
@@ -1639,7 +1654,7 @@ namespace gate
         //function to set up transition
         //NOTE: make sure that you check for !transition_active before invoking the function,
         //otherwise the update() will run again and the transition will continually trigger without ever completing, thereby just freezing the game (softlock)
-        private void set_transition(bool value, string level_id) {
+        public void set_transition(bool value, string level_id) {
             //set transition to active and set elapsed and next level variables
             transition_active = value;
             next_level_id = level_id;
