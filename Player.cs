@@ -72,7 +72,7 @@ namespace gate
         private const float player_attack_sprite_size = player_size*2;
 
         //larger context variables
-        public static bool DEBUG = false;
+        public static bool DEBUG = true;
         public float screen_width;
         public float screen_height;
 
@@ -168,6 +168,8 @@ namespace gate
         //World variable to trigger world events on player triggers
         World world;
 
+        Vector2 resultant;
+
         public Player(Vector2 base_position, float scale, float screen_width, float screen_height, int ID, World world) {
             this.base_position = base_position;
             this.draw_position = new Vector2(base_position.X - (player_size / 2), 
@@ -226,6 +228,7 @@ namespace gate
             this.random = new Random();
 
             collision_geometry_map = new Dictionary<IEntity, bool>();
+            resultant = Vector2.Zero;
 
             //world variable reference
             this.world = world;
@@ -478,18 +481,20 @@ namespace gate
                     float y = direction.Y * (float)Math.Cos(-rotation) + direction.X * (float)Math.Sin(-rotation);
 
                     direction = new Vector2(x, y);
+                    //direction.Normalize();
                     
                     (IEntity, bool) fcd = future_collision_detected();
                     if (!fcd.Item2) {
                         //alter the position based on direction and movement speed
                         base_position += direction * movement_speed;
                         draw_position += direction * movement_speed;
-                    } /*else {
+                    } else {
                         //collision, need to calculate resultant directions
-                        Vector2 resultant = calculate_resultant_vector(fcd.Item1, direction);
-                        base_position += resultant * movement_speed;
-                        draw_position += resultant * movement_speed;
-                    }*/
+                        resultant = calculate_resultant_vector(fcd.Item1, direction);
+                        //Vector2 v_res = Constant.rotate_point(resultant, rotation, 1f, Constant.direction_down);
+                        base_position += resultant * movement_speed * 0.1f;
+                        draw_position += resultant * movement_speed * 0.1f;
+                    }
                     //change depth sort position based on draw position regardless of camera rotation
                     depth_sort_position = draw_position + (player_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
                     //update attack draw_position to always stay at the same spot rotating the player in the Vector2(-1, -1) direction (example:See RRect.cs update function)
@@ -1161,7 +1166,7 @@ namespace gate
 
         public RRect get_future_hurtbox() {
             //need to update this to factor in dash direction and attack dash direction
-            Vector2 draw = draw_position + direction * movement_speed;
+            Vector2 draw = draw_position + direction * movement_speed*2f;
             // if (!dash_active && !attack_active) {
             //     draw = draw_position + direction * movement_speed;
             // } else if (dash_active) {
@@ -1195,14 +1200,14 @@ namespace gate
                 //normalize
                 center_to_player.Normalize();
 
-                //center_to_player = Constant.rotate_point(center_to_player, rotation, 1f, Constant.direction_up);
+                center_to_player = Constant.rotate_point(center_to_player, rotation, 1f, Constant.direction_up);
                 
                 Vector2 collision_tangent = new Vector2(-center_to_player.Y, center_to_player.X);
                 float normal_component = Vector2.Dot(direction, center_to_player);
                 float tangent_component = Vector2.Dot(direction, collision_tangent);
 
                 Vector2 resolved_direction = collision_tangent * tangent_component;
-                return resolved_direction;
+                return center_to_player;
             }
             return direction * -1;
         }
@@ -1516,6 +1521,9 @@ namespace gate
                 spriteBatch.DrawString(Constant.arial, "" + attack_charge, attack_draw_position, Color.Black, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);
                 spriteBatch.DrawString(Constant.arial, $"charging:{charging_active}", attack_draw_position + new Vector2(0, 10), Color.Black, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);
                 spriteBatch.DrawString(Constant.arial, $"charging_elapsed:{attack_charged_elapsed}", attack_draw_position + new Vector2(0, 20), Color.Black, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);
+
+                Vector2 v = Constant.rotate_point(resultant, rotation, 1f, Constant.direction_down);
+                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Purple, 1f, get_base_position(), get_base_position()+v*50f);
             }
         }
     }

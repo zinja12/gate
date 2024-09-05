@@ -20,7 +20,7 @@ namespace gate
         private Vector2 direction_down = new Vector2(0, 1);
         private Vector2 direction_up = new Vector2(0, -1);
 
-        public static bool debug = false;
+        public static bool debug = true;
 
         private float object_width = 32;
         private float object_height = 32;
