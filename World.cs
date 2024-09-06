@@ -283,7 +283,7 @@ namespace gate
                 int player_count = 0;
                 //parse camera bounds for level
                 if (world_file_contents.camera_bounds == null) {
-                    Console.WriteLine("here");
+                    Console.WriteLine("world file camera bounds set to null");
                 } else if (world_file_contents.camera_bounds != null) {
                     GameWorldObject bounds = world_file_contents.camera_bounds;
                     camera_bounds_center = new Vector2(bounds.x_position, bounds.y_position);
@@ -305,6 +305,11 @@ namespace gate
                         loaded_obj_identifiers.Add(w_obj.object_identifier);
                     }
                     Vector2 obj_position = new Vector2(w_obj.x_position, w_obj.y_position);
+                    if (w_obj.object_id_num != i) {
+                        Console.WriteLine($"Incongruency between ith object and id_num: w_obj:{w_obj.object_identifier},w_obj_id_num:{w_obj.object_id_num}");
+                        throw new Exception($"Object id and ith object count incongruency. w_obj:{w_obj.object_identifier},w_obj_id_num:{w_obj.object_id_num}");
+                    }
+
                     switch (w_obj.object_identifier) {
                         case "player":
                             if (player_count > 0) {
@@ -533,9 +538,10 @@ namespace gate
                         default:
                             break;
                     }
-                    //set object_idx to whatever i is for editor current object idx when we get out of the loop
-                    editor_object_idx = i;
                 }
+                //set editor object_idx to whatever i is for editor current object idx later on
+                editor_object_idx = world_file_contents.world_objects.Count - 1;
+                
                 //gather all ai entities
                 List<IAiEntity> all_ai_entities = new List<IAiEntity>();
                 foreach (IAiEntity ai in enemies) { all_ai_entities.Add(ai); }
@@ -563,8 +569,9 @@ namespace gate
                     condition_manager.add_condition(c);
                 }
 
-                //add to editor object idx to avoid overlap between object idxs
+                //increment editor object idx to avoid overlap between object idxs on next insertion of entity with editor
                 editor_object_idx++;
+                Console.WriteLine($"editor object idx:{editor_object_idx}");
             } else {
                 throw new Exception("Cannot deserialize JSON world objects!");
             }
@@ -1195,6 +1202,7 @@ namespace gate
                         default:
                             break;
                     }
+                    Console.WriteLine($"Created object idx:{editor_object_idx}");
                     editor_object_idx++;
                 } else if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.LeftControl) && selection_elapsed >= selection_cooldown) { //Ctrl+S
                     //pull all world entities from render list (whether or not they're currently being drawn)
