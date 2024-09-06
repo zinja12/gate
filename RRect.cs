@@ -47,8 +47,11 @@ namespace gate
             bottom_right_position = new Vector2();
             //create edges map
             edges = new Dictionary<Vector2, Vector2>();
+            ordered_edges = new List<KeyValuePair<Vector2, Vector2>>();
 
             verts = new List<Vector2>();
+
+            normals = new List<Vector2>();
         }
 
         public void update(float rotation, Vector2 center_position) {
@@ -67,6 +70,12 @@ namespace gate
             edges.Add(top_right_position, bottom_right_position);
             edges.Add(bottom_right_position, bottom_left_position);
             edges.Add(bottom_left_position, top_left_position);
+
+            ordered_edges.Clear();
+            foreach(KeyValuePair<Vector2, Vector2> entry in edges)
+            {
+                ordered_edges.Add(entry);
+            }
 
             verts.Clear();
             verts.Add(top_left_position);
@@ -165,7 +174,7 @@ namespace gate
 
             // Calculate the perpendicular distance from the point to the line
             float distance = Math.Abs(A * point.X + B * point.Y + C) / (float)Math.Sqrt(A * A + B * B);
-            Console.WriteLine("distance:" + distance);
+            //Console.WriteLine("distance:" + distance);
             return distance;
         }
 
@@ -180,9 +189,9 @@ namespace gate
             float distance = 10000000f;
             int idx = 0;
             for (int i = 0; i < ordered_edges.Count; i++) {
-                Console.WriteLine("edge:" + ordered_edges[i].Key + ", " + ordered_edges[i].Value);
+                //Console.WriteLine("edge:" + ordered_edges[i].Key + ", " + ordered_edges[i].Value);
                 float edge_distance_to_point = distance_from_edge_to_point(ordered_edges[i].Key, ordered_edges[i].Value, point);
-                Console.WriteLine("distance:" + edge_distance_to_point);
+                //Console.WriteLine("distance:" + edge_distance_to_point);
                 if (edge_distance_to_point < distance) {
                     distance = edge_distance_to_point;
                     idx = i;
@@ -246,6 +255,11 @@ namespace gate
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, draw_color, 1f, top_right_position, bottom_right_position);
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, draw_color, 1f, top_left_position, bottom_right_position);
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, draw_color, 1f, top_right_position, bottom_left_position);
+                //draw normals
+                List<Vector2> edge_normals = get_edge_normals(get_edges());
+                foreach (Vector2 v in edge_normals) {
+                    Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Cyan, 1f, position, position+v*15f);
+                }
             }
         }
     }

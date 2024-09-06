@@ -49,6 +49,7 @@ namespace gate
         private Vector2 direction;
         private Vector2 last_direction;
         private Vector2 dash_direction;
+        private Vector2 resultant;
         private Vector2 direction_down = new Vector2(0, 1);
         private bool moving = false;
         private bool movement_disabled = false;
@@ -72,7 +73,7 @@ namespace gate
         private const float player_attack_sprite_size = player_size*2;
 
         //larger context variables
-        public static bool DEBUG = true;
+        public static bool DEBUG = false;
         public float screen_width;
         public float screen_height;
 
@@ -167,8 +168,6 @@ namespace gate
 
         //World variable to trigger world events on player triggers
         World world;
-
-        Vector2 resultant;
 
         public Player(Vector2 base_position, float scale, float screen_width, float screen_height, int ID, World world) {
             this.base_position = base_position;
@@ -489,11 +488,11 @@ namespace gate
                         base_position += direction * movement_speed;
                         draw_position += direction * movement_speed;
                     } else {
-                        //collision, need to calculate resultant directions
+                        //collision, need to calculate resultant direction from the collision object and the player
                         resultant = calculate_resultant_vector(fcd.Item1, direction);
-                        //Vector2 v_res = Constant.rotate_point(resultant, rotation, 1f, Constant.direction_down);
-                        base_position += resultant * movement_speed * 0.1f;
-                        draw_position += resultant * movement_speed * 0.1f;
+                        //move the player slowing along the result direction from the collision
+                        base_position += resultant * movement_speed * 0.01f;
+                        draw_position += resultant * movement_speed * 0.01f;
                     }
                     //change depth sort position based on draw position regardless of camera rotation
                     depth_sort_position = draw_position + (player_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
@@ -1195,19 +1194,22 @@ namespace gate
                 Vector2 center = ic.get_hurtbox().position;
                 //base position for player
                 Vector2 base_pos = get_base_position();
-                //calculate direction between the two
+                //calculate direction between the two (end - start, giving the direction to the player from the collision entity)
                 Vector2 center_to_player = base_pos - center;
                 //normalize
                 center_to_player.Normalize();
-
-                center_to_player = Constant.rotate_point(center_to_player, rotation, 1f, Constant.direction_up);
                 
-                Vector2 collision_tangent = new Vector2(-center_to_player.Y, center_to_player.X);
-                float normal_component = Vector2.Dot(direction, center_to_player);
-                float tangent_component = Vector2.Dot(direction, collision_tangent);
-
-                Vector2 resolved_direction = collision_tangent * tangent_component;
-                return center_to_player;
+                //find the closest edge from the player
+                int closest_edge = ic.get_hurtbox().closest_edge(get_future_hurtbox().position);
+                //use that edge index pulled from the collision entity hitbox to pull the start and end points of that edge
+                KeyValuePair<Vector2, Vector2> edge = ic.get_hurtbox().get_edges()[closest_edge];
+                //given the start end end of that edge, get the edge normal
+                Vector2 edge_normal = ic.get_hurtbox().get_edge_normal(edge.Key, edge.Value);
+                //calculate the resultant direction by combining the edge_normal and the players current direction
+                Vector2 addition = edge_normal + direction;
+                //normalize and return
+                addition.Normalize();
+                return addition;
             }
             return direction * -1;
         }
@@ -1507,7 +1509,7 @@ namespace gate
                 //Draw positions
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Blue, 1f, base_position, base_position + new Vector2(0, -20));
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.White, 1f, draw_position + rotation_point, draw_position + rotation_point + new Vector2(0, -10));
-                //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Yellow, 1f, depth_sort_position, depth_sort_position + new Vector2(0, -10));
+                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Yellow, 1f, depth_sort_position, depth_sort_position + new Vector2(0, -10));
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Purple, 1f, attack_draw_position, attack_draw_position + new Vector2(0, -10));
                 //Draw collision information
                 hurtbox.draw(spriteBatch);
@@ -1522,8 +1524,7 @@ namespace gate
                 spriteBatch.DrawString(Constant.arial, $"charging:{charging_active}", attack_draw_position + new Vector2(0, 10), Color.Black, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);
                 spriteBatch.DrawString(Constant.arial, $"charging_elapsed:{attack_charged_elapsed}", attack_draw_position + new Vector2(0, 20), Color.Black, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);
 
-                Vector2 v = Constant.rotate_point(resultant, rotation, 1f, Constant.direction_down);
-                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Purple, 1f, get_base_position(), get_base_position()+v*50f);
+                Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Purple, 1f, get_base_position(), get_base_position()+resultant*50f);
             }
         }
     }

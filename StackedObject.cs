@@ -20,7 +20,7 @@ namespace gate
         private Vector2 direction_down = new Vector2(0, 1);
         private Vector2 direction_up = new Vector2(0, -1);
 
-        public static bool debug = true;
+        public static bool debug = false;
 
         private float object_width = 32;
         private float object_height = 32;
@@ -77,7 +77,7 @@ namespace gate
 
         public void Update(GameTime gameTime, float rotation) {
             this.rotation = -rotation;
-            depth_sort_position = draw_position + (object_height/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
+            depth_sort_position = draw_position + 1 * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
             //update collision once to properly instantiate for rotation and then don't update anymore
             if (update_once) {
                 hitbox.update(rotation, draw_position);
