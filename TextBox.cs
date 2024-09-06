@@ -198,7 +198,7 @@ namespace gate
             spriteBatch.DrawString(font, current_msg, position + text_offset, text_color);
             //draw continue button for all but the last message screen
             if (current_msg_screen_idx < speaker_msg_screens.Count-1) {
-                spriteBatch.DrawString(font, ">", position + new Vector2(width - 50, height - 80), text_color);
+                spriteBatch.DrawString(font, "...", position + new Vector2(width - 50, height - 80), text_color);
             }
         }
     }
