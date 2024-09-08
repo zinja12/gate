@@ -751,8 +751,9 @@ namespace gate
             if (next_level_id != null) {
                 level_transition(gameTime, next_level_id);
             }
-
-            goal_rotation(gameTime);
+            
+            //keep goal rotations updated
+            update_goal_rotation(gameTime);
 
             //handle textbox
             if ((current_sign != null || current_npc != null) && current_textbox != null) {
@@ -1746,12 +1747,12 @@ namespace gate
             camera_goal_rotation = MathHelper.ToRadians(rotation_value);
         }
 
-        public void goal_rotation(GameTime gameTime) {
+        public void update_goal_rotation(GameTime gameTime) {
             if (rotation_active) {
                 //calculate which way to rotate is closer
                 camera.Rotation = MathHelper.Lerp(camera.Rotation, camera_goal_rotation, 0.0005f * (float)gameTime.ElapsedGameTime.TotalMilliseconds);
                 float diff = Math.Abs(camera.Rotation - camera_goal_rotation);
-                if (diff < 0.1f) {
+                if (diff < 0.05f) {
                     //deactivate rotation when we are within the threshold of 0.1
                     rotation_active = false;
                 }
