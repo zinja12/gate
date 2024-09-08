@@ -75,7 +75,6 @@ namespace gate
         //level rotation variables
         private bool rotation_active = false;
         private float camera_goal_rotation;
-        private bool rotation_complete = false;
 
         //camera world variables
         private bool camera_shake = false;
@@ -1670,6 +1669,8 @@ namespace gate
                         //transition to next level
                         set_transition(true, level_id);
                         triggered = false;
+                        //set trigger back to false
+                        trigger.set_triggered(false);
                         return;
                     }
                 } else if (trigger.get_trigger_type() == TriggerType.Rotation) {
