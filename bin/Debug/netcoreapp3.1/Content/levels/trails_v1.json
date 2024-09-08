@@ -9264,6 +9264,18 @@
             "width": 300,
             "height": 300,
             "goal_rotation": 75
+        },
+        {
+            "object_identifier": "rotation_trigger",
+            "object_id_num": 617,
+            "x_position": 350,
+            "y_position": 250,
+            "scale": 0,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 300,
+            "height": 300,
+            "goal_rotation": 0
         }
     ],
     "conditions": [],

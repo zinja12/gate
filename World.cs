@@ -1752,7 +1752,7 @@ namespace gate
                 //calculate which way to rotate is closer
                 camera.Rotation = MathHelper.Lerp(camera.Rotation, camera_goal_rotation, 0.0005f * (float)gameTime.ElapsedGameTime.TotalMilliseconds);
                 float diff = Math.Abs(camera.Rotation - camera_goal_rotation);
-                if (diff < 0.05f) {
+                if (diff < 0.1f) {
                     //deactivate rotation when we are within the threshold of 0.1
                     rotation_active = false;
                 }
@@ -1957,7 +1957,7 @@ namespace gate
 
             //debug triggers
             if (debug_triggers) {
-                //draw level triggers
+                //draw triggers
                 foreach (ITrigger t in triggers) {
                     t.Draw(_spriteBatch);
                 }
