@@ -72,6 +72,10 @@ namespace gate
         private float transition_elapsed, transition_threshold = 1000f;
         private float transition_percentage = 0f;
         private bool transition1_complete = false;
+        //level rotation variables
+        private bool rotation_active = false;
+        private float camera_goal_rotation;
+        private bool rotation_complete = false;
 
         //camera world variables
         private bool camera_shake = false;
@@ -236,6 +240,14 @@ namespace gate
 
         #region load_level
         //function to load level files into the world
+        /*
+        * NOTE: Eventually we will get to the place where we want to start saving the modifications to level files
+        * This essentially means that we will have to save a level on level unload and check what has been destroyed / changed
+        * then save that off to a separate level_change file and on level load, read the change file and intermix the changes
+        * to hold state from the level the player left should they come back to it. Hopefully won't be too difficult, however
+        * an open question is how we handle IDs for objects that have been removed or destroyed? Otherwise should we not have
+        * that object loaded the load function will throw and Incongruency Error...
+        */
         public void load_level(string root_directory, GraphicsDeviceManager _graphics, string level_id) {
             //set current level id
             current_level_id = level_id;
@@ -437,6 +449,10 @@ namespace gate
                             LevelTrigger lt = new LevelTrigger(obj_position, w_obj.width, w_obj.height, w_obj.level_id, player, w_obj.object_id_num);
                             triggers.Add(lt);
                             break;
+                        case "rotation_trigger":
+                            RotationTrigger rt = new RotationTrigger(obj_position, w_obj.width, w_obj.height, w_obj.goal_rotation, player, w_obj.object_id_num);
+                            triggers.Add(rt);
+                            break;
                         case "nightmare":
                             check_and_load_tex(ref Constant.nightmare_tex, "sprites/test_nightmare_spritesheet2");
                             check_and_load_tex(ref Constant.nightmare_attack_tex, "sprites/test_nightmare_attacks_spritesheet1");
@@ -541,7 +557,7 @@ namespace gate
                 }
                 //set editor object_idx to whatever i is for editor current object idx later on
                 editor_object_idx = world_file_contents.world_objects.Count - 1;
-                
+
                 //gather all ai entities
                 List<IAiEntity> all_ai_entities = new List<IAiEntity>();
                 foreach (IAiEntity ai in enemies) { all_ai_entities.Add(ai); }
@@ -716,6 +732,9 @@ namespace gate
             //unload content
             Content.Unload();
             loaded_textures.Clear();
+
+            //set world variables if needed on unload
+            rotation_active = false;
         }
 
         public void Update(GameTime gameTime){
@@ -730,8 +749,10 @@ namespace gate
 
             //keep level transitions updated
             if (next_level_id != null) {
-                level_transition(gameTime, game.get_spriteBatch(), next_level_id);
+                level_transition(gameTime, next_level_id);
             }
+
+            goal_rotation(gameTime);
 
             //handle textbox
             if ((current_sign != null || current_npc != null) && current_textbox != null) {
@@ -1624,29 +1645,46 @@ namespace gate
 
         private void check_triggers(GameTime gameTime, float rotation) {
             bool triggered = false;
-            string level_id = null;
+            ITrigger trigger = null;
 
             foreach (ITrigger t in triggers) {
                 t.Update(gameTime, rotation);
 
-                //if trigger volume is triggered then execute specific logic
+                //if trigger volume is triggered, set trigger to check, break and then handle trigger set
                 if (t.is_triggered()) {
-                    //check for specific class
-                    if (t is LevelTrigger) {
-                        LevelTrigger lt = (LevelTrigger)t;
-                        level_id = lt.get_level_id();
-                        triggered = true;
-                        break;
-                    }
+                    triggered = true;
+                    trigger = t;
+                    break;
                 }
             }
-            
-            // check if level trigger has been set
-            if (triggered && !transition_active) {
-                //transition to next level
-                set_transition(true, level_id);
-                triggered = false;
-                return;
+
+            //check trigger set and execute logic based on specific trigger
+            if (triggered && trigger != null) {
+                //individual trigger logic
+                if (trigger.get_trigger_type() == TriggerType.Level) {
+                    string level_id = ((LevelTrigger)trigger).get_level_id();
+                    if (!transition_active) {
+                        Console.WriteLine("LEVEL TRANSITION!");
+                        Console.WriteLine($"level_transition:{level_id}");
+                        //transition to next level
+                        set_transition(true, level_id);
+                        triggered = false;
+                        return;
+                    }
+                } else if (trigger.get_trigger_type() == TriggerType.Rotation) {
+                    //only set goal rotation if the rotation is not currently active
+                    if (!rotation_active) {
+                        float goal_rotation_value = ((RotationTrigger)trigger).get_rotation_value();
+                        //Console.WriteLine($"setting goal rotation value:{goal_rotation_value}");
+                        set_goal_rotation(true, goal_rotation_value);
+                    }
+                    //set triggered back to false
+                    triggered = false;
+                    //set the actual trigger back to false
+                    trigger.set_triggered(false);
+                    return;
+                }
+                trigger = null;
             }
         }
         #endregion
@@ -1670,7 +1708,7 @@ namespace gate
             player.set_movement_disabled(true);
         }
 
-        public void level_transition(GameTime gameTime, SpriteBatch spriteBatch, string n_level_id) {
+        public void level_transition(GameTime gameTime, string n_level_id) {
             //calculate how long the transition has taken
             transition_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             //calculate the percentage based on how long the transition has played
@@ -1699,6 +1737,23 @@ namespace gate
                         transition1_complete = false;
                         player.set_movement_disabled(false);
                     }
+                }
+            }
+        }
+
+        public void set_goal_rotation(bool value, float rotation_value) {
+            rotation_active = value;
+            camera_goal_rotation = MathHelper.ToRadians(rotation_value);
+        }
+
+        public void goal_rotation(GameTime gameTime) {
+            if (rotation_active) {
+                //calculate which way to rotate is closer
+                camera.Rotation = MathHelper.Lerp(camera.Rotation, camera_goal_rotation, 0.0005f * (float)gameTime.ElapsedGameTime.TotalMilliseconds);
+                float diff = Math.Abs(camera.Rotation - camera_goal_rotation);
+                if (diff < 0.1f) {
+                    //deactivate rotation when we are within the threshold of 0.1
+                    rotation_active = false;
                 }
             }
         }

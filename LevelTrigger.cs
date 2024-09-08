@@ -13,13 +13,13 @@ namespace gate
 
         public RRect trigger_box;
 
-        private bool triggered;
+        protected bool triggered;
         private string level_id;
-        private Player player;
+        protected Player player;
 
-        public static bool debug = true;
+        protected static bool debug = true;
 
-        private int ID;
+        protected int ID;
         
         public LevelTrigger(Vector2 position, float width, float height, string level_id, Player player, int ID) {
             this.position = position;
@@ -31,7 +31,7 @@ namespace gate
             this.ID = ID;
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public virtual void Update(GameTime gameTime, float rotation) {
             //update trigger volume
             trigger_box.update(rotation / 1000, position);
 
@@ -43,6 +43,10 @@ namespace gate
 
         public bool is_triggered() {
             return triggered;
+        }
+
+        public virtual void set_triggered(bool value) {
+            this.triggered = value;
         }
 
         public string get_level_id() {
@@ -61,7 +65,11 @@ namespace gate
             return this.ID;
         }
 
-        public GameWorldObject to_world_level_object() {
+        public virtual TriggerType get_trigger_type() {
+            return TriggerType.Level;
+        }
+
+        public virtual GameWorldObject to_world_level_object() {
             return new GameWorldObject {
                 object_identifier = "level_trigger",
                 object_id_num = get_obj_ID_num(),

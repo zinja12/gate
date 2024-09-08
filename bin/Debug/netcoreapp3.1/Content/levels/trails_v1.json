@@ -9239,6 +9239,31 @@
             "rotation": -7448.451,
             "npc_path_entity_ids": null,
             "npc_conversation_file_id": null
+        },
+        {
+            "object_identifier": "level_trigger",
+            "object_id_num": 615,
+            "x_position": 350,
+            "y_position": -100,
+            "scale": 0,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 300,
+            "height": 300,
+            "level_id": "arena_v1_ids.json",
+            "rotation": 0
+        },
+        {
+            "object_identifier": "rotation_trigger",
+            "object_id_num": 616,
+            "x_position": 1000,
+            "y_position": 350,
+            "scale": 0,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 300,
+            "height": 300,
+            "goal_rotation": 75
         }
     ],
     "conditions": [],

@@ -57,6 +57,7 @@ namespace gate
                 _canvas.add_postprocessing_effect(Constant.pixelate_effect);
             } else {
                 //_canvas.set_postprocessing_effect(null);
+                _canvas.clear_postprocessing_effects();
             }
         }
 
