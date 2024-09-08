@@ -9256,7 +9256,7 @@
         {
             "object_identifier": "rotation_trigger",
             "object_id_num": 616,
-            "x_position": 1000,
+            "x_position": 900,
             "y_position": 350,
             "scale": 0,
             "sign_messages": null,
@@ -9270,6 +9270,18 @@
             "object_id_num": 617,
             "x_position": 350,
             "y_position": 250,
+            "scale": 0,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 300,
+            "height": 300,
+            "goal_rotation": 0
+        },
+        {
+            "object_identifier": "rotation_trigger",
+            "object_id_num": 618,
+            "x_position": 1550,
+            "y_position": 400,
             "scale": 0,
             "sign_messages": null,
             "canopy": false,
