@@ -1992,7 +1992,9 @@ namespace gate
                     //draw preview of object
                     IEntity selected_entity = obj_map[selected_object];
                     selected_entity.Draw(_spriteBatch);
+                    _spriteBatch.DrawString(Constant.arial_small, $"place", mouse_hitbox.position, Color.Black);
                 } else if (editor_tool_idx == 1) {
+                    _spriteBatch.DrawString(Constant.arial_small, $"cond.", mouse_hitbox.position, Color.Black);
                 } else if (editor_tool_idx == 2) {
                     _spriteBatch.DrawString(Constant.arial_small, $"delete", mouse_hitbox.position, Color.Black);
                 }
