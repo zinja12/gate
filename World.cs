@@ -2060,6 +2060,7 @@ namespace gate
             _spriteBatch.DrawString(Constant.arial_small, $"selected_object:{selected_object},obj_id:{obj_map[selected_object].get_id()}", new Vector2(0, 17*5), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}", new Vector2(0, 17*6), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
             _spriteBatch.End();
         }
     }
