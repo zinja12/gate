@@ -219,6 +219,7 @@ namespace gate
             obj_map.Add(24, new Tile(Vector2.Zero, 2f, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, -1));
             obj_map.Add(25, new StackedObject("sword", Constant.sword_tex, Vector2.Zero, 1f, 16, 16, 22, Constant.stack_distance1, 0f, -1));
             obj_map.Add(26, new StackedObject("box", Constant.box_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(27, new StackedObject("house", Constant.house_spritesheet, Vector2.Zero, 1f, 128, 128, 54, Constant.stack_distance1, 0f, -1));
         }
         #endregion
 
@@ -550,6 +551,13 @@ namespace gate
                             entities_list.Add(sword);
                             collision_entities.Add(sword);
                             break;
+                        case "house":
+                            check_and_load_tex(ref Constant.house_spritesheet, "sprites/house2_1_54");
+                            StackedObject house = new StackedObject(w_obj.object_identifier, Constant.house_spritesheet, obj_position, w_obj.scale, 128, 128, 54, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(house);
+                            collision_geometry.Add(house);
+                            collision_geometry_map[house] = false;
+                            break;
                         default:
                             break;
                     }
@@ -679,6 +687,9 @@ namespace gate
                             break;
                         case "box":
                             check_and_load_tex(ref Constant.box_spritesheet, "sprites/box1_2_18");
+                            break;
+                        case "house":
+                            check_and_load_tex(ref Constant.house_spritesheet, "sprites/house2_1_54");
                             break;
                         default:
                             //don't load anything
@@ -1219,6 +1230,13 @@ namespace gate
                             collision_geometry.Add(box);
                             collision_geometry_map[box] = false;
                             Console.WriteLine("box," + create_position.X + "," + create_position.Y + ",1");
+                            break;
+                        case 27:
+                            StackedObject house = new StackedObject("house", Constant.house_spritesheet, create_position, 1f, 128, 128, 54, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            house.Update(gameTime, rotation);
+                            collision_geometry.Add(house);
+                            collision_geometry_map[house] = false;
+                            Console.WriteLine("house," + create_position.X + "," + create_position.Y + ",1");
                             break;
                         default:
                             break;

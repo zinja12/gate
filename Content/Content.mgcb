@@ -254,6 +254,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/hit_confirm_spritesheet.png
 
+#begin sprites/house2_1_54.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/house2_1_54.png
+
 #begin sprites/lamppost_spritesheet3.png
 /importer:TextureImporter
 /processor:TextureProcessor
