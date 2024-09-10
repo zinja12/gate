@@ -1428,6 +1428,17 @@ namespace gate
             List<GameWorldCondition> sorted_world_conditions = conditions.OrderBy(c => c.object_id_num).ToList();
             //sort world objects by numerical id
             List<GameWorldObject> sorted_world_objs = world_objs.OrderBy (o => o.object_id_num).ToList();
+
+            //sanity check and re-issue ids to objects to prevent any gaps in object ids that could result in an issue on level loading
+            //trying to collapse gaps in ids mostly because it throws off the level loading process
+            //this is mostly because we introduced the concept of object deletion which then leads to gaps in ids
+            for (int i = 0; i < sorted_world_objs.Count; i++) {
+                sorted_world_objs[i].object_id_num = i;
+            }
+            int object_id_count = sorted_world_objs.Count;
+            for (int i = object_id_count; i < sorted_world_conditions.Count; i++) {
+                sorted_world_conditions[i].object_id_num = i;
+            }
             
             //generate GameWorldFile object with all saved objects
             GameWorldFile world_file = new GameWorldFile {
