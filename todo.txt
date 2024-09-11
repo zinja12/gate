@@ -266,7 +266,7 @@ ToDo List:
 [DONE](BUG)fix rotation for tile objects in editor
 [DONE](BUG)resizing window repositions the text boxes, however it does not adjust the size of the box as it should
     -fixed with in world text boxes
-[](BUG)add distance checks to all collision functions to save potentially checking things that are far away
+[DONE](BUG)add distance checks to all collision functions to save potentially checking things that are far away
     -should save some cycles at the very least
 [](BUG)fix dashing and attacking collision detection
 [](BUG)fix collision with multiple entities at once
