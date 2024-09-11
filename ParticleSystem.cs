@@ -30,6 +30,8 @@ namespace gate
         private bool in_world;
         private int frame_count = 0;
 
+        private RRect hurtbox;
+
         //constant emission constructor
         public ParticleSystem(bool in_world, Vector2 base_position, int max_speed, float particle_life_duration, float frequency, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) {
             this.base_position = base_position;
@@ -54,6 +56,8 @@ namespace gate
 
             this.in_world = in_world;
             this.frequency = frequency;
+
+            this.hurtbox = new RRect(base_position, 10, 10);
         }
         
         //puff / explosion constructor
@@ -86,14 +90,17 @@ namespace gate
             //only add particles if we are constantly emitting particles
             if (constant_emission) {
                 //line emission
-                if (end_position != null && frame_count % frequency == 0) {
+                if (dir.HasValue && frame_count % frequency == 0) {
                     //pick random point on the line between start and end point
                     //emit from that point
                     particles.Add(new Particle(random_point_on_line(base_position, end_position), direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
                     frame_count = 0;
                 } else {
                     //generate new particle from single point
-                    particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
+                    if (frame_count % frequency == 0) {
+                        particles.Add(new Particle(base_position, direction, speed, true, particle_life_duration, get_random_texture(), (float)random.Next(particle_min_scale, particle_max_scale), particle_colors));
+                        frame_count = 0;
+                    }
                 }
                 frame_count++;
             } else {
@@ -118,6 +125,9 @@ namespace gate
                 x = null;
             }
             dead_particles.Clear();
+
+            //update hurtbox
+            hurtbox.update(rotation, base_position);
         }
 
         public void set_position(Vector2 position) {
@@ -159,6 +169,26 @@ namespace gate
                 }
             }
             return false;
+        }
+
+        public RRect get_hurtbox() {
+            return hurtbox;
+        }
+
+        public GameWorldParticleSystem to_world_level_particle_system() {
+            return new GameWorldParticleSystem {
+                in_world = this.in_world,
+                object_id_num = -1,
+                x_position = base_position.X,
+                y_position = base_position.Y,
+                max_speed = this.max_speed,
+                life_duration = particle_life_duration,
+                frequency = this.frequency,
+                min_scale = particle_min_scale,
+                max_scale = particle_max_scale,
+                particle_colors = "white",
+                particle_textures = "footprint"
+            };
         }
 
         public void Draw(SpriteBatch spriteBatch) {

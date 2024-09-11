@@ -158,6 +158,10 @@ namespace gate
             //create entities list and add player
             entities_list = new RenderList();
 
+            //initialize particle systems for world effects
+            this.particle_systems = new List<ParticleSystem>();
+            this.dead_particle_systems = new List<ParticleSystem>();
+
             //load first level
             load_level(content_root_directory, _graphics, load_file_name);
 
@@ -166,10 +170,6 @@ namespace gate
 
             //run first sort so everything looks good initially
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
-
-            //initialize particle systems for world effects
-            this.particle_systems = new List<ParticleSystem>();
-            this.dead_particle_systems = new List<ParticleSystem>();
         }
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content, string level_id) : this(game, _graphics, content_root_directory, Content) {
@@ -220,6 +220,7 @@ namespace gate
             obj_map.Add(25, new StackedObject("sword", Constant.sword_tex, Vector2.Zero, 1f, 16, 16, 22, Constant.stack_distance1, 0f, -1));
             obj_map.Add(26, new StackedObject("box", Constant.box_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
             obj_map.Add(27, new StackedObject("house", Constant.house_spritesheet, Vector2.Zero, 1f, 128, 128, 54, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(28, new PlaceHolderEntity(Vector2.Zero, "ParticleSystem", -1));
         }
         #endregion
 
@@ -591,9 +592,27 @@ namespace gate
                     //add created condition to condition manager
                     condition_manager.add_condition(c);
                 }
-
-                //increment editor object idx to avoid overlap between object idxs on next insertion of entity with editor
+                //increment editor object idx
                 editor_object_idx++;
+
+                for (int i = 0; i < world_file_contents.particle_systems.Count; i++) {
+                    GameWorldParticleSystem game_particle_system = world_file_contents.particle_systems[i];
+                    particle_systems.Add(
+                        new ParticleSystem(
+                            game_particle_system.in_world,
+                            new Vector2(game_particle_system.x_position, game_particle_system.y_position),
+                            game_particle_system.max_speed,
+                            game_particle_system.life_duration,
+                            game_particle_system.frequency,
+                            game_particle_system.min_scale,
+                            game_particle_system.max_scale,
+                            Constant.white_particles,
+                            new List<Texture2D>() { Constant.footprint_tex }
+                        )
+                    );
+                    editor_object_idx++;
+                }
+
                 Console.WriteLine($"editor object idx:{editor_object_idx}");
             } else {
                 throw new Exception("Cannot deserialize JSON world objects!");
@@ -1238,6 +1257,11 @@ namespace gate
                             collision_geometry_map[house] = false;
                             Console.WriteLine("house," + create_position.X + "," + create_position.Y + ",1");
                             break;
+                        case 28:
+                            ParticleSystem ps = new ParticleSystem(true, create_position, 1, 800, 5, 2, 4, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex });
+                            particle_systems.Add(ps);
+                            Console.WriteLine($"particle_system,true,{create_position.X},{create_position.Y},1,800,5,2,4,white,footprint");
+                            break;
                         default:
                             break;
                     }
@@ -1301,6 +1325,7 @@ namespace gate
                         //can use basic find entity colliding since plants are now stacked objects with collision
                         //find collision entity
                         IEntity mouse_collision_entity = find_entity_colliding(mouse_hitbox);
+                        ParticleSystem mouse_collision_ps = find_particle_system_colliding(mouse_hitbox);
                         switch (editor_layer) {
                             case 0:
                                 //floor layer
@@ -1321,6 +1346,10 @@ namespace gate
                                     plants.Contains(mouse_collision_entity)) {
                                     //remove
                                     clear_entity(mouse_collision_entity);
+                                }
+                                //handle collision with a particle system
+                                if (particle_systems.Contains(mouse_collision_ps)) {
+                                    dead_particle_systems.Add(mouse_collision_ps);
                                 }
                                 break;
                             default:
@@ -1385,6 +1414,7 @@ namespace gate
             List<GameWorldPlayerAttribute> player_attribute_list = player.to_world_player_attributes_object();
             List<GameWorldObject> world_objs = new List<GameWorldObject>();
             List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
+            List<GameWorldParticleSystem> world_particle_systems = new List<GameWorldParticleSystem>();
             //iterate over all entities
             foreach (IEntity e in entities) {
                 world_objs.Add(e.to_world_level_object());
@@ -1424,6 +1454,11 @@ namespace gate
                 }
             }
 
+            //handle saving particle systems
+            foreach(ParticleSystem ps in particle_systems) {
+                world_particle_systems.Add(ps.to_world_level_particle_system());
+            }
+
             //handle sorting conditions
             List<GameWorldCondition> sorted_world_conditions = conditions.OrderBy(c => c.object_id_num).ToList();
             //sort world objects by numerical id
@@ -1439,12 +1474,18 @@ namespace gate
             for (int i = object_id_count; i < sorted_world_conditions.Count; i++) {
                 sorted_world_conditions[i].object_id_num = i;
             }
+            object_id_count = sorted_world_objs.Count + sorted_world_conditions.Count;
+            //set world particle systems object id (this number is irrelevant to particle systems, but it should still be in order)
+            for (int i = object_id_count; i < world_particle_systems.Count; i++) {
+                world_particle_systems[i].object_id_num = i;
+            }
             
             //generate GameWorldFile object with all saved objects
             GameWorldFile world_file = new GameWorldFile {
                 player_attributes = player_attribute_list,
                 world_objects = sorted_world_objs,
                 conditions = sorted_world_conditions,
+                particle_systems = world_particle_systems,
                 world_script = new List<string>()
             };
             //take world file and serialize to json then write to file
@@ -1879,6 +1920,15 @@ namespace gate
                 ICollisionEntity ce = (ICollisionEntity)e;
                 if (ce.get_hurtbox().collision(r)) {
                     return e;
+                }
+            }
+            return null;
+        }
+
+        public ParticleSystem find_particle_system_colliding(RRect r) {
+            foreach (ParticleSystem ps in particle_systems) {
+                if (ps.get_hurtbox().collision(r)) {
+                    return ps;
                 }
             }
             return null;

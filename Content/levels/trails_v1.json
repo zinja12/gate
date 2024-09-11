@@ -9291,5 +9291,6 @@
         }
     ],
     "conditions": [],
+    "particle_systems":[],
     "world_script": []
 }

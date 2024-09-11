@@ -209,3 +209,4 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\font
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\anxiety.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\fear_anger.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\house2_1_54.xnb
+C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\house2_1_54.xnb

@@ -15,6 +15,7 @@ namespace gate
         public List<GameWorldPlayerAttribute> player_attributes { get; set; }
         public List<GameWorldObject> world_objects { get; set; }
         public List<GameWorldCondition> conditions { get; set; }
+        public List<GameWorldParticleSystem> particle_systems { get; set; }
         public List<string> world_script { get; set; }
     }
 }
