@@ -1531,19 +1531,22 @@ namespace gate
             //check collisions against player hitbox
             if (player.hitbox_active()) {
                 foreach (IEntity e in collision_entities) {
-                    //check player hitboxes collision with all entity hurtboxes
-                    if ((e is Ghastly || e is Nightmare) && !(e is NPC)) {
-                        ICollisionEntity ic = (ICollisionEntity)e;
-                        if (ic.is_hurtbox_active()) {
-                            bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
-                            if (collision) {
-                                ic.take_hit(player, 1);
-                                //add to arrows charges for player
-                                player.add_arrow_charge(1);
-                                //freeze frames to add weight to collision
-                                freeze_frames = 2;
-                                //shake the camera
-                                set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                    //distance check
+                    if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2)) {
+                        //check player hitboxes collision with all entity hurtboxes
+                        if ((e is Ghastly || e is Nightmare) && !(e is NPC)) {
+                            ICollisionEntity ic = (ICollisionEntity)e;
+                            if (ic.is_hurtbox_active()) {
+                                bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
+                                if (collision) {
+                                    ic.take_hit(player, 1);
+                                    //add to arrows charges for player
+                                    player.add_arrow_charge(1);
+                                    //freeze frames to add weight to collision
+                                    freeze_frames = 2;
+                                    //shake the camera
+                                    set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                }
                             }
                         }
                     }
@@ -1552,33 +1555,36 @@ namespace gate
 
             //check enemy collisions against player
             foreach (IEntity e in collision_entities) {
-                //check enemy hitbox collision with player hurtboxes
-                if (e is Nightmare) {
-                    Nightmare n = (Nightmare)e;
-                    if (n.hitbox_active()) {
-                        bool collision = player.check_hurtbox_collisions(n.get_hitbox());
-                        if (collision && player.is_hurtbox_active()) {
-                            player.take_hit(n, n.get_damage());
-                            //freeze frames to add weight
-                            //freeze_frames = 2;
-                            //shake the camera
-                            set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                //distance check to save cycles
+                if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < render_distance) {
+                    //check enemy hitbox collision with player hurtboxes
+                    if (e is Nightmare) {
+                        Nightmare n = (Nightmare)e;
+                        if (n.hitbox_active()) {
+                            bool collision = player.check_hurtbox_collisions(n.get_hitbox());
+                            if (collision && player.is_hurtbox_active()) {
+                                player.take_hit(n, n.get_damage());
+                                //freeze frames to add weight
+                                //freeze_frames = 2;
+                                //shake the camera
+                                set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                            }
                         }
                     }
-                }
 
-                //handle projectile collisions
-                foreach (IEntity proj in projectiles) {
-                    if (!e.Equals(proj)) {
-                        if (e is Nightmare) {
-                            Nightmare nm = (Nightmare)e;
-                            Arrow a = (Arrow)proj;
-                            bool collision = nm.get_hurtbox().collision(a.get_hitbox());
-                            if (collision) {
-                                nm.take_hit(a, 1);
-                                //if the shot is not a power shot then clear it on impact immediately
-                                //it will be cleared when the speed runs out (dead)
-                                if (!a.is_power_shot()) { entities_to_clear.Add(a); }
+                    //handle projectile collisions
+                    foreach (IEntity proj in projectiles) {
+                        if (!e.Equals(proj)) {
+                            if (e is Nightmare) {
+                                Nightmare nm = (Nightmare)e;
+                                Arrow a = (Arrow)proj;
+                                bool collision = nm.get_hurtbox().collision(a.get_hitbox());
+                                if (collision) {
+                                    nm.take_hit(a, 1);
+                                    //if the shot is not a power shot then clear it on impact immediately
+                                    //it will be cleared when the speed runs out (dead)
+                                    if (!a.is_power_shot()) { entities_to_clear.Add(a); }
+                                }
                             }
                         }
                     }
@@ -1587,57 +1593,59 @@ namespace gate
 
             //check player interactions with collision_entities
             foreach (IEntity e in collision_entities) {
-                if (player.interacting()) {
-                    if (e is Sign) {
+                if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/3)) {
+                    if (player.interacting()) {
+                        if (e is Sign) {
+                            Sign s = (Sign)e;
+                            bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
+                            if (collision) {
+                                //calculate screen textbox position
+                                Vector2 textbox_screen_position = Constant.world_position_to_screen_position(s.get_overhead_position(), camera);
+                                //set textbox screen position
+                                s.get_textbox().set_position(textbox_screen_position);
+                                //set sign to display
+                                s.display_textbox();
+                                //set current textbox to correct instance
+                                current_textbox = s.get_textbox();
+                                current_sign = s;
+                            }
+                        } else if (e is NPC) {
+                            NPC npc = (NPC)e;
+                            bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
+                            if (collision) {
+                                //orient npc to target for speaking
+                                npc.orient_to_target(player.get_base_position(), camera.Rotation);
+                                //calculate screen textbox position from overhead position of npc
+                                Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
+                                npc.get_textbox().set_position(screen_position);
+                                //set npc to display
+                                npc.display_textbox();
+                                //set current textbox to correct instance
+                                current_textbox = npc.get_textbox();
+                                current_npc = npc;
+                            }
+                        }
+                    }
+
+                    if (e is Sign) { //check if interaction is available and display prompt for signs
                         Sign s = (Sign)e;
                         bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
-                        if (collision) {
-                            //calculate screen textbox position
-                            Vector2 textbox_screen_position = Constant.world_position_to_screen_position(s.get_overhead_position(), camera);
-                            //set textbox screen position
-                            s.get_textbox().set_position(textbox_screen_position);
-                            //set sign to display
-                            s.display_textbox();
-                            //set current textbox to correct instance
-                            current_textbox = s.get_textbox();
-                            current_sign = s;
-                        }
+                        //set available interaction display
+                        s.set_display_interaction(collision);
                     } else if (e is NPC) {
                         NPC npc = (NPC)e;
                         bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
-                        if (collision) {
-                            //orient npc to target for speaking
-                            npc.orient_to_target(player.get_base_position(), camera.Rotation);
-                            //calculate screen textbox position from overhead position of npc
-                            Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
-                            npc.get_textbox().set_position(screen_position);
-                            //set npc to display
-                            npc.display_textbox();
-                            //set current textbox to correct instance
-                            current_textbox = npc.get_textbox();
-                            current_npc = npc;
-                        }
-                    }
-                }
-
-                if (e is Sign) { //check if interaction is available and display prompt for signs
-                    Sign s = (Sign)e;
-                    bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
-                    //set available interaction display
-                    s.set_display_interaction(collision);
-                } else if (e is NPC) {
-                    NPC npc = (NPC)e;
-                    bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
-                    //set available interaction display
-                    npc.set_display_interaction(collision);
-                } else if (e is StackedObject) {
-                    //interactions with picking up weapons
-                    StackedObject stacked_object = (StackedObject)e;
-                    bool collision = player.check_hurtbox_collisions(stacked_object.get_hurtbox());
-                    if (collision && player.interacting()) {
-                        if ((e.get_id().Equals("sword") || e.get_id().Equals("bow") || e.get_id().Equals("dash")) && player.get_attribute_active(e.get_id()) == false) {
-                            player.set_attribute(e.get_id(), true);
-                            clear_entity(e);
+                        //set available interaction display
+                        npc.set_display_interaction(collision);
+                    } else if (e is StackedObject) {
+                        //interactions with picking up weapons
+                        StackedObject stacked_object = (StackedObject)e;
+                        bool collision = player.check_hurtbox_collisions(stacked_object.get_hurtbox());
+                        if (collision && player.interacting()) {
+                            if ((e.get_id().Equals("sword") || e.get_id().Equals("bow") || e.get_id().Equals("dash")) && player.get_attribute_active(e.get_id()) == false) {
+                                player.set_attribute(e.get_id(), true);
+                                clear_entity(e);
+                            }
                         }
                     }
                 }
@@ -1645,42 +1653,48 @@ namespace gate
 
             //check player-geometry collisions
             foreach (IEntity e in collision_geometry) {
-                if (e is StackedObject) {
-                    StackedObject obj = (StackedObject)e;
-                    bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
-                    collision_geometry_map[e] = collision;
-                    // if (collision) {
-                    //     player.resolve_collision_geometry_movement(player.get_direction(), obj);
-                    // }
+                if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2)) {
+                    if (e is StackedObject) {
+                        StackedObject obj = (StackedObject)e;
+                        bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
+                        collision_geometry_map[e] = collision;
+                        // if (collision) {
+                        //     player.resolve_collision_geometry_movement(player.get_direction(), obj);
+                        // }
 
-                    if (player.hitbox_active()) {
-                        ICollisionEntity ic = (ICollisionEntity)e;
-                        //don't need to check if hurtbox is active, it's an inanimate object, it should always be active
-                        bool hitbox_collision = player.check_hitbox_collisions(ic.get_hurtbox());
-                        if (hitbox_collision) {
-                            if (e.get_id().Equals("box")) {
-                                //add particles for effect
-                                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
-                                //remove box
-                                clear_entity(e);
-                                //shake the camera
-                                set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                        if (player.hitbox_active()) {
+                            ICollisionEntity ic = (ICollisionEntity)e;
+                            //don't need to check if hurtbox is active, it's an inanimate object, it should always be active
+                            bool hitbox_collision = player.check_hitbox_collisions(ic.get_hurtbox());
+                            if (hitbox_collision) {
+                                if (e.get_id().Equals("box")) {
+                                    //add particles for effect
+                                    particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                                    //remove box
+                                    clear_entity(e);
+                                    //shake the camera
+                                    set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                }
+                                //add arrow charge because we hit something
+                                player.add_arrow_charge(1);
                             }
-                            //add arrow charge because we hit something
-                            player.add_arrow_charge(1);
                         }
                     }
-                }
 
-                if (e is InvisibleObject) {
-                    InvisibleObject io = (InvisibleObject)e;
-                    bool collision = io.check_hitbox_collisions(player.get_hurtbox());
-                    if (collision && !player.is_dashing() && !editor_active) {
-                        Console.WriteLine("death!");
-                        //transition to beginning of the level (reload world)
-                        if (!transition_active) {
-                            set_transition(true, current_level_id);
+                    if (e is InvisibleObject) {
+                        InvisibleObject io = (InvisibleObject)e;
+                        bool collision = io.check_hitbox_collisions(player.get_hurtbox());
+                        if (collision && !player.is_dashing() && !editor_active) {
+                            Console.WriteLine("death!");
+                            //transition to beginning of the level (reload world)
+                            if (!transition_active) {
+                                set_transition(true, current_level_id);
+                            }
                         }
+                    }
+                } else {
+                    if (e is StackedObject) {
+                        collision_geometry_map[e] = false;
                     }
                 }
             }
