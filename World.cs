@@ -595,22 +595,25 @@ namespace gate
                 //increment editor object idx
                 editor_object_idx++;
 
-                for (int i = 0; i < world_file_contents.particle_systems.Count; i++) {
-                    GameWorldParticleSystem game_particle_system = world_file_contents.particle_systems[i];
-                    particle_systems.Add(
-                        new ParticleSystem(
-                            game_particle_system.in_world,
-                            new Vector2(game_particle_system.x_position, game_particle_system.y_position),
-                            game_particle_system.max_speed,
-                            game_particle_system.life_duration,
-                            game_particle_system.frequency,
-                            game_particle_system.min_scale,
-                            game_particle_system.max_scale,
-                            Constant.white_particles,
-                            new List<Texture2D>() { Constant.footprint_tex }
-                        )
-                    );
-                    editor_object_idx++;
+                //do not try to access particle systems should it not exist in the file
+                if (world_file_contents.particle_systems != null) {
+                    for (int i = 0; i < world_file_contents.particle_systems.Count; i++) {
+                        GameWorldParticleSystem game_particle_system = world_file_contents.particle_systems[i];
+                        particle_systems.Add(
+                            new ParticleSystem(
+                                game_particle_system.in_world,
+                                new Vector2(game_particle_system.x_position, game_particle_system.y_position),
+                                game_particle_system.max_speed,
+                                game_particle_system.life_duration,
+                                game_particle_system.frequency,
+                                game_particle_system.min_scale,
+                                game_particle_system.max_scale,
+                                Constant.white_particles,
+                                new List<Texture2D>() { Constant.footprint_tex }
+                            )
+                        );
+                        editor_object_idx++;
+                    }
                 }
 
                 Console.WriteLine($"editor object idx:{editor_object_idx}");
@@ -1658,10 +1661,8 @@ namespace gate
                         StackedObject obj = (StackedObject)e;
                         bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
                         collision_geometry_map[e] = collision;
-                        // if (collision) {
-                        //     player.resolve_collision_geometry_movement(player.get_direction(), obj);
-                        // }
 
+                        //player hitbox active
                         if (player.hitbox_active()) {
                             ICollisionEntity ic = (ICollisionEntity)e;
                             //don't need to check if hurtbox is active, it's an inanimate object, it should always be active

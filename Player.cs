@@ -459,6 +459,8 @@ namespace gate
             
             #region Movement
             if (!movement_disabled && !hitstun_active) {
+                //check for future collision
+                (IEntity, bool) fcd = future_collision_detected();
                 //normal movement code
                 if (!dash_active && !attack_active && !heavy_attack_active && !charging_active && !charging_arrow && !aiming) {
                     /*Update player position*/
@@ -482,7 +484,6 @@ namespace gate
                     direction = new Vector2(x, y);
                     //direction.Normalize();
                     
-                    (IEntity, bool) fcd = future_collision_detected();
                     if (!fcd.Item2) {
                         //alter the position based on direction and movement speed
                         base_position += direction * movement_speed;
@@ -509,9 +510,19 @@ namespace gate
                     dash_direction.Normalize();
 
                     //transform player position
-                    base_position += dash_direction * dash_speed;
-                    draw_position += dash_direction * dash_speed;
-                    attack_draw_position += dash_direction * dash_speed;
+                    if (!fcd.Item2) {
+                        base_position += dash_direction * dash_speed;
+                        draw_position += dash_direction * dash_speed;
+                        attack_draw_position += dash_direction * dash_speed;
+                    } else {
+                        //future collision detected
+                        //stop dashing
+                        //zero out all dash movement variables added to position variables
+                        dash_active = false;
+                        dash_direction_unit = Vector2.Zero;
+                        dash_direction = Vector2.Zero;
+                        dash_queued = false;
+                    }
 
                     if (Vector2.Distance(dash_start, base_position) > dash_length) {
                         dash_active = false;
@@ -538,9 +549,14 @@ namespace gate
                     dash_direction = new Vector2(x, y);
 
                     //transform player position
-                    base_position += dash_direction * Constant.player_attack_movement_speed;
-                    draw_position += dash_direction * Constant.player_attack_movement_speed;
-                    attack_draw_position += dash_direction * Constant.player_attack_movement_speed;
+                    float attack_speed_multiplier = Constant.player_attack_movement_speed;
+                    if (fcd.Item2) {
+                        attack_speed_multiplier = 0f;
+                    }
+                    //transform positions with correct speed based on collision scenario
+                    base_position += dash_direction * attack_speed_multiplier;
+                    draw_position += dash_direction * attack_speed_multiplier;
+                    attack_draw_position += dash_direction * attack_speed_multiplier;
                 }
             }
             #endregion
