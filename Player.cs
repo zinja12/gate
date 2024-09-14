@@ -737,9 +737,9 @@ namespace gate
             //show hit texture
             show_hit_texture = true;
             //calculate hit texture direction
-            hit_texture_position = hit_direction;
-            hit_texture_position.Normalize(); //normalize (unit vector)
-            hit_texture_position *= (-player_size/4); //set length with direction from this object to entity
+            hit_texture_position = hit_direction/2;
+            //hit_texture_position.Normalize(); //normalize (unit vector)
+            //hit_texture_position *= (-player_size/4); //set length with direction from this object to entity
             hit_texture_position += draw_position; //offset from draw_position
             hit_confirm = new HitConfirm(Constant.hit_confirm_spritesheet, hit_texture_position, 1f, 100f);
             //calcualte noise to add for slash effect
