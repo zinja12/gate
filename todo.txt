@@ -269,12 +269,12 @@ ToDo List:
 [DONE](BUG)add distance checks to all collision functions to save potentially checking things that are far away
     -should save some cycles at the very least
 [DONE](BUG)fix dashing and attacking collision detection
+[DONE](BUG)hit textures don't show up in the proper place when camera is rotated
+[DONE](BUG)fix hit confirm position when hitbox is active
 [](BUG)fix collision with multiple entities at once
     -this might just be as simple as just ignoring the movement rather than moving the player back on their line
 [WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
-[IN-PROGRESS](BUG)hit textures don't show up in the proper place when camera is rotated
     -this is probably because of a miscalculation happening with the rotation logic after the vector between the two entities is calculated
     -either we are rotating before and not calculating the appropriate position that way
     -or we are not rotating at all and we need to be rotating the vector2 after we calculate it to appropriately place the texture
 [](BUG)optimize? game barely works on microsoft surface
-[](BUG)fix hit confirm position when hitbox is active
