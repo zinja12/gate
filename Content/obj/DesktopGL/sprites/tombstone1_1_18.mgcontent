@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tombstone1_1_18.png</SourceFile>
-  <SourceTime>2024-08-12T10:54:47.9064712-04:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sprites/tombstone1_1_18.xnb</DestFile>
-  <DestTime>2024-09-09T22:43:16.1347169-04:00</DestTime>
+  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/tombstone1_1_18.png</SourceFile>
+  <SourceTime>2024-08-14T22:25:08.2096271-04:00</SourceTime>
+  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/sprites/tombstone1_1_18.xnb</DestFile>
+  <DestTime>2024-09-23T17:36:49.6041528-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
