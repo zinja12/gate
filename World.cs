@@ -221,6 +221,7 @@ namespace gate
             obj_map.Add(26, new StackedObject("box", Constant.box_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
             obj_map.Add(27, new StackedObject("house", Constant.house_spritesheet, Vector2.Zero, 1f, 128, 128, 54, Constant.stack_distance1, 0f, -1));
             obj_map.Add(28, new PlaceHolderEntity(Vector2.Zero, "ParticleSystem", -1));
+            obj_map.Add(29, new NPC(Constant.scarecrow_tex, Vector2.Zero, 1, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, -1, "scarecrow", true));
         }
         #endregion
 
@@ -487,6 +488,15 @@ namespace gate
                             collision_entities.Add(npc);
                             npcs.Add(npc);
                             break;
+                        case "scarecrow":
+                            //no need for dialogue file (yet)
+                            check_and_load_tex(ref Constant.scarecrow_tex, "sprites/scarecrow1");
+                            NPC scrow = new NPC(Constant.scarecrow_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            //add to entities list and npcs
+                            entities_list.Add(scrow);
+                            collision_entities.Add(scrow);
+                            npcs.Add(scrow);
+                            break;
                         case "wall":
                             check_and_load_tex(ref Constant.wall_tex, "sprites/box_spritesheet1");
                             StackedObject w = new StackedObject(w_obj.object_identifier, Constant.wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
@@ -712,6 +722,9 @@ namespace gate
                             break;
                         case "house":
                             check_and_load_tex(ref Constant.house_spritesheet, "sprites/house2_1_54");
+                            break;
+                        case "scarecrow":
+                            check_and_load_tex(ref Constant.scarecrow_tex, "sprites/scarecrow1");
                             break;
                         default:
                             //don't load anything
@@ -1265,6 +1278,14 @@ namespace gate
                             particle_systems.Add(ps);
                             Console.WriteLine($"particle_system,true,{create_position.X},{create_position.Y},1,800,5,2,4,white,footprint");
                             break;
+                        case 29:
+                            NPC scrow = new NPC(Constant.scarecrow_tex, create_position, 1f, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, editor_object_idx, "scarecrow", true);
+                            scrow.set_health(10000);
+                            entities_list.Add(scrow);
+                            collision_entities.Add(scrow);
+                            npcs.Add(scrow);
+                            Console.WriteLine($"scarecrow,{create_position.X},{create_position.Y}");
+                            break;
                         default:
                             break;
                     }
@@ -1537,7 +1558,8 @@ namespace gate
                     //distance check
                     if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2)) {
                         //check player hitboxes collision with all entity hurtboxes
-                        if ((e is Ghastly || e is Nightmare) && !(e is NPC)) {
+                        if ((e is Ghastly || e is Nightmare) && (e.get_id().Equals("scarecrow") || !(e is NPC))) {
+                        //if ((e is Ghastly || e is Nightmare) && !(e is NPC)) {
                             ICollisionEntity ic = (ICollisionEntity)e;
                             if (ic.is_hurtbox_active()) {
                                 bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
@@ -1613,19 +1635,21 @@ namespace gate
                                 current_sign = s;
                             }
                         } else if (e is NPC) {
-                            NPC npc = (NPC)e;
-                            bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
-                            if (collision) {
-                                //orient npc to target for speaking
-                                npc.orient_to_target(player.get_base_position(), camera.Rotation);
-                                //calculate screen textbox position from overhead position of npc
-                                Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
-                                npc.get_textbox().set_position(screen_position);
-                                //set npc to display
-                                npc.display_textbox();
-                                //set current textbox to correct instance
-                                current_textbox = npc.get_textbox();
-                                current_npc = npc;
+                            if (!e.get_id().Equals("scarecrow")) {
+                                NPC npc = (NPC)e;
+                                bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
+                                if (collision) {
+                                    //orient npc to target for speaking
+                                    npc.orient_to_target(player.get_base_position(), camera.Rotation);
+                                    //calculate screen textbox position from overhead position of npc
+                                    Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
+                                    npc.get_textbox().set_position(screen_position);
+                                    //set npc to display
+                                    npc.display_textbox();
+                                    //set current textbox to correct instance
+                                    current_textbox = npc.get_textbox();
+                                    current_npc = npc;
+                                }
                             }
                         }
                     }
@@ -1636,10 +1660,12 @@ namespace gate
                         //set available interaction display
                         s.set_display_interaction(collision);
                     } else if (e is NPC) {
-                        NPC npc = (NPC)e;
-                        bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
-                        //set available interaction display
-                        npc.set_display_interaction(collision);
+                        if (!e.get_id().Equals("scarecrow")) {
+                            NPC npc = (NPC)e;
+                            bool collision = player.check_hurtbox_collisions(npc.get_interaction_box());
+                            //set available interaction display
+                            npc.set_display_interaction(collision);
+                        }
                     } else if (e is StackedObject) {
                         //interactions with picking up weapons
                         StackedObject stacked_object = (StackedObject)e;

@@ -67,6 +67,7 @@ namespace gate
         public static Texture2D sword_tex;
         public static Texture2D box_spritesheet;
         public static Texture2D house_spritesheet;
+        public static Texture2D scarecrow_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
 
@@ -203,6 +204,7 @@ namespace gate
             identifiers.Add("sword");
             identifiers.Add("box");
             identifiers.Add("house");
+            identifiers.Add("scarecrow");
             return identifiers;
         }
 

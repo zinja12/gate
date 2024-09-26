@@ -41,8 +41,8 @@ namespace gate
         protected Vector2 direction_to_target = Vector2.Zero;
         protected float target_angle = 0f;
 
-        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, int ID, string identifier) 
-            : base(texture, base_position, scale, hit_texture, player, ID, identifier) {
+        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, int ID, string identifier, bool? static_image_entity = null) 
+            : base(texture, base_position, scale, hit_texture, player, ID, identifier, static_image_entity) {
             //NPC constructor
             this.size = size;
             this.interaction_box = new RRect(this.draw_position, (int)size*2f, (int)size*2f);
@@ -98,6 +98,9 @@ namespace gate
             //update textboxes
             update_npc_textbox(gameTime, rotation);
 
+            //update hurtbox for scarecrow npc
+            update_hurtbox_activity(gameTime, rotation);
+
             if (ai_behavior_enabled) {
                 update_movement(rotation);
             }
@@ -117,6 +120,42 @@ namespace gate
             }
             dead_particle_systems.Clear();
             /*END PARTICLE SYSTEMS*/
+        }
+
+        public virtual void update_hurtbox_activity(GameTime gameTime, float rotation) {
+            //set hurtbox active again
+            if (!hurtbox_active) { //check if hurtbox is not active
+                //add to hurtbox cooldown and color change cooldown
+                take_hit_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                take_hit_color_change_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                //check for secondary and tertiary flashes
+                if (take_hit_color_change_elapsed*2 < color_change_threshold) {
+                    draw_color = Color.Red;
+                }
+            }
+            if (take_hit_elapsed >= reactivate_hurtbox_threshold) {
+                hurtbox_active = true;
+                take_hit_elapsed = 0;
+            }
+            if (take_hit_color_change_elapsed >= color_change_threshold) {
+                draw_color = Color.White;
+                take_hit_color_change_elapsed = 0;
+                hit_flash_count++;
+            }
+
+            //show hit texture for certain amount of frames
+            if (show_hit_texture_frame_count < show_hit_texture_frame_total && show_hit_texture) {
+                show_hit_texture_frame_count++;
+                if (hit_confirm != null)
+                    hit_confirm.Update(gameTime, rotation);
+                if (slash_confirm != null)
+                    slash_confirm.Update(gameTime, rotation);
+            } else {
+                hit_confirm = null;
+                slash_confirm = null;
+                show_hit_texture = false;
+                show_hit_texture_frame_count = 0;
+            }
         }
 
         public override void update_movement(float rotation) {
@@ -222,14 +261,16 @@ namespace gate
         public void update_npc_textbox(GameTime gameTime, float rotation) {
             this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-Constant.Y_tex.Height), Constant.direction_down);
             
-            //if displaying text
-            if (display_text && !textbox.text_ended()) {
-                //update textbox
-                textbox.Update(gameTime);
-            }
-
-            if (textbox.text_ended()) {
-                display_text = false;
+            if (conversation_file != null) {
+                //if displaying text
+                if (display_text && !textbox.text_ended()) {
+                    //update textbox
+                    textbox.Update(gameTime);
+                }
+                
+                if (textbox.text_ended()) {
+                    display_text = false;
+                }
             }
 
             //update interaction box

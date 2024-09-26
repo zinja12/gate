@@ -21,14 +21,14 @@ namespace gate
         private int health = 4;
 
         protected RRect hurtbox;
-        private bool hurtbox_active = true;
-        private float take_hit_elapsed;
-        private float reactivate_hurtbox_threshold = 400f;
+        protected bool hurtbox_active = true;
+        protected float take_hit_elapsed;
+        protected float reactivate_hurtbox_threshold = 400f;
         protected Vector2 hit_direction;
-        private float hit_speed = 0.03f;
-        private float take_hit_color_change_elapsed;
-        private float color_change_threshold = 200f;
-        private int hit_flash_count = 0;
+        protected float hit_speed = 0.03f;
+        protected float take_hit_color_change_elapsed;
+        protected float color_change_threshold = 200f;
+        protected int hit_flash_count = 0;
         protected Color draw_color;
 
         protected Vector2 rotation_point;
@@ -44,15 +44,16 @@ namespace gate
         protected float attack_animation_duration = 120f;
         protected float animation_movement_swap_elapsed = 0f, animation_movement_swap_threshold = 150f;
         protected int animation_case = 0;
+        protected bool? static_image_entity;
 
-        private Texture2D texture;
-        private Texture2D hit_texture;
-        private HitConfirm hit_confirm;
-        private HitConfirm slash_confirm;
+        protected Texture2D texture;
+        protected Texture2D hit_texture;
+        protected HitConfirm hit_confirm;
+        protected HitConfirm slash_confirm;
 
-        private bool show_hit_texture = false;
-        private int show_hit_texture_frame_count = 0;
-        private int show_hit_texture_frame_total = 10;
+        protected bool show_hit_texture = false;
+        protected int show_hit_texture_frame_count = 0;
+        protected int show_hit_texture_frame_total = 10;
         private Vector2 hit_texture_position;
         private Vector2 hit_texture_rotation_point;
         private Vector2 hit_noise_position_offset = Vector2.Zero;
@@ -108,7 +109,7 @@ namespace gate
 
         protected GameTime gt;
 
-        public Nightmare(Texture2D texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier) {
+        public Nightmare(Texture2D texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier, bool? static_image_entity = null) {
             this.nightmare_size = 32;
             this.hitbox_center_distance = nightmare_size/2;
             this.draw_color = Color.White;
@@ -190,6 +191,7 @@ namespace gate
             this.last_movement_vector_idx = 1;
             //offset the start of the animation slightly for each entity so they all do not start with the same animation frames (animation syncing)
             idle_animation.set_elapsed((float)random.Next(0, (int)idle_animation_duration-1));
+            this.static_image_entity = static_image_entity;
         }
 
         public virtual void Update(GameTime gameTime, float rotation) {
@@ -697,8 +699,10 @@ namespace gate
             spriteBatch.Draw(Constant.shadow_tex, draw_position, null, Color.Black * 0.5f, -rotation, rotation_point, scale, SpriteEffects.None, 0f);
 
             //handle animation drawing (idle vs moving)
-            if (health > 0){
-                if (moving && !melee_attack) {
+            if (health > 0) {
+                if (static_image_entity.HasValue && static_image_entity.Value) {
+                    spriteBatch.Draw(texture, draw_position, null, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+                } else if (moving && !melee_attack) {
                     //draw walking animation
                     spriteBatch.Draw(texture, draw_position, walk_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
                 } else if (melee_attack) {
