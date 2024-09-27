@@ -269,8 +269,8 @@ ToDo List:
 [DONE](BUG)add distance checks to all collision functions to save potentially checking things that are far away
     -should save some cycles at the very least
 [DONE](BUG)fix dashing and attacking collision detection
-[DONE](BUG)hit textures don't show up in the proper place when camera is rotated
-[DONE](BUG)fix hit confirm position when hitbox is active
+[IN-PROGRESS](BUG)hit textures don't show up in the proper place when camera is rotated
+[IN-PROGRESS](BUG)fix hit confirm position when hitbox is active
 [](BUG)fix collision with multiple entities at once
     -this might just be as simple as just ignoring the movement rather than moving the player back on their line
 [WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
