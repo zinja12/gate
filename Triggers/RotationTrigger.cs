@@ -8,6 +8,7 @@ using gate.Serialize;
 using gate.Interface;
 using gate.Entities;
 using gate.Triggers;
+using gate.Collision;
 
 namespace gate
 {

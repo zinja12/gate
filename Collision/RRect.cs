@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using gate.Core;
 
-namespace gate
+namespace gate.Collision
 {
     public class RRect
     {

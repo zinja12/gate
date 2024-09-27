@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using gate.Serialize;
 using gate.Interface;
 using gate.Entities;
+using gate.Collision;
 
 namespace gate.Triggers
 {

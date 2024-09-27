@@ -14,6 +14,7 @@ using gate.Interface;
 using gate.Core;
 using gate.Entities;
 using gate.Triggers;
+using gate.Collision;
 
 namespace gate
 {

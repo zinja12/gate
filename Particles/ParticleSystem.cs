@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using gate;
 using gate.Serialize;
 using gate.Core;
+using gate.Collision;
 
 namespace gate.Particles
 {

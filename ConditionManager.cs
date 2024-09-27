@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using gate.Interface;
 using gate.Core;
+using gate.Collision;
 
 namespace gate
 {
