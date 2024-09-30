@@ -138,7 +138,7 @@ ToDo List:
 [DONE](FEATURE)modify particle systems to take in texture for particles as parameter
     -or even a list of particles to use
 [DONE](FEATURE)modify particle systems to be able to emit on a line as well as a point
-[](FEATURE)add sandbag to test out combat
+[DONE](FEATURE)add sandbag to test out combat
 [](FEATURE)add generic flat sprite object vs stacked object
 [](FEATURE)add player death/failure animation
 [](FEATURE)background floor tex + trail textures and add to game
