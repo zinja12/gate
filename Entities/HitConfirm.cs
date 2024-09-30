@@ -10,6 +10,7 @@ namespace gate.Entities
 {
     public class HitConfirm
     {
+        public Vector2 base_position;
         public Vector2 draw_position;
         public Vector2 depth_sort_position;
 
@@ -27,6 +28,7 @@ namespace gate.Entities
         public HitConfirm(Texture2D texture_spritesheet, Vector2 base_position, float scale, float animation_duration) {
             this.texture_spritesheet = texture_spritesheet;
             this.rect_size = (int)texture_spritesheet.Height;
+            this.base_position = base_position;
             this.draw_position = new Vector2(base_position.X - (rect_size / 2), 
                                             base_position.Y - rect_size);
             this.depth_sort_position = this.draw_position + new Vector2(0, rect_size / 2);
@@ -52,7 +54,8 @@ namespace gate.Entities
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(texture_spritesheet, draw_position, animation.source_rect, Color.White, -rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture_spritesheet, base_position, animation.source_rect, Color.White, -rotation, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            //Renderer.FillRectangle(spriteBatch, draw_position, 10, 10, Color.Red);
         }
     }
 }
