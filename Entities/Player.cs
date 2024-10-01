@@ -144,7 +144,7 @@ namespace gate.Entities
         private Color power_shot_color = Color.Red;
 
         /*PLAYER HEALTH*/
-        private int health = 40;
+        private int health = 3;
 
         //idle variables
         private bool idle;
