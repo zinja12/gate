@@ -118,6 +118,7 @@ namespace gate.Entities
         private float noise_angle = 1f;
 
         Dictionary<IEntity, bool> collision_geometry_map;
+        Dictionary<IEntity, bool> collision_tile_map;
 
         //attack vars
         private bool attack_active, heavy_attack_active, charging_active, aiming, charging_arrow;
@@ -143,7 +144,7 @@ namespace gate.Entities
         private Color power_shot_color = Color.Red;
 
         /*PLAYER HEALTH*/
-        private int health = 2;
+        private int health = 40;
 
         //idle variables
         private bool idle;
@@ -232,6 +233,7 @@ namespace gate.Entities
             this.random = new Random();
 
             collision_geometry_map = new Dictionary<IEntity, bool>();
+            collision_tile_map = new Dictionary<IEntity, bool>();
             resultant = Vector2.Zero;
 
             //world variable reference
@@ -591,6 +593,9 @@ namespace gate.Entities
 
             //update emotion state
             update_emotion_state(gameTime);
+
+            //update temp tile movement speed
+            update_temp_tile_movement_speed();
 
             //set camera track position
             if (camera_tracking_X) {
@@ -1209,6 +1214,23 @@ namespace gate.Entities
             return (null, false);
         }
 
+        public void update_temp_tile_movement_speed() {
+            bool slow_movement = false;
+            foreach (KeyValuePair<IEntity, bool> kv in collision_tile_map) {
+                if (kv.Value) {
+                    slow_movement = true;
+                    break;
+                }
+            }
+            
+            if (slow_movement) {
+                movement_speed = fear_movement_speed;
+            } else {
+                //no collisions mean regular movement speed
+                movement_speed = base_movement_speed;
+            }
+        }
+
         public Vector2 calculate_resultant_vector(IEntity e, Vector2 direction) {
             if (e is ICollisionEntity) {
                 ICollisionEntity ic = (ICollisionEntity)e;
@@ -1236,8 +1258,9 @@ namespace gate.Entities
             return direction * -1;
         }
 
-        public void set_collision_geometry_map(Dictionary<IEntity, bool> map) {
-            this.collision_geometry_map = map;
+        public void set_collision_geometry_map(Dictionary<IEntity, bool> geometry_map, Dictionary<IEntity, bool> tile_map) {
+            this.collision_geometry_map = geometry_map;
+            this.collision_tile_map = tile_map;
         }
 
         public bool check_hurtbox_collisions(RRect collision_rect) {

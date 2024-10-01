@@ -98,7 +98,7 @@ namespace gate.Entities
         protected List<ParticleSystem> particle_systems;
         protected List<ParticleSystem> dead_particle_systems;
         
-        private float engagement_distance = Constant.nightmare_engagement_distance;
+        protected float engagement_distance = Constant.nightmare_engagement_distance;
 
         protected Player player; // player var for use in AI behavior
         protected Random random;
@@ -704,6 +704,11 @@ namespace gate.Entities
             //draw shadow always
             spriteBatch.Draw(Constant.shadow_tex, draw_position, null, Color.Black * 0.5f, -rotation, rotation_point, scale, SpriteEffects.None, 0f);
 
+            /*PARTICLE SYSTEMS*/
+            foreach (ParticleSystem ps in particle_systems) {
+                ps.Draw(spriteBatch);
+            }
+
             //handle animation drawing (idle vs moving)
             if (health > 0) {
                 if (static_image_entity.HasValue && static_image_entity.Value) {
@@ -718,11 +723,6 @@ namespace gate.Entities
                     //draw idle
                     spriteBatch.Draw(texture, draw_position, idle_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
                 }
-            }
-
-            /*PARTICLE SYSTEMS*/
-            foreach (ParticleSystem ps in particle_systems) {
-                ps.Draw(spriteBatch);
             }
             
             //draw hits

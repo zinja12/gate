@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using gate.Serialize;
 using gate.Interface;
 using gate.Core;
+using gate.Collision;
 
 namespace gate.Entities
 {
@@ -62,7 +63,7 @@ namespace gate.Entities
             return draw_weight;
         }
 
-        public void Draw(SpriteBatch spriteBatch) {
+        public virtual void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(texture, draw_position, null, Color.White, rotation/1000, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
 
@@ -115,8 +116,69 @@ namespace gate.Entities
             };
         }
 
-        public void Update(GameTime gameTime, float rotation) {}
+        public virtual void Update(GameTime gameTime, float rotation) {}
 
         public void update_animation(GameTime gameTime) {}
+    }
+
+    public class TempTile : Tile, BackgroundEntity, FloorEntity, ICollisionEntity, IEntity
+    {
+        private Vector2 center;
+        //hurtbox
+        private RRect hurtbox;
+        private float opacity = 1f;
+        private bool fade;
+
+        private bool debug = false;
+
+        public TempTile(Vector2 draw_position, float scale, float rotation, Texture2D texture, string identifier, int draw_weight, int ID, bool fade = false)
+            : base(draw_position, scale, texture, identifier, draw_weight, ID) {
+            //set rotation offset
+            set_rotation_offset(rotation);
+            //set up hurtbox
+            this.center = this.draw_position + new Vector2(width/2, height/2);
+            this.hurtbox = new RRect(center, width, height);
+            this.fade = fade;
+        }
+
+        public void take_hit(IEntity entity, int damage) {}
+
+        public RRect get_hurtbox() {
+            return hurtbox;
+        }
+
+        public bool is_hurtbox_active() {
+            if (fade) {
+                return opacity > 0f;
+            }
+            return true;
+        }
+
+        public bool is_finished() {
+            return opacity <= 0f;
+        }
+
+        public override void Update(GameTime gameTime, float rotation) {
+            //only update if not finished
+            if (!is_finished()) {
+                //update hurtbox
+                hurtbox.update(rotation, center);
+
+                //handle fading
+                if (fade) {
+                    //decrease opacity
+                    opacity -= 0.0025f;
+                }
+            }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(texture, draw_position, null, Color.White * opacity, rotation/1000, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            
+            //debug draw
+            if (debug) {
+                hurtbox.draw(spriteBatch);
+            }
+        }
     }
 }

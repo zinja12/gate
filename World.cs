@@ -53,6 +53,7 @@ namespace gate
         List<ForegroundEntity> foreground_entities;
         List<BackgroundEntity> background_entities;
         List<FloorEntity> floor_entities;
+        List<TempTile> temp_tiles;
         List<ITrigger> triggers;
         List<IEntity> collision_geometry;
         List<IAiEntity> enemies;
@@ -60,6 +61,7 @@ namespace gate
         List<IEntity> projectiles;
         ConditionManager condition_manager;
         Dictionary<IEntity, bool> collision_geometry_map;
+        Dictionary<IEntity, bool> collision_tile_map;
 
         //clear variables
         List<IEntity> entities_to_clear;
@@ -146,6 +148,8 @@ namespace gate
             background_entities = new List<BackgroundEntity>();
             //create list of floor objects to be used behind floor pieces
             floor_entities = new List<FloorEntity>();
+            //list of fx entities
+            temp_tiles = new List<TempTile>();
             //create list of triggers
             triggers = new List<ITrigger>();
             //create list of enemies
@@ -158,6 +162,7 @@ namespace gate
             condition_manager = new ConditionManager(this);
             //create dict for collision map for level geometry
             collision_geometry_map = new Dictionary<IEntity, bool>();
+            collision_tile_map = new Dictionary<IEntity, bool>();
 
             //weapons
             entities_to_clear = new List<IEntity>();
@@ -229,6 +234,10 @@ namespace gate
             obj_map.Add(27, new StackedObject("house", Constant.house_spritesheet, Vector2.Zero, 1f, 128, 128, 54, Constant.stack_distance1, 0f, -1));
             obj_map.Add(28, new PlaceHolderEntity(Vector2.Zero, "ParticleSystem", -1));
             obj_map.Add(29, new NPC(Constant.scarecrow_tex, Vector2.Zero, 1, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, -1, "scarecrow", true));
+            obj_map.Add(30, new Ghost(Constant.ghastly_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "ghost", this));
+            Ghost ghost1 = (Ghost)obj_map[30];
+            //turn off ai for editor
+            ghost1.set_behavior_enabled(false);
         }
         #endregion
 
@@ -411,10 +420,18 @@ namespace gate
                             break;
                         case "ghastly":
                             //load texture
-                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/void_essence1");
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
                             Ghastly ghast = new Ghastly(Constant.ghastly_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, w_obj.object_id_num);
                             entities_list.Add(ghast);
                             collision_entities.Add(ghast);
+                            break;
+                        case "ghost":
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
+                            check_and_load_tex(ref Constant.sludge_tex, "sprites/sludge1");
+                            Ghost ghost = new Ghost(Constant.ghastly_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this);
+                            entities_list.Add(ghost);
+                            collision_entities.Add(ghost);
+                            enemies.Add(ghost);
                             break;
                         case "marker":
                             //load texture
@@ -673,7 +690,7 @@ namespace gate
                             check_and_load_tex(ref Constant.Y_tex, "sprites/Y");
                             break;
                         case "ghastly":
-                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/void_essence1");
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
                             break;
                         case "marker":
                             check_and_load_tex(ref Constant.marker_spritesheet, "sprites/marker_spritesheet5");
@@ -733,6 +750,10 @@ namespace gate
                         case "scarecrow":
                             check_and_load_tex(ref Constant.scarecrow_tex, "sprites/scarecrow1");
                             break;
+                        case "ghost":
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
+                            check_and_load_tex(ref Constant.sludge_tex, "sprites/sludge1");
+                            break;
                         default:
                             //don't load anything
                             Console.WriteLine($"WARNING: unknown object({i}) in Constant.get_object_identifiers()");
@@ -772,6 +793,7 @@ namespace gate
             foreground_entities.Clear();
             background_entities.Clear();
             floor_entities.Clear();
+            temp_tiles.Clear();
             collision_geometry.Clear();
             triggers.Clear();
             entities_list.Clear();
@@ -779,6 +801,7 @@ namespace gate
             projectiles.Clear();
             condition_manager.clear_conditions();
             collision_geometry_map.Clear();
+            collision_tile_map.Clear();
             //clear entities
             clear_entities();
             //unload content
@@ -1293,6 +1316,13 @@ namespace gate
                             npcs.Add(scrow);
                             Console.WriteLine($"scarecrow,{create_position.X},{create_position.Y}");
                             break;
+                        case 30:
+                            Ghost ghost = new Ghost(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "ghost", this);
+                            ghost.set_behavior_enabled(false);
+                            entities_list.Add(ghost);
+                            collision_entities.Add(ghost);
+                            enemies.Add(ghost);
+                            break;
                         default:
                             break;
                     }
@@ -1391,6 +1421,9 @@ namespace gate
             }
             #endregion
 
+            //update temp tiles
+            update_temp_tiles(gameTime, camera.Rotation);
+
             //update particle systems
             update_world_particle_systems(gameTime, camera.Rotation);
 
@@ -1418,6 +1451,15 @@ namespace gate
             
             //update camera bounds
             //update_camera_bounds();
+        }
+
+        /*editor tooling*/
+        public int get_editor_object_idx() {
+            return editor_object_idx;
+        }
+
+        public void increment_editor_idx() {
+            editor_object_idx++;
         }
         
         /*PARTICLE SYSTEMS CODE*/
@@ -1498,6 +1540,8 @@ namespace gate
             //sanity check and re-issue ids to objects to prevent any gaps in object ids that could result in an issue on level loading
             //trying to collapse gaps in ids mostly because it throws off the level loading process
             //this is mostly because we introduced the concept of object deletion which then leads to gaps in ids
+            //in addition to this through gameplay, entities may be created or destroyed which can throw off the running editor id count
+            //this re-issuing of the ids fixes this issue and allows us to save partial states or changes to the world due to gameplay
             for (int i = 0; i < sorted_world_objs.Count; i++) {
                 sorted_world_objs[i].object_id_num = i;
             }
@@ -1549,6 +1593,17 @@ namespace gate
             }
         }
 
+        //update temp tiles
+        public void update_temp_tiles(GameTime gameTime, float rotation) {
+            foreach (TempTile t in temp_tiles) {
+                t.Update(gameTime, rotation);
+                //set up removal
+                if (t.is_finished()) {
+                    clear_entity(t);
+                }
+            }
+        }
+
         //function to check player dash and shake camera
         private void check_player_dash_camera_shake() {
             if (player.is_dashing()) {
@@ -1591,16 +1646,33 @@ namespace gate
                 if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < render_distance) {
                     //check enemy hitbox collision with player hurtboxes
                     if (e is Nightmare) {
-                        Nightmare n = (Nightmare)e;
-                        if (n.hitbox_active()) {
-                            bool collision = player.check_hurtbox_collisions(n.get_hitbox());
-                            if (collision && player.is_hurtbox_active()) {
-                                player.take_hit(n, n.get_damage());
-                                //freeze frames to add weight
-                                //freeze_frames = 2;
-                                //shake the camera
-                                set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                        if (e.get_id().Equals("nightmare")) {
+                            Nightmare n = (Nightmare)e;
+                            if (n.hitbox_active()) {
+                                bool collision = player.check_hurtbox_collisions(n.get_hitbox());
+                                if (collision && player.is_hurtbox_active()) {
+                                    player.take_hit(n, n.get_damage());
+                                    //freeze frames to add weight
+                                    //freeze_frames = 2;
+                                    //shake the camera
+                                    set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                }
                             }
+                        } else if (e.get_id().Equals("ghost")) {
+                            Ghost g = (Ghost)e;
+                            if (player.is_hurtbox_active()) {
+                                bool collision = player.check_hurtbox_collisions(g.get_hurtbox());
+                                if (collision) {
+                                    player.take_hit(g, g.get_damage());
+                                    set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                }
+                            }
+                        }
+                    } else if (e is TempTile) {
+                        TempTile tt = (TempTile)e;
+                        if (player.is_hurtbox_active()) {
+                            bool collision = player.check_hurtbox_collisions(tt.get_hurtbox());
+                            collision_tile_map[tt] = collision;
                         }
                     }
 
@@ -1623,7 +1695,7 @@ namespace gate
                 }
             }
 
-            //check player interactions with collision_entities
+            //check player interactions with collision_entities (dialogue specific - signs, npc dialogue, etc)
             foreach (IEntity e in collision_entities) {
                 if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/3)) {
                     if (player.interacting()) {
@@ -1732,7 +1804,7 @@ namespace gate
                     }
                 }
             }
-            player.set_collision_geometry_map(collision_geometry_map);
+            player.set_collision_geometry_map(collision_geometry_map, collision_tile_map);
 
             //check projectile collision against geometry
             //TODO: why isn't collision geometry a collection of icollisionentity?
@@ -1809,11 +1881,39 @@ namespace gate
         }
         #endregion
 
-        private void add_floor_entity(FloorEntity e) {
+        public void add_floor_entity(FloorEntity e) {
             //add entity to list
             floor_entities.Add(e);
             //sort by weight
             floor_entities = floor_entities.OrderByDescending(x => x.get_draw_weight()).ToList();
+        }
+
+        public void remove_floor_entity(int id){
+            IEntity e = find_entity_by_id(id);
+            if (!(e is FloorEntity)) {
+                Console.WriteLine($"attempting to remove entity from floor entities that is not a FloorEntity (obj_id:{id}). ignoring...");
+                return;
+            }
+            FloorEntity fe  = (FloorEntity)e;
+            floor_entities.Remove(fe);
+            if (e is TempTile) {
+                TempTile tt = (TempTile)e;
+                temp_tiles.Remove(tt);
+            }
+        }
+
+        public void remove_floor_entity(FloorEntity e) {
+            floor_entities.Remove(e);
+            if (e is TempTile) {
+                TempTile tt = (TempTile)e;
+                temp_tiles.Remove(tt);
+            }
+        }
+
+        public void add_temp_tile(TempTile tt) {
+            add_floor_entity(tt);
+            temp_tiles.Add(tt);
+            collision_entities.Add(tt);
         }
         
         #region level_transitions
@@ -1890,6 +1990,9 @@ namespace gate
                 if (collision_geometry.Contains(e)) {
                     collision_geometry.Remove(e);
                 }
+                if (collision_geometry_map.ContainsKey(e)) {
+                    collision_geometry_map.Remove(e);
+                }
                 //remove from plant entities
                 if (plants.Contains(e)) {
                     plants.Remove(e);
@@ -1914,6 +2017,16 @@ namespace gate
                     if (floor_entities.Contains(fe)) {
                         floor_entities.Remove(fe);
                     }
+                }
+                //remove from temp tiles
+                if (e is TempTile) {
+                    TempTile tt = (TempTile)e;
+                    if (temp_tiles.Contains(tt)) {
+                        temp_tiles.Remove(tt);
+                    }
+                }
+                if (collision_tile_map.ContainsKey(e)) {
+                    collision_tile_map.Remove(e);
                 }
                 //if this is an ai, remove it from enemies
                 if (e is IAiEntity) {

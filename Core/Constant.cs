@@ -68,6 +68,7 @@ namespace gate.Core
         public static Texture2D box_spritesheet;
         public static Texture2D house_spritesheet;
         public static Texture2D scarecrow_tex;
+        public static Texture2D sludge_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
 
@@ -87,6 +88,7 @@ namespace gate.Core
         public static List<Color> green_particles = new List<Color>() {Color.White, Color.Green, Color.Black};
         public static List<Color> red_particles = new List<Color>() {Color.White, Color.Red, Color.Black};
         public static List<Color> white_particles = new List<Color>() {Color.White, Color.White, Color.White};
+        public static List<Color> black_particles = new List<Color>() {Color.Black};
 
         //gba color palette
         public static Color sandy = new Color(219,215,182);
@@ -205,6 +207,7 @@ namespace gate.Core
             identifiers.Add("box");
             identifiers.Add("house");
             identifiers.Add("scarecrow");
+            identifiers.Add("ghost");
             return identifiers;
         }
 
