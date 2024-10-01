@@ -62,8 +62,14 @@
 #begin levels/arena_v1_ids.json
 /copy:levels/arena_v1_ids.json
 
+#begin levels/blank_level.json
+/copy:levels/blank_level.json
+
 #begin levels/combat_v1.json
 /copy:levels/combat_v1.json
+
+#begin levels/crossroads1.json
+/copy:levels/crossroads1.json
 
 #begin levels/demo1_v2_ids.json
 /copy:levels/demo1_v2_ids.json
@@ -322,6 +328,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/player_spritesheet3.png
+
+#begin sprites/read_interact.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/read_interact.png
 
 #begin sprites/rock1.png
 /importer:TextureImporter
@@ -718,18 +736,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/white_pixel.png
-
-#begin sprites/Y.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/Y.png
 
 #begin sprites/yellow_tree1_4_26.png
 /importer:TextureImporter

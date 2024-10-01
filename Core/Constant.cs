@@ -55,7 +55,7 @@ namespace gate.Core
         public static Texture2D fence_spritesheet;
         public static Texture2D rock_spritesheet;
         public static Texture2D grass_spritesheet;
-        public static Texture2D Y_tex;
+        public static Texture2D read_interact_tex;
         public static Texture2D orange_tree;
         public static Texture2D yellow_tree;
         public static Texture2D green_tree;

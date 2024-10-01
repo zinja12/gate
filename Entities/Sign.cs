@@ -71,7 +71,7 @@ namespace gate.Entities
         public void Update(GameTime gameTime, float rotation) {
             this.rotation = rotation;
             depth_sort_position = Constant.rotate_point(draw_position, rotation, (texture.Height/2), Constant.direction_down);
-            this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-Constant.Y_tex.Height), Constant.direction_down);
+            this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-Constant.read_interact_tex.Height), Constant.direction_down);
 
 
             //if displaying text
@@ -176,7 +176,7 @@ namespace gate.Entities
             spriteBatch.Draw(texture, draw_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
             //display interaction
             if (display_interaction && !display_text) {
-                spriteBatch.Draw(Constant.Y_tex, interaction_display_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(Constant.read_interact_tex, interaction_display_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
             }
             if (debug) {
                 interaction_box.draw(spriteBatch);

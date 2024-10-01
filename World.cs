@@ -37,7 +37,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "trails_v1.json", current_level_id;
+        public string load_file_name = "crossroads1.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -293,6 +293,7 @@ namespace gate
             Constant.slash_confirm_spritesheet = Content.Load<Texture2D>("sprites/slash_confirm_spritesheet");
             Constant.shadow_tex = Content.Load<Texture2D>("sprites/shadow0");
             Constant.green_tree = Content.Load<Texture2D>("sprites/green_tree1_1_26");
+            Constant.read_interact_tex = Content.Load<Texture2D>("sprites/read_interact");
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
@@ -424,7 +425,6 @@ namespace gate
                         case "sign":
                             //load texture
                             check_and_load_tex(ref Constant.sign_tex, "sprites/sign1");
-                            check_and_load_tex(ref Constant.Y_tex, "sprites/Y");
                             Sign s = new Sign(Constant.sign_tex, obj_position, w_obj.scale, w_obj.sign_messages, w_obj.object_id_num);
                             entities_list.Add(s);
                             collision_entities.Add(s);
@@ -713,7 +713,7 @@ namespace gate
                             break;
                         case "sign":
                             check_and_load_tex(ref Constant.sign_tex, "sprites/sign1");
-                            check_and_load_tex(ref Constant.Y_tex, "sprites/Y");
+                            check_and_load_tex(ref Constant.read_interact_tex, "sprites/read_interact");
                             break;
                         case "ghastly":
                             check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");

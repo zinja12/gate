@@ -264,7 +264,7 @@ namespace gate.Entities
         }
 
         public void update_npc_textbox(GameTime gameTime, float rotation) {
-            this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-Constant.Y_tex.Height), Constant.direction_down);
+            this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-Constant.read_interact_tex.Height), Constant.direction_down);
             
             if (conversation_file != null) {
                 //if displaying text
@@ -359,7 +359,7 @@ namespace gate.Entities
 
             //display interaction
             if (display_interaction && !display_text) {
-                spriteBatch.Draw(Constant.Y_tex, interaction_display_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(Constant.read_interact_tex, interaction_display_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
             }
 
             if (DEBUG) {
