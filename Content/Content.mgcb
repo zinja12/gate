@@ -68,9 +68,6 @@
 #begin levels/demo1_v2_ids.json
 /copy:levels/demo1_v2_ids.json
 
-#begin levels/test_v1.json
-/copy:levels/test_v1.json
-
 #begin levels/trails_v1.json
 /copy:levels/trails_v1.json
 
@@ -409,6 +406,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/sludge1.png
+
+#begin sprites/switch2_active_8.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/switch2_active_8.png
+
+#begin sprites/switch2_inactive_8.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/switch2_inactive_8.png
 
 #begin sprites/sword1_22.png
 /importer:TextureImporter

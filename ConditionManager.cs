@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using gate.Interface;
 using gate.Core;
 using gate.Collision;
+using gate.Conditions;
 
 namespace gate
 {
@@ -116,6 +117,18 @@ namespace gate
                             y_position = edroc.get_position().Y
                         }
                     );
+                } else if (c is SwitchCondition) {
+                    SwitchCondition sw_cond = (SwitchCondition)c;
+                    world_conditions.Add(
+                        new GameWorldCondition {
+                            object_identifier = c.condition_name(),
+                            object_id_num = c.condition_id(),
+                            enemy_ids = sw_cond.get_switch_ids(),
+                            obj_ids_to_remove = sw_cond.get_obj_ids_to_remove(),
+                            x_position = sw_cond.get_position().X,
+                            y_position = sw_cond.get_position().Y
+                        }
+                    );
                 }
             }
             return world_conditions;
@@ -149,8 +162,25 @@ namespace gate
                         foreach (UIButton b in edroc.get_buttons()) {
                             b.Draw(spriteBatch);
                         }
-                        //Renderer.FillRectangle(spriteBatch, c.get_position() + new Vector2(0, -35), 10, 10, Color.Red);
-                        //Renderer.FillRectangle(spriteBatch, c.get_position() + new Vector2(15, -35), 10, 10, Color.Blue);
+                    }
+                } else if (c is SwitchCondition) {
+                    SwitchCondition sw_cond = (SwitchCondition)c;
+                    //draw connections to each object
+                    foreach (int i in sw_cond.get_obj_ids_to_remove()) {
+                        IEntity e = sw_cond.get_world_obj().find_entity_by_id(i);
+                        Renderer.DrawALine(spriteBatch, Constant.pixel, 1, Color.Red, 1f, position, e.get_base_position());
+                    }
+                    if (sw_cond.get_switch_ids().Count > 0) {
+                        foreach (int j in sw_cond.get_switch_ids()) {
+                            IEntity e = sw_cond.get_world_obj().find_entity_by_id(j);
+                            Renderer.DrawALine(spriteBatch, Constant.pixel, 1, Color.Blue, 1f, position, e.get_base_position());
+                        }
+                    }
+                    if (sw_cond.get_selected()) {
+                        //display selection options
+                        foreach (UIButton b in sw_cond.get_buttons()) {
+                            b.Draw(spriteBatch);
+                        }
                     }
                 }
             }

@@ -15,6 +15,7 @@ using gate.Core;
 using gate.Entities;
 using gate.Triggers;
 using gate.Collision;
+using gate.Conditions;
 
 namespace gate
 {
@@ -62,6 +63,7 @@ namespace gate
         ConditionManager condition_manager;
         Dictionary<IEntity, bool> collision_geometry_map;
         Dictionary<IEntity, bool> collision_tile_map;
+        List<IEntity> switches;
 
         //clear variables
         List<IEntity> entities_to_clear;
@@ -110,6 +112,11 @@ namespace gate
         private ICondition selected_condition;
         //editor tools: (object_placement, object/linkage editor)
         private int editor_tool_idx, editor_object_idx, editor_tool_count, editor_layer, editor_layer_count;
+        private Dictionary<int, string> editor_tool_name_map = new Dictionary<int, string>() {
+            {0, "place"},
+            {1, "cond."},
+            {2, "delete"}
+        };
 
         //Random variable
         private Random random = new Random();
@@ -163,6 +170,8 @@ namespace gate
             //create dict for collision map for level geometry
             collision_geometry_map = new Dictionary<IEntity, bool>();
             collision_tile_map = new Dictionary<IEntity, bool>();
+            //list for switches
+            switches = new List<IEntity>();
 
             //weapons
             entities_to_clear = new List<IEntity>();
@@ -238,6 +247,8 @@ namespace gate
             Ghost ghost1 = (Ghost)obj_map[30];
             //turn off ai for editor
             ghost1.set_behavior_enabled(false);
+            obj_map.Add(31, new HitSwitch("hitswitch", Constant.switch_active, Constant.switch_inactive, Vector2.Zero, 1f, 16, 16, 8, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(32, new PlaceHolderEntity(Vector2.Zero, "Condition(SwitchC)", -1));
         }
         #endregion
 
@@ -593,6 +604,16 @@ namespace gate
                             collision_geometry.Add(house);
                             collision_geometry_map[house] = false;
                             break;
+                        case "hitswitch":
+                            check_and_load_tex(ref Constant.switch_active, "sprites/switch2_active_8");
+                            check_and_load_tex(ref Constant.switch_inactive, "sprites/switch2_inactive_8");
+                            HitSwitch hs = new HitSwitch(w_obj.object_identifier, Constant.switch_active, Constant.switch_inactive, obj_position, w_obj.scale, 16, 16, 8, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(hs);
+                            collision_entities.Add(hs);
+                            collision_geometry.Add(hs);
+                            collision_geometry_map[hs] = false;
+                            switches.Add(hs);
+                            break;
                         default:
                             break;
                     }
@@ -618,6 +639,11 @@ namespace gate
                                 c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
                             } else {
                                 c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                            }
+                            break;
+                        case "switch_condition":
+                            if (w_condition.enemy_ids != null && w_condition.enemy_ids.Count > 0) {
+                                c = new SwitchCondition(editor_object_idx, this, switches, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
                             }
                             break;
                         default:
@@ -754,6 +780,10 @@ namespace gate
                             check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
                             check_and_load_tex(ref Constant.sludge_tex, "sprites/sludge1");
                             break;
+                        case "hitswitch":
+                            check_and_load_tex(ref Constant.switch_active, "sprites/switch2_active_8");
+                            check_and_load_tex(ref Constant.switch_inactive, "sprites/switch2_inactive_8");
+                            break;
                         default:
                             //don't load anything
                             Console.WriteLine($"WARNING: unknown object({i}) in Constant.get_object_identifiers()");
@@ -802,6 +832,7 @@ namespace gate
             condition_manager.clear_conditions();
             collision_geometry_map.Clear();
             collision_tile_map.Clear();
+            switches.Clear();
             //clear entities
             clear_entities();
             //unload content
@@ -1235,7 +1266,7 @@ namespace gate
                         case 16:
                             ICondition cond = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, new List<int>(), create_position);
                             condition_manager.add_condition(cond);
-                            Console.WriteLine("condition created!");
+                            Console.WriteLine("edroc condition created!");
                             break;
                         case 17:
                             Tile gt_tile = new Tile(create_position, editor_object_scale, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
@@ -1299,6 +1330,7 @@ namespace gate
                         case 27:
                             StackedObject house = new StackedObject("house", Constant.house_spritesheet, create_position, 1f, 128, 128, 54, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
                             house.Update(gameTime, rotation);
+                            entities_list.Add(house);
                             collision_geometry.Add(house);
                             collision_geometry_map[house] = false;
                             Console.WriteLine("house," + create_position.X + "," + create_position.Y + ",1");
@@ -1323,6 +1355,20 @@ namespace gate
                             collision_entities.Add(ghost);
                             enemies.Add(ghost);
                             break;
+                        case 31:
+                            HitSwitch hs = new HitSwitch("hitswitch", Constant.switch_active, Constant.switch_inactive, create_position, 1f, 16, 16, 8, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            hs.Update(gameTime, rotation);
+                            entities_list.Add(hs);
+                            collision_entities.Add(hs);
+                            collision_geometry.Add(hs);
+                            collision_geometry_map[hs] = false;
+                            switches.Add(hs);
+                            break;
+                        case 32:
+                            ICondition s_cond = new SwitchCondition(editor_object_idx, this, switches, new List<int>(), new List<int>(), create_position);
+                            condition_manager.add_condition(s_cond);
+                            Console.WriteLine("switch condition created!");
+                            break;
                         default:
                             break;
                     }
@@ -1334,6 +1380,7 @@ namespace gate
                     //save
                     save_world_level_to_file(all_world_entities, foreground_entities, background_entities);
                 } else if (editor_tool_idx == 1) {
+                    //right click
                     if (Mouse.GetState().RightButton == ButtonState.Pressed) {
                         //context for right mouse button pressed
                         //check if mouse hitbox is within hitbox for condition
@@ -1344,6 +1391,10 @@ namespace gate
                                 EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)c;
                                 edroc.set_selected(true);
                                 selected_condition = edroc;
+                            } else if (c is SwitchCondition) {
+                                SwitchCondition s_cond = (SwitchCondition)c;
+                                s_cond.set_selected(true);
+                                selected_condition = s_cond;
                             }
                         }
                     
@@ -1375,6 +1426,29 @@ namespace gate
                                     } else {
                                         //disconnect
                                         edroc.remove_obj_to_remove(ce.get_obj_ID_num());
+                                    }
+                                }
+                            } else if (selected_condition is SwitchCondition) {
+                                Console.WriteLine("selected condition is switch condition and colliding entity is not null");
+                                SwitchCondition sw_cond = (SwitchCondition)selected_condition;
+                                int function_mode = sw_cond.get_function_mode();
+                                if (ce is HitSwitch) {
+                                    //connect or disconnect from switches
+                                    if (function_mode == 0) {
+                                        //connect
+                                        sw_cond.add_switch_id_to_check(ce.get_obj_ID_num());
+                                    } else {
+                                        //disconnect
+                                        sw_cond.remove_switch_id_from_check(ce.get_obj_ID_num());
+                                    }
+                                } else {
+                                    //connect or disconnect from objs to remove
+                                    if (function_mode == 0) {
+                                        //connect
+                                        sw_cond.add_obj_to_remove(ce.get_obj_ID_num());
+                                    } else {
+                                        //disconnect
+                                        sw_cond.remove_obj_to_remove(ce.get_obj_ID_num());
                                     }
                                 }
                             }
@@ -1550,7 +1624,7 @@ namespace gate
                 sorted_world_conditions[i].object_id_num = i;
             }
             object_id_count = sorted_world_objs.Count + sorted_world_conditions.Count;
-            //set world particle systems object id (this number is irrelevant to particle systems, but it should still be in order)
+            //set world particle systems object id (this number is irrelevant to particle systems, but it should still be in order as good practice and for consistency)
             for (int i = object_id_count; i < world_particle_systems.Count; i++) {
                 world_particle_systems[i].object_id_num = i;
             }
@@ -1780,9 +1854,18 @@ namespace gate
                                     clear_entity(e);
                                     //shake the camera
                                     set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                    //add arrow charge because we hit something
+                                    player.add_arrow_charge(1);
+                                } else if (e.get_id().Equals("hitswitch")) {
+                                    HitSwitch hs = (HitSwitch)ic;
+                                    if (hs.is_hurtbox_active()) {
+                                        hs.take_hit(player, 0);
+                                        //shake the camera
+                                        set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                        //add arrow charge because we hit something
+                                        player.add_arrow_charge(1);
+                                    }
                                 }
-                                //add arrow charge because we hit something
-                                player.add_arrow_charge(1);
                             }
                         }
                     }
@@ -2232,12 +2315,8 @@ namespace gate
                     //draw preview of object
                     IEntity selected_entity = obj_map[selected_object];
                     selected_entity.Draw(_spriteBatch);
-                    _spriteBatch.DrawString(Constant.arial_small, $"place", mouse_hitbox.position, Color.Black);
-                } else if (editor_tool_idx == 1) {
-                    _spriteBatch.DrawString(Constant.arial_small, $"cond.", mouse_hitbox.position, Color.Black);
-                } else if (editor_tool_idx == 2) {
-                    _spriteBatch.DrawString(Constant.arial_small, $"delete", mouse_hitbox.position, Color.Black);
                 }
+                _spriteBatch.DrawString(Constant.arial_small, $"{editor_tool_name_map[editor_tool_idx]}", mouse_hitbox.position, Color.Black);
                 
                 Renderer.FillRectangle(_spriteBatch, create_position, 10, 10, Color.Purple);
                 mouse_hitbox.draw(_spriteBatch);
@@ -2297,7 +2376,7 @@ namespace gate
             _spriteBatch.DrawString(Constant.arial_small, "editor:" + editor_active, new Vector2(0, 17*4), Color.Black);
             //_spriteBatch.DrawString(Constant.arial_small, "selected_object:" + selected_object, new Vector2(0, 17*5), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"selected_object:{selected_object},obj_id:{obj_map[selected_object].get_id()}", new Vector2(0, 17*5), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}", new Vector2(0, 17*6), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}-{editor_tool_name_map[editor_tool_idx]}", new Vector2(0, 17*6), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
             _spriteBatch.End();

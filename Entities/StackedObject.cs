@@ -18,34 +18,34 @@ namespace gate.Entities
         public Vector2 draw_position;
         public Vector2 depth_sort_position;
 
-        private Vector2 rotation_point;
-        private float scale;
-        private float rotation = 0.0f, rotation_offset = 0f;
-        private Vector2 direction_down = new Vector2(0, 1);
-        private Vector2 direction_up = new Vector2(0, -1);
+        protected Vector2 rotation_point;
+        protected float scale;
+        protected float rotation = 0.0f, rotation_offset = 0f;
+        protected Vector2 direction_down = new Vector2(0, 1);
+        protected Vector2 direction_up = new Vector2(0, -1);
 
         public static bool debug = false;
 
-        private float object_width = 32;
-        private float object_height = 32;
+        protected float object_width = 32;
+        protected float object_height = 32;
 
-        private int stack_count = 18, stack_distance = 1;
-        private List<Rectangle> sprite_rectangles;
-        private Vector2 rotation_factor;
+        protected int stack_count = 18, stack_distance = 1;
+        protected List<Rectangle> sprite_rectangles;
+        protected Vector2 rotation_factor;
 
         //collision information
-        private RRect hitbox;
-        private List<Vector2> hitbox_normals;
+        protected RRect hitbox;
+        protected List<Vector2> hitbox_normals;
         
-        private bool update_once = true;
+        protected bool update_once = true;
 
         private bool sway = false;
         private float sway_elapsed0, sway_elapsed1, sway_elapsed2, sway_threshold = 3000f;
         private Random random;
 
-        private Texture2D texture;
-        private string id;
-        private int ID;
+        protected Texture2D texture;
+        protected string id;
+        protected int ID;
 
         public StackedObject(string id, Texture2D texture, Vector2 base_position, float scale, float width, float height, int stack_frame_count, int stack_distance, float rotation_degrees, int ID) {
             this.object_width = width;
@@ -79,7 +79,7 @@ namespace gate.Entities
             sway_elapsed2 = (float)random.Next(0, (int)sway_threshold*2);
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public virtual void Update(GameTime gameTime, float rotation) {
             this.rotation = -rotation;
             depth_sort_position = draw_position + 1 * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
             //update collision once to properly instantiate for rotation and then don't update anymore
@@ -135,13 +135,13 @@ namespace gate.Entities
             return hitbox.collision(collision_rect);
         }
 
-        public void take_hit(IEntity entity, int damage) {}
+        public virtual void take_hit(IEntity entity, int damage) {}
 
         public RRect get_hurtbox() {
             return hitbox;
         }
 
-        public bool is_hurtbox_active() {
+        public virtual bool is_hurtbox_active() {
             return false;
         }
 
@@ -177,7 +177,7 @@ namespace gate.Entities
             return id;
         }
 
-        public void Draw(SpriteBatch spriteBatch) {
+        public virtual void Draw(SpriteBatch spriteBatch) {
             //calculate the number of sprites that will be moving (round down to make sure we don't try to access any sprites that are out of bounds)
             int stack_div3 = (int)Math.Floor((double)stack_count/3);
             //update draw positions so that everything draws in the right direction

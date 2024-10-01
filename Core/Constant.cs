@@ -69,6 +69,7 @@ namespace gate.Core
         public static Texture2D house_spritesheet;
         public static Texture2D scarecrow_tex;
         public static Texture2D sludge_tex;
+        public static Texture2D switch_active, switch_inactive;
 
         public static Texture2D fear_tex, anxiety_tex;
 
@@ -208,6 +209,7 @@ namespace gate.Core
             identifiers.Add("house");
             identifiers.Add("scarecrow");
             identifiers.Add("ghost");
+            identifiers.Add("hitswitch");
             return identifiers;
         }
 
