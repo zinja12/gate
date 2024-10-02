@@ -13,5 +13,6 @@ namespace gate.Serialize
         //game world player attribute fields
         public string identifier { get; set; }
         public bool active { get; set; }
+        public int charges { get; set; }
     }
 }

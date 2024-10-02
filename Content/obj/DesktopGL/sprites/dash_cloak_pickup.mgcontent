@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_0.png</SourceFile>
-  <SourceTime>2024-03-06T20:28:34.1458419-05:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sprites/grass_0.xnb</DestFile>
-  <DestTime>2024-10-02T18:12:19.5915725-04:00</DestTime>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/dash_cloak_pickup.png</SourceFile>
+  <SourceTime>2024-10-02T12:16:40.940853-04:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sprites/dash_cloak_pickup.xnb</DestFile>
+  <DestTime>2024-10-02T18:12:19.5608207-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

@@ -250,6 +250,7 @@ namespace gate
             ghost1.set_behavior_enabled(false);
             obj_map.Add(31, new HitSwitch("hitswitch", Constant.switch_active, Constant.switch_inactive, Vector2.Zero, 1f, 16, 16, 8, Constant.stack_distance1, 0f, -1));
             obj_map.Add(32, new PlaceHolderEntity(Vector2.Zero, "Condition(SwitchC)", -1));
+            obj_map.Add(33, new BillboardSprite(Constant.dash_cloak_pickup_tex, Vector2.Zero, 1f, "dash_cloak", -1));
         }
         #endregion
 
@@ -372,7 +373,14 @@ namespace gate
                             if (world_file_contents.player_attributes != null) {
                                 //iterate over player attributes and set active variable for attribute
                                 foreach (GameWorldPlayerAttribute pa in world_file_contents.player_attributes) {
+                                    //set attribute active / inactive
                                     p.set_attribute(pa.identifier, pa.active);
+                                    //set charges for attributes accordingly if attribute is active
+                                    if (pa.active && pa.charges > 0) {
+                                        p.set_attribute_charges(pa.identifier, pa.charges);
+                                    } else {
+                                        p.set_attribute_charges(pa.identifier, 0);
+                                    }
                                 }
                             }
                             entities_list.Add(p);
@@ -615,6 +623,12 @@ namespace gate
                             collision_geometry_map[hs] = false;
                             switches.Add(hs);
                             break;
+                        case "dash_cloak":
+                            check_and_load_tex(ref Constant.dash_cloak_pickup_tex, "sprites/dash_cloak_pickup");
+                            BillboardSprite dash_cloak = new BillboardSprite(Constant.dash_cloak_pickup_tex, obj_position, w_obj.scale, w_obj.object_identifier, w_obj.object_id_num);
+                            entities_list.Add(dash_cloak);
+                            collision_entities.Add(dash_cloak);
+                            break;
                         default:
                             break;
                     }
@@ -681,8 +695,10 @@ namespace gate
             } else {
                 throw new Exception("Cannot deserialize JSON world objects!");
             }
-
+            
+            Console.WriteLine($"editor_status:{editor_enabled}");
             if (editor_enabled) {
+                Console.WriteLine("loading unloaded objects and textures for editor...");
                 //find objects that are not present in the level that we need to load textures for due to editor being active
                 var unloaded_objects = Constant.get_object_identifiers().Where(i => loaded_obj_identifiers.All(i2 => i2 != i));
                 //load textures not present in the level
@@ -784,6 +800,9 @@ namespace gate
                         case "hitswitch":
                             check_and_load_tex(ref Constant.switch_active, "sprites/switch2_active_8");
                             check_and_load_tex(ref Constant.switch_inactive, "sprites/switch2_inactive_8");
+                            break;
+                        case "dash_cloak":
+                            check_and_load_tex(ref Constant.dash_cloak_pickup_tex, "sprites/dash_cloak_pickup");
                             break;
                         default:
                             //don't load anything
@@ -1370,6 +1389,11 @@ namespace gate
                             condition_manager.add_condition(s_cond);
                             Console.WriteLine("switch condition created!");
                             break;
+                        case 33:
+                            BillboardSprite dash_cloak = new BillboardSprite(Constant.dash_cloak_pickup_tex, create_position, 1f, "dash_cloak", editor_object_idx, true);
+                            entities_list.Add(dash_cloak);
+                            collision_entities.Add(dash_cloak);
+                            break;
                         default:
                             break;
                     }
@@ -1850,6 +1874,16 @@ namespace gate
                                 clear_entity(e);
                             }
                         }
+                    } else if (e is BillboardSprite) {
+                        //interactions with billboard (items in the world)
+                        BillboardSprite sprite = (BillboardSprite)e;
+                        bool collision = player.check_hurtbox_collisions(sprite.get_hurtbox());
+                        sprite.set_display_interaction(collision);
+                        if (collision && player.interacting()) {
+                            //pickup item
+                            player_item_pickup(player, sprite);
+                            clear_entity(sprite);
+                        }
                     }
                 }
             }
@@ -1934,6 +1968,33 @@ namespace gate
                         }
                     }
                 }
+            }
+        }
+
+        private void player_item_pickup(Player p, BillboardSprite item) {
+            //split string to pull first string part to identify the attribute
+            string player_attribute = item.get_id().Split("_")[0];
+            switch (player_attribute) {
+                case "dash":
+                    p.set_attribute(player_attribute, true);
+                    //if the player currently has more dash charges and picks this item up again somehow we do not want them to have their charges reset
+                    if (p.get_dash_charge() <= Constant.player_default_dash_charge) {
+                        //set dash charges
+                        p.set_attribute_charges(player_attribute, Constant.player_default_dash_charge);
+                    }
+                    break;
+                case "bow":
+                    p.set_attribute(player_attribute, true);
+                    if (p.get_max_arrows() <= Constant.player_default_max_arrows) {
+                        //set max arrows
+                        p.set_attribute_charges(player_attribute, Constant.player_default_max_arrows);
+                        //refill arrow charges
+                        p.add_arrow_charge(Constant.player_default_max_arrows);
+                    }
+                    break;
+                default:
+                    //nothing
+                    break;
             }
         }
 

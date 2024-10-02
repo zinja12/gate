@@ -14,6 +14,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/attack_sprites2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/box_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/box1_2_18.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/dash_cloak_pickup.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/fear_anger.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/fence1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/flower1_1_12.png</File>
@@ -67,6 +68,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

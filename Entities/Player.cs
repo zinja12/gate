@@ -63,6 +63,7 @@ namespace gate.Entities
         //dash
         private bool dash_active;
         private int dash_charge = Constant.player_dash_charge;
+        private int max_dashes = 0;
         private Vector2 dash_direction_unit;
         private Vector2 dash_start;
         private Vector2 dash_queued_direction;
@@ -433,7 +434,7 @@ namespace gate.Entities
                 //add particle system on dash
                 particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 1, 5, 1, 3, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
             } else if (dash_cooldown_elapsed >= dash_cooldown) { //reset dash_charge if the player has not dashed in the required cooldown
-                dash_charge = 2;
+                dash_charge = get_max_dashes();
                 dash_cooldown = Constant.player_dash_cooldown;
             }
 
@@ -450,7 +451,7 @@ namespace gate.Entities
                 attack_animation.set_elapsed(0);
                 attack_animation.set_frame(0);
             } else if (attack_cooldown_elapsed >= attack_cooldown) {
-                attack_charge = 2;
+                attack_charge = get_attack_charge();
                 attack_cooldown = Constant.player_attack_cooldown;
             }
             
@@ -1409,8 +1410,26 @@ namespace gate.Entities
             return dash_charge;
         }
 
+        public void set_dash_charges(int charges) {
+            this.dash_charge = charges;
+            Console.WriteLine($"dash_charges_set:{this.dash_charge}");
+        }
+
+        public void set_max_dashes(int charges) {
+            this.max_dashes = charges;
+        }
+
+        public int get_max_dashes() {
+            return max_dashes;
+        }
+
         public int get_attack_charge() {
             return attack_charge;
+        }
+
+        public void set_attack_charges(int charges) {
+            this.attack_charge = charges;
+            Console.WriteLine($"attack_charges_set:{this.dash_charge}");
         }
 
         public bool interacting() {
@@ -1450,8 +1469,39 @@ namespace gate.Entities
             }
         }
 
+        public void set_arrow_charges(int charges) {
+            arrow_charge = charges;
+        }
+
         public int get_arrow_charges() {
             return arrow_charge;
+        }
+
+        public int get_max_arrows() {
+            return max_arrows;
+        }
+
+        public void set_max_arrow_charges(int charges) {
+            max_arrows = charges;
+        }
+
+        public void set_attribute_charges(string attribute_id, int charges) {
+            switch (attribute_id) {
+                case "sword":
+                    set_attack_charges(charges);
+                    break;
+                case "dash":
+                    set_dash_charges(charges);
+                    set_max_dashes(charges);
+                    break;
+                case "bow":
+                    set_max_arrow_charges(charges);
+                    set_arrow_charges(charges);
+                    break;
+                default:
+                    //do nothing
+                    break;
+            }
         }
 
         public void set_attribute(string attribute_id, bool value) {

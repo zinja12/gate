@@ -3,15 +3,18 @@
     "player_attributes": [
         {
             "identifier": "sword",
-            "active": false
+            "active": false,
+            "charges": 2
         },
         {
             "identifier": "dash",
-            "active": false
+            "active": false,
+            "charges": 1
         },
         {
             "identifier": "bow",
-            "active": false
+            "active": false,
+            "charges": 1
         }
     ],
     "world_objects": [

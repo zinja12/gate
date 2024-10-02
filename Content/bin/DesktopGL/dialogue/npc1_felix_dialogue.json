@@ -11,7 +11,7 @@
         },
         {
             "speaker": "felix",
-            "dialogue_line": "head down the path to get to town and they'll get you all sorted out"
+            "dialogue_line": "head down the path to town and they'll get you all sorted"
         },
         {
             "speaker": "felix",
@@ -20,10 +20,6 @@
         {
             "speaker": "felix",
             "dialogue_line": "you might want to go talk to zahir, the shrine keeper, he might be able to help you out"
-        },
-        {
-            "speaker": "s",
-            "dialogue_line": "great, thanks!"
         }
     ]
 }

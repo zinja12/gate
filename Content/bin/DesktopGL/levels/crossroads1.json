@@ -30562,8 +30562,8 @@
         {
             "object_identifier": "npc",
             "object_id_num": 1909,
-            "x_position": 50,
-            "y_position": 250,
+            "x_position": 210,
+            "y_position": 80,
             "scale": 1,
             "sign_messages": null,
             "canopy": false,
@@ -30572,24 +30572,26 @@
             "level_id": null,
             "rotation": 0,
             "npc_path_entity_ids": [],
-            "npc_conversation_file_id": "test_npc1_dialogue.json"
+            "npc_conversation_file_id": "npc1_felix_dialogue.json"
+        },
+        {
+            "object_identifier": "sign",
+            "object_id_num": 1910,
+            "x_position": 1087.128,
+            "y_position": -870.0779,
+            "scale": 1,
+            "sign_messages": ["<- Shrine", "Town ->"],
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "npc_path_entity_ids": null,
+            "npc_conversation_file_id": null
         }
     ],
     "conditions": [],
-    "particle_systems": [
-        {
-            "in_world": true,
-            "object_id_num": -1,
-            "x_position": 125.824814,
-            "y_position": -92.79019,
-            "max_speed": 1,
-            "life_duration": 800,
-            "frequency": 5,
-            "min_scale": 2,
-            "max_scale": 4,
-            "particle_colors": "white",
-            "particle_textures": "footprint"
-        }
-    ],
+    "particle_systems": [],
     "world_script": []
 }

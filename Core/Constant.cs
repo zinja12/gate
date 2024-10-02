@@ -70,6 +70,7 @@ namespace gate.Core
         public static Texture2D scarecrow_tex;
         public static Texture2D sludge_tex;
         public static Texture2D switch_active, switch_inactive;
+        public static Texture2D dash_cloak_pickup_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
 
@@ -144,6 +145,7 @@ namespace gate.Core
         public static float nightmare_aggro_engagement_distance = 500f;
 
         /*PLAYER CONFIG*/
+        public static int player_default_dash_charge = 1, player_default_attack_charge = 2, player_default_max_arrows = 1;
         public static int player_dash_charge = 2, player_attack_charge = 2, player_arrow_charge = 2, player_max_arrows = 2;
         public static float player_dash_cooldown = 800f;
         public static float player_doubledash_cooldown = 800f;
@@ -210,6 +212,7 @@ namespace gate.Core
             identifiers.Add("scarecrow");
             identifiers.Add("ghost");
             identifiers.Add("hitswitch");
+            identifiers.Add("dash_cloak");
             return identifiers;
         }
 
