@@ -30592,20 +30592,6 @@
         }
     ],
     "conditions": [],
-    "particle_systems": [
-        {
-            "in_world": true,
-            "object_id_num": -1,
-            "x_position": 125.824814,
-            "y_position": -92.79019,
-            "max_speed": 1,
-            "life_duration": 800,
-            "frequency": 5,
-            "min_scale": 2,
-            "max_scale": 4,
-            "particle_colors": "white",
-            "particle_textures": "footprint"
-        }
-    ],
+    "particle_systems": [],
     "world_script": []
 }
