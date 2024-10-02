@@ -272,6 +272,7 @@ ToDo List:
 [DONE](BUG)fix dashing and attacking collision detection
 [DONE](BUG)hit textures don't show up in the proper place when camera is rotated
 [DONE](BUG)fix hit confirm position when hitbox is active
+[](BUG)constant emission static positioned particle systems do not properly rotate position when camera rotates
 [](BUG)fix collision with multiple entities at once
     -this might just be as simple as just ignoring the movement rather than moving the player back on their line
 [WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
