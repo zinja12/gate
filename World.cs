@@ -37,7 +37,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads1.json", current_level_id;
+        public string load_file_name = "trails_v1.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -1871,6 +1871,7 @@ namespace gate
                         if (collision && player.interacting()) {
                             if ((e.get_id().Equals("sword") || e.get_id().Equals("bow") || e.get_id().Equals("dash")) && player.get_attribute_active(e.get_id()) == false) {
                                 player.set_attribute(e.get_id(), true);
+                                player.set_attribute_charges(e.get_id(), Constant.player_default_attack_charge);
                                 clear_entity(e);
                             }
                         }

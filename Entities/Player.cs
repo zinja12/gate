@@ -124,6 +124,7 @@ namespace gate.Entities
         //attack vars
         private bool attack_active, heavy_attack_active, charging_active, aiming, charging_arrow;
         private int attack_charge = Constant.player_attack_charge;
+        private int max_attack_charges = Constant.player_attack_charge;
         private float attack_cooldown = Constant.player_attack_cooldown;
         private float attack_cooldown_elapsed = Constant.player_attack_cooldown;
         private float doubleattack_cooldown = Constant.player_doubleattack_cooldown;
@@ -451,7 +452,7 @@ namespace gate.Entities
                 attack_animation.set_elapsed(0);
                 attack_animation.set_frame(0);
             } else if (attack_cooldown_elapsed >= attack_cooldown) {
-                attack_charge = get_attack_charge();
+                attack_charge = get_max_attack_charges();
                 attack_cooldown = Constant.player_attack_cooldown;
             }
             
@@ -1412,7 +1413,7 @@ namespace gate.Entities
 
         public void set_dash_charges(int charges) {
             this.dash_charge = charges;
-            Console.WriteLine($"dash_charges_set:{this.dash_charge}");
+            Console.WriteLine($"dash_charges_set:{get_dash_charge()}");
         }
 
         public void set_max_dashes(int charges) {
@@ -1427,9 +1428,17 @@ namespace gate.Entities
             return attack_charge;
         }
 
+        public void set_max_attack_charges(int charges) {
+            this.max_attack_charges = charges;
+        }
+
+        public int get_max_attack_charges() {
+            return max_attack_charges;
+        }
+
         public void set_attack_charges(int charges) {
             this.attack_charge = charges;
-            Console.WriteLine($"attack_charges_set:{this.dash_charge}");
+            Console.WriteLine($"attack_charges_set:{get_attack_charge()}");
         }
 
         public bool interacting() {
@@ -1489,6 +1498,7 @@ namespace gate.Entities
             switch (attribute_id) {
                 case "sword":
                     set_attack_charges(charges);
+                    set_max_attack_charges(charges);
                     break;
                 case "dash":
                     set_dash_charges(charges);
