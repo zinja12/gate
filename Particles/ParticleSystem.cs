@@ -137,6 +137,10 @@ namespace gate.Particles
             this.base_position = position;
         }
 
+        public Vector2 get_base_position() {
+            return base_position;
+        }
+
         public void add_particle_texture(Texture2D tex) {
             particle_textures.Add(tex);
         }

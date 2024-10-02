@@ -1,0 +1,29 @@
+{
+    "character_name": "felix",
+    "dialogue": [
+        {
+            "speaker": "felix",
+            "dialogue_line": "hi!"
+        },
+        {
+            "speaker": "felix",
+            "dialogue_line": "oh, you must be here for the pilgrimage..."
+        },
+        {
+            "speaker": "felix",
+            "dialogue_line": "head down the path to get to town and they'll get you all sorted"
+        },
+        {
+            "speaker": "felix",
+            "dialogue_line": "but make sure to be careful, i think some of the path might be blocked"
+        },
+        {
+            "speaker": "felix",
+            "dialogue_line": "you might want to go talk to zahir, the shrine keeper, he might be able to help you out"
+        },
+        {
+            "speaker": "s",
+            "dialogue_line": "great, thanks!"
+        }
+    ]
+}

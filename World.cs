@@ -115,7 +115,8 @@ namespace gate
         private Dictionary<int, string> editor_tool_name_map = new Dictionary<int, string>() {
             {0, "place"},
             {1, "cond."},
-            {2, "delete"}
+            {2, "delete"},
+            {3, "tile"}
         };
 
         //Random variable
@@ -202,7 +203,7 @@ namespace gate
         private void editor_init() {
             /*Editor Initialization*/
             editor_tool_idx = 0;
-            editor_tool_count = 3;
+            editor_tool_count = 4;
             editor_layer = 0;
             editor_layer_count = 2;
             //obj map init
@@ -1491,6 +1492,24 @@ namespace gate
                                 break;
                         }
                     }
+                } else if (editor_tool_idx == 3) {
+                    //tile tool
+                    if (Mouse.GetState().LeftButton == ButtonState.Pressed && selection_elapsed >= selection_cooldown) {
+                        selection_elapsed = 0f;
+                        MouseState mouse_state = Mouse.GetState();
+                        //calculate 10 tiles to the right and up
+                        Vector2 tile_start = new Vector2(create_position.X - 10*64, create_position.Y - 10*64);
+                        //iterate over 10 tiles and place them
+                        for (int i = 0; i < 10; i++) {
+                            for (int j = 0; j < 10; j++) {
+                                Vector2 tile_position = new Vector2(tile_start.X + i*64, tile_start.Y + j*64);
+                                Tile gt_tile = new Tile(tile_position, editor_object_scale, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
+                                add_floor_entity(gt_tile);
+                                Console.WriteLine($"grass_tile,{tile_position.X},{tile_position.Y},{editor_object_scale}");
+                                editor_object_idx++;
+                            }
+                        }
+                    }
                 }
             }
             #endregion
@@ -1540,7 +1559,9 @@ namespace gate
         public void update_world_particle_systems(GameTime gameTime, float rotation) {
             //update and manage world particle systems
             foreach (ParticleSystem ps in particle_systems) {
-                ps.Update(gameTime, rotation);
+                if (Vector2.Distance(ps.get_base_position(), player.get_base_position()) <= render_distance) {
+                    ps.Update(gameTime, rotation);
+                }
                 //add dead systems to dead list
                 if (ps.is_finished()) {
                     dead_particle_systems.Add(ps);
@@ -2276,7 +2297,9 @@ namespace gate
 
             /*PARTICLE SYSTEMS*/
             foreach (ParticleSystem ps in particle_systems) {
-                ps.Draw(_spriteBatch);
+                if (Vector2.Distance(ps.get_base_position(), player.get_base_position()) <= render_distance) {
+                    ps.Draw(_spriteBatch);
+                }
             }
 
             //debug triggers

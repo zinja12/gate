@@ -26,6 +26,9 @@
 /processorParam:TextureFormat=Color
 /build:color_palettte/color_palette_gba2.png
 
+#begin dialogue/npc1_felix_dialogue.json
+/copy:dialogue/npc1_felix_dialogue.json
+
 #begin dialogue/swordkeeper_dialogue1.json
 /copy:dialogue/swordkeeper_dialogue1.json
 
