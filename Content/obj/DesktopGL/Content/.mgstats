@@ -1,6 +1,6 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
 "C:/Users/Shaan/Documents/test_projects/gate/Content/color_palettte/color_palette_gba2.png","C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/color_palettte/color_palette_gba2.xnb","TextureProcessor","Texture2DContent",5612,7680085,0.2751379
-"C:/Users/Shaan/Documents/test_projects/gate/Content/dialogue/npc1_felix_dialogue.json","C:\Users\Shaan\Documents\test_projects\gate\Content\bin\DesktopGL\Content\dialogue/npc1_felix_dialogue.json","CopyItem","File",871,871,0.0012608
+"C:/Users/Shaan/Documents/test_projects/gate/Content/dialogue/npc1_felix_dialogue.json","C:\Users\Shaan\Documents\test_projects\gate\Content\bin\DesktopGL\Content\dialogue/npc1_felix_dialogue.json","CopyItem","File",765,765,0.0012891
 "C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial.spritefont","C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fonts/arial.xnb","FontDescriptionProcessor","SpriteFontContent",2008,267298,0.0978776
 "C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial_mid_reg.spritefont","C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fonts/arial_mid_reg.xnb","FontDescriptionProcessor","SpriteFontContent",2068,70690,0.0152625
 "C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial_small.spritefont","C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fonts/arial_small.xnb","FontDescriptionProcessor","SpriteFontContent",2008,21538,0.0103393
