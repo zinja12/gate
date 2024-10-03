@@ -19,17 +19,19 @@ namespace gate.Triggers
 
         protected bool triggered;
         private string level_id;
+        private Vector2 entry_position;
         protected Player player;
 
         protected static bool debug = true;
 
         protected int ID;
         
-        public LevelTrigger(Vector2 position, float width, float height, string level_id, Player player, int ID) {
+        public LevelTrigger(Vector2 position, float width, float height, string level_id, Vector2 entry_position, Player player, int ID) {
             this.position = position;
             trigger_box = new RRect(position, width, height);
             triggered = false;
             this.level_id = level_id;
+            this.entry_position = entry_position;
             this.player = player;
 
             this.ID = ID;
@@ -55,6 +57,10 @@ namespace gate.Triggers
 
         public string get_level_id() {
             return level_id;
+        }
+
+        public Vector2 get_entry_position() {
+            return entry_position;
         }
 
         public RRect get_trigger_collision_box() {

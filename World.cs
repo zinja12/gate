@@ -37,7 +37,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "shrine1.json", current_level_id;
+        public string load_file_name = "crossroads1.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -80,6 +80,7 @@ namespace gate
         //level transition variables
         private bool transition_active = false;
         private string next_level_id = null;
+        private LevelTrigger current_level_trigger = null;
         private float transition_elapsed, transition_threshold = 1000f;
         private float transition_percentage = 0f;
         private bool transition1_complete = false;
@@ -279,7 +280,7 @@ namespace gate
         * an open question is how we handle IDs for objects that have been removed or destroyed? Otherwise should we not have
         * that object loaded the load function will throw and Incongruency Error...
         */
-        public void load_level(string root_directory, GraphicsDeviceManager _graphics, string level_id) {
+        public void load_level(string root_directory, GraphicsDeviceManager _graphics, string level_id, Vector2? player_start_point = null) {
             //set current level id
             current_level_id = level_id;
             //load context for fx
@@ -368,6 +369,9 @@ namespace gate
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             //create player object
+                            if (player_start_point.HasValue){
+                                obj_position = player_start_point.Value;
+                            }
                             Player p = new Player(obj_position, w_obj.scale, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, w_obj.object_id_num, this);
                             //read world file player attributes to help initialize player
                             if (world_file_contents.player_attributes != null) {
@@ -491,10 +495,10 @@ namespace gate
                             Tile round_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex4, w_obj.object_identifier, (int)DrawWeight.Light, w_obj.object_id_num);
                             background_entities.Add(round_tile);
                             break;
-                        case "level_trigger":
-                            LevelTrigger lt = new LevelTrigger(obj_position, w_obj.width, w_obj.height, w_obj.level_id, player, w_obj.object_id_num);
-                            triggers.Add(lt);
-                            break;
+                        // case "level_trigger":
+                        //     LevelTrigger lt = new LevelTrigger(obj_position, w_obj.width, w_obj.height, w_obj.level_id, player, w_obj.object_id_num);
+                        //     triggers.Add(lt);
+                        //     break;
                         case "rotation_trigger":
                             RotationTrigger rt = new RotationTrigger(obj_position, w_obj.width, w_obj.height, w_obj.goal_rotation, player, w_obj.object_id_num);
                             triggers.Add(rt);
@@ -636,13 +640,38 @@ namespace gate
                 //set editor object_idx to whatever i is for editor current object idx later on
                 editor_object_idx = world_file_contents.world_objects.Count - 1;
 
-                //gather all ai entities
+                //gather all ai entities and set references for each ai entity
                 List<IAiEntity> all_ai_entities = new List<IAiEntity>();
                 foreach (IAiEntity ai in enemies) { all_ai_entities.Add(ai); }
                 foreach (IAiEntity ai in npcs) { all_ai_entities.Add(ai); }
                 //set fellow enemies for all ais (this is so each entity knows where the others are to avoid overlaps)
                 foreach (IAiEntity ai in enemies) { ai.set_ai_entities(all_ai_entities); }
                 foreach (IAiEntity ai in npcs) { ai.set_ai_entities(all_ai_entities); }
+
+                //set up triggers
+                for (int i = 0; i < world_file_contents.world_triggers.Count; i++) {
+                    GameWorldTrigger w_trigger = world_file_contents.world_triggers[i];
+                    editor_object_idx++;
+                    ITrigger trigger = null;
+                    Vector2 trigger_position = new Vector2(w_trigger.x_position, w_trigger.y_position);
+                    switch (w_trigger.object_identifier) {
+                        case "level_trigger":
+                            Vector2 entry_position = new Vector2(w_trigger.entry_x_position, w_trigger.entry_y_position);
+                            trigger = new LevelTrigger(trigger_position, w_trigger.width, w_trigger.height, w_trigger.level_id, entry_position, player, w_trigger.object_id_num);
+                            break;
+                        case "rotation_trigger":
+                            trigger = new RotationTrigger(trigger_position, w_trigger.width, w_trigger.height, w_trigger.goal_rotation, player, w_trigger.object_id_num);
+                            break;
+                        default:
+                            //nothing
+                            break;
+                    }
+                    //add trigger if not null
+                    if (trigger != null) {
+                        triggers.Add(trigger);
+                    }
+                }
+
                 //set up conditions
                 for (int i = 0; i < world_file_contents.conditions.Count; i++) {
                     GameWorldCondition w_condition = world_file_contents.conditions[i];
@@ -875,7 +904,7 @@ namespace gate
 
             //keep level transitions updated
             if (next_level_id != null) {
-                level_transition(gameTime, next_level_id);
+                level_transition(gameTime, next_level_id, current_level_trigger);
             }
             
             //keep goal rotations updated
@@ -969,12 +998,12 @@ namespace gate
             if (player.get_health() <= 0) {
                 //player has died, transition and reload the current level
                 if (!transition_active) {
-                    set_transition(true, current_level_id);
+                    set_transition(true, current_level_id, null);
                 }
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.B)) {
-                set_transition(true, current_level_id);
+                set_transition(true, current_level_id, null);
             }
             #endregion
 
@@ -1933,7 +1962,7 @@ namespace gate
                             Console.WriteLine("death!");
                             //transition to beginning of the level (reload world)
                             if (!transition_active) {
-                                set_transition(true, current_level_id);
+                                set_transition(true, current_level_id, null);
                             }
                         }
                     }
@@ -2023,7 +2052,7 @@ namespace gate
                         Console.WriteLine("LEVEL TRANSITION!");
                         Console.WriteLine($"level_transition:{level_id}");
                         //transition to next level
-                        set_transition(true, level_id);
+                        set_transition(true, level_id, (LevelTrigger)trigger);
                         triggered = false;
                         //set trigger back to false
                         trigger.set_triggered(false);
@@ -2086,15 +2115,17 @@ namespace gate
         //function to set up transition
         //NOTE: make sure that you check for !transition_active before invoking the function,
         //otherwise the update() will run again and the transition will continually trigger without ever completing, thereby just freezing the game (softlock)
-        public void set_transition(bool value, string level_id) {
+        public void set_transition(bool value, string level_id, LevelTrigger level_trigger) {
             //set transition to active and set elapsed and next level variables
             transition_active = value;
             next_level_id = level_id;
             transition_elapsed = 0f;
             player.set_movement_disabled(true);
+            //set current level trigger
+            current_level_trigger = level_trigger;
         }
 
-        public void level_transition(GameTime gameTime, string n_level_id) {
+        public void level_transition(GameTime gameTime, string n_level_id, LevelTrigger level_trigger) {
             //calculate how long the transition has taken
             transition_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             //calculate the percentage based on how long the transition has played
@@ -2109,7 +2140,13 @@ namespace gate
                     //once the transition time has fully expired we have fully transitioned to a black screen
                     //unload current level, load next level
                     unload_level();
-                    load_level(content_root_directory, _graphics, n_level_id);
+                    if (level_trigger != null) {
+                        load_level(content_root_directory, _graphics, n_level_id, level_trigger.get_entry_position());
+                        Update(gameTime);
+                    } else {
+                        load_level(content_root_directory, _graphics, n_level_id);
+                        Update(gameTime);
+                    }
                     Update(gameTime);
                     //set transition 1 to complete
                     transition1_complete = true;
@@ -2122,6 +2159,7 @@ namespace gate
                         //set transition1 back to incomplete for next transition
                         transition1_complete = false;
                         player.set_movement_disabled(false);
+                        transition_percentage = 0;
                     }
                 }
             }

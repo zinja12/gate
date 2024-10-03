@@ -20417,7 +20417,9 @@
             "goal_rotation": 0,
             "npc_path_entity_ids": null,
             "npc_conversation_file_id": null
-        },
+        }
+    ],
+    "world_triggers": [
         {
             "object_identifier": "level_trigger",
             "object_id_num": 1275,
@@ -20429,6 +20431,8 @@
             "width": 300,
             "height": 300,
             "level_id": "crossroads1.json",
+            "entry_x_position": 827.8857,
+            "entry_y_position":-946.71466,
             "rotation": 0
         }
     ],

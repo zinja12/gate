@@ -17,7 +17,7 @@ namespace gate
         private float rotation_value;
 
         public RotationTrigger(Vector2 position, float width, float height, float rotation_value, Player player, int ID) 
-            : base(position, width, height, "", player, ID) {
+            : base(position, width, height, "", Vector2.Zero, player, ID) {
             this.rotation_value = rotation_value;
         }
 
