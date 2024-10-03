@@ -77,6 +77,9 @@
 #begin levels/demo1_v2_ids.json
 /copy:levels/demo1_v2_ids.json
 
+#begin levels/shrine1.json
+/copy:levels/shrine1.json
+
 #begin levels/trails_v1.json
 /copy:levels/trails_v1.json
 

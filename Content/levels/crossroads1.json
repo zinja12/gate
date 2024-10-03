@@ -30592,6 +30592,19 @@
             "goal_rotation": 0,
             "npc_path_entity_ids": null,
             "npc_conversation_file_id": null
+        },
+        {
+            "object_identifier": "level_trigger",
+            "object_id_num": 1911,
+            "x_position": 747.2805,
+            "y_position": -1179.3948,
+            "scale": 0,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 300,
+            "height": 300,
+            "level_id": "shrine1.json",
+            "rotation": 0
         }
     ],
     "conditions": [],

@@ -37,7 +37,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads1.json", current_level_id;
+        public string load_file_name = "shrine1.json", current_level_id;
         //string load_file_name = "sandbox.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -625,7 +625,7 @@ namespace gate
                             break;
                         case "dash_cloak":
                             check_and_load_tex(ref Constant.dash_cloak_pickup_tex, "sprites/dash_cloak_pickup");
-                            BillboardSprite dash_cloak = new BillboardSprite(Constant.dash_cloak_pickup_tex, obj_position, w_obj.scale, w_obj.object_identifier, w_obj.object_id_num);
+                            BillboardSprite dash_cloak = new BillboardSprite(Constant.dash_cloak_pickup_tex, obj_position, w_obj.scale, w_obj.object_identifier, w_obj.object_id_num, true);
                             entities_list.Add(dash_cloak);
                             collision_entities.Add(dash_cloak);
                             break;
