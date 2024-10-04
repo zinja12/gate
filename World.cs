@@ -505,14 +505,6 @@ namespace gate
                             Tile round_tile = new Tile(obj_position, w_obj.scale, Constant.tile_tex4, w_obj.object_identifier, (int)DrawWeight.Light, w_obj.object_id_num);
                             background_entities.Add(round_tile);
                             break;
-                        // case "level_trigger":
-                        //     LevelTrigger lt = new LevelTrigger(obj_position, w_obj.width, w_obj.height, w_obj.level_id, player, w_obj.object_id_num);
-                        //     triggers.Add(lt);
-                        //     break;
-                        case "rotation_trigger":
-                            RotationTrigger rt = new RotationTrigger(obj_position, w_obj.width, w_obj.height, w_obj.goal_rotation, player, w_obj.object_id_num);
-                            triggers.Add(rt);
-                            break;
                         case "nightmare":
                             check_and_load_tex(ref Constant.nightmare_tex, "sprites/test_nightmare_spritesheet2");
                             check_and_load_tex(ref Constant.nightmare_attack_tex, "sprites/test_nightmare_attacks_spritesheet1");
