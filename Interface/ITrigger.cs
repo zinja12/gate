@@ -19,7 +19,7 @@ namespace gate.Interface
         bool is_triggered();
         TriggerType get_trigger_type();
         void set_triggered(bool value);
-        GameWorldObject to_world_level_object();
+        GameWorldTrigger to_world_level_trigger();
         void Update(GameTime gameTime, float rotation);
         void Draw(SpriteBatch spriteBatch);
     }

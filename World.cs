@@ -37,8 +37,8 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads1.json", current_level_id;
-        //string load_file_name = "sandbox.json";
+        public string load_file_name = "shrine1.json", current_level_id;
+        public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
         //objects present in every world
@@ -270,6 +270,14 @@ namespace gate
             return file_contents;
         }
 
+        public string read_from_file(string root_dir, string file_path, string file_name) {
+            var path = Path.Combine(root_dir, file_path + file_name);
+            using (var file_stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var reader = new StreamReader(file_stream)) {
+                return reader.ReadToEnd();
+            }
+        }
+
         #region load_level
         //function to load level files into the world
         /*
@@ -319,6 +327,7 @@ namespace gate
             //set up and read level file
             string level_file_path = "levels/";
             string dialogue_file_path = "dialogue/";
+            string player_attribute_file_path = "player_attributes/";
             string file_contents = read_gameworld_file_contents(root_directory, level_file_path, level_id);
             /*Read object from contents as json*/
             GameWorldFile world_file_contents = JsonSerializer.Deserialize<GameWorldFile>(file_contents);
@@ -358,7 +367,7 @@ namespace gate
                     switch (w_obj.object_identifier) {
                         case "player":
                             if (player_count > 0) {
-                                throw new Exception("World File Error: Too many player objects found in world file. There can only be one. :)");
+                                throw new Exception("World File Error: Too many player objects found in world file. There can only be one player to rule them all.");
                             }
                             //load textures for player
                             check_and_load_tex(ref Constant.player_tex, "sprites/test_player_spritesheet6");
@@ -373,8 +382,22 @@ namespace gate
                                 obj_position = player_start_point.Value;
                             }
                             Player p = new Player(obj_position, w_obj.scale, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, w_obj.object_id_num, this);
-                            //read world file player attributes to help initialize player
-                            if (world_file_contents.player_attributes != null) {
+                            //read player attribute file to initialize player
+                            string player_file_contents = read_from_file(root_directory, player_attribute_file_path, player_attribute_file_name);
+                            GameWorldPlayerAttributeFile player_attribute_file_contents = JsonSerializer.Deserialize<GameWorldPlayerAttributeFile>(player_file_contents);
+                            if (player_attribute_file_contents != null) {
+                                foreach (GameWorldPlayerAttribute pa in player_attribute_file_contents.player_attributes) {
+                                    //set attribute active / inactive
+                                    p.set_attribute(pa.identifier, pa.active);
+                                    //set charges for attributes accordingly if attribute is active
+                                    if (pa.active && pa.charges > 0) {
+                                        p.set_attribute_charges(pa.identifier, pa.charges);
+                                    } else {
+                                        p.set_attribute_charges(pa.identifier, 0);
+                                    }
+                                }
+                            }
+                            /*if (world_file_contents.player_attributes != null) {
                                 //iterate over player attributes and set active variable for attribute
                                 foreach (GameWorldPlayerAttribute pa in world_file_contents.player_attributes) {
                                     //set attribute active / inactive
@@ -386,7 +409,7 @@ namespace gate
                                         p.set_attribute_charges(pa.identifier, 0);
                                     }
                                 }
-                            }
+                            }*/
                             entities_list.Add(p);
                             collision_entities.Add(p);
                             //make sure to set player reference and increment count
@@ -1632,8 +1655,8 @@ namespace gate
         #region save_world_file
         public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities) {
             //set up object lists to save to file
-            List<GameWorldPlayerAttribute> player_attribute_list = player.to_world_player_attributes_object();
             List<GameWorldObject> world_objs = new List<GameWorldObject>();
+            List<GameWorldTrigger> world_triggers = new List<GameWorldTrigger>();
             List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
             List<GameWorldParticleSystem> world_particle_systems = new List<GameWorldParticleSystem>();
             //iterate over all entities
@@ -1663,7 +1686,7 @@ namespace gate
             }
             //iterate over level triggers
             foreach (ITrigger t in triggers) {
-                world_objs.Add(t.to_world_level_object());
+                world_triggers.Add(t.to_world_level_trigger());
             }
 
             //handle saving collision geometry that is not drawn
@@ -1684,40 +1707,53 @@ namespace gate
             List<GameWorldCondition> sorted_world_conditions = conditions.OrderBy(c => c.object_id_num).ToList();
             //sort world objects by numerical id
             List<GameWorldObject> sorted_world_objs = world_objs.OrderBy (o => o.object_id_num).ToList();
+            List<GameWorldTrigger> sorted_world_triggers = world_triggers.OrderBy (t => t.object_id_num).ToList();
 
             //sanity check and re-issue ids to objects to prevent any gaps in object ids that could result in an issue on level loading
             //trying to collapse gaps in ids mostly because it throws off the level loading process
             //this is mostly because we introduced the concept of object deletion which then leads to gaps in ids
             //in addition to this through gameplay, entities may be created or destroyed which can throw off the running editor id count
             //this re-issuing of the ids fixes this issue and allows us to save partial states or changes to the world due to gameplay
+            int obj_reissue_id = 0;
             for (int i = 0; i < sorted_world_objs.Count; i++) {
-                sorted_world_objs[i].object_id_num = i;
+                sorted_world_objs[i].object_id_num = obj_reissue_id;
+                obj_reissue_id++;
             }
-            int object_id_count = sorted_world_objs.Count;
-            for (int i = object_id_count; i < sorted_world_conditions.Count; i++) {
-                sorted_world_conditions[i].object_id_num = i;
+            //triggers
+            for (int i = 0; i < sorted_world_triggers.Count; i++) {
+                sorted_world_triggers[i].object_id_num = obj_reissue_id;
+                obj_reissue_id++;
             }
-            object_id_count = sorted_world_objs.Count + sorted_world_conditions.Count;
+            //int object_id_count = sorted_world_objs.Count;
+            for (int i = 0; i < sorted_world_conditions.Count; i++) {
+                sorted_world_conditions[i].object_id_num = obj_reissue_id;
+                obj_reissue_id++;
+            }
             //set world particle systems object id (this number is irrelevant to particle systems, but it should still be in order as good practice and for consistency)
-            for (int i = object_id_count; i < world_particle_systems.Count; i++) {
-                world_particle_systems[i].object_id_num = i;
+            for (int i = 0; i < world_particle_systems.Count; i++) {
+                world_particle_systems[i].object_id_num = obj_reissue_id;
+                obj_reissue_id++;
             }
             
             //generate GameWorldFile object with all saved objects
             GameWorldFile world_file = new GameWorldFile {
-                player_attributes = player_attribute_list,
                 world_objects = sorted_world_objs,
+                world_triggers = sorted_world_triggers,
                 conditions = sorted_world_conditions,
                 particle_systems = world_particle_systems,
                 world_script = new List<string>()
             };
             //take world file and serialize to json then write to file
             string file_contents = JsonSerializer.Serialize(world_file);
-            var file_path = Path.Combine(content_root_directory, "levels/" + save_file_name);
-            Console.WriteLine("saving file:" + file_path);
+            //write
+            write_to_file("levels/", save_file_name, file_contents);
+        }
 
+        public void write_to_file(string file_path, string file_name, string file_contents) {
+            var path = Path.Combine(content_root_directory, file_path + file_name);
+            Console.WriteLine($"saving file:{file_path+file_name}");
             //write file
-            File.WriteAllText(file_path, file_contents);
+            File.WriteAllText(path, file_contents);
         }
         #endregion
 
@@ -1910,9 +1946,12 @@ namespace gate
                         bool collision = player.check_hurtbox_collisions(sprite.get_hurtbox());
                         sprite.set_display_interaction(collision);
                         if (collision && player.interacting()) {
-                            //pickup item
-                            player_item_pickup(player, sprite);
-                            clear_entity(sprite);
+                            //check for item specifics
+                            if (e.get_id().Equals("dash_cloak")) {
+                                //pickup item
+                                player_item_pickup(player, sprite);
+                                clear_entity(sprite);
+                            }
                         }
                     }
                 }
@@ -2026,6 +2065,8 @@ namespace gate
                     //nothing
                     break;
             }
+            //write player attributes to file
+            p.save_player_attributes();
         }
 
         private void check_triggers(GameTime gameTime, float rotation) {

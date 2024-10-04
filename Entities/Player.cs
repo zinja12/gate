@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -1387,15 +1388,18 @@ namespace gate.Entities
             return new List<GameWorldPlayerAttribute>() {
                 new GameWorldPlayerAttribute {
                     identifier = "sword",
-                    active = sword_attribute
+                    active = sword_attribute,
+                    charges = get_max_attack_charges()
                 },
                 new GameWorldPlayerAttribute {
                     identifier = "dash",
-                    active = dash_attribute
+                    active = dash_attribute,
+                    charges = get_max_dashes()
                 },
                 new GameWorldPlayerAttribute {
                     identifier = "bow",
-                    active = bow_attribute
+                    active = bow_attribute,
+                    charges = get_max_arrows()
                 }
             };
         }
@@ -1492,6 +1496,7 @@ namespace gate.Entities
 
         public void set_max_arrow_charges(int charges) {
             max_arrows = charges;
+            Console.WriteLine($"arrow_charges_set:{get_max_arrows()}");
         }
 
         public void set_attribute_charges(string attribute_id, int charges) {
@@ -1512,6 +1517,19 @@ namespace gate.Entities
                     //do nothing
                     break;
             }
+        }
+        
+        public void save_player_attributes() {
+            //write the change to the attributes file
+            //gather current state of player attributes
+            List<GameWorldPlayerAttribute> player_attributes = to_world_player_attributes_object();
+            GameWorldPlayerAttributeFile player_attribute_file = new GameWorldPlayerAttributeFile {
+                player_attributes = player_attributes
+            };
+            //serialize to json then write to file
+            string file_contents = JsonSerializer.Serialize(player_attribute_file);
+            //write to file
+            world.write_to_file("player_attributes/", "player_attributes.json", file_contents);
         }
 
         public void set_attribute(string attribute_id, bool value) {

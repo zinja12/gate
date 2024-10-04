@@ -79,15 +79,17 @@ namespace gate.Triggers
             return TriggerType.Level;
         }
 
-        public virtual GameWorldObject to_world_level_object() {
-            return new GameWorldObject {
+        public virtual GameWorldTrigger to_world_level_trigger() {
+            return new GameWorldTrigger {
                 object_identifier = "level_trigger",
                 object_id_num = get_obj_ID_num(),
                 x_position = position.X,
                 y_position = position.Y,
                 width = trigger_box.width,
                 height = trigger_box.height,
-                level_id = this.level_id
+                level_id = this.level_id,
+                entry_x_position = get_entry_position().X,
+                entry_y_position = get_entry_position().Y
             };
         }
 

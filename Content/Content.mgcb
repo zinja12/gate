@@ -83,6 +83,9 @@
 #begin levels/trails_v1.json
 /copy:levels/trails_v1.json
 
+#begin player_attributes/player_attributes.json
+/copy:player_attributes/player_attributes.json
+
 #begin sprites/anxiety.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -39,8 +39,8 @@ namespace gate
             return TriggerType.Rotation;
         }
 
-        public override GameWorldObject to_world_level_object() {
-            return new GameWorldObject {
+        public override GameWorldTrigger to_world_level_trigger() {
+            return new GameWorldTrigger {
                 object_identifier = "rotation_trigger",
                 object_id_num = get_obj_ID_num(),
                 x_position = position.X,
