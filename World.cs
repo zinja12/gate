@@ -397,19 +397,6 @@ namespace gate
                                     }
                                 }
                             }
-                            /*if (world_file_contents.player_attributes != null) {
-                                //iterate over player attributes and set active variable for attribute
-                                foreach (GameWorldPlayerAttribute pa in world_file_contents.player_attributes) {
-                                    //set attribute active / inactive
-                                    p.set_attribute(pa.identifier, pa.active);
-                                    //set charges for attributes accordingly if attribute is active
-                                    if (pa.active && pa.charges > 0) {
-                                        p.set_attribute_charges(pa.identifier, pa.charges);
-                                    } else {
-                                        p.set_attribute_charges(pa.identifier, 0);
-                                    }
-                                }
-                            }*/
                             entities_list.Add(p);
                             collision_entities.Add(p);
                             //make sure to set player reference and increment count
