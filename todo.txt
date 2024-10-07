@@ -278,6 +278,10 @@ ToDo List:
 [](BUG)constant emission static positioned particle systems do not properly rotate position when camera rotates
 [](BUG)fix collision with multiple entities at once
     -this might just be as simple as just ignoring the movement rather than moving the player back on their line
+[](NICE-TO-HAVE)enable file/object diffing for saves
+    -right now we save a modified version of the level file off to load later when a player makes a modification to the level like picking up an item
+    -we do not necessarily have to re-save the entire level, we can probably just save what has been removed and use that to reconstruct the modified level
+    -this should save on storage cost because we are not saving the level objects twice
 [WILL NOT DO - cutting this enemy](BUG)redesign ghastly so the enemy fits in the world
     -this is probably because of a miscalculation happening with the rotation logic after the vector between the two entities is calculated
     -either we are rotating before and not calculating the appropriate position that way
