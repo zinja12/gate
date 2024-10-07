@@ -1976,9 +1976,14 @@ namespace gate
                         bool collision = player.check_hurtbox_collisions(stacked_object.get_hurtbox());
                         if (collision && player.interacting()) {
                             if ((e.get_id().Equals("sword") || e.get_id().Equals("bow") || e.get_id().Equals("dash")) && player.get_attribute_active(e.get_id()) == false) {
-                                player.set_attribute(e.get_id(), true);
-                                player.set_attribute_charges(e.get_id(), Constant.player_default_attack_charge);
+                                player_item_pickup(player, e);
                                 clear_entity(e);
+                                save_world_level_to_file(
+                                    entities_list.get_all_entities().Keys.ToList(),
+                                    foreground_entities,
+                                    background_entities,
+                                    "mod_" + current_level_id
+                                );
                             }
                         }
                     } else if (e is BillboardSprite) {
@@ -2095,7 +2100,7 @@ namespace gate
             }
         }
 
-        private void player_item_pickup(Player p, BillboardSprite item) {
+        private void player_item_pickup(Player p, IEntity item) {
             //split string to pull first string part to identify the attribute
             string player_attribute = item.get_id().Split("_")[0];
             switch (player_attribute) {
@@ -2114,6 +2119,13 @@ namespace gate
                         p.set_attribute_charges(player_attribute, Constant.player_default_max_arrows);
                         //refill arrow charges
                         p.add_arrow_charge(Constant.player_default_max_arrows);
+                    }
+                    break;
+                case "sword":
+                    p.set_attribute(player_attribute, true);
+                    if (p.get_attack_charge() <= Constant.player_default_attack_charge) {
+                        //set attach charges
+                        p.set_attribute_charges(player_attribute, Constant.player_default_attack_charge);
                     }
                     break;
                 default:
@@ -2375,22 +2387,30 @@ namespace gate
         public IEntity find_entity_colliding(RRect r) {
             foreach (IEntity e in collision_entities) {
                 //cast to collision entity
-                ICollisionEntity ce = (ICollisionEntity)e;
-                if (ce.get_hurtbox().collision(r)) {
-                    return e;
+                Console.WriteLine($"deleting+casting to collision entity:{e.get_id()}");
+                Console.WriteLine($"deleting:{e.get_id()}");
+                if (e is ICollisionEntity) {
+                    ICollisionEntity ce = (ICollisionEntity)e;
+                    if (ce.get_hurtbox().collision(r)) {
+                        return e;
+                    }
                 }
             }
             foreach (IEntity e in collision_geometry) {
                 //cast to collision entity
-                ICollisionEntity ce = (ICollisionEntity)e;
-                if (ce.get_hurtbox().collision(r)) {
-                    return e;
+                if (e is ICollisionEntity) {
+                    ICollisionEntity ce = (ICollisionEntity)e;
+                    if (ce.get_hurtbox().collision(r)) {
+                        return e;
+                    }
                 }
             }
             foreach (IEntity e in plants) {
-                ICollisionEntity ce = (ICollisionEntity)e;
-                if (ce.get_hurtbox().collision(r)) {
-                    return e;
+                if (e is ICollisionEntity) {
+                    ICollisionEntity ce = (ICollisionEntity)e;
+                    if (ce.get_hurtbox().collision(r)) {
+                        return e;
+                    }
                 }
             }
             return null;
