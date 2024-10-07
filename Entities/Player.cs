@@ -47,7 +47,7 @@ namespace gate.Entities
         private List<Footprints> footprints;
         private List<Footprints> reap_footprints;
         private float footprints_elapsed;
-        private float footprints_delay = 300f;
+        private float footprints_delay = 250f;
 
         //movement and input
         private float base_movement_speed = 2.0f, movement_speed = 2.0f, fear_movement_speed = 0.8f;
@@ -1062,7 +1062,7 @@ namespace gate.Entities
                 //create new footprint and set elapsed back to 0
                 footprints.Add(new Footprints(depth_sort_position, 1f, Constant.footprint_tex, rotation, 0.5f, 0.01f, Color.Black));
                 //add particle system for puff
-                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(draw_position, rotation, 2f, Constant.direction_down), 1, 350f, 1, random.Next(1, 4), 1, 2, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(draw_position, rotation, 2f, Constant.direction_down), 1, 500f, 1, random.Next(1, 4), 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
                 footprints_elapsed = 0;
             }
         }

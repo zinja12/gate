@@ -254,6 +254,7 @@ namespace gate
             obj_map.Add(31, new HitSwitch("hitswitch", Constant.switch_active, Constant.switch_inactive, Vector2.Zero, 1f, 16, 16, 8, Constant.stack_distance1, 0f, -1));
             obj_map.Add(32, new PlaceHolderEntity(Vector2.Zero, "Condition(SwitchC)", -1));
             obj_map.Add(33, new BillboardSprite(Constant.dash_cloak_pickup_tex, Vector2.Zero, 1f, "dash_cloak", -1));
+            obj_map.Add(34, new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, Vector2.Zero, 1f, 32, 32, 4, Constant.stack_distance1, 0f, -1));
         }
         #endregion
 
@@ -668,6 +669,13 @@ namespace gate
                             entities_list.Add(dash_cloak);
                             collision_entities.Add(dash_cloak);
                             break;
+                        case "cracked_rocks":
+                            check_and_load_tex(ref Constant.cracked_rocks_spritesheet, "sprites/cracked_rocks_4");
+                            StackedObject cracked_rocks = new StackedObject(w_obj.object_identifier, Constant.cracked_rocks_spritesheet, obj_position, w_obj.scale, 32, 32, 4, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(cracked_rocks);
+                            collision_geometry.Add(cracked_rocks);
+                            collision_geometry_map[cracked_rocks] = false;
+                            break;
                         default:
                             break;
                     }
@@ -867,6 +875,9 @@ namespace gate
                             break;
                         case "dash_cloak":
                             check_and_load_tex(ref Constant.dash_cloak_pickup_tex, "sprites/dash_cloak_pickup");
+                            break;
+                        case "cracked_rocks":
+                            check_and_load_tex(ref Constant.cracked_rocks_spritesheet, "sprites/cracked_rocks_4");
                             break;
                         default:
                             //don't load anything
@@ -1457,6 +1468,12 @@ namespace gate
                             BillboardSprite dash_cloak = new BillboardSprite(Constant.dash_cloak_pickup_tex, create_position, 1f, "dash_cloak", editor_object_idx, true);
                             entities_list.Add(dash_cloak);
                             collision_entities.Add(dash_cloak);
+                            break;
+                        case 34:
+                            StackedObject cracked_rocks = new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, create_position, 1f, 32, 32, 4, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                            entities_list.Add(cracked_rocks);
+                            collision_geometry.Add(cracked_rocks);
+                            collision_geometry_map[cracked_rocks] = false;
                             break;
                         default:
                             break;

@@ -20414,7 +20414,7 @@
             "level_id": null,
             "rotation": 0,
             "npc_path_entity_ids": [],
-            "npc_conversation_file_id": "npc1_felix_dialogue.json"
+            "npc_conversation_file_id": "npc1_zahir_dialogue.json"
         }
     ],
     "world_triggers": [

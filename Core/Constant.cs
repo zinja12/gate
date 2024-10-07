@@ -71,6 +71,7 @@ namespace gate.Core
         public static Texture2D sludge_tex;
         public static Texture2D switch_active, switch_inactive;
         public static Texture2D dash_cloak_pickup_tex;
+        public static Texture2D cracked_rocks_spritesheet;
 
         public static Texture2D fear_tex, anxiety_tex;
 
@@ -213,6 +214,7 @@ namespace gate.Core
             identifiers.Add("ghost");
             identifiers.Add("hitswitch");
             identifiers.Add("dash_cloak");
+            identifiers.Add("cracked_rocks");
             return identifiers;
         }
 
