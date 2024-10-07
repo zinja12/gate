@@ -6,6 +6,9 @@ Codename: The Gate
 ## GIFS
 ![](https://github.com/zinja12/gate/blob/main/gifs/gategif1_f.gif)
 
+## Build + Info
+This project is built using Monogame 3.8.0. The build SDK is .NET 6.0.302, however the target is .NET Core 3.1. In order to run the build .NET Core 3.1 is required, however Monogame itself is packaged alongside the .exe in the bin/Debug/netcoreapp3.1 directory so that Monogame itself is not necessary to install before being able to run the build. In order to run the project, just run the gate.exe in the bin/Debug/netcoreapp3.1 directory. This should not be necessary for the Release folder however as that version will have the .NET Core 3.1 target binaries necessary for dependencies packaged alongside the .exe so no installs will be needed aside from the Release folder itself.
+
 ## Controls
 ### Keyboard
 - Y - open text / interact
