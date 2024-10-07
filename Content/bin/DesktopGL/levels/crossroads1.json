@@ -1,22 +1,5 @@
 {
     "camera_bounds": null,
-    "player_attributes": [
-        {
-            "identifier": "sword",
-            "active": false,
-            "charges": 2
-        },
-        {
-            "identifier": "dash",
-            "active": false,
-            "charges": 1
-        },
-        {
-            "identifier": "bow",
-            "active": false,
-            "charges": 1
-        }
-    ],
     "world_objects": [
         {
             "object_identifier": "player",

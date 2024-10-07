@@ -1,0 +1,33 @@
+{
+    "character_name": "zahir, the first shrine keeper",
+    "dialogue": [
+        {
+            "speaker": "zahir, the first shrine keeper",
+            "dialogue_line": "huh? whazzit?"
+        },
+        {
+            "speaker": "zahir, the first shrine keeper",
+            "dialogue_line": "oh, sorry, my eyes ain't what they used to be"
+        },
+        {
+            "speaker": "zahir, the first shrine keeper",
+            "dialogue_line": "well, you look like you need some help"
+        },
+        {
+            "speaker": "zahir, the first shrine keeper",
+            "dialogue_line": "i take it the bridge is out again? that's the third time this season"
+        },
+        {
+            "speaker": "zahir, the first shrine keeper",
+            "dialogue_line": "i'll tell you, no one wants to admit it, but the storms around here have been getting worse recently"
+        },
+        {
+            "speaker": "zahir, the first shrine keeper",
+            "dialogue_line": "anyways, go grab the orb over there, it should help you get across the bridge gap if you tap the 'A' button"
+        },
+        {
+            "speaker": "zahir, the first shrine keeper",
+            "dialogue_line": "good luck out there!"
+        }
+    ]
+}

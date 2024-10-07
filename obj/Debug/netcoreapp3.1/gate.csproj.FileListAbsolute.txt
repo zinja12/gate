@@ -222,3 +222,4 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\dial
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\dash_cloak_pickup.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\levels\shrine1.json
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\player_attributes\player_attributes.json
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\dialogue\npc1_zahir_dialogue.json

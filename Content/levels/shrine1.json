@@ -20400,12 +20400,27 @@
             "goal_rotation": 0,
             "npc_path_entity_ids": null,
             "npc_conversation_file_id": null
+        },
+        {
+            "object_identifier": "npc",
+            "object_id_num": 1275,
+            "x_position": -497.51907,
+            "y_position": -693.3362,
+            "scale": 1,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0,
+            "npc_path_entity_ids": [],
+            "npc_conversation_file_id": "npc1_zahir_dialogue.json"
         }
     ],
     "world_triggers": [
         {
             "object_identifier": "level_trigger",
-            "object_id_num": 1275,
+            "object_id_num": 1276,
             "x_position": -145.88089,
             "y_position": -125.353424,
             "scale": 0,
