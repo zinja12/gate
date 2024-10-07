@@ -41,6 +41,8 @@ namespace gate
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
+        bool object_persistence = false;
+
         //objects present in every world
         Camera camera;
         Player player;
@@ -278,6 +280,35 @@ namespace gate
             }
         }
 
+        public bool file_exists(string file_path) {
+            return File.Exists(file_path);
+        }
+        
+        //function to return the modified level file full path to load from
+        //if modified level file does not exist, it just retuns level id
+        public string get_modified_level_file(string root_dir, string file_path, string level_id) {
+            //if object persistence is not enabled, just return level id as is
+            if (!get_object_persistence()) {
+                Console.WriteLine($"object persistence disabled({get_object_persistence()}). returning un-modified default level id");
+                return level_id;
+            }
+
+            //in the case of object persistence being enabled we need to look for the modified level file to return
+            string mod_prefix = "mod_";
+            var modified_level_id = mod_prefix + level_id;
+            //combine path
+            var path = Path.Combine(root_dir, file_path + modified_level_id);
+            //check for file existence and return based on file existence
+            if (file_exists(path)) {
+                Console.WriteLine($"modified level file found({path})");
+                return mod_prefix + level_id;
+            } else {
+                Console.WriteLine($"no modified level file found({path})");
+                Console.WriteLine($"level_id_path:{Path.Combine(root_dir, file_path + level_id)}");
+                return level_id;
+            }
+        }
+
         #region load_level
         //function to load level files into the world
         /*
@@ -328,7 +359,9 @@ namespace gate
             string level_file_path = "levels/";
             string dialogue_file_path = "dialogue/";
             string player_attribute_file_path = "player_attributes/";
-            string file_contents = read_gameworld_file_contents(root_directory, level_file_path, level_id);
+            //check for existence of modified level file to load for gameplay and world continuity sake
+            string modified_level_id = get_modified_level_file(root_directory, level_file_path, level_id);
+            string file_contents = read_from_file(root_directory, level_file_path, modified_level_id);
             /*Read object from contents as json*/
             GameWorldFile world_file_contents = JsonSerializer.Deserialize<GameWorldFile>(file_contents);
             //check deserialization
@@ -1434,7 +1467,7 @@ namespace gate
                     //pull all world entities from render list (whether or not they're currently being drawn)
                     List<IEntity> all_world_entities = entities_list.get_all_entities().Keys.ToList();
                     //save
-                    save_world_level_to_file(all_world_entities, foreground_entities, background_entities);
+                    save_world_level_to_file(all_world_entities, foreground_entities, background_entities, save_file_name);
                 } else if (editor_tool_idx == 1) {
                     //right click
                     if (Mouse.GetState().RightButton == ButtonState.Pressed) {
@@ -1630,9 +1663,13 @@ namespace gate
             //clear
             dead_particle_systems.Clear();
         }
+
+        public bool get_object_persistence() {
+            return object_persistence;
+        }
         
         #region save_world_file
-        public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities) {
+        public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities, string file_save_name) {
             //set up object lists to save to file
             List<GameWorldObject> world_objs = new List<GameWorldObject>();
             List<GameWorldTrigger> world_triggers = new List<GameWorldTrigger>();
@@ -1640,7 +1677,9 @@ namespace gate
             List<GameWorldParticleSystem> world_particle_systems = new List<GameWorldParticleSystem>();
             //iterate over all entities
             foreach (IEntity e in entities) {
-                world_objs.Add(e.to_world_level_object());
+                if (!entities_to_clear.Contains(e)) {
+                    world_objs.Add(e.to_world_level_object());
+                }
             }
             //iterate over foreground entities
             foreach (ForegroundEntity fe in foreground_entities) {
@@ -1653,14 +1692,18 @@ namespace gate
             foreach (BackgroundEntity be in background_entities) {
                 if (be is Tile) {
                     Tile tile = (Tile)be;
-                    world_objs.Add(tile.to_world_level_object());
+                    if (!entities_to_clear.Contains(tile)) {
+                        world_objs.Add(tile.to_world_level_object());
+                    }
                 }
             }
             //iterate over floor entities
             foreach (FloorEntity fe in floor_entities) {
                 if (fe is Tile) {
                     Tile tile = (Tile)fe;
-                    world_objs.Add(tile.to_world_level_object());
+                    if (!entities_to_clear.Contains(tile)) {
+                        world_objs.Add(tile.to_world_level_object());
+                    }
                 }
             }
             //iterate over level triggers
@@ -1673,7 +1716,9 @@ namespace gate
             foreach (IEntity g in collision_geometry) {
                 if (g is InvisibleObject) {
                     InvisibleObject io = (InvisibleObject)g;
-                    world_objs.Add(io.to_world_level_object());
+                    if (!entities_to_clear.Contains(io)) {
+                        world_objs.Add(io.to_world_level_object());
+                    }
                 }
             }
 
@@ -1725,7 +1770,7 @@ namespace gate
             //take world file and serialize to json then write to file
             string file_contents = JsonSerializer.Serialize(world_file);
             //write
-            write_to_file("levels/", save_file_name, file_contents);
+            write_to_file("levels/", file_save_name, file_contents);
         }
 
         public void write_to_file(string file_path, string file_name, string file_contents) {
@@ -1930,6 +1975,12 @@ namespace gate
                                 //pickup item
                                 player_item_pickup(player, sprite);
                                 clear_entity(sprite);
+                                save_world_level_to_file(
+                                    entities_list.get_all_entities().Keys.ToList(),
+                                    foreground_entities,
+                                    background_entities,
+                                    "mod_" + current_level_id
+                                );
                             }
                         }
                     }
@@ -2249,8 +2300,18 @@ namespace gate
                         temp_tiles.Remove(tt);
                     }
                 }
+                if (collision_geometry_map.ContainsKey(e)) {
+                    collision_geometry_map.Remove(e);
+                }
                 if (collision_tile_map.ContainsKey(e)) {
                     collision_tile_map.Remove(e);
+                }
+                //switches
+                if (e is HitSwitch) {
+                    HitSwitch hs = (HitSwitch)e;
+                    if (switches.Contains(hs)) {
+                        switches.Remove(hs);
+                    }
                 }
                 //if this is an ai, remove it from enemies
                 if (e is IAiEntity) {
