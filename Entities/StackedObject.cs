@@ -162,7 +162,7 @@ namespace gate.Entities
             update_once = true;
         }
 
-        public GameWorldObject to_world_level_object() {
+        public virtual GameWorldObject to_world_level_object() {
             return new GameWorldObject {
                 object_identifier = id,
                 object_id_num = get_obj_ID_num(),

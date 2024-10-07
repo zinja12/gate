@@ -37,7 +37,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "shrine1.json", current_level_id;
+        public string load_file_name = "crossroads1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -2010,7 +2010,15 @@ namespace gate
                     if (e is StackedObject) {
                         StackedObject obj = (StackedObject)e;
                         bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
-                        collision_geometry_map[e] = collision;
+
+                        //specific check for cracked rocks / objects player can dash through
+                        if (collision && e.get_id().Equals("cracked_rocks") && player.is_dashing()) {
+                            //if there is a collision with cracked rocks specifically and the player is dashing, ignore the collision
+                            collision_geometry_map[e] = false;
+                        } else {
+                            //default for stacked objects, just set the collision in the map
+                            collision_geometry_map[e] = collision;
+                        }
 
                         //player hitbox active
                         if (player.hitbox_active()) {
