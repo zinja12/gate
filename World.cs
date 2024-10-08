@@ -261,6 +261,7 @@ namespace gate
             obj_map.Add(33, new BillboardSprite(Constant.dash_cloak_pickup_tex, Vector2.Zero, 1f, "dash_cloak", -1));
             obj_map.Add(34, new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, Vector2.Zero, 1f, 32, 32, 4, Constant.stack_distance1, 0f, -1));
             obj_map.Add(35, new BillboardSprite(Constant.player_chip_tex, Vector2.Zero, 1f, "player_chip", -1));
+            obj_map.Add(36, new BillboardSprite(Constant.bow_pickup_tex, Vector2.Zero, 1f, "bow", -1));
         }
         #endregion
 
@@ -687,6 +688,12 @@ namespace gate
                             collision_geometry.Add(cracked_rocks);
                             collision_geometry_map[cracked_rocks] = false;
                             break;
+                        case "bow":
+                            check_and_load_tex(ref Constant.bow_pickup_tex, "sprites/bow_pickup");
+                            BillboardSprite bow = new BillboardSprite(Constant.bow_pickup_tex, obj_position, w_obj.scale, w_obj.object_identifier, w_obj.object_id_num, true);
+                            entities_list.Add(bow);
+                            collision_entities.Add(bow);
+                            break;
                         default:
                             break;
                     }
@@ -910,6 +917,9 @@ namespace gate
                             check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
+                            break;
+                        case "bow":
+                            check_and_load_tex(ref Constant.bow_pickup_tex, "sprites/bow_pickup");
                             break;
                         default:
                             //don't load anything
@@ -1510,6 +1520,11 @@ namespace gate
                         case 35:
                             BillboardSprite player_chip = new BillboardSprite(Constant.player_chip_tex, create_position, 1f, "player_chip", editor_object_idx);
                             editor_only_objects.Add(player_chip);
+                            break;
+                        case 36:
+                            BillboardSprite bow = new BillboardSprite(Constant.bow_pickup_tex, create_position, 1f, "bow", editor_object_idx, false);
+                            entities_list.Add(bow);
+                            collision_entities.Add(bow);
                             break;
                         default:
                             break;

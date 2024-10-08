@@ -225,3 +225,4 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\play
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\dialogue\npc1_zahir_dialogue.json
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\cracked_rocks_4.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\player_chip.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\bow_pickup.xnb

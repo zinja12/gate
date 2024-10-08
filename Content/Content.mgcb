@@ -125,6 +125,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/attack_sprites2.png
 
+#begin sprites/bow_pickup.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/bow_pickup.png
+
 #begin sprites/box_spritesheet1.png
 /importer:TextureImporter
 /processor:TextureProcessor
