@@ -143,8 +143,8 @@ namespace gate.Entities
             return new GameWorldObject {
                 object_identifier = identifier,
                 object_id_num = get_obj_ID_num(),
-                x_position = get_base_position().X,
-                y_position = get_base_position().Y,
+                x_position = base_position.X,
+                y_position = base_position.Y,
                 scale = get_scale(),
                 rotation = get_rotation_offset()
             };

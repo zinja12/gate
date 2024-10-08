@@ -353,6 +353,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/orange_tree4_6_26.png
 
+#begin sprites/player_chip.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/player_chip.png
+
 #begin sprites/player_spritesheet3.png
 /importer:TextureImporter
 /processor:TextureProcessor

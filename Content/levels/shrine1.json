@@ -2,7 +2,7 @@
     "camera_bounds": null,
     "world_objects": [
         {
-            "object_identifier": "player",
+            "object_identifier": "player_chip",
             "object_id_num": 0,
             "x_position": -322.59796,
             "y_position": -312.07965,

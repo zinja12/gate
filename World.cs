@@ -66,6 +66,8 @@ namespace gate
         Dictionary<IEntity, bool> collision_geometry_map;
         Dictionary<IEntity, bool> collision_tile_map;
         List<IEntity> switches;
+        //editor ONLY objects
+        List<IEntity> editor_only_objects;
 
         //clear variables
         List<IEntity> entities_to_clear;
@@ -177,6 +179,9 @@ namespace gate
             //list for switches
             switches = new List<IEntity>();
 
+            //editor ONLY objects
+            editor_only_objects = new List<IEntity>();
+
             //weapons
             entities_to_clear = new List<IEntity>();
 
@@ -255,6 +260,7 @@ namespace gate
             obj_map.Add(32, new PlaceHolderEntity(Vector2.Zero, "Condition(SwitchC)", -1));
             obj_map.Add(33, new BillboardSprite(Constant.dash_cloak_pickup_tex, Vector2.Zero, 1f, "dash_cloak", -1));
             obj_map.Add(34, new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, Vector2.Zero, 1f, 32, 32, 4, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(35, new BillboardSprite(Constant.player_chip_tex, Vector2.Zero, 1f, "player_chip", -1));
         }
         #endregion
 
@@ -399,7 +405,7 @@ namespace gate
                     }
 
                     switch (w_obj.object_identifier) {
-                        case "player":
+                        case "player_chip":
                             if (player_count > 0) {
                                 throw new Exception("World File Error: Too many player objects found in world file. There can only be one player to rule them all.");
                             }
@@ -411,10 +417,12 @@ namespace gate
                             check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
+                            check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
                             //create player object
                             if (player_start_point.HasValue){
                                 obj_position = player_start_point.Value;
                             }
+                            //NOTE: we should probably do something about the object_id_num for player since it's basically not relevant now for save files
                             Player p = new Player(obj_position, w_obj.scale, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, w_obj.object_id_num, this);
                             //read player attribute file to initialize player
                             string player_file_contents = read_from_file(root_directory, player_attribute_file_path, player_attribute_file_name);
@@ -436,6 +444,9 @@ namespace gate
                             //make sure to set player reference and increment count
                             player = p;
                             player_count++;
+                            //set up player chip in editor only objects
+                            BillboardSprite p_chip = new BillboardSprite(Constant.player_chip_tex, obj_position, w_obj.scale, "player_chip", w_obj.object_id_num);
+                            editor_only_objects.Add(p_chip);
                             break;
                         case "tree":
                             //load texture
@@ -683,6 +694,11 @@ namespace gate
                 //set editor object_idx to whatever i is for editor current object idx later on
                 editor_object_idx = world_file_contents.world_objects.Count - 1;
 
+                //check for absence of player
+                if (player_count < 1) {
+                    throw new Exception("World File Error: No player_chip found in file for player to spawn at. Please add a player chip object to world file.");
+                }
+
                 //gather all ai entities and set references for each ai entity
                 List<IAiEntity> all_ai_entities = new List<IAiEntity>();
                 foreach (IAiEntity ai in enemies) { all_ai_entities.Add(ai); }
@@ -692,52 +708,56 @@ namespace gate
                 foreach (IAiEntity ai in npcs) { ai.set_ai_entities(all_ai_entities); }
 
                 //set up triggers
-                for (int i = 0; i < world_file_contents.world_triggers.Count; i++) {
-                    GameWorldTrigger w_trigger = world_file_contents.world_triggers[i];
-                    editor_object_idx++;
-                    ITrigger trigger = null;
-                    Vector2 trigger_position = new Vector2(w_trigger.x_position, w_trigger.y_position);
-                    switch (w_trigger.object_identifier) {
-                        case "level_trigger":
-                            Vector2 entry_position = new Vector2(w_trigger.entry_x_position, w_trigger.entry_y_position);
-                            trigger = new LevelTrigger(trigger_position, w_trigger.width, w_trigger.height, w_trigger.level_id, entry_position, player, w_trigger.object_id_num);
-                            break;
-                        case "rotation_trigger":
-                            trigger = new RotationTrigger(trigger_position, w_trigger.width, w_trigger.height, w_trigger.goal_rotation, player, w_trigger.object_id_num);
-                            break;
-                        default:
-                            //nothing
-                            break;
-                    }
-                    //add trigger if not null
-                    if (trigger != null) {
-                        triggers.Add(trigger);
+                if (world_file_contents.world_triggers != null) {
+                    for (int i = 0; i < world_file_contents.world_triggers.Count; i++) {
+                        GameWorldTrigger w_trigger = world_file_contents.world_triggers[i];
+                        editor_object_idx++;
+                        ITrigger trigger = null;
+                        Vector2 trigger_position = new Vector2(w_trigger.x_position, w_trigger.y_position);
+                        switch (w_trigger.object_identifier) {
+                            case "level_trigger":
+                                Vector2 entry_position = new Vector2(w_trigger.entry_x_position, w_trigger.entry_y_position);
+                                trigger = new LevelTrigger(trigger_position, w_trigger.width, w_trigger.height, w_trigger.level_id, entry_position, player, w_trigger.object_id_num);
+                                break;
+                            case "rotation_trigger":
+                                trigger = new RotationTrigger(trigger_position, w_trigger.width, w_trigger.height, w_trigger.goal_rotation, player, w_trigger.object_id_num);
+                                break;
+                            default:
+                                //nothing
+                                break;
+                        }
+                        //add trigger if not null
+                        if (trigger != null) {
+                            triggers.Add(trigger);
+                        }
                     }
                 }
 
                 //set up conditions
-                for (int i = 0; i < world_file_contents.conditions.Count; i++) {
-                    GameWorldCondition w_condition = world_file_contents.conditions[i];
-                    editor_object_idx++;
-                    ICondition c = null;
-                    switch (w_condition.object_identifier) {
-                        case "all_enemies_dead_remove_objs":
-                            if (w_condition.enemy_ids == null || w_condition.enemy_ids.Count == 0) {
-                                c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
-                            } else {
-                                c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
-                            }
-                            break;
-                        case "switch_condition":
-                            if (w_condition.enemy_ids != null && w_condition.enemy_ids.Count > 0) {
-                                c = new SwitchCondition(editor_object_idx, this, switches, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
-                            }
-                            break;
-                        default:
-                            break;
+                if (world_file_contents.conditions != null) {
+                    for (int i = 0; i < world_file_contents.conditions.Count; i++) {
+                        GameWorldCondition w_condition = world_file_contents.conditions[i];
+                        editor_object_idx++;
+                        ICondition c = null;
+                        switch (w_condition.object_identifier) {
+                            case "all_enemies_dead_remove_objs":
+                                if (w_condition.enemy_ids == null || w_condition.enemy_ids.Count == 0) {
+                                    c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                                } else {
+                                    c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                                }
+                                break;
+                            case "switch_condition":
+                                if (w_condition.enemy_ids != null && w_condition.enemy_ids.Count > 0) {
+                                    c = new SwitchCondition(editor_object_idx, this, switches, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        //add created condition to condition manager
+                        condition_manager.add_condition(c);
                     }
-                    //add created condition to condition manager
-                    condition_manager.add_condition(c);
                 }
                 //increment editor object idx
                 editor_object_idx++;
@@ -878,6 +898,18 @@ namespace gate
                             break;
                         case "cracked_rocks":
                             check_and_load_tex(ref Constant.cracked_rocks_spritesheet, "sprites/cracked_rocks_4");
+                            break;
+                        case "player_chip":
+                            //load player chip
+                            check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
+                            //load player assets because they will be needed later
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_player_spritesheet6");
+                            check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet5");
+                            check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             break;
                         default:
                             //don't load anything
@@ -1475,6 +1507,10 @@ namespace gate
                             collision_geometry.Add(cracked_rocks);
                             collision_geometry_map[cracked_rocks] = false;
                             break;
+                        case 35:
+                            BillboardSprite player_chip = new BillboardSprite(Constant.player_chip_tex, create_position, 1f, "player_chip", editor_object_idx);
+                            editor_only_objects.Add(player_chip);
+                            break;
                         default:
                             break;
                     }
@@ -1687,14 +1723,30 @@ namespace gate
         
         #region save_world_file
         public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities, string file_save_name) {
+            //track player chip count
+            int player_chip_count = 0;
             //set up object lists to save to file
             List<GameWorldObject> world_objs = new List<GameWorldObject>();
             List<GameWorldTrigger> world_triggers = new List<GameWorldTrigger>();
             List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
             List<GameWorldParticleSystem> world_particle_systems = new List<GameWorldParticleSystem>();
+            //iterate over editor only objects (ex. player_chip)
+            foreach (IEntity e in editor_only_objects) {
+                world_objs.Add(e.to_world_level_object());
+                if (e.get_id().Equals("player_chip")) {
+                    player_chip_count++;
+                }
+            }
+            //check for player chip to save level (should only be one within the level)
+            if (player_chip_count != 1) {
+                Console.WriteLine($"File Save Error. There should be exactly 1 player chip (player spawn point) in the level, but {player_chip_count} were found.");
+                return;
+            }
             //iterate over all entities
             foreach (IEntity e in entities) {
-                if (!entities_to_clear.Contains(e)) {
+                //we need to exclude deleted objects from being saved to the world level file
+                //we also need to exclude the player form being saved as we are using player chips to denote spawn points
+                if (!entities_to_clear.Contains(e) && !(e is Player)) {
                     world_objs.Add(e.to_world_level_object());
                 }
             }
@@ -2571,6 +2623,11 @@ namespace gate
                 mouse_hitbox.draw(_spriteBatch);
 
                 condition_manager.Draw(_spriteBatch);
+
+                //draw editor only entities
+                foreach (IEntity e in editor_only_objects) {
+                    e.Draw(_spriteBatch);
+                }
             }
             _spriteBatch.End();
 

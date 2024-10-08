@@ -31,6 +31,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/lamppost_spritesheet3.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/marker_spritesheet5.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/orange_tree4_6_26.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/player_chip.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/player_spritesheet3.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/read_interact.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock1.png</File>
@@ -69,6 +70,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
