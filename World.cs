@@ -586,7 +586,7 @@ namespace gate
                         case "scarecrow":
                             //no need for dialogue file (yet)
                             check_and_load_tex(ref Constant.scarecrow_tex, "sprites/scarecrow1");
-                            NPC scrow = new NPC(Constant.scarecrow_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            NPC scrow = new NPC(Constant.scarecrow_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, true);
                             //add to entities list and npcs
                             entities_list.Add(scrow);
                             collision_entities.Add(scrow);
