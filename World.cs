@@ -37,7 +37,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "blank_level.json", current_level_id;
+        public string load_file_name = "crossroads1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -1319,6 +1319,7 @@ namespace gate
                     //save
                     save_world_level_to_file(all_world_entities, foreground_entities, background_entities, save_file_name);
                 } else if (editor_tool_idx == 1) {
+                    //condition tool
                     //right click
                     if (Mouse.GetState().RightButton == ButtonState.Pressed) {
                         //context for right mouse button pressed
@@ -2122,7 +2123,7 @@ namespace gate
 
             //check player-geometry collisions
             foreach (IEntity e in collision_geometry) {
-                if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2)) {
+                if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2) && !editor_active) {
                     if (e is StackedObject) {
                         StackedObject obj = (StackedObject)e;
                         bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
@@ -2190,7 +2191,7 @@ namespace gate
                 foreach (IEntity proj in projectiles) {
                     //make sure we are not checking the same entity
                     if (!e.Equals(proj)) {
-                        if (e is StackedObject) {
+                        if (e is StackedObject && !e.get_id().Equals("hitswitch")) {
                             //check only for collisions with certain defined collision entities
                             if (Constant.projectile_collision_identifiers.Contains(e.get_id())) {
                                 StackedObject so = (StackedObject)e;
@@ -2202,6 +2203,20 @@ namespace gate
                                         //if the shot is not a power shot then clear it on impact immediately
                                         //it will be cleared when the speed runs out (dead)
                                         if (!a.is_power_shot()) { entities_to_clear.Add(a); }
+                                    }
+                                }
+                            }
+                        } else if (e is StackedObject && e.get_id().Equals("hitswitch")) {
+                            //arrow collision with switch
+                            HitSwitch hs = (HitSwitch)e;
+                            if (hs.is_hurtbox_active()) {
+                                if (proj is Arrow) {
+                                    Arrow a = (Arrow)proj;
+                                    bool collision = hs.get_hurtbox().collision(a.get_hitbox());
+                                    if (collision) {
+                                        hs.take_hit(a, 0);
+                                        //shake the camera
+                                        set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
                                     }
                                 }
                             }
@@ -2498,8 +2513,7 @@ namespace gate
         public IEntity find_entity_colliding(RRect r) {
             foreach (IEntity e in collision_entities) {
                 //cast to collision entity
-                Console.WriteLine($"deleting+casting to collision entity:{e.get_id()}");
-                Console.WriteLine($"deleting:{e.get_id()}");
+                Console.WriteLine($"entity_check:{e.get_id()}");
                 if (e is ICollisionEntity) {
                     ICollisionEntity ce = (ICollisionEntity)e;
                     if (ce.get_hurtbox().collision(r)) {
@@ -2534,6 +2548,10 @@ namespace gate
                 }
             }
             return null;
+        }
+
+        public void add_world_particle_system(ParticleSystem ps) {
+            particle_systems.Add(ps);
         }
 
         public FloorEntity find_floor_entity_colliding(RRect r) {

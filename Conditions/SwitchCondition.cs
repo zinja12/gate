@@ -8,9 +8,13 @@ using Microsoft.Xna.Framework.Input;
 using gate.Collision;
 using gate.Interface;
 using gate.Entities;
+using gate.Particles;
+using gate.Core;
 
 namespace gate.Conditions
 {
+    //TODO: in order to be instantiated correctly, please insert a switch into enemy ids in the json
+    //otherwise the game will not create it, need to fix this later
     public class SwitchCondition : ICondition
     {
         private string name = "switch_condition";
@@ -19,6 +23,8 @@ namespace gate.Conditions
         private Vector2 position;
         private RRect rect;
         private int size = 50;
+
+        private float rotation;
         
         private List<IEntity> switches;
         private List<int> switch_ids;
@@ -94,6 +100,8 @@ namespace gate.Conditions
         }
 
         public bool condition(GameTime gameTime, float rotation, RRect mouse_hitbox) {
+            this.rotation = rotation;
+
             // if we are in edit mode (selected == true) we need to check and update the buttons
             if (selected) {
                 //update buttons
@@ -148,7 +156,26 @@ namespace gate.Conditions
                 triggered = true;
                 //remove certain object(s) from the world
                 foreach (int e_id in obj_ids_to_remove) {
+                    //clear entity by id
                     world.clear_entity_by_id(e_id);
+                    world.add_world_particle_system(
+                        new ParticleSystem(true,
+                        Constant.rotate_point(
+                            //TODO: this might get cumbersome with adding the particle systems because we need to find the entity in the list each time since we are requesting by entity id
+                            //however for now this seems to work
+                            world.find_entity_by_id(e_id).get_base_position(),
+                            rotation,
+                            1f,
+                            Constant.direction_up),
+                        2,
+                        500f,
+                        1,
+                        5,
+                        1,
+                        3,
+                        Constant.white_particles,
+                        new List<Texture2D>() { Constant.footprint_tex })
+                    );
                 }
             }
         }
