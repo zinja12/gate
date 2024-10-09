@@ -37,7 +37,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads1.json", current_level_id;
+        public string load_file_name = "blank_level.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -111,7 +111,7 @@ namespace gate
         //private Dictionary<int, Texture2D> object_map;
         private Dictionary<int, IEntity> obj_map;
         private Vector2 mouse_world_position, create_position;
-        private RRect mouse_hitbox;
+        private RRect mouse_hitbox, brush_box;
         private int previous_scroll_value;
         private Keys previous_key;
         private ICondition selected_condition;
@@ -121,7 +121,8 @@ namespace gate
             {0, "place"},
             {1, "cond."},
             {2, "delete"},
-            {3, "tile"}
+            {3, "tile"},
+            {4, "tree_brush"}
         };
 
         //Random variable
@@ -145,6 +146,9 @@ namespace gate
             //set up mouse hitbox
             mouse_hitbox = new RRect(Vector2.Zero, 10, 10);
             mouse_hitbox.set_color(Color.Pink);
+            //set up brush hitbox
+            brush_box = new RRect(Vector2.Zero, 300, 300);
+            brush_box.set_color(Color.Black);
 
             //init load textures
             loaded_textures = new List<string>();
@@ -211,7 +215,7 @@ namespace gate
         private void editor_init() {
             /*Editor Initialization*/
             editor_tool_idx = 0;
-            editor_tool_count = 4;
+            editor_tool_count = 5;
             editor_layer = 0;
             editor_layer_count = 2;
             //obj map init
@@ -1666,6 +1670,49 @@ namespace gate
                             }
                         }
                     }
+                } else if (editor_tool_idx == 4) {
+                    //brush tool for trees
+                    //update rectangle to generate trees in
+                    brush_box.update(camera.Rotation, mouse_world_position);
+                    //check for click
+                    if (Mouse.GetState().LeftButton == ButtonState.Pressed && selection_elapsed >= selection_cooldown) {
+                        selection_elapsed = 0f;
+                        MouseState mouse_state = Mouse.GetState();
+                        //generate random points within that box
+                        List<Vector2> generated_points = generate_list_of_points(brush_box, 14, 25f);
+                        int tree_type = 0;
+                        foreach (Vector2 p in generated_points) {
+                            float random_rotation = (float)random.Next(0, 360);
+                            switch (tree_type) {
+                                case 0:
+                                    StackedObject gtree = new StackedObject("green_tree", Constant.green_tree, p, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(random_rotation), editor_object_idx);
+                                    plants.Add(gtree);
+                                    entities_list.Add(gtree);
+                                    Console.WriteLine("green_tree," + p.X + "," + p.Y + ",1," + editor_object_idx);
+                                    break;
+                                case 1:
+                                    StackedObject otree = new StackedObject("orange_tree", Constant.orange_tree, p, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(random_rotation), editor_object_idx);
+                                    plants.Add(otree);
+                                    entities_list.Add(otree);
+                                    Console.WriteLine("orange_tree," + p.X + "," + p.Y + ",1," + editor_object_idx);
+                                    break;
+                                case 2:
+                                    StackedObject ytree = new StackedObject("yellow_tree", Constant.yellow_tree, p, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(random_rotation), editor_object_idx);
+                                    plants.Add(ytree);
+                                    entities_list.Add(ytree);
+                                    Console.WriteLine("yellow_tree," + p.X + "," + p.Y + ",1," + editor_object_idx);
+                                    break;
+                                default:
+                                    //nothing
+                                    break;
+                            }
+                            editor_object_idx++;
+                            tree_type++;
+                            if (tree_type >= 3) {
+                                tree_type = 0;
+                            }
+                        }
+                    }
                 }
             }
             #endregion
@@ -1703,6 +1750,10 @@ namespace gate
         }
 
         /*editor tooling*/
+        public void place_object(int selected_obj) {
+            
+        }
+
         public int get_editor_object_idx() {
             return editor_object_idx;
         }
@@ -2563,6 +2614,36 @@ namespace gate
             return editor_active;
         }
 
+        public List<Vector2> generate_list_of_points(RRect r, int num_points, float distance) {
+            List<Vector2> random_points = new List<Vector2>();
+            
+            while (random_points.Count < num_points) {
+                Vector2 p = r.top_left_position;
+                float r_x = (float)random.Next(0, (int)r.width) + brush_box.width/5;
+                float r_y = (float)random.Next(0, (int)r.height) + brush_box.height/5;
+
+                Vector2 r_point = p + new Vector2(r_x, r_y);
+
+                //r_point = Vector2.Transform(r_point - r.position, Matrix.CreateRotationZ(camera.Rotation)) + r.position;
+
+                // Check distance from all other points
+                bool is_valid = true;
+                foreach (var point in random_points) {
+                    if (Vector2.Distance(r_point, point) < distance) {
+                        is_valid = false;
+                        break;
+                    }
+                }
+
+                // If valid, add the point
+                if (is_valid) {
+                    random_points.Add(r_point);
+                }
+            }
+
+            return random_points;
+        }
+
         public void Draw(SpriteBatch _spriteBatch){
             // TODO: Add drawing code here
 
@@ -2631,6 +2712,9 @@ namespace gate
                     //draw preview of object
                     IEntity selected_entity = obj_map[selected_object];
                     selected_entity.Draw(_spriteBatch);
+                } else if (editor_tool_idx == 4) {
+                    //draw brush area
+                    brush_box.draw(_spriteBatch);
                 }
                 _spriteBatch.DrawString(Constant.arial_small, $"{editor_tool_name_map[editor_tool_idx]}", mouse_hitbox.position, Color.Black);
                 
