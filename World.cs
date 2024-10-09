@@ -1310,229 +1310,7 @@ namespace gate
                     //create_position = Constant.rotate_point(mouse_world_position, -camera.Rotation, 0f, Constant.direction_down);
                     Console.WriteLine("mouse_world_position:" + mouse_world_position);
                     Console.WriteLine("create_position:" + create_position);
-                    switch (selected_object) {
-                        case 1:
-                            Tree t = new Tree(create_position, 1f, Constant.tree_spritesheet, false, "tree", editor_object_idx);
-                            plants.Add(t);
-                            entities_list.Add(t);
-                            Console.WriteLine("tree," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 2:
-                            Grass g = new Grass(create_position, 1f, editor_object_idx);
-                            plants.Add(g);
-                            entities_list.Add(g);
-                            Console.WriteLine("grass," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 3:
-                            Ghastly ghast = new Ghastly(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, editor_object_idx);
-                            entities_list.Add(ghast);
-                            collision_entities.Add(ghast);
-                            Console.WriteLine("ghastly," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 4:
-                            StackedObject m = new StackedObject("marker", Constant.marker_spritesheet, create_position, 1f, 32, 32, 15, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            entities_list.Add(m);
-                            collision_geometry.Add(m);
-                            collision_geometry_map[m] = false;
-                            Console.WriteLine("marker," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 5:
-                            Lamppost l = new Lamppost(create_position, 1f, editor_object_idx);
-                            entities_list.Add(l);
-                            Console.WriteLine("lamp," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 6:
-                            Tile tile1 = new Tile(create_position, 3f, Constant.tile_tex, "big_tile", (int)DrawWeight.Light, editor_object_idx);
-                            background_entities.Add(tile1);
-                            Console.WriteLine("big_tile," + create_position.X + "," + create_position.Y + ",3");
-                            break;
-                        case 7:
-                            Tile tile2 = new Tile(create_position, 3f, Constant.tile_tex2, "cracked_tile", (int)DrawWeight.Light, editor_object_idx);
-                            background_entities.Add(tile2);
-                            Console.WriteLine("cracked_tile," + create_position.X + "," + create_position.Y + ",3");
-                            break;
-                        case 8:
-                            Tile tile3 = new Tile(create_position, 3f, Constant.tile_tex3, "reg_tile", (int)DrawWeight.Light, editor_object_idx);
-                            background_entities.Add(tile3);
-                            Console.WriteLine("reg_tile," + create_position.X + "," + create_position.Y + ",3");
-                            break;
-                        case 9:
-                            Tile tile4 = new Tile(create_position, 3f, Constant.tile_tex4, "round_tile", (int)DrawWeight.Light, editor_object_idx);
-                            background_entities.Add(tile4);
-                            Console.WriteLine("round_tile," + create_position.X + "," + create_position.Y + ",3");
-                            break;
-                        case 10:
-                            Tile tan_tile = new Tile(create_position, editor_object_scale, Constant.tan_tile_tex, "tan_tile", (int)DrawWeight.Medium, editor_object_idx);
-                            add_floor_entity(tan_tile);
-                            Console.WriteLine("tan_tile," + create_position.X + "," + create_position.Y + ",2");
-                            break;
-                        case 11:
-                            Tree c = new Tree(create_position, 4f, Constant.tree_spritesheet, true, "tree", editor_object_idx);
-                            plants.Add(c);
-                            entities_list.Add(c);
-                            Console.WriteLine("tree," + create_position.X + "," + create_position.Y + ",4,true");
-                            break;
-                        case 12:
-                            StackedObject w = new StackedObject("wall", Constant.wall_tex, create_position, 1f, 32, 32, 8, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            w.Update(gameTime, rotation);
-                            entities_list.Add(w);
-                            collision_geometry.Add(w);
-                            collision_geometry_map[w] = false;
-                            Console.WriteLine("wall," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 13:
-                            StackedObject f = new StackedObject("fence", Constant.fence_spritesheet, create_position, 1f, 32, 32, 18, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            f.Update(gameTime, rotation);
-                            entities_list.Add(f);
-                            collision_geometry.Add(f);
-                            collision_geometry_map[f] = false;
-                            Console.WriteLine("fence," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 14:
-                            InvisibleObject io = new InvisibleObject("deathbox", create_position, 1f, 48, 48, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            io.set_debug(true);
-                            io.Update(gameTime, rotation);
-                            collision_geometry.Add(io);
-                            collision_geometry_map[io] = false;
-                            Console.WriteLine($"deathbox,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
-                            break;
-                        case 15:
-                            Nightmare n = new Nightmare(Constant.nightmare_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "nightmare");
-                            n.set_behavior_enabled(false);
-                            entities_list.Add(n);
-                            collision_entities.Add(n);
-                            enemies.Add(n);
-                            Console.WriteLine($"nightmare,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
-                            break;
-                        case 16:
-                            ICondition cond = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, new List<int>(), create_position);
-                            condition_manager.add_condition(cond);
-                            Console.WriteLine("edroc condition created!");
-                            break;
-                        case 17:
-                            Tile gt_tile = new Tile(create_position, editor_object_scale, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
-                            add_floor_entity(gt_tile);
-                            Console.WriteLine("grass_tile," + create_position.X + "," + create_position.Y + ",2");
-                            break;
-                        case 18:
-                            StackedObject otree = new StackedObject("orange_tree", Constant.orange_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            plants.Add(otree);
-                            entities_list.Add(otree);
-                            Console.WriteLine("orange_tree," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 19:
-                            StackedObject ytree = new StackedObject("yellow_tree", Constant.yellow_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            plants.Add(ytree);
-                            entities_list.Add(ytree);
-                            Console.WriteLine("yellow_tree," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 20:
-                            StackedObject gtree = new StackedObject("green_tree", Constant.green_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            plants.Add(gtree);
-                            entities_list.Add(gtree);
-                            Console.WriteLine("green_tree," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 21:
-                            StackedObject fl = new StackedObject("flower", Constant.flower_tex, create_position, 1f, 32, 32, 12, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            plants.Add(fl);
-                            entities_list.Add(fl);
-                            Console.WriteLine("flower," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 22:
-                            StackedObject g2 = new StackedObject("grass2", Constant.stacked_grass, create_position, 1f, 32, 32, 17, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            plants.Add(g2);
-                            entities_list.Add(g2);
-                            Console.WriteLine("grass2," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 23:
-                            Tile trail_tile = new Tile(create_position, editor_object_scale, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, editor_object_idx);
-                            add_floor_entity(trail_tile);
-                            Console.WriteLine("trail_tile," + create_position.X + "," + create_position.Y + ",2");
-                            break;
-                        case 24:
-                            Tile sand_tile = new Tile(create_position, editor_object_scale, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, editor_object_idx);
-                            add_floor_entity(sand_tile);
-                            Console.WriteLine("sand_tile," + create_position.X + "," + create_position.Y + ",2");
-                            break;
-                        case 25:
-                            StackedObject sword = new StackedObject("sword", Constant.sword_tex, create_position, 1f, 16, 16, 22, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            entities_list.Add(sword);
-                            collision_entities.Add(sword);
-                            Console.WriteLine("sword," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 26:
-                            StackedObject box = new StackedObject("box", Constant.box_spritesheet, create_position, 1f, 32, 32, 18, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            box.Update(gameTime, rotation);
-                            entities_list.Add(box);
-                            collision_geometry.Add(box);
-                            collision_geometry_map[box] = false;
-                            Console.WriteLine("box," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 27:
-                            StackedObject house = new StackedObject("house", Constant.house_spritesheet, create_position, 1f, 128, 128, 54, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            house.Update(gameTime, rotation);
-                            entities_list.Add(house);
-                            collision_geometry.Add(house);
-                            collision_geometry_map[house] = false;
-                            Console.WriteLine("house," + create_position.X + "," + create_position.Y + ",1");
-                            break;
-                        case 28:
-                            ParticleSystem ps = new ParticleSystem(true, create_position, 1, 800, 5, 2, 4, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex });
-                            particle_systems.Add(ps);
-                            Console.WriteLine($"particle_system,true,{create_position.X},{create_position.Y},1,800,5,2,4,white,footprint");
-                            break;
-                        case 29:
-                            NPC scrow = new NPC(Constant.scarecrow_tex, create_position, 1f, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, editor_object_idx, "scarecrow", true);
-                            scrow.set_health(10000);
-                            entities_list.Add(scrow);
-                            collision_entities.Add(scrow);
-                            npcs.Add(scrow);
-                            Console.WriteLine($"scarecrow,{create_position.X},{create_position.Y}");
-                            break;
-                        case 30:
-                            Ghost ghost = new Ghost(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "ghost", this);
-                            ghost.set_behavior_enabled(false);
-                            entities_list.Add(ghost);
-                            collision_entities.Add(ghost);
-                            enemies.Add(ghost);
-                            break;
-                        case 31:
-                            HitSwitch hs = new HitSwitch("hitswitch", Constant.switch_active, Constant.switch_inactive, create_position, 1f, 16, 16, 8, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            hs.Update(gameTime, rotation);
-                            entities_list.Add(hs);
-                            collision_entities.Add(hs);
-                            collision_geometry.Add(hs);
-                            collision_geometry_map[hs] = false;
-                            switches.Add(hs);
-                            break;
-                        case 32:
-                            ICondition s_cond = new SwitchCondition(editor_object_idx, this, switches, new List<int>(), new List<int>(), create_position);
-                            condition_manager.add_condition(s_cond);
-                            Console.WriteLine("switch condition created!");
-                            break;
-                        case 33:
-                            BillboardSprite dash_cloak = new BillboardSprite(Constant.dash_cloak_pickup_tex, create_position, 1f, "dash_cloak", editor_object_idx, true);
-                            entities_list.Add(dash_cloak);
-                            collision_entities.Add(dash_cloak);
-                            break;
-                        case 34:
-                            StackedObject cracked_rocks = new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, create_position, 1f, 32, 32, 4, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                            entities_list.Add(cracked_rocks);
-                            collision_geometry.Add(cracked_rocks);
-                            collision_geometry_map[cracked_rocks] = false;
-                            break;
-                        case 35:
-                            BillboardSprite player_chip = new BillboardSprite(Constant.player_chip_tex, create_position, 1f, "player_chip", editor_object_idx);
-                            editor_only_objects.Add(player_chip);
-                            break;
-                        case 36:
-                            BillboardSprite bow = new BillboardSprite(Constant.bow_pickup_tex, create_position, 1f, "bow", editor_object_idx, false);
-                            entities_list.Add(bow);
-                            collision_entities.Add(bow);
-                            break;
-                        default:
-                            break;
-                    }
+                    place_object(gameTime, camera.Rotation, selected_object, create_position, editor_object_rotation);
                     Console.WriteLine($"Created object idx:{editor_object_idx}");
                     editor_object_idx++;
                 } else if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.LeftControl) && selection_elapsed >= selection_cooldown) { //Ctrl+S
@@ -1683,29 +1461,22 @@ namespace gate
                         int tree_type = 0;
                         foreach (Vector2 p in generated_points) {
                             float random_rotation = (float)random.Next(0, 360);
+                            int selected_tree_obj;
                             switch (tree_type) {
                                 case 0:
-                                    StackedObject gtree = new StackedObject("green_tree", Constant.green_tree, p, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(random_rotation), editor_object_idx);
-                                    plants.Add(gtree);
-                                    entities_list.Add(gtree);
-                                    Console.WriteLine("green_tree," + p.X + "," + p.Y + ",1," + editor_object_idx);
+                                    selected_tree_obj = 18;
                                     break;
                                 case 1:
-                                    StackedObject otree = new StackedObject("orange_tree", Constant.orange_tree, p, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(random_rotation), editor_object_idx);
-                                    plants.Add(otree);
-                                    entities_list.Add(otree);
-                                    Console.WriteLine("orange_tree," + p.X + "," + p.Y + ",1," + editor_object_idx);
+                                    selected_tree_obj = 19;
                                     break;
                                 case 2:
-                                    StackedObject ytree = new StackedObject("yellow_tree", Constant.yellow_tree, p, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(random_rotation), editor_object_idx);
-                                    plants.Add(ytree);
-                                    entities_list.Add(ytree);
-                                    Console.WriteLine("yellow_tree," + p.X + "," + p.Y + ",1," + editor_object_idx);
+                                    selected_tree_obj = 20;
                                     break;
                                 default:
-                                    //nothing
+                                    selected_tree_obj = 20;
                                     break;
                             }
+                            place_object(gameTime, camera.Rotation, selected_tree_obj, p, random_rotation);
                             editor_object_idx++;
                             tree_type++;
                             if (tree_type >= 3) {
@@ -1750,8 +1521,230 @@ namespace gate
         }
 
         /*editor tooling*/
-        public void place_object(int selected_obj) {
-            
+        public void place_object(GameTime gameTime, float rotation, int selected_obj, Vector2 create_position, float editor_object_rotation) {
+            switch (selected_obj) {
+                case 1:
+                    Tree t = new Tree(create_position, 1f, Constant.tree_spritesheet, false, "tree", editor_object_idx);
+                    plants.Add(t);
+                    entities_list.Add(t);
+                    Console.WriteLine("tree," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 2:
+                    Grass g = new Grass(create_position, 1f, editor_object_idx);
+                    plants.Add(g);
+                    entities_list.Add(g);
+                    Console.WriteLine("grass," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 3:
+                    Ghastly ghast = new Ghastly(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, editor_object_idx);
+                    entities_list.Add(ghast);
+                    collision_entities.Add(ghast);
+                    Console.WriteLine("ghastly," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 4:
+                    StackedObject m = new StackedObject("marker", Constant.marker_spritesheet, create_position, 1f, 32, 32, 15, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    entities_list.Add(m);
+                    collision_geometry.Add(m);
+                    collision_geometry_map[m] = false;
+                    Console.WriteLine("marker," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 5:
+                    Lamppost l = new Lamppost(create_position, 1f, editor_object_idx);
+                    entities_list.Add(l);
+                    Console.WriteLine("lamp," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 6:
+                    Tile tile1 = new Tile(create_position, 3f, Constant.tile_tex, "big_tile", (int)DrawWeight.Light, editor_object_idx);
+                    background_entities.Add(tile1);
+                    Console.WriteLine("big_tile," + create_position.X + "," + create_position.Y + ",3");
+                    break;
+                case 7:
+                    Tile tile2 = new Tile(create_position, 3f, Constant.tile_tex2, "cracked_tile", (int)DrawWeight.Light, editor_object_idx);
+                    background_entities.Add(tile2);
+                    Console.WriteLine("cracked_tile," + create_position.X + "," + create_position.Y + ",3");
+                    break;
+                case 8:
+                    Tile tile3 = new Tile(create_position, 3f, Constant.tile_tex3, "reg_tile", (int)DrawWeight.Light, editor_object_idx);
+                    background_entities.Add(tile3);
+                    Console.WriteLine("reg_tile," + create_position.X + "," + create_position.Y + ",3");
+                    break;
+                case 9:
+                    Tile tile4 = new Tile(create_position, 3f, Constant.tile_tex4, "round_tile", (int)DrawWeight.Light, editor_object_idx);
+                    background_entities.Add(tile4);
+                    Console.WriteLine("round_tile," + create_position.X + "," + create_position.Y + ",3");
+                    break;
+                case 10:
+                    Tile tan_tile = new Tile(create_position, editor_object_scale, Constant.tan_tile_tex, "tan_tile", (int)DrawWeight.Medium, editor_object_idx);
+                    add_floor_entity(tan_tile);
+                    Console.WriteLine("tan_tile," + create_position.X + "," + create_position.Y + ",2");
+                    break;
+                case 11:
+                    Tree c = new Tree(create_position, 4f, Constant.tree_spritesheet, true, "tree", editor_object_idx);
+                    plants.Add(c);
+                    entities_list.Add(c);
+                    Console.WriteLine("tree," + create_position.X + "," + create_position.Y + ",4,true");
+                    break;
+                case 12:
+                    StackedObject w = new StackedObject("wall", Constant.wall_tex, create_position, 1f, 32, 32, 8, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    w.Update(gameTime, rotation);
+                    entities_list.Add(w);
+                    collision_geometry.Add(w);
+                    collision_geometry_map[w] = false;
+                    Console.WriteLine("wall," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 13:
+                    StackedObject f = new StackedObject("fence", Constant.fence_spritesheet, create_position, 1f, 32, 32, 18, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    f.Update(gameTime, rotation);
+                    entities_list.Add(f);
+                    collision_geometry.Add(f);
+                    collision_geometry_map[f] = false;
+                    Console.WriteLine("fence," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 14:
+                    InvisibleObject io = new InvisibleObject("deathbox", create_position, 1f, 48, 48, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    io.set_debug(true);
+                    io.Update(gameTime, rotation);
+                    collision_geometry.Add(io);
+                    collision_geometry_map[io] = false;
+                    Console.WriteLine($"deathbox,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
+                    break;
+                case 15:
+                    Nightmare n = new Nightmare(Constant.nightmare_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "nightmare");
+                    n.set_behavior_enabled(false);
+                    entities_list.Add(n);
+                    collision_entities.Add(n);
+                    enemies.Add(n);
+                    Console.WriteLine($"nightmare,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
+                    break;
+                case 16:
+                    ICondition cond = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, new List<int>(), create_position);
+                    condition_manager.add_condition(cond);
+                    Console.WriteLine("edroc condition created!");
+                    break;
+                case 17:
+                    Tile gt_tile = new Tile(create_position, editor_object_scale, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
+                    add_floor_entity(gt_tile);
+                    Console.WriteLine("grass_tile," + create_position.X + "," + create_position.Y + ",2");
+                    break;
+                case 18:
+                    StackedObject otree = new StackedObject("orange_tree", Constant.orange_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    plants.Add(otree);
+                    entities_list.Add(otree);
+                    Console.WriteLine("orange_tree," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 19:
+                    StackedObject ytree = new StackedObject("yellow_tree", Constant.yellow_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    plants.Add(ytree);
+                    entities_list.Add(ytree);
+                    Console.WriteLine("yellow_tree," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 20:
+                    StackedObject gtree = new StackedObject("green_tree", Constant.green_tree, create_position, 1f, 64, 64, 26, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    plants.Add(gtree);
+                    entities_list.Add(gtree);
+                    Console.WriteLine("green_tree," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 21:
+                    StackedObject fl = new StackedObject("flower", Constant.flower_tex, create_position, 1f, 32, 32, 12, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    plants.Add(fl);
+                    entities_list.Add(fl);
+                    Console.WriteLine("flower," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 22:
+                    StackedObject g2 = new StackedObject("grass2", Constant.stacked_grass, create_position, 1f, 32, 32, 17, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    plants.Add(g2);
+                    entities_list.Add(g2);
+                    Console.WriteLine("grass2," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 23:
+                    Tile trail_tile = new Tile(create_position, editor_object_scale, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, editor_object_idx);
+                    add_floor_entity(trail_tile);
+                    Console.WriteLine("trail_tile," + create_position.X + "," + create_position.Y + ",2");
+                    break;
+                case 24:
+                    Tile sand_tile = new Tile(create_position, editor_object_scale, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, editor_object_idx);
+                    add_floor_entity(sand_tile);
+                    Console.WriteLine("sand_tile," + create_position.X + "," + create_position.Y + ",2");
+                    break;
+                case 25:
+                    StackedObject sword = new StackedObject("sword", Constant.sword_tex, create_position, 1f, 16, 16, 22, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    entities_list.Add(sword);
+                    collision_entities.Add(sword);
+                    Console.WriteLine("sword," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 26:
+                    StackedObject box = new StackedObject("box", Constant.box_spritesheet, create_position, 1f, 32, 32, 18, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    box.Update(gameTime, rotation);
+                    entities_list.Add(box);
+                    collision_geometry.Add(box);
+                    collision_geometry_map[box] = false;
+                    Console.WriteLine("box," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 27:
+                    StackedObject house = new StackedObject("house", Constant.house_spritesheet, create_position, 1f, 128, 128, 54, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    house.Update(gameTime, rotation);
+                    entities_list.Add(house);
+                    collision_geometry.Add(house);
+                    collision_geometry_map[house] = false;
+                    Console.WriteLine("house," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 28:
+                    ParticleSystem ps = new ParticleSystem(true, create_position, 1, 800, 5, 2, 4, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex });
+                    particle_systems.Add(ps);
+                    Console.WriteLine($"particle_system,true,{create_position.X},{create_position.Y},1,800,5,2,4,white,footprint");
+                    break;
+                case 29:
+                    NPC scrow = new NPC(Constant.scarecrow_tex, create_position, 1f, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, editor_object_idx, "scarecrow", true);
+                    scrow.set_health(10000);
+                    entities_list.Add(scrow);
+                    collision_entities.Add(scrow);
+                    npcs.Add(scrow);
+                    Console.WriteLine($"scarecrow,{create_position.X},{create_position.Y}");
+                    break;
+                case 30:
+                    Ghost ghost = new Ghost(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "ghost", this);
+                    ghost.set_behavior_enabled(false);
+                    entities_list.Add(ghost);
+                    collision_entities.Add(ghost);
+                    enemies.Add(ghost);
+                    break;
+                case 31:
+                    HitSwitch hs = new HitSwitch("hitswitch", Constant.switch_active, Constant.switch_inactive, create_position, 1f, 16, 16, 8, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    hs.Update(gameTime, rotation);
+                    entities_list.Add(hs);
+                    collision_entities.Add(hs);
+                    collision_geometry.Add(hs);
+                    collision_geometry_map[hs] = false;
+                    switches.Add(hs);
+                    break;
+                case 32:
+                    ICondition s_cond = new SwitchCondition(editor_object_idx, this, switches, new List<int>(), new List<int>(), create_position);
+                    condition_manager.add_condition(s_cond);
+                    Console.WriteLine("switch condition created!");
+                    break;
+                case 33:
+                    BillboardSprite dash_cloak = new BillboardSprite(Constant.dash_cloak_pickup_tex, create_position, 1f, "dash_cloak", editor_object_idx, true);
+                    entities_list.Add(dash_cloak);
+                    collision_entities.Add(dash_cloak);
+                    break;
+                case 34:
+                    StackedObject cracked_rocks = new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, create_position, 1f, 32, 32, 4, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    entities_list.Add(cracked_rocks);
+                    collision_geometry.Add(cracked_rocks);
+                    collision_geometry_map[cracked_rocks] = false;
+                    break;
+                case 35:
+                    BillboardSprite player_chip = new BillboardSprite(Constant.player_chip_tex, create_position, 1f, "player_chip", editor_object_idx);
+                    editor_only_objects.Add(player_chip);
+                    break;
+                case 36:
+                    BillboardSprite bow = new BillboardSprite(Constant.bow_pickup_tex, create_position, 1f, "bow", editor_object_idx, false);
+                    entities_list.Add(bow);
+                    collision_entities.Add(bow);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public int get_editor_object_idx() {
