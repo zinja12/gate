@@ -12,8 +12,8 @@
         },
         {
             "identifier": "bow",
-            "active": false,
-            "charges": 0
+            "active": true,
+            "charges": 2
         }
     ]
 }

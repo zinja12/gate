@@ -1033,7 +1033,9 @@ namespace gate.Entities
 
             if (_v != 0 || _h != 0) { //if player is moving update animation and add footprints
                 walk_animation.Update(gameTime);
-                add_footprints(gameTime);
+                if (!aiming) {
+                    add_footprints(gameTime);
+                }
             } else {
                 idle_animation.Update(gameTime);
             }
