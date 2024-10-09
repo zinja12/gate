@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/footstep1.ogg</SourceFile>
-  <SourceTime>2024-10-09T17:21:31.3788438-04:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sfx/footstep1.xnb</DestFile>
-  <DestTime>2024-10-09T19:05:25.2689734-04:00</DestTime>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/bow_up_aim.ogg</SourceFile>
+  <SourceTime>2024-10-09T18:39:26.0870516-04:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/sfx/bow_up_aim.xnb</DestFile>
+  <DestTime>2024-10-09T19:05:44.9308179-04:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>

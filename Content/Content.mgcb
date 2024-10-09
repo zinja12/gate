@@ -89,6 +89,12 @@
 #begin player_attributes/player_attributes.json
 /copy:player_attributes/player_attributes.json
 
+#begin sfx/bow_up_aim.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/bow_up_aim.ogg
+
 #begin sfx/dash2.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor

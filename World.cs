@@ -431,6 +431,7 @@ namespace gate
                             //load sounds for player
                             sound_manager.load_sfx(ref Constant.footstep_sfx, "sfx/footstep1");
                             sound_manager.load_sfx(ref Constant.dash_sfx, "sfx/dash2");
+                            sound_manager.load_sfx(ref Constant.bow_up_aim_sfx, "sfx/bow_up_aim");
                             //create player object
                             if (player_start_point.HasValue){
                                 obj_position = player_start_point.Value;

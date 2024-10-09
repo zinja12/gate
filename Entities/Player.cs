@@ -351,6 +351,11 @@ namespace gate.Entities
                 power_shot = false;
                 power_shot_color = Color.White;
             }
+            //play sfx
+            if (arrow_charge_elapsed >= 10f && arrow_charge_elapsed <= 20f) {
+                //play bow drawn (bow up aim) sfx
+                world.play_spatial_sfx(Constant.bow_up_aim_sfx, depth_sort_position, 0.5f, world.get_render_distance());
+            }
             #endregion
 
             if (current_gamepad_state.Triggers.Right == 0f && previous_gamepad_state.Triggers.Right != 0f && attack_charge > 1) {

@@ -7,8 +7,8 @@
         },
         {
             "identifier": "dash",
-            "active": true,
-            "charges": 2
+            "active": false,
+            "charges": 0
         },
         {
             "identifier": "bow",
