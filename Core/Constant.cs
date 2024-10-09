@@ -106,6 +106,7 @@ namespace gate.Core
 
         //sounds
         public static SoundEffect footstep_sfx;
+        public static SoundEffect dash_sfx;
 
         //Reference directions in relation to the game world
         public static Vector2 direction_down = new Vector2(0, 1);

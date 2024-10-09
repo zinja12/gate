@@ -89,6 +89,12 @@
 #begin player_attributes/player_attributes.json
 /copy:player_attributes/player_attributes.json
 
+#begin sfx/dash2.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/dash2.ogg
+
 #begin sfx/footstep1.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor

@@ -430,6 +430,7 @@ namespace gate
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
                             //load sounds for player
                             sound_manager.load_sfx(ref Constant.footstep_sfx, "sfx/footstep1");
+                            sound_manager.load_sfx(ref Constant.dash_sfx, "sfx/dash2");
                             //create player object
                             if (player_start_point.HasValue){
                                 obj_position = player_start_point.Value;

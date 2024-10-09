@@ -436,6 +436,8 @@ namespace gate.Entities
                 }
                 //add particle system on dash
                 particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up), 2, 800f, 1, 5, 1, 3, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                //play dash sound
+                world.play_spatial_sfx(Constant.dash_sfx, depth_sort_position, ((float)random.Next(-1, 2))/2f, world.get_render_distance());
             } else if (dash_cooldown_elapsed >= dash_cooldown) { //reset dash_charge if the player has not dashed in the required cooldown
                 dash_charge = get_max_dashes();
                 dash_cooldown = Constant.player_dash_cooldown;
@@ -1070,7 +1072,7 @@ namespace gate.Entities
                 footprints_elapsed = 0;
             }
 
-            if (footprint_sound >= 2) {
+            if (footprint_sound >= 2 && !is_dashing()) {
                 footprint_sound = 0;
                 //add sound for footprints
                 world.play_spatial_sfx(Constant.footstep_sfx, depth_sort_position, ((float)random.Next(-1, 2))/4f, world.get_render_distance());
