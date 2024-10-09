@@ -2009,7 +2009,8 @@ namespace gate
                         TempTile tt = (TempTile)e;
                         if (player.is_hurtbox_active()) {
                             bool collision = player.check_hurtbox_collisions(tt.get_hurtbox());
-                            collision_tile_map[tt] = collision;
+                            //collision only results with true if the opacity of the temp tile is greater than a threshold
+                            collision_tile_map[tt] = collision && (tt.get_opacity() >= 0.15f);
                         }
                     }
 

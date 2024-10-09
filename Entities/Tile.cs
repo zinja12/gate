@@ -158,6 +158,10 @@ namespace gate.Entities
             return opacity <= 0f;
         }
 
+        public float get_opacity() {
+            return opacity;
+        }
+
         public override void Update(GameTime gameTime, float rotation) {
             //only update if not finished
             if (!is_finished()) {
