@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 using gate.Particles;
 using gate.Serialize;
 using gate.Interface;
@@ -16,6 +17,7 @@ using gate.Entities;
 using gate.Triggers;
 using gate.Collision;
 using gate.Conditions;
+using gate.Sounds;
 
 namespace gate
 {
@@ -66,6 +68,7 @@ namespace gate
         Dictionary<IEntity, bool> collision_geometry_map;
         Dictionary<IEntity, bool> collision_tile_map;
         List<IEntity> switches;
+        SoundManager sound_manager;
         //editor ONLY objects
         List<IEntity> editor_only_objects;
 
@@ -182,6 +185,8 @@ namespace gate
             collision_tile_map = new Dictionary<IEntity, bool>();
             //list for switches
             switches = new List<IEntity>();
+            //sound manager
+            sound_manager = new SoundManager(this, Content);
 
             //editor ONLY objects
             editor_only_objects = new List<IEntity>();
@@ -423,6 +428,8 @@ namespace gate
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
+                            //load sounds for player
+                            sound_manager.load_sfx(ref Constant.footstep_sfx, "sfx/footstep1");
                             //create player object
                             if (player_start_point.HasValue){
                                 obj_position = player_start_point.Value;
@@ -950,7 +957,7 @@ namespace gate
                 //add to loaded textures
                 loaded_textures.Add(texture_path);
                 tex = this.Content.Load<Texture2D>(texture_path);
-                Console.WriteLine("Loaded texture from path:" + texture_path);
+                Console.WriteLine($"Loaded texture from path: {texture_path}");
             }
         }
 
@@ -1516,6 +1523,9 @@ namespace gate
             } else {
                 camera.Update(player.get_camera_track_position());
             }
+
+            //update sound manager
+            sound_manager.Update(gameTime, camera.Rotation);
             
             //update camera bounds
             //update_camera_bounds();
@@ -2656,6 +2666,17 @@ namespace gate
             return random_points;
         }
 
+        public float get_render_distance() {
+            return render_distance;
+        }
+
+        #region sounds
+        public void play_spatial_sfx(SoundEffect sfx, Vector2 sfx_position, float pitch, float player_hearing_distance) {
+            sound_manager.play_spatial_sfx(sfx, sfx_position, player.get_base_position(), pitch, player_hearing_distance);
+        }
+        #endregion
+        
+        # region draw
         public void Draw(SpriteBatch _spriteBatch){
             // TODO: Add drawing code here
 
@@ -2739,6 +2760,9 @@ namespace gate
                 foreach (IEntity e in editor_only_objects) {
                     e.Draw(_spriteBatch);
                 }
+
+                //draw sound effects in editor
+                sound_manager.Draw(_spriteBatch);
             }
             _spriteBatch.End();
 
@@ -2798,5 +2822,6 @@ namespace gate
             _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
             _spriteBatch.End();
         }
+        #endregion
     }
 }

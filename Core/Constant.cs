@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -102,6 +103,9 @@ namespace gate.Core
         public static SpriteFont arial;
         public static SpriteFont arial_small;
         public static SpriteFont arial_mid_reg;
+
+        //sounds
+        public static SoundEffect footstep_sfx;
 
         //Reference directions in relation to the game world
         public static Vector2 direction_down = new Vector2(0, 1);
