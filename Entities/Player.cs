@@ -450,6 +450,15 @@ namespace gate.Entities
 
             //attack code
             if (_attack != 0 && !attack_active && attack_charge > 0 && sword_attribute) {
+                //play dash sound dependent on swing
+                if (attack_charge > 1) {
+                    Console.WriteLine("slash");
+                    world.play_spatial_sfx(Constant.sword_slash_sfx, depth_sort_position, 0.75f, world.get_render_distance(), -0.5f);
+                } else {
+                    Console.WriteLine("slash2");
+                    world.play_spatial_sfx(Constant.sword_slash_sfx, depth_sort_position, 1f, world.get_render_distance(), -0.5f);
+                }
+                //set attack to active
                 attack_active = true;
                 attack_cooldown_elapsed = 0;
                 attack_charge--;

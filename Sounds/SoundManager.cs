@@ -51,7 +51,7 @@ namespace gate.Sounds
             return loaded_sfx;
         }
 
-        public void play_spatial_sfx(SoundEffect sfx, Vector2 sound_position, Vector2 player_position, float pitch, float player_hearing_distance) {
+        public void play_spatial_sfx(SoundEffect sfx, Vector2 sound_position, Vector2 player_position, float pitch, float player_hearing_distance, float volume_offset = 0f) {
             //sound should already be loaded at this point so we should just play it where it needs to be played
             //create instance
             SoundEffectInstance sfx_instance = sfx.CreateInstance();
@@ -62,9 +62,10 @@ namespace gate.Sounds
             //adjust pan based on position
             float pan = MathHelper.Clamp(direction.X / player_hearing_distance, -1f, 1f);
             sfx_instance.Pan = pan;
-            float volume = MathHelper.Clamp(1f - (direction.Length() / max_volume_distance), 0f, 1f);
             //adjust volume based on distance (further away, the quieter the sound should be played)
-            sfx_instance.Volume = volume;
+            float volume = MathHelper.Clamp(1f - (direction.Length() / max_volume_distance), 0f, 1f);
+            float final_volume = MathHelper.Clamp(volume + volume_offset, 0f, 1f);
+            sfx_instance.Volume = final_volume;
 
             //set pitch (clamped)
             sfx_instance.Pitch = MathHelper.Clamp(pitch, -1f, 1f);

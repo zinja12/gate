@@ -432,6 +432,7 @@ namespace gate
                             sound_manager.load_sfx(ref Constant.footstep_sfx, "sfx/footstep1");
                             sound_manager.load_sfx(ref Constant.dash_sfx, "sfx/dash2");
                             sound_manager.load_sfx(ref Constant.bow_up_aim_sfx, "sfx/bow_up_aim");
+                            sound_manager.load_sfx(ref Constant.sword_slash_sfx, "sfx/sword_slash");
                             //create player object
                             if (player_start_point.HasValue){
                                 obj_position = player_start_point.Value;
@@ -2673,8 +2674,8 @@ namespace gate
         }
 
         #region sounds
-        public void play_spatial_sfx(SoundEffect sfx, Vector2 sfx_position, float pitch, float player_hearing_distance) {
-            sound_manager.play_spatial_sfx(sfx, sfx_position, player.get_base_position(), pitch, player_hearing_distance);
+        public void play_spatial_sfx(SoundEffect sfx, Vector2 sfx_position, float pitch, float player_hearing_distance, float volume_offset = 0f) {
+            sound_manager.play_spatial_sfx(sfx, sfx_position, player.get_base_position(), pitch, player_hearing_distance, volume_offset);
         }
         #endregion
         
