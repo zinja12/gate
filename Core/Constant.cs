@@ -109,6 +109,7 @@ namespace gate.Core
         public static SoundEffect dash_sfx;
         public static SoundEffect bow_up_aim_sfx;
         public static SoundEffect sword_slash_sfx;
+        public static SoundEffect hit1_sfx;
 
         //Reference directions in relation to the game world
         public static Vector2 direction_down = new Vector2(0, 1);

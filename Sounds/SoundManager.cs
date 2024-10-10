@@ -60,7 +60,7 @@ namespace gate.Sounds
             Vector2 direction = player_position - sound_position;
 
             //adjust pan based on position
-            float pan = MathHelper.Clamp(direction.X / player_hearing_distance, -1f, 1f);
+            float pan = MathHelper.Clamp(-direction.X / player_hearing_distance, -1f, 1f);
             sfx_instance.Pan = pan;
             //adjust volume based on distance (further away, the quieter the sound should be played)
             float volume = MathHelper.Clamp(1f - (direction.Length() / max_volume_distance), 0f, 1f);

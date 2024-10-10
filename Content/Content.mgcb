@@ -107,6 +107,12 @@
 /processorParam:Quality=Best
 /build:sfx/footstep1.ogg
 
+#begin sfx/hitHurt1.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/hitHurt1.ogg
+
 #begin sfx/sword_slash.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor

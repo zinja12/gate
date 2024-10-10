@@ -363,6 +363,9 @@ namespace gate
             //set up texture map once textures are loaded
             Constant.emotion_texture_map = Constant.generate_emotion_texture_map();
 
+            //load universal sounds
+            sound_manager.load_sfx(ref Constant.hit1_sfx, "sfx/hitHurt1");
+
             //set pixel shader to active once it has been loaded
             game.set_pixel_shader_active(true);
 
@@ -2231,6 +2234,8 @@ namespace gate
                                         hs.take_hit(a, 0);
                                         //shake the camera
                                         set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                        //play hit sound effect
+                                        play_spatial_sfx(Constant.hit1_sfx, hs.get_base_position(), 0f, get_render_distance());
                                     }
                                 }
                             }

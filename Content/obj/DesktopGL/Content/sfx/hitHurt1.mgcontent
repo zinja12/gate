@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/sword_slash.ogg</SourceFile>
-  <SourceTime>2024-10-09T20:29:20.342211-04:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sfx/sword_slash.xnb</DestFile>
-  <DestTime>2024-10-09T21:01:34.458177-04:00</DestTime>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/hitHurt1.ogg</SourceFile>
+  <SourceTime>2024-10-09T21:00:38.6171229-04:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/sfx/hitHurt1.xnb</DestFile>
+  <DestTime>2024-10-09T21:07:04.2356419-04:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>
