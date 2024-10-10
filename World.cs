@@ -2805,7 +2805,7 @@ namespace gate
             }
             //display health
             for (int i = 0; i < player.get_health(); i++) {
-                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, Constant.dash_charge_ui_size*2 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Red);
+                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size - 20f, Constant.dash_charge_ui_size*2 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Red);
             }
             //display arrow charges
             for (int i = 0; i < player.get_arrow_charges(); i++) {
