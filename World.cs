@@ -987,6 +987,8 @@ namespace gate
             collision_geometry_map.Clear();
             collision_tile_map.Clear();
             switches.Clear();
+            //clear sound manager
+            sound_manager.clear();
             //clear entities
             clear_entities();
             //unload content

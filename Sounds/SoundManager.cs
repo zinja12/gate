@@ -51,6 +51,12 @@ namespace gate.Sounds
             return loaded_sfx;
         }
 
+        public void clear() {
+            loaded_sfx.Clear();
+            sfx_instance_positions.Clear();
+            dead_sfx_instances.Clear();
+        }
+
         public void play_spatial_sfx(SoundEffect sfx, Vector2 sound_position, Vector2 player_position, float pitch, float player_hearing_distance, float volume_offset = 0f) {
             //sound should already be loaded at this point so we should just play it where it needs to be played
             //create instance
