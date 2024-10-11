@@ -219,7 +219,7 @@ namespace gate
             text_draw_position = position + text_offset;
             //track offset
             char_offset = Vector2.Zero;
-            //draw current message based on characters
+            //draw current message based on characters (current_msg_char_idx will increase with elapsed time up until the threshold so we can display character by character over time)
             for (int i = 0; i <= current_msg_char_idx; i++) {
                 //pull current char from msg
                 char current_char = current_msg[i];
