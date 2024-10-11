@@ -16,14 +16,18 @@ namespace gate
 
         protected Vector2 text_offset = new Vector2(30, 20);
         protected Vector2 box_title_offset = new Vector2(0, -50);
+        protected Vector2 text_draw_position = Vector2.Zero;
+        protected Vector2 char_offset = Vector2.Zero;
 
         protected SpriteFont font;
-        protected List<(string, string)> msgs;        protected List<(string, List<string>)> speaker_msg_screens;
+        protected List<(string, string)> msgs;
+        protected List<(string, List<string>)> speaker_msg_screens;
         protected string current_msg;
         protected int current_msg_index, current_msg_screen_idx;
         protected float width, height;
         protected Color box_color, text_color;
         protected bool end_of_text = false;
+        protected int current_msg_char_idx;
 
         protected string box_title_name;
 
@@ -42,6 +46,8 @@ namespace gate
             this.box_color = box_color;
             this.text_color = text_color;
             this.max_line_width = width - 20;
+
+            this.current_msg_char_idx = 1;
 
             //Cannot have a text box without text
             if (msgs.Count <= 0) {
@@ -77,13 +83,27 @@ namespace gate
                     advance_message_elapsed = 0;
                     //pull next message to display
                     current_msg = next_message();
+                    //reset current_msg_char_idx
+                    current_msg_char_idx = 0;
+                    //set cooldown relative to length of msg
+                    //advance_message_cooldown = current_msg.Length * 10f;
                     if (end_of_text) {
                         return;
                     }
                 }
                 //add to variable to keep track of cooldowns
                 advance_message_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                //calculate the index of the current character in the message to display based on how much time has elapsed going up to the cooldown
+                current_msg_char_idx = elapsed_to_index(advance_message_elapsed, advance_message_cooldown, current_msg);
             }
+        }
+
+        //function to calculate the index of what character we should be on in a string given elapsed and threshold
+        private int elapsed_to_index(float elapsed, float threshold, string msg) {
+            //calculate percentage
+            float percentage = MathHelper.Clamp(elapsed / threshold, 0f, 1f);
+            //calculate and return index based on percentage of message length
+            return (int)(percentage * (msg.Length - 1));
         }
 
         public string next_message() {
@@ -195,8 +215,31 @@ namespace gate
             Renderer.FillRectangle(spriteBatch, position, (int)width, (int)height, box_color * background_opacity);
             //draw box title
             spriteBatch.DrawString(Constant.arial_mid_reg, speaker_msg_screens[current_msg_screen_idx].Item1, position + box_title_offset, box_color);
-            //draw current message
-            spriteBatch.DrawString(font, current_msg, position + text_offset, text_color);
+            //start position
+            text_draw_position = position + text_offset;
+            //track offset
+            char_offset = Vector2.Zero;
+            //draw current message based on characters
+            for (int i = 0; i <= current_msg_char_idx; i++) {
+                //pull current char from msg
+                char current_char = current_msg[i];
+                //handle line break
+                if (current_char == '\n') {
+                    //set offset back to zero for x axis
+                    char_offset.X = 0;
+                    //set offset to line spacing for y axis
+                    char_offset.Y += font.LineSpacing;
+                    //skip and don't draw this character obviously
+                    continue;
+                }
+                //calculate size of current character
+                Vector2 char_size = font.MeasureString(current_char.ToString());
+                //draw current character at appropriate positioning
+                spriteBatch.DrawString(font, current_char.ToString(), text_draw_position + char_offset, text_color);
+                //increase offset on x axis
+                char_offset.X += char_size.X;
+            }
+            //spriteBatch.DrawString(font, current_msg, position + text_offset, text_color);
             //draw continue button for all but the last message screen
             if (current_msg_screen_idx < speaker_msg_screens.Count-1) {
                 spriteBatch.DrawString(font, "...", position + new Vector2(width - 50, height - 80), text_color);
