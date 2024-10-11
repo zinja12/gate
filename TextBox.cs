@@ -86,7 +86,7 @@ namespace gate
                     //reset current_msg_char_idx
                     current_msg_char_idx = 0;
                     //set cooldown relative to length of msg
-                    //advance_message_cooldown = current_msg.Length * 10f;
+                    advance_message_cooldown = current_msg.Length * 15f;
                     if (end_of_text) {
                         return;
                     }
