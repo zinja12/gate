@@ -27,7 +27,7 @@ namespace gate
         protected float width, height;
         protected Color box_color, text_color;
         protected bool end_of_text = false;
-        protected int current_msg_char_idx;
+        protected int current_msg_char_idx, previous_msg_char_idx;
 
         protected string box_title_name;
 
@@ -36,6 +36,8 @@ namespace gate
 
         protected float background_opacity = 0.8f;
         protected float max_line_width;
+
+        private Random random;
 
         public TextBox(Vector2 position, SpriteFont font, List<(string, string)> msgs, string box_title_name, float width, float height, Color box_color, Color text_color) {
             this.position = position;
@@ -48,6 +50,7 @@ namespace gate
             this.max_line_width = width - 20;
 
             this.current_msg_char_idx = 1;
+            this.previous_msg_char_idx = 1;
 
             //Cannot have a text box without text
             if (msgs.Count <= 0) {
@@ -65,9 +68,11 @@ namespace gate
             current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
             
             this.box_title_name = box_title_name;
+
+            this.random = new Random();
         }
 
-        public virtual void Update(GameTime gameTime) {
+        public virtual void Update(GameTime gameTime, World world) {
             //check for input so that the player can advance to the next message
             int input;
             if (!GamePad.GetState(PlayerIndex.One).IsConnected) { //keyboard input
@@ -86,7 +91,7 @@ namespace gate
                     //reset current_msg_char_idx
                     current_msg_char_idx = 0;
                     //set cooldown relative to length of msg
-                    advance_message_cooldown = current_msg.Length * 15f;
+                    advance_message_cooldown = current_msg.Length * 25f;
                     if (end_of_text) {
                         return;
                     }
@@ -95,6 +100,11 @@ namespace gate
                 advance_message_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 //calculate the index of the current character in the message to display based on how much time has elapsed going up to the cooldown
                 current_msg_char_idx = elapsed_to_index(advance_message_elapsed, advance_message_cooldown, current_msg);
+                if (current_msg_char_idx != previous_msg_char_idx) {
+                    //play sound because we are on a new character
+                    world.play_spatial_sfx(Constant.typewriter_sfx, world.get_player().get_base_position(), ((float)random.Next(-1, 2)), world.get_render_distance(), -0.5f);
+                }
+                previous_msg_char_idx = current_msg_char_idx;
             }
         }
 

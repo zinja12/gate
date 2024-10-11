@@ -119,6 +119,12 @@
 /processorParam:Quality=Best
 /build:sfx/sword_slash.ogg
 
+#begin sfx/typewriter.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/typewriter.ogg
+
 #begin sprites/anxiety.png
 /importer:TextureImporter
 /processor:TextureProcessor

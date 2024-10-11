@@ -46,7 +46,9 @@ namespace gate.Entities
         protected Vector2 direction_to_target = Vector2.Zero;
         protected float target_angle = 0f;
 
-        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, int ID, string identifier, bool? static_image_entity = null) 
+        private World world;
+
+        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, int ID, string identifier, World world, bool? static_image_entity = null) 
             : base(texture, base_position, scale, hit_texture, player, ID, identifier, static_image_entity) {
             //NPC constructor
             this.size = size;
@@ -71,6 +73,8 @@ namespace gate.Entities
                 //initialize textbox
                 textbox = new TextBox(Constant.textbox_screen_position, Constant.arial_mid_reg, speaker_messages, npc_name, Constant.textbox_width, Constant.textbox_height, Color.White, Color.Black);
             }
+
+            this.world = world;
         }
 
         public List<(string, string)> parse_dialogue_file(GameWorldDialogueFile dialogue_file) {
@@ -270,7 +274,7 @@ namespace gate.Entities
                 //if displaying text
                 if (display_text && !textbox.text_ended()) {
                     //update textbox
-                    textbox.Update(gameTime);
+                    textbox.Update(gameTime, world);
                 }
                 
                 if (textbox.text_ended()) {

@@ -260,7 +260,7 @@ namespace gate
             obj_map.Add(26, new StackedObject("box", Constant.box_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
             obj_map.Add(27, new StackedObject("house", Constant.house_spritesheet, Vector2.Zero, 1f, 128, 128, 54, Constant.stack_distance1, 0f, -1));
             obj_map.Add(28, new PlaceHolderEntity(Vector2.Zero, "ParticleSystem", -1));
-            obj_map.Add(29, new NPC(Constant.scarecrow_tex, Vector2.Zero, 1, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, -1, "scarecrow", true));
+            obj_map.Add(29, new NPC(Constant.scarecrow_tex, Vector2.Zero, 1, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, -1, "scarecrow", this, true));
             obj_map.Add(30, new Ghost(Constant.ghastly_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "ghost", this));
             Ghost ghost1 = (Ghost)obj_map[30];
             //turn off ai for editor
@@ -365,6 +365,7 @@ namespace gate
 
             //load universal sounds
             sound_manager.load_sfx(ref Constant.hit1_sfx, "sfx/hitHurt1");
+            sound_manager.load_sfx(ref Constant.typewriter_sfx, "sfx/typewriter");
 
             //set pixel shader to active once it has been loaded
             game.set_pixel_shader_active(true);
@@ -511,7 +512,7 @@ namespace gate
                         case "sign":
                             //load texture
                             check_and_load_tex(ref Constant.sign_tex, "sprites/sign1");
-                            Sign s = new Sign(Constant.sign_tex, obj_position, w_obj.scale, w_obj.sign_messages, w_obj.object_id_num);
+                            Sign s = new Sign(Constant.sign_tex, obj_position, w_obj.scale, w_obj.sign_messages, w_obj.object_id_num, this);
                             entities_list.Add(s);
                             collision_entities.Add(s);
                             break;
@@ -586,7 +587,7 @@ namespace gate
                                 dialogue_file = JsonSerializer.Deserialize<GameWorldDialogueFile>(dialogue_file_contents);
                             }
                             //initialize npc as stationary to start
-                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, dialogue_file, w_obj.npc_conversation_file_id, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, dialogue_file, w_obj.npc_conversation_file_id, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this);
                             //if there are path points specified then set the path points and set the behavior to loop
                             if (w_obj.npc_path_entity_ids != null && w_obj.npc_path_entity_ids.Count > 0) {
                                 //add all path points to npc
@@ -604,7 +605,7 @@ namespace gate
                         case "scarecrow":
                             //no need for dialogue file (yet)
                             check_and_load_tex(ref Constant.scarecrow_tex, "sprites/scarecrow1");
-                            NPC scrow = new NPC(Constant.scarecrow_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, true);
+                            NPC scrow = new NPC(Constant.scarecrow_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this, true);
                             //add to entities list and npcs
                             entities_list.Add(scrow);
                             collision_entities.Add(scrow);
@@ -1713,7 +1714,7 @@ namespace gate
                     Console.WriteLine($"particle_system,true,{create_position.X},{create_position.Y},1,800,5,2,4,white,footprint");
                     break;
                 case 29:
-                    NPC scrow = new NPC(Constant.scarecrow_tex, create_position, 1f, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, editor_object_idx, "scarecrow", true);
+                    NPC scrow = new NPC(Constant.scarecrow_tex, create_position, 1f, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, editor_object_idx, "scarecrow", this, true);
                     scrow.set_health(10000);
                     entities_list.Add(scrow);
                     collision_entities.Add(scrow);
@@ -2680,13 +2681,17 @@ namespace gate
             return render_distance;
         }
 
+        public Player get_player() {
+            return player;
+        }
+
         #region sounds
         public void play_spatial_sfx(SoundEffect sfx, Vector2 sfx_position, float pitch, float player_hearing_distance, float volume_offset = 0f) {
             sound_manager.play_spatial_sfx(sfx, sfx_position, player.get_base_position(), pitch, player_hearing_distance, volume_offset);
         }
         #endregion
         
-        # region draw
+        #region draw
         public void Draw(SpriteBatch _spriteBatch){
             // TODO: Add drawing code here
 

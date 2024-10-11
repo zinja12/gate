@@ -37,7 +37,9 @@ namespace gate.Entities
 
         private int ID;
 
-        public Sign(Texture2D texture, Vector2 base_position, float scale, List<string> messages, int ID) {
+        private World world;
+
+        public Sign(Texture2D texture, Vector2 base_position, float scale, List<string> messages, int ID, World world) {
             this.texture = texture;
             this.base_position = base_position;
             this.draw_position = new Vector2(base_position.X - (texture.Width / 2), 
@@ -57,6 +59,8 @@ namespace gate.Entities
             textbox = new TextBox(Constant.textbox_screen_position, Constant.arial_mid_reg, this.messages, "sign", Constant.textbox_width, Constant.textbox_height, Color.White, Color.Black);
 
             this.ID = ID;
+
+            this.world = world;
         }
 
         public List<(string, string)> add_sign_speaker_to_messages(List<string> messages) {
@@ -77,7 +81,7 @@ namespace gate.Entities
             //if displaying text
             if (display_text && !textbox.text_ended()) {
                 //update textbox
-                textbox.Update(gameTime);
+                textbox.Update(gameTime, world);
             }
 
             if (textbox.text_ended()) {
