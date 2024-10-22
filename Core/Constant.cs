@@ -82,24 +82,26 @@ namespace gate.Core
         public static Texture2D lamppost_spritesheet;
         public static Texture2D tree_spritesheet;
 
+        //shader effects
         public static Effect pixelate_effect;
-
-        public static Color rich_black = new Color(0,8,7);
-        public static Color manatee = new Color(162,163,187);
-        public static Color blue_bell = new Color(147,149,211);
-        public static Color maximum_blue_purple = new Color(179,183,238);
-        public static Color ghost_white = new Color(251,249,255);
+        
+        //subtract blend state for lights
+        public static BlendState subtract_blend = new BlendState() {
+            ColorSourceBlend = Blend.One, // Use full source color
+            ColorDestinationBlend = Blend.One, // Use full destination color
+            ColorBlendFunction = BlendFunction.ReverseSubtract, // Subtract source from destination
+            AlphaSourceBlend = Blend.One,
+            AlphaDestinationBlend = Blend.One,
+            AlphaBlendFunction = BlendFunction.ReverseSubtract // Subtract source alpha from destination alpha
+        };
 
         /*Particle parameters*/
         public static List<Color> green_particles = new List<Color>() {Color.White, Color.Green, Color.Black};
         public static List<Color> red_particles = new List<Color>() {Color.White, Color.Red, Color.Black};
         public static List<Color> white_particles = new List<Color>() {Color.White, Color.White, Color.White};
         public static List<Color> black_particles = new List<Color>() {Color.Black};
-
-        //gba color palette
-        public static Color sandy = new Color(219,215,182);
-        public static Color off_white = new Color(200,200,200);
-
+        
+        //fonts
         public static SpriteFont arial;
         public static SpriteFont arial_small;
         public static SpriteFont arial_mid_reg;
@@ -383,6 +385,16 @@ namespace gate.Core
 
         public static float get_angle(Vector2 a, Vector2 b) {
             return (float)Math.Atan2(b.Y - a.Y, b.X - a.X);
+        }
+        
+        //convert world coordinates to screen coordinates
+        public static Vector2 world_to_screen(Vector2 worldPosition, Matrix cameraViewMatrix) {
+            //transform the position by the view matrix to get screen coords
+            return Vector2.Transform(worldPosition, cameraViewMatrix);
+        }
+
+        public static Vector2 screen_to_world(Vector2 screen_position, Matrix camera_view_matrix) {
+            return Vector2.Transform(screen_position, Matrix.Invert(camera_view_matrix));
         }
     }
 }

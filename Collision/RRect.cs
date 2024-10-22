@@ -233,6 +233,34 @@ namespace gate.Collision
                 return false; //point is inside
             }
         }
+        
+        //specialized collision function to detect where a ray meets a set edge if at all
+        public static bool ray_intersects_edge(Vector2 ray_origin, Vector2 ray_direction, Vector2 edge_start, Vector2 edge_end, out Vector2 intersection_point) {
+            //intersection of line segments using parametrics
+            Vector2 edge_direction = edge_end - edge_start;
+
+            float denominator = (ray_direction.X * edge_direction.Y - ray_direction.Y * edge_direction.X);
+            if (Math.Abs(denominator) < 0.0001f) {
+                //parallel lines, no intersection
+                intersection_point = Vector2.Zero;
+                return false;
+            }
+            
+            //t1 is the parameter for the ray
+            //t2 is the parameter for the edge segment
+            float t1 = ((edge_start.X - ray_origin.X) * edge_direction.Y - (edge_start.Y - ray_origin.Y) * edge_direction.X) / denominator;
+            float t2 = ((edge_start.X - ray_origin.X) * ray_direction.Y - (edge_start.Y - ray_origin.Y) * ray_direction.X) / denominator;
+            
+            if (t1 >= 0 && t2 >= 0 && t2 <= 1) {
+                //there is a valid intersection
+                intersection_point = ray_origin + t1 * ray_direction;
+                return true;
+            }
+
+            //base case
+            intersection_point = Vector2.Zero;
+            return false;
+        }
 
         public void set_color(Color color) {
             this.draw_color = color;

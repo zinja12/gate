@@ -51,6 +51,19 @@ namespace gate.Core
             spriteBatch.Draw(rect, position, Color.White * opacity);
         }
 
+        public static void FillRectangle(SpriteBatch spriteBatch, Vector2 rect_position, int width, int height, Color color, float opacity, float rotation) 
+        {
+            Texture2D rect = new Texture2D(spriteBatch.GraphicsDevice, width, height);
+
+            Color[] color_data = new Color[width * height];
+            for (int i = 0; i < color_data.Length; i++)
+                color_data[i] = color;
+            rect.SetData(color_data);
+
+            Vector2 position = rect_position;
+            spriteBatch.Draw(rect, position, null, Color.White * opacity, rotation, new Vector2(width/2, height/2), 1f, SpriteEffects.None, 0f);
+        }
+
         public static Texture2D CreateTexture(GraphicsDevice device, int width,int height, Func<int,Color> paint) {
             //initialize a texture
             Texture2D texture = new Texture2D(device, width, height);
@@ -67,6 +80,37 @@ namespace gate.Core
             texture.SetData(data);
 
             return texture;
+        }
+        
+        //NOTE: Monogame has a built in way to draw triangles via primitives on the gpu, but they're difficult to work with
+        //plus I cannot for the life of me figure out how to draw the primitive in the view of the camera
+        //I can draw it to the screen but only in screen space, not world space
+        //this solution basically just connects three vectors as a triangle
+        //afterwards it calculates a set number of points between two triangle vertexes and fills in a 2 pixel wide line between
+        //the remaining outlying vertex and each of the calculated points
+        //this basically only works because it is a pixel art game with crunchy pixels
+        public static void DrawTri(SpriteBatch spriteBatch, Vector2 tri1, Vector2 tri2, Vector2 tri3, Color color, float opacity) {
+            //draw edges
+            DrawALine(spriteBatch, Constant.pixel, 2f, color * opacity, 1f, tri1, tri2);
+            DrawALine(spriteBatch, Constant.pixel, 2f, color * opacity, 1f, tri2, tri3);
+            DrawALine(spriteBatch, Constant.pixel, 2f, color * opacity, 1f, tri3, tri1);
+
+            //fill
+            List<Vector2> points = new List<Vector2>();
+            //calculate an estimate of the points needed to fill the triangle
+            int n = (int)Vector2.Distance(tri2, tri3) / 4;
+            //calculate the vector between vertexes 2 and 3
+            Vector2 step = (tri3 - tri2) / (n - 1);
+            //calculate each point along the vector from vertex 2 to 3
+            for (int i = 0; i < n; i++) {
+                Vector2 new_point = tri2 + step * i;
+                points.Add(new_point);
+            }
+            
+            //for calculated points draw line between first vertex and calculated point
+            foreach (Vector2 p in points) {
+                DrawALine(spriteBatch, Constant.pixel, 5f, color * opacity, 1f, tri1, p);
+            }
         }
     }
 }

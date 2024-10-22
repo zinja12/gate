@@ -18,6 +18,7 @@ using gate.Triggers;
 using gate.Collision;
 using gate.Conditions;
 using gate.Sounds;
+using gate.Lighting;
 
 namespace gate
 {
@@ -39,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads1.json", current_level_id;
+        public string load_file_name = "blank_level.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -135,6 +136,13 @@ namespace gate
         private List<ParticleSystem> particle_systems;
         private List<ParticleSystem> dead_particle_systems;
 
+        //Light
+        Light light, light2;
+        private bool lights_enabled = true;
+        
+        List<(Vector2, Vector2)> geometry_edges;
+        RenderTarget2D light_render_target;
+
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content) {
             //set game objects
             this.game = game;
@@ -201,6 +209,11 @@ namespace gate
             this.particle_systems = new List<ParticleSystem>();
             this.dead_particle_systems = new List<ParticleSystem>();
 
+            //light resources
+            geometry_edges = new List<(Vector2, Vector2)>();
+            //set up light render target
+            light_render_target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height);
+
             //load first level
             load_level(content_root_directory, _graphics, load_file_name);
 
@@ -209,6 +222,9 @@ namespace gate
 
             //run first sort so everything looks good initially
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+
+            light = new Light(new Vector2(237, 384), 250f, 0.45f, Color.White);
+            light2 = new Light(new Vector2(237, 384), 250f, 0.75f, Color.White);
         }
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content, string level_id) : this(game, _graphics, content_root_directory, Content) {
@@ -1538,6 +1554,9 @@ namespace gate
             
             //update camera bounds
             //update_camera_bounds();
+            
+            light.Update(gameTime, camera.Rotation, player.get_base_position());
+            light2.Update(gameTime, camera.Rotation);
         }
 
         /*editor tooling*/
@@ -2779,6 +2798,9 @@ namespace gate
                 //draw sound effects in editor
                 sound_manager.Draw(_spriteBatch);
             }
+            
+            //draw_lights3(new List<Light> { light }, collision_geometry, _spriteBatch);
+
             _spriteBatch.End();
 
             //draw textboxes without camera matrix (screen positioning)
@@ -2789,6 +2811,11 @@ namespace gate
                 current_textbox.Draw(_spriteBatch);
             }
             _spriteBatch.End();
+            
+            //draw lights over top of the scene
+            if (lights_enabled) {
+                draw_lights(new List<Light> { light }, collision_geometry, _spriteBatch);
+            }
 
             //draw transition
             if (transition_active) {
@@ -2836,6 +2863,187 @@ namespace gate
             _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
             _spriteBatch.End();
+        }
+        
+        //TODO: add exclusionary entities to lights
+        //lights should not affect the entity they are being cast by
+        //right now if we put a light on a lamppost it will factor in the lamp post into the algorithm to block that light
+        //need to add an exclusionary list so if an edge or endpoint of a segment is found in that list or as a part of an entity in that list, then it is ignored from the algorithm
+        //also need to add the option to pass in npcs and signs and other non collision objects to affect light and cast shadows
+        //they have hurtboxes so we should be able to leverage that geometry to cast shadows as well
+        public void draw_lights(List<Light> lights, List<IEntity> shadow_casters, SpriteBatch spriteBatch) {
+            //only render if we have lights
+            if (lights.Count > 0) {
+                //construct list of edges from shadow caster geometry
+                geometry_edges.Clear();
+                foreach (IEntity sc in shadow_casters) {
+                    //only add those objects that are within half the render distance to the list
+                    //we do not want to render lights for something the player will not see or interact with off screen
+                    if (Vector2.Distance(player.get_base_position(), sc.get_base_position()) < render_distance/2) {
+                        if (sc is StackedObject) {
+                            StackedObject so = (StackedObject)sc;
+                            foreach (KeyValuePair<Vector2, Vector2> kv in so.get_hurtbox().edges) {
+                                //add to geometry map
+                                geometry_edges.Add((kv.Key, kv.Value));
+                            }
+                        }
+                    }
+                }
+
+                //lights
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+                spriteBatch.Draw(light_render_target, Vector2.Zero, Color.White);
+                spriteBatch.End();
+
+                _graphics.GraphicsDevice.SetRenderTarget(light_render_target);
+                _graphics.GraphicsDevice.Clear(Color.Black * 0.25f);
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, Constant.subtract_blend, SamplerState.PointClamp);
+                foreach (Light light in lights) {
+                    List<(float, Vector2)> light_geometry = calculate_light_geometry(light, geometry_edges);
+                    Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
+                    //convert vector into screen space
+                    for (int i = 0; i < light_geometry.Count - 1; i++) {
+                        Vector2 ray1 = light_geometry[i].Item2;
+                        Vector2 ray2 = light_geometry[i+1].Item2;
+                        Vector2 ray1_vector_screen_space = Vector2.Transform(ray1, camera.Transform);
+                        Vector2 ray2_vector_screen_space = Vector2.Transform(ray2, camera.Transform);
+                        Renderer.DrawTri(
+                            spriteBatch,
+                            light_screen_space,
+                            ray1_vector_screen_space,
+                            ray2_vector_screen_space,
+                            light.get_color() * light.get_intensity(),
+                            1f
+                        );
+                    }
+                    //draw last triangle between first and last point (also screen space)
+                    Vector2 ray_first_screen_space = Vector2.Transform(light_geometry[0].Item2, camera.Transform);
+                    Vector2 ray_last_screen_space = Vector2.Transform(light_geometry[light_geometry.Count-1].Item2, camera.Transform);
+                    Renderer.DrawTri(
+                        spriteBatch,
+                        light_screen_space,
+                        ray_first_screen_space,
+                        ray_last_screen_space,
+                        light.get_color() * light.get_intensity(),
+                        1f
+                    );
+                }
+                spriteBatch.End();
+
+                // Set back to the default render target (screen)
+                _graphics.GraphicsDevice.SetRenderTarget(null);
+            }
+        }
+        
+        public void draw_lights_world_space(List<Light> lights, List<IEntity> shadow_casters, SpriteBatch spriteBatch) {
+            //construct list of edges from shadow caster geometry
+            geometry_edges.Clear();
+            foreach (IEntity sc in shadow_casters) {
+                //only add those objects that are within half the render distance to the list
+                //we do not want to render lights for something the player will not see or interact with off screen
+                if (Vector2.Distance(player.get_base_position(), sc.get_base_position()) < render_distance/2) {
+                    if (sc is StackedObject) {
+                        StackedObject so = (StackedObject)sc;
+                        foreach (KeyValuePair<Vector2, Vector2> kv in so.get_hurtbox().edges) {
+                            //add to geometry map
+                            geometry_edges.Add((kv.Key, kv.Value));
+                        }
+                    }
+                }
+            }
+
+            foreach (Light light in lights) {
+                List<(float, Vector2)> light_rays = calculate_light_geometry(light, geometry_edges);
+                //iterate through all rays and draw triangles
+                for (int i = 0; i < light_rays.Count - 1; i++) {
+                    Vector2 ray1 = light_rays[i].Item2;
+                    Vector2 ray2 = light_rays[i+1].Item2;
+                    //fill triangles
+                    Renderer.DrawTri(
+                        spriteBatch, 
+                        light.get_center_position(),
+                        ray1,
+                        ray2,
+                        Color.White,
+                        0.1f
+                    );
+                }
+                //draw last triangle between first and last point
+                Renderer.DrawTri(
+                    spriteBatch,
+                    light.get_center_position(),
+                    light_rays[0].Item2,
+                    light_rays[light_rays.Count-1].Item2,
+                    Color.White,
+                    0.1f
+                );
+            }
+        }
+        
+        //function to calculate light map geometry
+        public List<(float, Vector2)> calculate_light_geometry(Light light, List<(Vector2, Vector2)> edges) {
+            List<(float, Vector2)> rays = new List<(float, Vector2)>();
+            HashSet<float> unique_angles = new HashSet<float>();
+
+            float max_distance = 250f;
+            float offset_angle = 0.01f;
+            // min rays to cast out for when there is not enough geometry in the scene, but we still have lights
+            int min_rays = 50;
+            
+            //loop over all the edges we are calculating light against
+            foreach ((Vector2, Vector2) edge in edges) {
+                Vector2 p1 = edge.Item1;
+                Vector2 p2 = edge.Item2;
+
+                float angle1 = (float)Math.Atan2(p1.Y - light.get_center_position().Y, p1.X - light.get_center_position().X);
+                float angle2 = (float)Math.Atan2(p2.Y - light.get_center_position().Y, p2.X - light.get_center_position().X);
+                
+                //add to unique angles
+                unique_angles.Add(angle1);
+                unique_angles.Add(angle1 + offset_angle);
+                unique_angles.Add(angle1 - offset_angle);
+
+                unique_angles.Add(angle2);
+                unique_angles.Add(angle2 + offset_angle);
+                unique_angles.Add(angle2 - offset_angle);
+            }
+
+            if (unique_angles.Count < min_rays) {
+                int remaining_rays = min_rays - unique_angles.Count;
+                //evenly distribute remaining rays
+                float angle_increment = MathHelper.TwoPi / remaining_rays;
+
+                for (int i = 0; i < remaining_rays; i++) {
+                    float additional_angle = i * angle_increment;
+                    unique_angles.Add(additional_angle);
+                }
+            }
+
+            //cast rays at each unique angle
+            List<float> unqiue_angs = unique_angles.OrderBy(a => a).ToList(); //sort clockwise order
+            foreach (float angle in unqiue_angs) {
+                Vector2 ray_direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                Vector2 closest_intersection = light.get_center_position() + ray_direction * max_distance;
+                float closest_distance = max_distance;
+
+                //check for intersection with each edge
+                foreach ((Vector2, Vector2) edge in edges) {
+                    Vector2 intersection;
+                    if (RRect.ray_intersects_edge(light.get_center_position(), ray_direction, edge.Item1, edge.Item2, out intersection)) {
+                        float distance = Vector2.Distance(light.get_center_position(), intersection);
+                        if (distance < closest_distance) {
+                            closest_distance = distance;
+                            closest_intersection = intersection;
+                        }
+                    }
+                }
+
+                rays.Add((angle, closest_intersection));
+            }
+            
+            //return the rays (they are in clockwise order at this point)
+            return rays;
         }
         #endregion
     }
