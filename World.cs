@@ -140,7 +140,6 @@ namespace gate
         Light light, light2;
         private bool lights_enabled = true;
         
-        List<(Vector2, Vector2)> geometry_edges;
         RenderTarget2D light_render_target;
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content) {
@@ -210,7 +209,6 @@ namespace gate
             this.dead_particle_systems = new List<ParticleSystem>();
 
             //light resources
-            geometry_edges = new List<(Vector2, Vector2)>();
             //set up light render target
             light_render_target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height);
 
@@ -2874,22 +2872,6 @@ namespace gate
         public void draw_lights(List<Light> lights, List<IEntity> shadow_casters, SpriteBatch spriteBatch) {
             //only render if we have lights
             if (lights.Count > 0) {
-                //construct list of edges from shadow caster geometry
-                geometry_edges.Clear();
-                foreach (IEntity sc in shadow_casters) {
-                    //only add those objects that are within half the render distance to the list
-                    //we do not want to render lights for something the player will not see or interact with off screen
-                    if (Vector2.Distance(player.get_base_position(), sc.get_base_position()) < render_distance/2) {
-                        if (sc is StackedObject) {
-                            StackedObject so = (StackedObject)sc;
-                            foreach (KeyValuePair<Vector2, Vector2> kv in so.get_hurtbox().edges) {
-                                //add to geometry map
-                                geometry_edges.Add((kv.Key, kv.Value));
-                            }
-                        }
-                    }
-                }
-
                 //lights
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
                 spriteBatch.Draw(light_render_target, Vector2.Zero, Color.White);
@@ -2900,7 +2882,10 @@ namespace gate
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, Constant.subtract_blend, SamplerState.PointClamp);
                 foreach (Light light in lights) {
-                    List<(float, Vector2)> light_geometry = calculate_light_geometry(light, geometry_edges);
+                    //calculate in range geometry for light
+                    light.calculate_in_range_geometry(shadow_casters, player.get_base_position(), render_distance);
+                    //calculate geometry of this light
+                    List<(float, Vector2)> light_geometry = calculate_light_geometry(light, light.get_geometry_edges());
                     Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
                     //convert vector into screen space
                     for (int i = 0; i < light_geometry.Count - 1; i++) {
@@ -2937,24 +2922,12 @@ namespace gate
         }
         
         public void draw_lights_world_space(List<Light> lights, List<IEntity> shadow_casters, SpriteBatch spriteBatch) {
-            //construct list of edges from shadow caster geometry
-            geometry_edges.Clear();
-            foreach (IEntity sc in shadow_casters) {
-                //only add those objects that are within half the render distance to the list
-                //we do not want to render lights for something the player will not see or interact with off screen
-                if (Vector2.Distance(player.get_base_position(), sc.get_base_position()) < render_distance/2) {
-                    if (sc is StackedObject) {
-                        StackedObject so = (StackedObject)sc;
-                        foreach (KeyValuePair<Vector2, Vector2> kv in so.get_hurtbox().edges) {
-                            //add to geometry map
-                            geometry_edges.Add((kv.Key, kv.Value));
-                        }
-                    }
-                }
-            }
-
+            //loop over lights and calculate geometry per light with shadow casters
             foreach (Light light in lights) {
-                List<(float, Vector2)> light_rays = calculate_light_geometry(light, geometry_edges);
+                //calculate in range geometry for light
+                light.calculate_in_range_geometry(shadow_casters, player.get_base_position(), render_distance);
+                //calculate geometry of this light
+                List<(float, Vector2)> light_rays = calculate_light_geometry(light, light.get_geometry_edges());
                 //draw rays themselves
                 foreach ((float, Vector2) ray in light_rays) {
                     Renderer.DrawALine(

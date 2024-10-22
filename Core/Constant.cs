@@ -169,6 +169,9 @@ namespace gate.Core
         public static float player_doubleattack_cooldown = 800f;
         public static float player_attack_movement_speed = 0.5f;
 
+        //light constants
+        public static float light_distance = 250f;
+
         /*SHADERS*/
         public static float pixels = 1700.0f;
         public static float pixelation = 3.55f;
