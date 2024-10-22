@@ -2799,7 +2799,7 @@ namespace gate
                 sound_manager.Draw(_spriteBatch);
             }
             
-            //draw_lights3(new List<Light> { light }, collision_geometry, _spriteBatch);
+            //draw_lights_world_space(new List<Light> { light }, collision_geometry, _spriteBatch);
 
             _spriteBatch.End();
 
@@ -2955,7 +2955,20 @@ namespace gate
 
             foreach (Light light in lights) {
                 List<(float, Vector2)> light_rays = calculate_light_geometry(light, geometry_edges);
-                //iterate through all rays and draw triangles
+                //draw rays themselves
+                foreach ((float, Vector2) ray in light_rays) {
+                    Renderer.DrawALine(
+                        spriteBatch, 
+                        Constant.pixel,
+                        2f,
+                        Color.Red,
+                        1f,
+                        light.get_center_position(),
+                        ray.Item2
+                    );
+                }
+
+                //iterate through all rays and draw triangles between rays
                 for (int i = 0; i < light_rays.Count - 1; i++) {
                     Vector2 ray1 = light_rays[i].Item2;
                     Vector2 ray2 = light_rays[i+1].Item2;
@@ -2989,7 +3002,7 @@ namespace gate
             float max_distance = 250f;
             float offset_angle = 0.01f;
             // min rays to cast out for when there is not enough geometry in the scene, but we still have lights
-            int min_rays = 50;
+            int min_rays = 100;
             
             //loop over all the edges we are calculating light against
             foreach ((Vector2, Vector2) edge in edges) {
@@ -3019,10 +3032,28 @@ namespace gate
                     unique_angles.Add(additional_angle);
                 }
             }
+            
+            List<float> sorted_angles = unique_angles.OrderBy(a => a).ToList(); //sort clockwise order
+            
+            //ensure there are no large gaps between consecutive angles
+            //this works to keep the light circular as we exit places with higher entity density to cast light off of
+            //otherwise the light ends up looking fairly polygonal which kind of destroys the effect
+            for (int i = 0; i < sorted_angles.Count - 1; i++) {
+                float angle1 = sorted_angles[i];
+                float angle2 = sorted_angles[i+1];
 
+                if (angle2 - angle1 > (MathHelper.TwoPi / min_rays)) {
+                    float new_angle = (angle1 + angle2) / 2;
+                    //add if we don't already have an angle for this value
+                    if (!unique_angles.Contains(new_angle)) {
+                        unique_angles.Add(new_angle);
+                    }
+                }
+            }
+            
+            sorted_angles = unique_angles.OrderBy(a => a).ToList();
             //cast rays at each unique angle
-            List<float> unqiue_angs = unique_angles.OrderBy(a => a).ToList(); //sort clockwise order
-            foreach (float angle in unqiue_angs) {
+            foreach (float angle in sorted_angles) {
                 Vector2 ray_direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
                 Vector2 closest_intersection = light.get_center_position() + ray_direction * max_distance;
                 float closest_distance = max_distance;

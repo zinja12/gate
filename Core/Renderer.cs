@@ -109,7 +109,7 @@ namespace gate.Core
             
             //for calculated points draw line between first vertex and calculated point
             foreach (Vector2 p in points) {
-                DrawALine(spriteBatch, Constant.pixel, 5f, color * opacity, 1f, tri1, p);
+                DrawALine(spriteBatch, Constant.pixel, 10f, color * opacity, 1f, tri1, p);
             }
         }
     }
