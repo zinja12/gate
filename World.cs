@@ -70,6 +70,8 @@ namespace gate
         Dictionary<IEntity, bool> collision_tile_map;
         List<IEntity> switches;
         SoundManager sound_manager;
+        List<Light> lights;
+        List<IEntity> light_excluded_entities;
         //editor ONLY objects
         List<IEntity> editor_only_objects;
 
@@ -194,6 +196,9 @@ namespace gate
             switches = new List<IEntity>();
             //sound manager
             sound_manager = new SoundManager(this, Content);
+            //list for lights
+            lights = new List<Light>();
+            light_excluded_entities = new List<IEntity>();
 
             //editor ONLY objects
             editor_only_objects = new List<IEntity>();
@@ -221,8 +226,11 @@ namespace gate
             //run first sort so everything looks good initially
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
 
-            light = new Light(new Vector2(237, 384), 250f, 0.45f, Color.White);
+            light = new Light(new Vector2(237, 384), 250f, 0.45f, Color.White, player);
             light2 = new Light(new Vector2(237, 384), 250f, 0.75f, Color.White);
+
+            lights.Add(light2);
+            //light_excluded_entities.Add(player);
         }
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content, string level_id) : this(game, _graphics, content_root_directory, Content) {
@@ -1002,6 +1010,8 @@ namespace gate
             collision_geometry_map.Clear();
             collision_tile_map.Clear();
             switches.Clear();
+            lights.Clear();
+            light_excluded_entities.Clear();
             //clear sound manager
             sound_manager.clear();
             //clear entities
@@ -1552,9 +1562,10 @@ namespace gate
             
             //update camera bounds
             //update_camera_bounds();
-            
-            light.Update(gameTime, camera.Rotation, player.get_base_position());
-            light2.Update(gameTime, camera.Rotation);
+
+            foreach (Light light in lights) {
+                light.Update(gameTime, camera.Rotation);
+            }
         }
 
         /*editor tooling*/
@@ -2797,7 +2808,7 @@ namespace gate
                 sound_manager.Draw(_spriteBatch);
             }
             
-            //draw_lights_world_space(new List<Light> { light }, collision_geometry, _spriteBatch);
+            //draw_lights_world_space(new List<Light> { light }, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
 
             _spriteBatch.End();
 
@@ -2810,9 +2821,10 @@ namespace gate
             }
             _spriteBatch.End();
             
-            //draw lights over top of the scene
+            /* LIGHTING PASS */
             if (lights_enabled) {
-                draw_lights(new List<Light> { light }, collision_geometry, _spriteBatch);
+                //draw lights over top of the scene if lights are enabled
+                draw_lights(new List<Light> { light }, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
             }
 
             //draw transition
@@ -2869,7 +2881,7 @@ namespace gate
         //need to add an exclusionary list so if an edge or endpoint of a segment is found in that list or as a part of an entity in that list, then it is ignored from the algorithm
         //also need to add the option to pass in npcs and signs and other non collision objects to affect light and cast shadows
         //they have hurtboxes so we should be able to leverage that geometry to cast shadows as well
-        public void draw_lights(List<Light> lights, List<IEntity> shadow_casters, SpriteBatch spriteBatch) {
+        public void draw_lights(List<Light> lights, List<IEntity> geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
             //only render if we have lights
             if (lights.Count > 0) {
                 //lights
@@ -2883,7 +2895,7 @@ namespace gate
                 spriteBatch.Begin(SpriteSortMode.Immediate, Constant.subtract_blend, SamplerState.PointClamp);
                 foreach (Light light in lights) {
                     //calculate in range geometry for light
-                    light.calculate_in_range_geometry(shadow_casters, player.get_base_position(), render_distance);
+                    light.calculate_in_range_geometry(geometry_shadow_casters, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
                     //calculate geometry of this light
                     List<(float, Vector2)> light_geometry = calculate_light_geometry(light, light.get_geometry_edges());
                     Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
@@ -2921,11 +2933,11 @@ namespace gate
             }
         }
         
-        public void draw_lights_world_space(List<Light> lights, List<IEntity> shadow_casters, SpriteBatch spriteBatch) {
+        public void draw_lights_world_space(List<Light> lights, List<IEntity> geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
             //loop over lights and calculate geometry per light with shadow casters
             foreach (Light light in lights) {
                 //calculate in range geometry for light
-                light.calculate_in_range_geometry(shadow_casters, player.get_base_position(), render_distance);
+                light.calculate_in_range_geometry(geometry_shadow_casters, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
                 //calculate geometry of this light
                 List<(float, Vector2)> light_rays = calculate_light_geometry(light, light.get_geometry_edges());
                 //draw rays themselves
