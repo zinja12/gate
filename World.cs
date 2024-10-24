@@ -1859,7 +1859,7 @@ namespace gate
             foreach (IEntity e in entities) {
                 //we need to exclude deleted objects from being saved to the world level file
                 //we also need to exclude the player form being saved as we are using player chips to denote spawn points
-                if (!entities_to_clear.Contains(e) && !(e is Player)) {
+                if (!entities_to_clear.Contains(e) && !(e is Player) && !(e is Arrow) && !(e is Footprints)) {
                     world_objs.Add(e.to_world_level_object());
                 }
             }
