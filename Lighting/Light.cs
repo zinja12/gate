@@ -109,5 +109,9 @@ namespace gate.Lighting
         public float get_intensity() {
             return intensity;
         }
+
+        public IEntity get_parent_entity() {
+            return parent_entity;
+        }
     }
 }

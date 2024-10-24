@@ -10,5 +10,6 @@ namespace gate.Interface
     public interface IGameObject
     {
         int get_obj_ID_num();
+        void set_obj_ID_num(int id_num);
     }
 }

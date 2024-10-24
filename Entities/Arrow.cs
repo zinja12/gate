@@ -187,6 +187,10 @@ namespace gate.Entities
             return -1;
         }
 
+        public void set_obj_ID_num(int value) {
+            //not needed
+        }
+
         public Vector2 get_base_position(){
             return depth_sort_position;
         }

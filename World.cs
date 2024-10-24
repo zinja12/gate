@@ -138,10 +138,8 @@ namespace gate
         private List<ParticleSystem> particle_systems;
         private List<ParticleSystem> dead_particle_systems;
 
-        //Light
-        Light light, light2;
+        //Lights
         private bool lights_enabled = true;
-        
         RenderTarget2D light_render_target;
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content) {
@@ -225,12 +223,6 @@ namespace gate
 
             //run first sort so everything looks good initially
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
-
-            light = new Light(new Vector2(237, 384), 250f, 0.45f, Color.White, player);
-            light2 = new Light(new Vector2(237, 384), 250f, 0.75f, Color.White);
-
-            lights.Add(light2);
-            //light_excluded_entities.Add(player);
         }
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content, string level_id) : this(game, _graphics, content_root_directory, Content) {
@@ -565,6 +557,14 @@ namespace gate
                             //load texture
                             check_and_load_tex(ref Constant.lamppost_spritesheet, "sprites/lamppost_spritesheet3");
                             Lamppost l = new Lamppost(obj_position, w_obj.scale, w_obj.object_id_num);
+                            //check if object has light assigned
+                            if (w_obj.light != null) {
+                                Light light = new Light(l.get_base_position(), 250f, 0.45f, Color.White, l);
+                                lights.Add(light);
+                                if (w_obj.light_excluded) {
+                                    light_excluded_entities.Add(l);
+                                }
+                            }
                             entities_list.Add(l);
                             break;
                         case "big_tile":
@@ -1598,7 +1598,12 @@ namespace gate
                     break;
                 case 5:
                     Lamppost l = new Lamppost(create_position, 1f, editor_object_idx);
+                    Light light = new Light(l.get_base_position(), 250f, 0.45f, Color.White, l);
+                    //add light + light excluded
+                    lights.Add(light);
+                    light_excluded_entities.Add(l);
                     entities_list.Add(l);
+                    Console.WriteLine($"added light");
                     Console.WriteLine("lamp," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 6:
@@ -1909,6 +1914,11 @@ namespace gate
             List<GameWorldObject> sorted_world_objs = world_objs.OrderBy (o => o.object_id_num).ToList();
             List<GameWorldTrigger> sorted_world_triggers = world_triggers.OrderBy (t => t.object_id_num).ToList();
 
+            //TODO: potential bug here where the objects get re-issued IDs and it actually breaks the connection between the conditions and the objects those conditions need to affect
+            //we can potentially get around this by saving off all of the conditions into a separate data structure in this function
+            //then when we can use it to reconstruct the correct connections after the re-issuing of ids has occurred
+            //Data Structure: Dictionary<Condition, List<IEntity>> (this way we have the actual objects themselves in memory and don't have to worry about referencing by ids)
+
             //sanity check and re-issue ids to objects to prevent any gaps in object ids that could result in an issue on level loading
             //trying to collapse gaps in ids mostly because it throws off the level loading process
             //this is mostly because we introduced the concept of object deletion which then leads to gaps in ids
@@ -1916,6 +1926,9 @@ namespace gate
             //this re-issuing of the ids fixes this issue and allows us to save partial states or changes to the world due to gameplay
             int obj_reissue_id = 0;
             for (int i = 0; i < sorted_world_objs.Count; i++) {
+                //also update entity in world with new id
+                entities_list.get_entity_by_id(sorted_world_objs[i].object_id_num).set_obj_ID_num(obj_reissue_id);
+                //update sorted world objects
                 sorted_world_objs[i].object_id_num = obj_reissue_id;
                 obj_reissue_id++;
             }
@@ -1933,6 +1946,40 @@ namespace gate
             for (int i = 0; i < world_particle_systems.Count; i++) {
                 world_particle_systems[i].object_id_num = obj_reissue_id;
                 obj_reissue_id++;
+            }
+
+            //once object ids have been re-issued, modify the lists to add the light data in
+            //build dictionary with entity ids
+            //see comments below about performance and runtime
+            Dictionary<Light, int> light_entity_ids = new Dictionary<Light, int>();
+            foreach (Light light in lights) {
+                light_entity_ids.Add(light, light.get_parent_entity().get_obj_ID_num());
+            }
+            //iterate over dictionary and set lights for game world objs
+            foreach (GameWorldObject gwo in sorted_world_objs) {
+                foreach (KeyValuePair<Light, int> kv in light_entity_ids) {
+                    int light_entity_id = kv.Value;
+                    Light light = kv.Key;
+                    if (gwo.object_id_num == light_entity_id) {
+                        //set light in sorted world objects
+                        gwo.light = new GameWorldLight {
+                            light_center_x = light.get_center_position().X,
+                            light_center_y = light.get_center_position().Y,
+                            radius = light.get_radius()
+                        };
+                    }
+                }
+            }
+            //modify object list to add light exclusion data
+            //yes this is n^2, but it only happens on saves which doesn't affect the player, only us lowly devs
+            //plus there won't ever be that many light excluded entities
+            foreach (GameWorldObject gwo in sorted_world_objs) {
+                foreach (IEntity e in light_excluded_entities) {
+                    if (e.get_obj_ID_num() == gwo.object_id_num) {
+                        //set exclusion
+                        gwo.light_excluded = true;
+                    }
+                }
             }
             
             //generate GameWorldFile object with all saved objects
@@ -2824,7 +2871,7 @@ namespace gate
             /* LIGHTING PASS */
             if (lights_enabled) {
                 //draw lights over top of the scene if lights are enabled
-                draw_lights(new List<Light> { light }, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+                draw_lights(lights, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
             }
 
             //draw transition

@@ -113,6 +113,10 @@ namespace gate.Entities
             return -1;
         }
 
+        public void set_obj_ID_num(int value) {
+            //do nothing, not needed
+        }
+
         public string get_flag() {
             return Constant.ENTITY_PASSIVE;
         }

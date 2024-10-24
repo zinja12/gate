@@ -25,5 +25,7 @@ namespace gate.Serialize
         public float goal_rotation { get; set; }
         public List<int> npc_path_entity_ids { get; set; }
         public string npc_conversation_file_id { get; set; }
+        public GameWorldLight light { get; set; }
+        public bool light_excluded { get; set; }
     }
 }
