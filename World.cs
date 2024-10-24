@@ -1563,6 +1563,7 @@ namespace gate
             //update camera bounds
             //update_camera_bounds();
 
+            //keep the lights on lol
             foreach (Light light in lights) {
                 light.Update(gameTime, camera.Rotation);
             }
