@@ -29,6 +29,9 @@
 #begin dialogue/npc1_felix_dialogue.json
 /copy:dialogue/npc1_felix_dialogue.json
 
+#begin dialogue/npc1_taj_dialogue.json
+/copy:dialogue/npc1_taj_dialogue.json
+
 #begin dialogue/npc1_zahir_dialogue.json
 /copy:dialogue/npc1_zahir_dialogue.json
 

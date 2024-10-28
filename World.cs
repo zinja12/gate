@@ -1835,14 +1835,12 @@ namespace gate
         }
         
         #region save_world_file
-        public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities, string file_save_name) {
+        public List<GameWorldObject> build_world_objs(List<IEntity> entities, List<ForegroundEntity> foreground_entities, List<BackgroundEntity> background_entities) {
             //track player chip count
             int player_chip_count = 0;
-            //set up object lists to save to file
+            //set up object lists to return
             List<GameWorldObject> world_objs = new List<GameWorldObject>();
-            List<GameWorldTrigger> world_triggers = new List<GameWorldTrigger>();
-            List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
-            List<GameWorldParticleSystem> world_particle_systems = new List<GameWorldParticleSystem>();
+
             //iterate over editor only objects (ex. player_chip)
             foreach (IEntity e in editor_only_objects) {
                 world_objs.Add(e.to_world_level_object());
@@ -1852,8 +1850,8 @@ namespace gate
             }
             //check for player chip to save level (should only be one within the level)
             if (player_chip_count != 1) {
-                Console.WriteLine($"File Save Error. There should be exactly 1 player chip (player spawn point) in the level, but {player_chip_count} were found.");
-                return;
+                //Console.WriteLine($"File Save Error. There should be exactly 1 player chip (player spawn point) in the level, but {player_chip_count} were found.");
+                throw new Exception($"File Save Error. There should be exactly 1 player chip (player spawn point) in the level, but {player_chip_count} were found.");
             }
             //iterate over all entities
             foreach (IEntity e in entities) {
@@ -1888,10 +1886,6 @@ namespace gate
                     }
                 }
             }
-            //iterate over level triggers
-            foreach (ITrigger t in triggers) {
-                world_triggers.Add(t.to_world_level_trigger());
-            }
 
             //handle saving collision geometry that is not drawn
             //(invisible objects)
@@ -1904,13 +1898,27 @@ namespace gate
                 }
             }
 
+            return world_objs;
+        }
+
+        public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities, string file_save_name) {
+            //set up object lists to save to file
+            List<GameWorldTrigger> world_triggers = new List<GameWorldTrigger>();
+            List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
+            List<GameWorldParticleSystem> world_particle_systems = new List<GameWorldParticleSystem>();
+            
+            //iterate over level triggers
+            foreach (ITrigger t in triggers) {
+                world_triggers.Add(t.to_world_level_trigger());
+            }
+
             //handle saving particle systems
             foreach(ParticleSystem ps in particle_systems) {
                 world_particle_systems.Add(ps.to_world_level_particle_system());
             }
 
             //sort world objects by numerical id
-            List<GameWorldObject> sorted_world_objs = world_objs.OrderBy (o => o.object_id_num).ToList();
+            List<GameWorldObject> sorted_world_objs = build_world_objs(entities, foreground_entities, background_entities).OrderBy (o => o.object_id_num).ToList();
             List<GameWorldTrigger> sorted_world_triggers = world_triggers.OrderBy (t => t.object_id_num).ToList();
 
             //pull and store all of the conditions into a separate data structure in this function
@@ -1959,11 +1967,31 @@ namespace gate
                         }
                     }
                 }
+
+                if (previous_id == 3266) {
+                    Console.WriteLine($"found it, obj_id_to_assign: {obj_reissue_id}");
+                }
                 
-                //assign new object id to entity
-                entities_list.get_entity_by_id(previous_id).set_obj_ID_num(obj_reissue_id);
+                //find and assign new object id to entity
+                IEntity render_list_entity = entities_list.get_entity_by_id(previous_id);
+                if (render_list_entity != null) {
+                    //found the entity in the render list and can set the id accordingly
+                    render_list_entity.set_obj_ID_num(obj_reissue_id);
+                } else {
+                    //object was not found, however it might exist in a different list not included in the render list (floor entities)
+                    //check floor entities
+                    IEntity non_render_list_entity = search_non_render_list_entity(previous_id);
+                    if (non_render_list_entity != null) {
+                        non_render_list_entity.set_obj_ID_num(obj_reissue_id);
+                    } else {
+                        throw new Exception("Missing Entity Error: We fucked up. Cannot find the entity to save via id in any data structure or list. Check more lists???");
+                    }
+                }
+                //increase reissue id
                 obj_reissue_id++;
             }
+            //rebuild sorted world objs with new ids that have been assigned
+            sorted_world_objs = build_world_objs(entities, foreground_entities, background_entities).OrderBy (o => o.object_id_num).ToList();
 
             //triggers
             for (int i = 0; i < sorted_world_triggers.Count; i++) {
@@ -2459,6 +2487,27 @@ namespace gate
             floor_entities.Add(e);
             //sort by weight
             floor_entities = floor_entities.OrderByDescending(x => x.get_draw_weight()).ToList();
+        }
+
+        public IEntity search_non_render_list_entity(int id) {
+            //search floor entities
+            foreach (FloorEntity fe in floor_entities) {
+                if (fe is IEntity) {
+                    IEntity e = (IEntity)fe;
+                    if (e.get_obj_ID_num() == id) {
+                        return e;
+                    }
+                }
+            }
+            //search invisible objects
+            foreach (IEntity e in collision_geometry) {
+                if (e is InvisibleObject) {
+                    if (e.get_obj_ID_num() == id) {
+                        return e;
+                    }
+                }
+            }
+            return null;
         }
 
         public void remove_floor_entity(int id){

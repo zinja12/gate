@@ -1,0 +1,37 @@
+{
+    "character_name": "taj",
+    "dialogue": [
+        {
+            "speaker": "taj",
+            "dialogue_line": "aww man, what am i going to do?"
+        },
+        {
+            "speaker": "taj",
+            "dialogue_line": "sim, is going to kill me for this..."
+        },
+        {
+            "speaker": "taj",
+            "dialogue_line": "oh hey there!"
+        },
+        {
+            "speaker": "taj",
+            "dialogue_line": "apologies, but i might need some help"
+        },
+        {
+            "speaker": "taj",
+            "dialogue_line": "i sorta, accidentally closed the gate up ahead and dropped the switch behind the rocks"
+        },
+        {
+            "speaker": "taj",
+            "dialogue_line": "i can't exactly reach far enough to grab it and i don't have anything to hit it with"
+        },
+        {
+            "speaker": "taj",
+            "dialogue_line": "there has to be something around here that we can grab to hit it with..."
+        },
+        {
+            "speaker": "taj",
+            "dialogue_line": "think you could help me out?"
+        }
+    ]
+}

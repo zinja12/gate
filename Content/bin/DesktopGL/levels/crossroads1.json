@@ -52197,12 +52197,28 @@
             "goal_rotation": 0,
             "npc_path_entity_ids": null,
             "npc_conversation_file_id": null
+        },
+        {
+            "object_identifier": "npc",
+            "object_id_num": 3262,
+            "x_position": 2610.4604,
+            "y_position": -1184.2039,
+            "scale": 1,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "npc_path_entity_ids": [],
+            "npc_conversation_file_id": "npc1_taj_dialogue.json"
         }
     ],
     "world_triggers": [
         {
             "object_identifier": "level_trigger",
-            "object_id_num": 3262,
+            "object_id_num": 3263,
             "x_position": 747.2805,
             "y_position": -1179.3948,
             "scale": 0,
@@ -52218,7 +52234,7 @@
     "conditions": [
         {
             "object_identifier": "switch_condition",
-            "object_id_num": 3263,
+            "object_id_num": 3264,
             "enemy_ids": [
                 3261
             ],

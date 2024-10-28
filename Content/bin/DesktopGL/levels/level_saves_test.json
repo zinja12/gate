@@ -40,42 +40,6 @@
         {
             "object_identifier": "wall",
             "object_id_num": 2,
-            "x_position": 293.59674,
-            "y_position": 43.030952,
-            "scale": 1,
-            "sign_messages": null,
-            "canopy": false,
-            "width": 0,
-            "height": 0,
-            "level_id": null,
-            "rotation": -71619.73,
-            "goal_rotation": 0,
-            "npc_path_entity_ids": null,
-            "npc_conversation_file_id": null,
-            "light": null,
-            "light_excluded": false
-        },
-        {
-            "object_identifier": "wall",
-            "object_id_num": 3,
-            "x_position": 337.02533,
-            "y_position": 71.03096,
-            "scale": 1,
-            "sign_messages": null,
-            "canopy": false,
-            "width": 0,
-            "height": 0,
-            "level_id": null,
-            "rotation": -46409.582,
-            "goal_rotation": 0,
-            "npc_path_entity_ids": null,
-            "npc_conversation_file_id": null,
-            "light": null,
-            "light_excluded": false
-        },
-        {
-            "object_identifier": "wall",
-            "object_id_num": 4,
             "x_position": 375.31104,
             "y_position": 102.45953,
             "scale": 1,
@@ -93,7 +57,7 @@
         },
         {
             "object_identifier": "wall",
-            "object_id_num": 5,
+            "object_id_num": 3,
             "x_position": 412.45386,
             "y_position": 131.03096,
             "scale": 1,
@@ -111,7 +75,7 @@
         },
         {
             "object_identifier": "wall",
-            "object_id_num": 6,
+            "object_id_num": 4,
             "x_position": 451.31104,
             "y_position": 157.8881,
             "scale": 1,
@@ -129,7 +93,7 @@
         },
         {
             "object_identifier": "marker",
-            "object_id_num": 7,
+            "object_id_num": 5,
             "x_position": 211.31102,
             "y_position": -4.9690475,
             "scale": 1,
@@ -147,7 +111,7 @@
         },
         {
             "object_identifier": "marker",
-            "object_id_num": 8,
+            "object_id_num": 6,
             "x_position": 485.02533,
             "y_position": 188.17383,
             "scale": 1,
@@ -165,7 +129,7 @@
         },
         {
             "object_identifier": "orange_tree",
-            "object_id_num": 9,
+            "object_id_num": 7,
             "x_position": 7.8824615,
             "y_position": 91.60239,
             "scale": 1,
@@ -183,7 +147,7 @@
         },
         {
             "object_identifier": "yellow_tree",
-            "object_id_num": 10,
+            "object_id_num": 8,
             "x_position": -33.260406,
             "y_position": 191.60239,
             "scale": 1,
@@ -201,7 +165,7 @@
         },
         {
             "object_identifier": "green_tree",
-            "object_id_num": 11,
+            "object_id_num": 9,
             "x_position": -95.54612,
             "y_position": 125.88811,
             "scale": 1,
@@ -219,7 +183,7 @@
         },
         {
             "object_identifier": "green_tree",
-            "object_id_num": 12,
+            "object_id_num": 10,
             "x_position": 37.59674,
             "y_position": 172.17381,
             "scale": 1,
@@ -237,7 +201,7 @@
         },
         {
             "object_identifier": "orange_tree",
-            "object_id_num": 13,
+            "object_id_num": 11,
             "x_position": -92.11755,
             "y_position": 235.60239,
             "scale": 1,
@@ -252,10 +216,43 @@
             "npc_conversation_file_id": null,
             "light": null,
             "light_excluded": false
+        },
+        {
+            "object_identifier": "hitswitch",
+            "object_id_num": 12,
+            "x_position": 100.45387,
+            "y_position": 25.8881,
+            "scale": 1,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": -30366.764,
+            "goal_rotation": 0,
+            "npc_path_entity_ids": null,
+            "npc_conversation_file_id": null,
+            "light": null,
+            "light_excluded": false
         }
     ],
     "world_triggers": [],
-    "conditions": [],
+    "conditions": [
+        {
+            "object_identifier": "switch_condition",
+            "object_id_num": 13,
+            "enemy_ids": [
+                12
+            ],
+            "obj_ids_to_remove": [
+                2,
+                3,
+                4
+            ],
+            "x_position": 160,
+            "y_position": 140
+        }
+    ],
     "particle_systems": [],
     "world_script": []
 }
