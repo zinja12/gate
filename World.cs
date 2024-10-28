@@ -1913,9 +1913,11 @@ namespace gate
             List<GameWorldObject> sorted_world_objs = world_objs.OrderBy (o => o.object_id_num).ToList();
             List<GameWorldTrigger> sorted_world_triggers = world_triggers.OrderBy (t => t.object_id_num).ToList();
 
-            //TODO: potential bug here where the objects get re-issued IDs and it actually breaks the connection between the conditions and the objects those conditions need to affect
             //pull and store all of the conditions into a separate data structure in this function
             //we can use it to reconstruct the correct connections after the re-issuing of ids has occurred
+            //this is done to prevent objects that have been deleted from causing conditions to lose the original entities they were assigned to listen and remove
+            //causing this hole in the ordered ints that make up the id system can cause the window of objects that conditions listen and delete to shift
+            //this dictionary holds the new ids and reassigns the conditions to their new ids to fix this bug
             Dictionary<ICondition, (List<int>, List<int>)> condition_obj_id_data_map = new Dictionary<ICondition, (List<int>, List<int>)>();
             
             //sanity check and re-issue ids to objects to prevent any gaps in object ids that could result in an issue on level loading
