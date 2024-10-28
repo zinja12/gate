@@ -278,6 +278,14 @@ ToDo List:
 [DONE](BUG)ui does not reflect accurate charges for attack charges or dash charges
 [DONE](BUG)advance_msg_cooldown needs to be set on a per msg basis based on msg length
     -shorter strings reveal in textboxes slower than longer strings because the characters are split over the cooldown time for longer because the cooldown is the same regardless of msg length
+[DONE](BUG)level saving bug
+    -conditions can potentially have the ids they they listen to and delete shifted if objects have been deleted earlier in the ordered ids
+    -should a gap exist in the ordered ids prior to the objects that are being listened to and deleted by a condition, the reassignment of ids on level saves in the editor can shift the ids that
+        -condition listens to
+    -to fix this we set up a dictionary to hold the new ids for the entities that were previously assigned to the conditions
+    -while we reassign the ids to those entities we also keep the data structure updated with the new ids
+    -after the reassignment process, we hot swap the lists the conditions are listening and deleting so they have the updated ids for the entities
+    -then we can just save the conditions as normal
 [](BUG)adding particle systems for footsteps is impacting performance
     -maybe instead of spawning particle systems and removing them, we can increase the functionality of the current particle system class
     -to increase the functionality and flexibility of it maybe we can add a way to pass a function to it to decide when to spawn particles
