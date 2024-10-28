@@ -147,6 +147,9 @@ ToDo List:
 [DONE](FEATURE)create engine to play sounds
     -(nah, probably too complicated)different channels for effects?
     -(maybe)queue songs/music to play
+[DONE - but needs some tweaks and improvement](FEATURE)lighting
+    -this is my white whale
+    -I have never implemented this successfully yet :')
 [](FEATURE)add player death/failure animation
 [](FEATURE)background floor tex + trail textures and add to game
     -implement some type of ordering for floor textures so trails can go on top of floor textures

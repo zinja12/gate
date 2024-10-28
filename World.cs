@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "blank_level.json", current_level_id;
+        public string load_file_name = "crossroads1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -1909,17 +1909,15 @@ namespace gate
                 world_particle_systems.Add(ps.to_world_level_particle_system());
             }
 
-            //handle sorting conditions
-            List<GameWorldCondition> sorted_world_conditions = conditions.OrderBy(c => c.object_id_num).ToList();
             //sort world objects by numerical id
             List<GameWorldObject> sorted_world_objs = world_objs.OrderBy (o => o.object_id_num).ToList();
             List<GameWorldTrigger> sorted_world_triggers = world_triggers.OrderBy (t => t.object_id_num).ToList();
 
             //TODO: potential bug here where the objects get re-issued IDs and it actually breaks the connection between the conditions and the objects those conditions need to affect
-            //we can potentially get around this by saving off all of the conditions into a separate data structure in this function
-            //then when we can use it to reconstruct the correct connections after the re-issuing of ids has occurred
-            //Data Structure: Dictionary<Condition, List<IEntity>> (this way we have the actual objects themselves in memory and don't have to worry about referencing by ids)
-
+            //pull and store all of the conditions into a separate data structure in this function
+            //we can use it to reconstruct the correct connections after the re-issuing of ids has occurred
+            Dictionary<ICondition, (List<int>, List<int>)> condition_obj_id_data_map = new Dictionary<ICondition, (List<int>, List<int>)>();
+            
             //sanity check and re-issue ids to objects to prevent any gaps in object ids that could result in an issue on level loading
             //trying to collapse gaps in ids mostly because it throws off the level loading process
             //this is mostly because we introduced the concept of object deletion which then leads to gaps in ids
@@ -1927,22 +1925,68 @@ namespace gate
             //this re-issuing of the ids fixes this issue and allows us to save partial states or changes to the world due to gameplay
             int obj_reissue_id = 0;
             for (int i = 0; i < sorted_world_objs.Count; i++) {
+                //keep conditions updated as we assign new ids
+                //as we re-assign ids, construct data structure of conditions and entity ids through previous entity id and then build a list to hot swap with the new id
                 //also update entity in world with new id
-                entities_list.get_entity_by_id(sorted_world_objs[i].object_id_num).set_obj_ID_num(obj_reissue_id);
-                //update sorted world objects
-                sorted_world_objs[i].object_id_num = obj_reissue_id;
+                int previous_id = sorted_world_objs[i].object_id_num;
+                //pull condition to get data to make update for hotswap
+                (ICondition, int) c = condition_manager.get_condition_by_entity_id(previous_id);
+                //valid condition check
+                if (c.Item2 != -1) {
+                    //pull condition and list type
+                    ICondition cond = c.Item1;
+                    int list_type = c.Item2;
+                    //update dictionary appropriately
+                    if (condition_obj_id_data_map.ContainsKey(cond)) {
+                        //pull and update list
+                        if (list_type == 0) {
+                            //listen
+                            condition_obj_id_data_map[cond].Item1.Add(obj_reissue_id);
+                        } else {
+                            //remove
+                            condition_obj_id_data_map[cond].Item2.Add(obj_reissue_id);
+                        }
+                    } else {
+                        //add
+                        if (list_type == 0) {
+                            //listen
+                            condition_obj_id_data_map.Add(cond, (new List<int> { obj_reissue_id }, new List<int>()));
+                        } else {
+                            //remove
+                            condition_obj_id_data_map.Add(cond, (new List<int>(), new List<int> { obj_reissue_id }));
+                        }
+                    }
+                }
+                
+                //assign new object id to entity
+                entities_list.get_entity_by_id(previous_id).set_obj_ID_num(obj_reissue_id);
                 obj_reissue_id++;
             }
+
             //triggers
             for (int i = 0; i < sorted_world_triggers.Count; i++) {
                 sorted_world_triggers[i].object_id_num = obj_reissue_id;
                 obj_reissue_id++;
             }
-            //int object_id_count = sorted_world_objs.Count;
+            
+            //hot swap condition lists being listened to and removed based on new ids assigned from entity id re-assignment
+            foreach (KeyValuePair<ICondition, (List<int>, List<int>)> kv in condition_obj_id_data_map) {
+                //pull data from key-value pair
+                ICondition c = kv.Key;
+                List<int> listen_ids = kv.Value.Item1;
+                List<int> remove_ids = kv.Value.Item2;
+                //hot swap each condition with their updated ids
+                condition_manager.update_condition_listen_ids(c.condition_id(), listen_ids);
+                condition_manager.update_condition_remove_ids(c.condition_id(), remove_ids);
+            }
+            //now we can set up sorted_world_conditions
+            List<GameWorldCondition> sorted_world_conditions = condition_manager.get_world_level_list().OrderBy(c => c.object_id_num).ToList();
+            //re-issue condition ids (thankfully this does not have repercussions for the actual ids inside the conditions)
             for (int i = 0; i < sorted_world_conditions.Count; i++) {
                 sorted_world_conditions[i].object_id_num = obj_reissue_id;
                 obj_reissue_id++;
             }
+
             //set world particle systems object id (this number is irrelevant to particle systems, but it should still be in order as good practice and for consistency)
             for (int i = 0; i < world_particle_systems.Count; i++) {
                 world_particle_systems[i].object_id_num = obj_reissue_id;

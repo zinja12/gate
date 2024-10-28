@@ -80,6 +80,9 @@
 #begin levels/demo1_v2_ids.json
 /copy:levels/demo1_v2_ids.json
 
+#begin levels/level_saves_test.json
+/copy:levels/level_saves_test.json
+
 #begin levels/shrine1.json
 /copy:levels/shrine1.json
 

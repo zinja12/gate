@@ -87,6 +87,78 @@ namespace gate
             return conditions[condition_id];
         }
 
+        public Dictionary<int, ICondition> get_conditions() {
+            return conditions;
+        }
+        
+        //retrieve condition by entity id that it listens to
+        //return value is tuple of ICondition, int
+        //where ICondition is the condition object and the int is either 0 or 1 depending on whether the entity is one being listened to or removed
+        //0 - listened to
+        //1 - removed
+        public (ICondition, int) get_condition_by_entity_id(int entity_id) {
+            foreach (KeyValuePair<int, ICondition> kv in conditions) {
+                ICondition c = kv.Value;
+                if (c is EnemiesDeadRemoveObjCondition) {
+                    EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)c;
+                    (bool, int) contains = edroc.contains_entity(entity_id);
+                    if (contains.Item1) {
+                        return (edroc, contains.Item2);
+                    }
+                } else if (c is SwitchCondition) {
+                    SwitchCondition sw_cond = (SwitchCondition)c;
+                    (bool, int) contains = sw_cond.contains_entity(entity_id);
+                    if (contains.Item1) {
+                        return (sw_cond, contains.Item2);
+                    }
+                }
+            }
+            //return null if not found
+            return (null, -1);
+        }
+
+        public void update_condition_listen_ids(int condition_id, List<int> listen_ids) {
+            ICondition c = conditions[condition_id];
+            if (c is EnemiesDeadRemoveObjCondition) {
+                EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)c;
+                //clear lists
+                edroc.clear_enemy_ids();
+                //replace list values based on parameter
+                foreach (int id in listen_ids) {
+                    edroc.add_enemy_id_to_check(id);
+                }
+            } else if (c is SwitchCondition) {
+                SwitchCondition sw_cond = (SwitchCondition)c;
+                //clear lists
+                sw_cond.clear_switch_ids();
+                //replace values in list based on parameter
+                foreach (int id in listen_ids) {
+                    sw_cond.add_switch_id_to_check(id);
+                }
+            }
+        }
+
+        public void update_condition_remove_ids(int condition_id, List<int> remove_ids) {
+            ICondition c = conditions[condition_id];
+            if (c is EnemiesDeadRemoveObjCondition) {
+                EnemiesDeadRemoveObjCondition edroc = (EnemiesDeadRemoveObjCondition)c;
+                //clear list
+                edroc.clear_remove_ids();
+                //replace values
+                foreach (int id in remove_ids) {
+                    edroc.add_obj_to_remove(id);
+                }
+            } else if (c is SwitchCondition) {
+                SwitchCondition sw_cond = (SwitchCondition)c;
+                //clear list
+                sw_cond.clear_remove_ids();
+                //replace values
+                foreach (int id in remove_ids) {
+                    sw_cond.add_obj_to_remove(id);
+                }
+            }
+        }
+
         public void add_condition(ICondition condition) {
             //don't add null conditions
             if (condition == null) { return; }

@@ -195,5 +195,28 @@ namespace gate.Conditions
         public List<int> get_obj_ids_to_remove() {
             return obj_ids_to_remove;
         }
+
+        public void clear_enemy_ids() {
+            enemy_ids.Clear();
+        }
+
+        public void clear_remove_ids() {
+            obj_ids_to_remove.Clear();
+        }
+
+        public void clear() {
+            clear_enemy_ids();
+            clear_remove_ids();
+        }
+
+        //condition contains entity id
+        public (bool, int) contains_entity(int entity_id) {
+            if (enemy_ids.Contains(entity_id)) {
+                return (true, 0);
+            } else if (obj_ids_to_remove.Contains(entity_id)) {
+                return (true, 1);
+            }
+            return (false, -1);
+        }
     }
 }
