@@ -89,6 +89,9 @@
 #begin levels/shrine1.json
 /copy:levels/shrine1.json
 
+#begin levels/shrine2.json
+/copy:levels/shrine2.json
+
 #begin levels/trails_v1.json
 /copy:levels/trails_v1.json
 

@@ -235,3 +235,4 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sfx\
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sfx\typewriter.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\levels\level_saves_test.json
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\dialogue\npc1_taj_dialogue.json
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\levels\shrine2.json
