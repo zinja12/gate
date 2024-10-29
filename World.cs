@@ -628,6 +628,7 @@ namespace gate
                             //no need for dialogue file (yet)
                             check_and_load_tex(ref Constant.scarecrow_tex, "sprites/scarecrow1");
                             NPC scrow = new NPC(Constant.scarecrow_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this, true);
+                            scrow.set_health(10000);
                             //add to entities list and npcs
                             entities_list.Add(scrow);
                             collision_entities.Add(scrow);
@@ -1012,6 +1013,9 @@ namespace gate
             switches.Clear();
             lights.Clear();
             light_excluded_entities.Clear();
+
+            //clear editor only objects
+            editor_only_objects.Clear();
             //clear sound manager
             sound_manager.clear();
             //clear entities
@@ -2276,6 +2280,16 @@ namespace gate
                         if (collision && player.interacting()) {
                             //check for item specifics
                             if (e.get_id().Equals("dash_cloak")) {
+                                //pickup item
+                                player_item_pickup(player, sprite);
+                                clear_entity(sprite);
+                                save_world_level_to_file(
+                                    entities_list.get_all_entities().Keys.ToList(),
+                                    foreground_entities,
+                                    background_entities,
+                                    "mod_" + current_level_id
+                                );
+                            } else if (e.get_id().Equals("bow")) {
                                 //pickup item
                                 player_item_pickup(player, sprite);
                                 clear_entity(sprite);
