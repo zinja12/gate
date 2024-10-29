@@ -58757,12 +58757,55 @@
             "npc_conversation_file_id": null,
             "light": null,
             "light_excluded": false
+        },
+        {
+            "object_identifier": "sign",
+            "object_id_num": 3264,
+            "x_position": 2383.6094,
+            "y_position": -988.1459,
+            "scale": 1,
+            "sign_messages": [
+                "Town -^",
+                "<- Shrine 1",
+                "Shrine 2 ->"
+            ],
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "npc_path_entity_ids": null,
+            "npc_conversation_file_id": null,
+            "light": null,
+            "light_excluded": false
+        },
+        {
+            "object_identifier": "sign",
+            "object_id_num": 3265,
+            "x_position": 2723.038,
+            "y_position": -816.1459,
+            "scale": 1,
+            "sign_messages": [
+                "<- Shrine 1",
+                "Shrine 2 ->"
+            ],
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "npc_path_entity_ids": null,
+            "npc_conversation_file_id": null,
+            "light": null,
+            "light_excluded": false
         }
     ],
     "world_triggers": [
         {
             "object_identifier": "level_trigger",
-            "object_id_num": 3264,
+            "object_id_num": 3266,
             "x_position": 747.2805,
             "y_position": -1179.3948,
             "scale": 0,
@@ -58776,7 +58819,7 @@
         },
         {
             "object_identifier": "level_trigger",
-            "object_id_num": 3265,
+            "object_id_num": 3267,
             "x_position": 3056.7808,
             "y_position": -643.1046,
             "scale": 0,
@@ -58792,7 +58835,7 @@
     "conditions": [
         {
             "object_identifier": "switch_condition",
-            "object_id_num": 3266,
+            "object_id_num": 3268,
             "enemy_ids": [
                 3261
             ],
