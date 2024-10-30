@@ -14,5 +14,6 @@ namespace gate.Serialize
         public float y_position { get; set; }
         public float pause_time { get; set; }
         public bool disable { get; set; }
+        public int target_entity_id { get; set; }
     }
 }

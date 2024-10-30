@@ -20455,6 +20455,13 @@
     "world_script": [
         {
             "trigger": "ON_LOAD",
+            "action": "ai_behavior",
+            "parameters": {
+                "disable": true
+            }
+        },
+        {
+            "trigger": "ON_LOAD",
             "action": "player_movement",
             "parameters": {
                 "disable": true
@@ -20472,6 +20479,13 @@
         {
             "trigger": "ON_LOAD",
             "action": "player_movement",
+            "parameters": {
+                "disable": false
+            }
+        },
+        {
+            "trigger": "ON_LOAD",
+            "action": "ai_behavior",
             "parameters": {
                 "disable": false
             }

@@ -147,28 +147,38 @@ namespace gate
                             //check distance to finish and clean up variables
                             //leave things as we found them
                             if (Vector2.Distance(camera_center_position, world.get_player().get_camera_track_position()) < 5f) {
+                                //ACTION DONE
                                 //camera has reached player
                                 //re-tether the camera to the player
                                 world.player_camera_tethered = true;
                                 //set camera pause timer back to 0
                                 camera_pause_timer = 0f;
-                                action_timer = 0f;
                                 //set camera_move1 back to false for potential next camera move
                                 camera_move1 = false;
+                                //increase on_load_processed count
+                                on_load_processed++;
                                 //increase command idx as we have finished this command
                                 safe_increase_command_idx(script);
                             }
                         }
                         break;
                     case "player_movement":
-                        Console.WriteLine($"setting player movement: {command.parameters.disable}");
+                        Console.WriteLine($"setting player movement disabled: {command.parameters.disable}");
                         //set player movement based on what the command specifies
                         world.get_player().set_movement_disabled(command.parameters.disable);
                         //increase command idx as we have finished this command
                         safe_increase_command_idx(script);
                         break;
+                    case "ai_behavior":
+                        Console.WriteLine($"setting ai behavior disabled: {command.parameters.disable}");
+                        world.set_ai_behavior_disabled(command.parameters.disable);
+                        //increase command idx as we have finished this command
+                        safe_increase_command_idx(script);
+                        break;
                     default:
-                        Console.WriteLine($"command action:{command.action} not supported. ignoring...");
+                        Console.WriteLine($"command action:{command.action} not supported. ignoring and continuing...");
+                        //increase command idx as we have finished this command
+                        safe_increase_command_idx(script);
                         break;
                 }
             }
@@ -177,9 +187,12 @@ namespace gate
         private void safe_increase_command_idx(List<GameWorldScriptElement> script) {
             if (current_command_idx == script.Count - 1) {
                 current_command_idx = -1;
+                Console.WriteLine("end of script commands run");
             } else {
                 current_command_idx++;
             }
+            //set action timer to 0
+            action_timer = 0f;
         }
 
         //returns true when executing, false when finished

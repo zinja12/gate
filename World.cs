@@ -2577,6 +2577,31 @@ namespace gate
             collision_entities.Add(tt);
         }
         
+        //function to set all or specific ai entity behavior enabled or disabled
+        //can extend this function in the future to also pass in a value to set the ai behavior to a certain type
+        public void set_ai_behavior_disabled(bool value, int? entity_id = null) {
+            if (entity_id != null && entity_id.HasValue){
+                //search and set specific entity behavior disabled value
+                IEntity e = entities_list.get_entity_by_id(entity_id.Value);
+                if (e is IAiEntity) {
+                    //type check to make sure we're doing the right thing
+                    IAiEntity ai = (IAiEntity)e;
+                    //see comment below in for loop for why we flip the value
+                    ai.set_behavior_enabled(!value);
+                }
+            } else {
+                //set all
+                //build list of all ai_entities
+                List<IAiEntity> all_ai_entities = new List<IAiEntity>();
+                all_ai_entities.AddRange(enemies);
+                all_ai_entities.AddRange(npcs);
+                foreach (IAiEntity ai in all_ai_entities) {
+                    //value comes in as whether or not it is disabled, so we flip the value and pass to enable function
+                    ai.set_behavior_enabled(!value);
+                }
+            }
+        }
+        
         #region level_transitions
         //function to set up transition
         //NOTE: make sure that you check for !transition_active before invoking the function,
