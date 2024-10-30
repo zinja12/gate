@@ -20452,5 +20452,29 @@
     ],
     "conditions": [],
     "particle_systems": [],
-    "world_script": []
+    "world_script": [
+        {
+            "trigger": "ON_LOAD",
+            "action": "player_movement",
+            "parameters": {
+                "disable": true
+            }
+        },
+        {
+            "trigger": "ON_LOAD",
+            "action": "camera_move",
+            "parameters": {
+                "x_position": 400,
+                "y_position": -400,
+                "pause_time": 5.0
+            }
+        },
+        {
+            "trigger": "ON_LOAD",
+            "action": "player_movement",
+            "parameters": {
+                "disable": false
+            }
+        }
+    ]
 }

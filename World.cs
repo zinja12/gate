@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads1.json", current_level_id;
+        public string load_file_name = "shrine1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -78,6 +78,9 @@ namespace gate
         //clear variables
         List<IEntity> entities_to_clear;
 
+        //script parser
+        ScriptParser world_script_parser;
+
         TextBox current_textbox = null;
         Sign current_sign = null;
         NPC current_npc = null;
@@ -97,6 +100,7 @@ namespace gate
         //level rotation variables
         private bool rotation_active = false;
         private float camera_goal_rotation;
+        private bool post_level_load = false;
 
         //camera world variables
         private bool camera_shake = false;
@@ -108,6 +112,7 @@ namespace gate
         private List<int> viewport_points_outside_collider = new List<int>();
         float camera_gamepad_h_input = 0f;
         private bool player_camera_rotate_enabled = true, camera_invert = false;
+        public bool player_camera_tethered = true;
 
         //editor variables
         private bool editor_active = false, editor_enabled = true;
@@ -399,6 +404,18 @@ namespace gate
             string file_contents = read_from_file(root_directory, level_file_path, modified_level_id);
             /*Read object from contents as json*/
             GameWorldFile world_file_contents = JsonSerializer.Deserialize<GameWorldFile>(file_contents);
+            //set up script parser
+            world_script_parser = new ScriptParser(this, world_file_contents.world_script);
+            //parse world script
+            int command_parse_count = 0;
+            if (!world_script_parser.parse_script(world_file_contents.world_script, out command_parse_count)) {
+                //parse has failed something is wrong
+                throw new Exception("World Script Parser Error. Please fix world script.");
+            }
+            //check commands parsed
+            if (command_parse_count != world_file_contents.world_script.Count) {
+                throw new Exception($"World Script Parser Error: Commands parsed {command_parse_count} while world file contains {world_file_contents.world_script.Count} commands");
+            }
             //check deserialization
             if (world_file_contents != null) {
                 //variables to check world file as loading occurs
@@ -979,6 +996,8 @@ namespace gate
             camera.Rotation = 0f;
             //sort the entities list once so things are not drawn out of order in terms of depth values
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+            //set post level load
+            post_level_load = true;
         }
         #endregion
 
@@ -1045,6 +1064,14 @@ namespace gate
             
             //keep goal rotations updated
             update_goal_rotation(gameTime);
+            
+            //check whether to execute world scripts post level load
+            if (post_level_load) {
+                //post level load run on_load world script
+                world_script_parser.execute_on_load_script(gameTime, world_script_parser.get_on_load_scripts());
+                //set post level load to the value of the script finishing execution
+                post_level_load = !world_script_parser.finished_execution();
+            }
 
             //handle textbox
             if ((current_sign != null || current_npc != null) && current_textbox != null) {
@@ -1555,9 +1582,7 @@ namespace gate
             check_player_dash_camera_shake();
 
             //update camera
-            if (Keyboard.GetState().IsKeyDown(Keys.N)) {
-                camera.Update(Vector2.Zero);
-            } else {
+            if (player_camera_tethered) {
                 camera.Update(player.get_camera_track_position());
             }
 
@@ -2067,7 +2092,7 @@ namespace gate
                 world_triggers = sorted_world_triggers,
                 conditions = sorted_world_conditions,
                 particle_systems = world_particle_systems,
-                world_script = new List<string>()
+                world_script = new List<GameWorldScriptElement>()
             };
             //take world file and serialize to json then write to file
             string file_contents = JsonSerializer.Serialize(world_file);
@@ -2778,6 +2803,10 @@ namespace gate
                 }
             }
             return null;
+        }
+
+        public Camera get_camera() {
+            return this.camera;
         }
 
         public void resize_viewport(GraphicsDeviceManager _graphics) {

@@ -16,6 +16,6 @@ namespace gate.Serialize
         public List<GameWorldTrigger> world_triggers { get; set; }
         public List<GameWorldCondition> conditions { get; set; }
         public List<GameWorldParticleSystem> particle_systems { get; set; }
-        public List<string> world_script { get; set; }
+        public List<GameWorldScriptElement> world_script { get; set; }
     }
 }

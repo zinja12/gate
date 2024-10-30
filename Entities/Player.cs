@@ -1643,6 +1643,11 @@ namespace gate.Entities
                 spriteBatch.Draw(Constant.player_tex, draw_position, idle_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
             }
 
+            if (movement_disabled) {
+                //if movement is disabled draw idle
+                spriteBatch.Draw(Constant.player_tex, draw_position, idle_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+            }
+
             //draw current emotion
             if (current_emotion != Emotion.Calm) {
                 spriteBatch.Draw(Constant.emotion_texture_map[(int)current_emotion].Item1, emotion_display_position, null, Constant.emotion_texture_map[(int)current_emotion].Item2, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
