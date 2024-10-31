@@ -13,5 +13,6 @@ namespace gate.Serialize
         public string trigger { get; set; }
         public string action { get; set; }
         public GameWorldScriptElementParam parameters { get; set; }
+        public int level_load_count_required { get; set; }
     }
 }

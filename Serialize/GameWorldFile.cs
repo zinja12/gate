@@ -12,6 +12,7 @@ namespace gate.Serialize
     {
         //game world object fields
         public GameWorldObject camera_bounds { get; set; }
+        public int level_loaded_count { get; set; }
         public List<GameWorldObject> world_objects { get; set; }
         public List<GameWorldTrigger> world_triggers { get; set; }
         public List<GameWorldCondition> conditions { get; set; }

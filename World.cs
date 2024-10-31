@@ -81,6 +81,9 @@ namespace gate
         //script parser
         ScriptParser world_script_parser;
 
+        //dictionary for level loaded counts
+        Dictionary<string, int> level_loaded_map;
+
         TextBox current_textbox = null;
         Sign current_sign = null;
         NPC current_npc = null;
@@ -209,6 +212,9 @@ namespace gate
             //weapons
             entities_to_clear = new List<IEntity>();
 
+            //set dictionary for level loading
+            level_loaded_map = new Dictionary<string, int>();
+
             //create entities list and add player
             entities_list = new RenderList();
 
@@ -330,14 +336,13 @@ namespace gate
             }
 
             //in the case of object persistence being enabled we need to look for the modified level file to return
-            string mod_prefix = "mod_";
-            var modified_level_id = mod_prefix + level_id;
+            var modified_level_id = Constant.level_mod_prefix + level_id;
             //combine path
             var path = Path.Combine(root_dir, file_path + modified_level_id);
             //check for file existence and return based on file existence
             if (file_exists(path)) {
                 Console.WriteLine($"modified level file found({path})");
-                return mod_prefix + level_id;
+                return Constant.level_mod_prefix + level_id;
             } else {
                 Console.WriteLine($"no modified level file found({path})");
                 Console.WriteLine($"level_id_path:{Path.Combine(root_dir, file_path + level_id)}");
@@ -405,7 +410,7 @@ namespace gate
             /*Read object from contents as json*/
             GameWorldFile world_file_contents = JsonSerializer.Deserialize<GameWorldFile>(file_contents);
             //set up script parser
-            world_script_parser = new ScriptParser(this, world_file_contents.world_script);
+            world_script_parser = new ScriptParser(this, world_file_contents.world_script, level_loaded_map.ContainsKey(level_id) ? level_loaded_map[level_id] : 1);
             //parse world script
             int command_parse_count = 0;
             if (!world_script_parser.parse_script(world_file_contents.world_script, out command_parse_count)) {
@@ -998,6 +1003,15 @@ namespace gate
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
             //set post level load
             post_level_load = true;
+
+            //update level loaded count
+            //set/update level loaded dictionary with level currently being loaded
+            update_level_loaded_map(world_file_contents.level_loaded_count, level_id);
+            //print level loaded map
+            Console.WriteLine("level_loaded_map:");
+            foreach (KeyValuePair<string, int> kv in level_loaded_map) {
+                Console.WriteLine($"{kv.Key}-{kv.Value}");
+            }
         }
         #endregion
 
@@ -1047,6 +1061,41 @@ namespace gate
             rotation_active = false;
         }
 
+        private void update_level_loaded_map(int level_loaded_count, string level_id) {
+            //clean level id if needed
+            string stripped_level_id = level_id.StartsWith(Constant.level_mod_prefix) ? level_id.Substring(Constant.level_mod_prefix.Length) : level_id;
+            if (level_loaded_count == 0) {
+                //first time level is being loaded, add it to dictionary
+                level_loaded_map.Add(stripped_level_id, 1);
+            } else {
+                //this is not the first time the level has been loaded during any point previously whether or not the game has been booted down or not
+                //set the dictionary to 1 + level_loaded_count passed in from file
+                if (level_loaded_map.ContainsKey(stripped_level_id)) {
+                    //pull held value from dictionary
+                    int level_loaded_value = level_loaded_map[stripped_level_id];
+                    //if the value from the dictionary is not the same as the passed in count, take the parameter
+                    if (level_loaded_value != level_loaded_count) {
+                        level_loaded_map[stripped_level_id] = level_loaded_count + 1;
+                    } else {
+                        level_loaded_map[stripped_level_id] = level_loaded_value + 1;
+                    }
+                } else {
+                    level_loaded_map.Add(stripped_level_id, level_loaded_count + 1);
+                }
+            }
+
+            //save modified file with updated count
+            //we actually want to save with the mod prefix here
+            //because we will be able to read it from the mod file in the load level function the next time we enter this level
+            save_world_level_to_file(
+                entities_list.get_all_entities().Keys.ToList(),
+                foreground_entities,
+                background_entities,
+                level_loaded_map[current_level_id],
+                Constant.level_mod_prefix + current_level_id
+            );
+        }
+
         public void Update(GameTime gameTime){
             //calculate fps
             fps = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -1068,7 +1117,7 @@ namespace gate
             //check whether to execute world scripts post level load
             if (post_level_load) {
                 //post level load run on_load world script
-                world_script_parser.execute_on_load_script(gameTime, world_script_parser.get_on_load_scripts());
+                world_script_parser.execute_on_load_script(gameTime, level_loaded_map[current_level_id], world_script_parser.get_on_load_scripts());
                 //set post level load to the value of the script finishing execution
                 post_level_load = !world_script_parser.finished_execution();
             }
@@ -1152,9 +1201,8 @@ namespace gate
                 * this approach actually could work well
                 */
                 //Depth sort while player is moving as well
+                //render distance re-calculation for entities happens within the sort_list_by_distance function
                 entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
-
-                //recalculate what objects need to be within render distance
             }
 
             #region player_death
@@ -1388,7 +1436,7 @@ namespace gate
                     //pull all world entities from render list (whether or not they're currently being drawn)
                     List<IEntity> all_world_entities = entities_list.get_all_entities().Keys.ToList();
                     //save
-                    save_world_level_to_file(all_world_entities, foreground_entities, background_entities, save_file_name);
+                    save_world_level_to_file(all_world_entities, foreground_entities, background_entities, level_loaded_map[current_level_id], save_file_name);
                 } else if (editor_tool_idx == 1) {
                     //condition tool
                     //right click
@@ -1930,7 +1978,7 @@ namespace gate
             return world_objs;
         }
 
-        public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities, string file_save_name) {
+        public void save_world_level_to_file(List<IEntity> entities,  List<ForegroundEntity> foreground_entities,  List<BackgroundEntity> background_entities, int level_load_count, string file_save_name) {
             //set up object lists to save to file
             List<GameWorldTrigger> world_triggers = new List<GameWorldTrigger>();
             List<GameWorldCondition> conditions = condition_manager.get_world_level_list();
@@ -2088,11 +2136,12 @@ namespace gate
             
             //generate GameWorldFile object with all saved objects
             GameWorldFile world_file = new GameWorldFile {
+                level_loaded_count = level_load_count,
                 world_objects = sorted_world_objs,
                 world_triggers = sorted_world_triggers,
                 conditions = sorted_world_conditions,
                 particle_systems = world_particle_systems,
-                world_script = new List<GameWorldScriptElement>()
+                world_script = world_script_parser.get_game_world_script()
             };
             //take world file and serialize to json then write to file
             string file_contents = JsonSerializer.Serialize(world_file);
@@ -2293,7 +2342,8 @@ namespace gate
                                     entities_list.get_all_entities().Keys.ToList(),
                                     foreground_entities,
                                     background_entities,
-                                    "mod_" + current_level_id
+                                    level_loaded_map[current_level_id],
+                                    Constant.level_mod_prefix + current_level_id
                                 );
                             }
                         }
@@ -2312,7 +2362,8 @@ namespace gate
                                     entities_list.get_all_entities().Keys.ToList(),
                                     foreground_entities,
                                     background_entities,
-                                    "mod_" + current_level_id
+                                    level_loaded_map[current_level_id],
+                                    Constant.level_mod_prefix + current_level_id
                                 );
                             } else if (e.get_id().Equals("bow")) {
                                 //pickup item
@@ -2322,7 +2373,8 @@ namespace gate
                                     entities_list.get_all_entities().Keys.ToList(),
                                     foreground_entities,
                                     background_entities,
-                                    "mod_" + current_level_id
+                                    level_loaded_map[current_level_id],
+                                    Constant.level_mod_prefix + current_level_id
                                 );
                             }
                         }

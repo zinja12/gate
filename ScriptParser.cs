@@ -26,6 +26,8 @@ namespace gate
         private World world;
         private List<GameWorldScriptElement> game_world_script;
 
+        private int level_loaded_count = 0;
+
         private List<GameWorldScriptElement> on_load_scripts;
         private List<GameWorldScriptElement> on_unload_scripts;
         
@@ -39,9 +41,11 @@ namespace gate
         private bool camera_move1 = false;
         private float camera_pause_timer, camera_pause_threshold;
 
-        public ScriptParser(World world, List<GameWorldScriptElement> game_world_script) {
+        public ScriptParser(World world, List<GameWorldScriptElement> game_world_script, int level_loaded_count) {
             this.world = world;
             this.game_world_script = game_world_script;
+            
+            this.level_loaded_count = level_loaded_count;
 
             this.on_load_scripts = new List<GameWorldScriptElement>();
             this.on_unload_scripts = new List<GameWorldScriptElement>();
@@ -92,7 +96,7 @@ namespace gate
             return true;
         }
 
-        public void execute_on_load_script(GameTime gameTime, List<GameWorldScriptElement> script) {
+        public void execute_on_load_script(GameTime gameTime, int level_loaded_count, List<GameWorldScriptElement> script) {
             //current command is not set
             if (current_command_idx == -1) {
                 //set the current command
@@ -107,6 +111,12 @@ namespace gate
                 action_timer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 //pull current command and execute based on timer
                 GameWorldScriptElement command = script[current_command_idx];
+                //first check whether or not the current commands required level load count matches
+                if (level_loaded_count != command.level_load_count_required) {
+                    //level load count required does not match current, so we can skip this command and continue
+                    safe_increase_command_idx(script);
+                }
+
                 switch (command.action) {
                     case "camera_move":
                         //set camera_move_timer threshold

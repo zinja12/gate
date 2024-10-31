@@ -1,5 +1,6 @@
 {
     "camera_bounds": null,
+    "level_loaded_count": 0,
     "world_objects": [
         {
             "object_identifier": "player_chip",

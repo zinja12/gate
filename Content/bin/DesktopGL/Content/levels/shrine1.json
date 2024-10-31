@@ -1,5 +1,6 @@
 {
     "camera_bounds": null,
+    "level_loaded_count": 0,
     "world_objects": [
         {
             "object_identifier": "player_chip",
@@ -20458,37 +20459,42 @@
             "action": "ai_behavior",
             "parameters": {
                 "disable": true
-            }
+            },
+            "level_load_count_required": 1
         },
         {
             "trigger": "ON_LOAD",
             "action": "player_movement",
             "parameters": {
                 "disable": true
-            }
+            },
+            "level_load_count_required": 1
         },
         {
             "trigger": "ON_LOAD",
             "action": "camera_move",
             "parameters": {
-                "x_position": 400,
-                "y_position": -400,
+                "x_position": -500,
+                "y_position": -800,
                 "pause_time": 5.0
-            }
+            },
+            "level_load_count_required": 1
         },
         {
             "trigger": "ON_LOAD",
             "action": "player_movement",
             "parameters": {
                 "disable": false
-            }
+            },
+            "level_load_count_required": 1
         },
         {
             "trigger": "ON_LOAD",
             "action": "ai_behavior",
             "parameters": {
                 "disable": false
-            }
+            },
+            "level_load_count_required": 1
         }
     ]
 }

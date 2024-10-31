@@ -172,6 +172,8 @@ namespace gate.Core
         //light constants
         public static float light_distance = 250f;
 
+        public static string level_mod_prefix = "mod_";
+
         /*SHADERS*/
         public static float pixels = 1700.0f;
         public static float pixelation = 3.55f;
