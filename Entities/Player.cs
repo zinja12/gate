@@ -602,6 +602,9 @@ namespace gate.Entities
             //update animations for the player
             if (!movement_disabled){
                 update_animation(gameTime);
+            } else {
+                //if player has movement disabled, only update idle animation
+                idle_animation.Update(gameTime);
             }
 
             //update collision and hit/hurt boxes
