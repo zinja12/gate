@@ -175,8 +175,8 @@ ToDo List:
         -fix swing artwork to actually look more like complete parabolic swing
 [](FEATURE)add kasugai crow character to deliver tutorial story beats?
     -maybe this comes from a character similar to uncle iroh to deliver wisdom?
-[](FEATURE)add procedural weapons attached to back of player
-[](FEATURE)support for game event scripting (cutscenes, camera pans, etc)
+[WILL NOT DO - too complex for the scale of game](FEATURE)add procedural weapons attached to back of player
+[IN-PROGRESS](FEATURE)support for game event scripting (cutscenes, camera pans, etc)
 [](FEATURE)on-demand texture streaming/loading per level
 [IN PROGRESS](FEATURE)start working on tutorial level
 [](FEATURE)start working on different worlds and different color palettes
@@ -185,7 +185,7 @@ ToDo List:
 [](FEATURE)add pause functionality (this is a can of worms rn, because it should probably be another screen, not just stopping the game loop)
     -this is essentially support for screens and menus
 [](FEATURE)add screen/menu for changing key bindings
-[](FEATURE)add level intro scripting
+[IN-PROGRESS](FEATURE)add level intro scripting
     -example:
     {
          "stage_command": "ON_LEVEL_LOAD",
