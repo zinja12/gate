@@ -84,7 +84,6 @@ namespace gate.Triggers
         }
 
         public virtual GameWorldTrigger to_world_level_trigger() {
-            Console.WriteLine($"saving script trigger previously activated value:{previously_activated}");
             return new GameWorldTrigger {
                 object_identifier = "script_trigger",
                 object_id_num = get_obj_ID_num(),
