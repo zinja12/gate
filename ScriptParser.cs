@@ -180,7 +180,7 @@ namespace gate
                 //pull current command and execute based on timer
                 GameWorldScriptElement command = script[current_command_idx];
                 //first check whether or not the current commands required level load count matches
-                if (level_loaded_count != command.level_load_count_required) {
+                if (command.level_load_count_required < level_loaded_count) {
                     //level load count required does not match current, so we can skip this command and continue
                     safe_increase_command_idx(script);
                 }
@@ -243,6 +243,7 @@ namespace gate
         }
 
         public void camera_move_command(GameTime gameTime, GameWorldScriptElement command, List<GameWorldScriptElement> script) {
+            world.get_player().set_movement_disabled(true);
             //set camera_move_timer threshold
             camera_pause_threshold = command.parameters.pause_time;
             //move camera

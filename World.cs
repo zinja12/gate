@@ -400,6 +400,9 @@ namespace gate
             game.fps = new FpsCounter(game, Constant.arial_small, Vector2.Zero);
             game.fps.Initialize();
 
+            //set camera tether to player on every level load
+            this.player_camera_tethered = true;
+
             List<string> loaded_obj_identifiers = new List<string>();
 
             //set up and read level file
@@ -2771,6 +2774,8 @@ namespace gate
                         //set transition1 back to incomplete for next transition
                         transition1_complete = false;
                         player.set_movement_disabled(false);
+                        //tether camera back to player
+                        player_camera_tethered = true;
                         transition_percentage = 0;
                     }
                 }
