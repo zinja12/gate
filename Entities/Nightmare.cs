@@ -112,6 +112,8 @@ namespace gate.Entities
         private float previous_rotation = 0f;
         protected float angle;
 
+        protected int placement_source = 0;
+
         protected GameTime gt;
 
         public Nightmare(Texture2D texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier, bool? static_image_entity = null) {
@@ -621,6 +623,14 @@ namespace gate.Entities
         public bool is_dead() {
             //only stop updating when the health is 0 and the time since death is greater than the threshold
             return health <= 0 && time_since_death >= 500f;
+        }
+
+        public void set_placement_source(int placement_source_value) {
+            this.placement_source = placement_source_value;
+        }
+
+        public int get_placement_source() {
+            return this.placement_source;
         }
 
         public void take_hit(IEntity entity, int damage) {

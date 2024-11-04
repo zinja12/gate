@@ -58831,12 +58831,28 @@
             "entry_y_position": -1107.4844,
             "rotation": 0,
             "goal_rotation": 0
+        },
+        {
+            "object_identifier": "script_trigger",
+            "object_id_num": 3268,
+            "x_position": 2927.84,
+            "y_position": -1659.1283,
+            "scale": 0,
+            "width": 250,
+            "height": 250,
+            "level_id": "shrine2.json",
+            "entry_x_position": -1463.9585,
+            "entry_y_position": -1107.4844,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "previously_activated": false,
+            "retrigger": false
         }
     ],
     "conditions": [
         {
             "object_identifier": "switch_condition",
-            "object_id_num": 3268,
+            "object_id_num": 3269,
             "enemy_ids": [
                 3261
             ],
@@ -58853,5 +58869,68 @@
         }
     ],
     "particle_systems": [],
-    "world_script": []
+    "world_script": [
+        {
+            "trigger": "ON_TRIGGER",
+            "action": "spawn_nightmare",
+            "parameters": {
+                "x_position": 2927.84,
+                "y_position": -1659.1283,
+                "trigger_id": 3268,
+                "trigger_only_once": true
+            }
+        },
+        {
+            "trigger": "ON_TRIGGER",
+            "action": "spawn_ghost",
+            "parameters": {
+                "x_position": 3027.84,
+                "y_position": -1659.1283,
+                "trigger_id": 3268,
+                "trigger_only_once": true
+            }
+        },
+        {
+            "trigger": "ON_TRIGGER",
+            "action": "ai_behavior",
+            "parameters": {
+                "disable": true,
+                "trigger_id": 3268
+            }
+        },
+        {
+            "trigger": "ON_TRIGGER",
+            "action": "player_movement",
+            "parameters": {
+                "disable": true,
+                "trigger_id": 3268
+            }
+        },
+        {
+            "trigger": "ON_TRIGGER",
+            "action": "camera_move",
+            "parameters": {
+                "x_position": 2927.84,
+                "y_position": -1659.1283,
+                "pause_time": 5.0,
+                "trigger_id": 3268
+            }
+        },
+        {
+            "trigger": "ON_TRIGGER",
+            "action": "player_movement",
+            "parameters": {
+                "disable": false,
+                "trigger_id": 3268
+            }
+        },
+        {
+            "trigger": "ON_TRIGGER",
+            "action": "ai_behavior",
+            "parameters": {
+                "disable": false,
+                "trigger_id": 3268
+            }
+        }
+    ]
 }

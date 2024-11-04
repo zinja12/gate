@@ -23,5 +23,7 @@ namespace gate.Serialize
         public float entry_y_position { get; set; }
         public float rotation { get; set; }
         public float goal_rotation { get; set; }
+        public bool previously_activated { get; set; }
+        public bool retrigger { get; set; }
     }
 }

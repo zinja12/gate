@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "shrine1.json", current_level_id;
+        public string load_file_name = "crossroads1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -103,7 +103,9 @@ namespace gate
         //level rotation variables
         private bool rotation_active = false;
         private float camera_goal_rotation;
-        private bool post_level_load = false;
+        //script variables
+        private bool post_level_load_script_trigger = false, gameplay_script_trigger = false;
+        private ScriptTrigger current_script_trigger = null;
 
         //camera world variables
         private bool camera_shake = false;
@@ -769,13 +771,8 @@ namespace gate
                     throw new Exception("World File Error: No player_chip found in file for player to spawn at. Please add a player chip object to world file.");
                 }
 
-                //gather all ai entities and set references for each ai entity
-                List<IAiEntity> all_ai_entities = new List<IAiEntity>();
-                foreach (IAiEntity ai in enemies) { all_ai_entities.Add(ai); }
-                foreach (IAiEntity ai in npcs) { all_ai_entities.Add(ai); }
-                //set fellow enemies for all ais (this is so each entity knows where the others are to avoid overlaps)
-                foreach (IAiEntity ai in enemies) { ai.set_ai_entities(all_ai_entities); }
-                foreach (IAiEntity ai in npcs) { ai.set_ai_entities(all_ai_entities); }
+                //set ai entities for all ai entities
+                set_ai_entities_for_all_ais();
 
                 //set up triggers
                 if (world_file_contents.world_triggers != null) {
@@ -791,6 +788,9 @@ namespace gate
                                 break;
                             case "rotation_trigger":
                                 trigger = new RotationTrigger(trigger_position, w_trigger.width, w_trigger.height, w_trigger.goal_rotation, player, w_trigger.object_id_num);
+                                break;
+                            case "script_trigger":
+                                trigger = new ScriptTrigger(trigger_position, w_trigger.width, w_trigger.height, w_trigger.previously_activated, w_trigger.retrigger, player, w_trigger.object_id_num);
                                 break;
                             default:
                                 //nothing
@@ -1002,7 +1002,7 @@ namespace gate
             //sort the entities list once so things are not drawn out of order in terms of depth values
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
             //set post level load
-            post_level_load = true;
+            post_level_load_script_trigger = true;
 
             //update level loaded count
             //set/update level loaded dictionary with level currently being loaded
@@ -1012,6 +1012,16 @@ namespace gate
             foreach (KeyValuePair<string, int> kv in level_loaded_map) {
                 Console.WriteLine($"{kv.Key}-{kv.Value}");
             }
+        }
+
+        public void set_ai_entities_for_all_ais() {
+            //gather all ai entities and set references for each ai entity
+            List<IAiEntity> all_ai_entities = new List<IAiEntity>();
+            foreach (IAiEntity ai in enemies) { all_ai_entities.Add(ai); }
+            foreach (IAiEntity ai in npcs) { all_ai_entities.Add(ai); }
+            //set fellow enemies for all ais (this is so each entity knows where the others are to avoid overlaps)
+            foreach (IAiEntity ai in enemies) { ai.set_ai_entities(all_ai_entities); }
+            foreach (IAiEntity ai in npcs) { ai.set_ai_entities(all_ai_entities); }
         }
         #endregion
 
@@ -1064,24 +1074,18 @@ namespace gate
         private void update_level_loaded_map(int level_loaded_count, string level_id) {
             //clean level id if needed
             string stripped_level_id = level_id.StartsWith(Constant.level_mod_prefix) ? level_id.Substring(Constant.level_mod_prefix.Length) : level_id;
-            if (level_loaded_count == 0) {
-                //first time level is being loaded, add it to dictionary
-                level_loaded_map.Add(stripped_level_id, 1);
-            } else {
-                //this is not the first time the level has been loaded during any point previously whether or not the game has been booted down or not
-                //set the dictionary to 1 + level_loaded_count passed in from file
-                if (level_loaded_map.ContainsKey(stripped_level_id)) {
-                    //pull held value from dictionary
-                    int level_loaded_value = level_loaded_map[stripped_level_id];
-                    //if the value from the dictionary is not the same as the passed in count, take the parameter
-                    if (level_loaded_value != level_loaded_count) {
-                        level_loaded_map[stripped_level_id] = level_loaded_count + 1;
-                    } else {
-                        level_loaded_map[stripped_level_id] = level_loaded_value + 1;
-                    }
+            if (level_loaded_map.ContainsKey(stripped_level_id)) {
+                //we already have the level id in the map so increase the count
+                int level_loaded_value = level_loaded_map[stripped_level_id];
+                //if the value from the dictionary is not the same as the passed in count, take the parameter
+                if (level_loaded_value != level_loaded_count) {
+                    level_loaded_map[stripped_level_id] = (level_loaded_count + 1);
                 } else {
-                    level_loaded_map.Add(stripped_level_id, level_loaded_count + 1);
+                    level_loaded_map[stripped_level_id] = (level_loaded_value + 1);
                 }
+            } else {
+                //must be the first time level is being loaded, add it to dictionary
+                level_loaded_map.Add(stripped_level_id, 1);
             }
 
             //save modified file with updated count
@@ -1115,11 +1119,39 @@ namespace gate
             update_goal_rotation(gameTime);
             
             //check whether to execute world scripts post level load
-            if (post_level_load) {
+            if (post_level_load_script_trigger) {
                 //post level load run on_load world script
-                world_script_parser.execute_on_load_script(gameTime, level_loaded_map[current_level_id], world_script_parser.get_on_load_scripts());
+                world_script_parser.execute_on_load_script(gameTime, level_loaded_map[current_level_id], world_script_parser.get_on_load_script());
                 //set post level load to the value of the script finishing execution
-                post_level_load = !world_script_parser.finished_execution();
+                post_level_load_script_trigger = !world_script_parser.finished_execution();
+            }
+
+            //check whether to execute gameplay world scripts
+            if (gameplay_script_trigger && current_script_trigger != null) {
+                //run gameplay script)
+                world_script_parser.execute_gameplay_trigger_script(gameTime, current_script_trigger, world_script_parser.get_on_gameplay_script(current_script_trigger.get_obj_ID_num()));
+                //set gameplay script trigger based on whether or not the script parser has finished the execution
+                gameplay_script_trigger = !world_script_parser.finished_execution();
+                //if gameplay script trigger is set to false after checking for finished execution
+                //invalidate script trigger
+                if (!gameplay_script_trigger) {
+                    //set focused trigger previously activated to true
+                    if (!current_script_trigger.get_previously_activated()) {
+                        //save the level, because now the script trigger previously activated value is true
+                        //if it already has been previously activated of true we don't need to save the file to reset it
+                        current_script_trigger.set_previously_activated(true);
+                        //save the world level file with the newly updated script trigger value
+                        save_world_level_to_file(
+                            entities_list.get_all_entities().Keys.ToList(),
+                            foreground_entities,
+                            background_entities,
+                            level_loaded_map[current_level_id],
+                            Constant.level_mod_prefix + current_level_id
+                        );
+                    }
+                    //set focused script trigger to null
+                    current_script_trigger = null;
+                }
             }
 
             //handle textbox
@@ -1429,7 +1461,7 @@ namespace gate
                     //create_position = Constant.rotate_point(mouse_world_position, -camera.Rotation, 0f, Constant.direction_down);
                     Console.WriteLine("mouse_world_position:" + mouse_world_position);
                     Console.WriteLine("create_position:" + create_position);
-                    place_object(gameTime, camera.Rotation, selected_object, create_position, editor_object_rotation);
+                    place_object(gameTime, camera.Rotation, selected_object, create_position, editor_object_rotation, (int)ObjectPlacement.Level);
                     Console.WriteLine($"Created object idx:{editor_object_idx}");
                     editor_object_idx++;
                 } else if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.LeftControl) && selection_elapsed >= selection_cooldown) { //Ctrl+S
@@ -1596,7 +1628,7 @@ namespace gate
                                     selected_tree_obj = 20;
                                     break;
                             }
-                            place_object(gameTime, camera.Rotation, selected_tree_obj, p, random_rotation);
+                            place_object(gameTime, camera.Rotation, selected_tree_obj, p, random_rotation, (int)ObjectPlacement.Level);
                             editor_object_idx++;
                             tree_type++;
                             if (tree_type >= 3) {
@@ -1647,7 +1679,7 @@ namespace gate
         }
 
         /*editor tooling*/
-        public void place_object(GameTime gameTime, float rotation, int selected_obj, Vector2 create_position, float editor_object_rotation) {
+        public void place_object(GameTime gameTime, float rotation, int selected_obj, Vector2 create_position, float editor_object_rotation, int placement_source) {
             switch (selected_obj) {
                 case 1:
                     Tree t = new Tree(create_position, 1f, Constant.tree_spritesheet, false, "tree", editor_object_idx);
@@ -1742,9 +1774,12 @@ namespace gate
                 case 15:
                     Nightmare n = new Nightmare(Constant.nightmare_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "nightmare");
                     n.set_behavior_enabled(false);
+                    n.set_placement_source(placement_source);
                     entities_list.Add(n);
                     collision_entities.Add(n);
                     enemies.Add(n);
+                    //set ai entities for all entities
+                    set_ai_entities_for_all_ais();
                     Console.WriteLine($"nightmare,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
                     break;
                 case 16:
@@ -1835,9 +1870,12 @@ namespace gate
                 case 30:
                     Ghost ghost = new Ghost(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "ghost", this);
                     ghost.set_behavior_enabled(false);
+                    ghost.set_placement_source(placement_source);
                     entities_list.Add(ghost);
                     collision_entities.Add(ghost);
                     enemies.Add(ghost);
+                    set_ai_entities_for_all_ais();
+                    Console.WriteLine($"ghost,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
                     break;
                 case 31:
                     HitSwitch hs = new HitSwitch("hitswitch", Constant.switch_active, Constant.switch_inactive, create_position, 1f, 16, 16, 8, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
@@ -1935,7 +1973,20 @@ namespace gate
                 //we need to exclude deleted objects from being saved to the world level file
                 //we also need to exclude the player form being saved as we are using player chips to denote spawn points
                 if (!entities_to_clear.Contains(e) && !(e is Player) && !(e is Arrow) && !(e is Footprints)) {
-                    world_objs.Add(e.to_world_level_object());
+                    //also need to check further for AI and exclude those added via script
+                    if (((e is Nightmare) || (e is Ghost)) && !(e is NPC)) {
+                        //check for object placement source
+                        //can just cast to nightmare since ghost inherits from nightmare
+                        Nightmare n = (Nightmare)e;
+                        int placement_src = n.get_placement_source();
+                        //skip entity if the placement source is via script
+                        if (placement_src == (int)ObjectPlacement.Script) {
+                            continue;
+                        }
+                    } else {
+                        //add if not nightmare or ghost
+                        world_objs.Add(e.to_world_level_object());
+                    }
                 }
             }
             //iterate over foreground entities
@@ -2565,6 +2616,24 @@ namespace gate
                     //set triggered back to false
                     triggered = false;
                     //set the actual trigger back to false
+                    trigger.set_triggered(false);
+                    return;
+                } else if (trigger.get_trigger_type() == TriggerType.Script) {
+                    //check trigger for previous trigger value and retrigger value
+                    bool previously_activated = ((ScriptTrigger)trigger).get_previously_activated();
+                    bool retrigger = ((ScriptTrigger)trigger).get_retrigger();
+                    //if the trigger has not been previously activated or we want to retrigger it (retrigger == true)
+                    if (!previously_activated || (retrigger)) {
+                        //set up variables to run script on next game update tick
+                        //set current trigger
+                        current_script_trigger = (ScriptTrigger)trigger;
+                        //set gameplay script trigger to true
+                        gameplay_script_trigger = true;
+                    }
+
+                    //set actual trigger back to false
+                    //previously_activated will bet set to true after the script finishes running
+                    triggered = false;
                     trigger.set_triggered(false);
                     return;
                 }

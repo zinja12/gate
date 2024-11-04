@@ -17,6 +17,11 @@ namespace gate.Core
         Anxiety = 1, //attack power reduction - 
         Calm = 2 //normal
     }
+
+    public enum ObjectPlacement {
+        Level = 0,
+        Script = 1
+    }
     
     public class Constant
     {

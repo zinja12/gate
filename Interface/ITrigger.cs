@@ -11,7 +11,8 @@ namespace gate.Interface
 {
     public enum TriggerType {
         Level = 1,
-        Rotation = 2
+        Rotation = 2,
+        Script = 3
     }
 
     public interface ITrigger {
