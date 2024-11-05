@@ -1124,7 +1124,7 @@ namespace gate
             //check whether to execute world scripts post level load
             if (post_level_load_script_trigger) {
                 //post level load run on_load world script
-                world_script_parser.execute_on_load_script(gameTime, level_loaded_map[current_level_id], world_script_parser.get_on_load_script());
+                world_script_parser.execute_on_load_script(gameTime, level_loaded_map[current_level_id], world_script_parser.get_on_load_script().Where(command => (command.level_load_count_required == level_loaded_map[current_level_id] || command.level_load_count_required == -1)).ToList());
                 //set post level load to the value of the script finishing execution
                 post_level_load_script_trigger = !world_script_parser.finished_execution();
             }
