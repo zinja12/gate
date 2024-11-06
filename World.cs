@@ -2402,6 +2402,10 @@ namespace gate
                                         Console.WriteLine($"{kv.Key}-{kv.Value}");
                                     }
                                     //filter messages for textbox on first matching tag
+                                    Console.WriteLine("CONDITION TAGS:");
+                                    foreach (KeyValuePair<string, bool> kv in condition_tags) {
+                                        Console.WriteLine($"{kv.Key}-{kv.Value}");
+                                    }
                                     string tag = npc.find_first_matching_tag(condition_tags);
                                     //set npc textbox to filtered textbox
                                     npc.set_textbox(

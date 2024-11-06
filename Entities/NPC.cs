@@ -285,9 +285,15 @@ namespace gate.Entities
                     npc_tags.Add(gw_dialogue.tag);
                 }
             }
+            Console.WriteLine($"all_npc_tags:{npc_tags}");
+
             //filter dictionary
             Dictionary<string, bool> filtered_condition_tags = condition_tags.Where(i => npc_tags.Contains(i.Key)).ToDictionary(i => i.Key, i => i.Value);
             //now that we have the tags we should check which conditions in the map match that tag
+            Console.WriteLine("filtered_condition_tags:");
+            foreach(KeyValuePair<string, bool> kv in filtered_condition_tags) {
+                Console.WriteLine($"{kv.Key}-{kv.Value}");
+            }
             foreach (KeyValuePair<string, bool> kv in filtered_condition_tags) {
                 //find the first valid tag
                 string tag = kv.Key;
@@ -295,9 +301,11 @@ namespace gate.Entities
                 //we want to return the first tag that has not had the condition satisfied
                 //the first condition that isn't met should have the matching dialogue displayed
                 if (!status) {
+                    Console.WriteLine($"{tag}-{status}-RETURNING TAG");
                     return tag;
                 }
             }
+            Console.WriteLine("FIND FIRST MATCHING TAG RETURN NULL");
             return null;
         }
 
