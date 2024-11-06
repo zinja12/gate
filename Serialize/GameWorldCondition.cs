@@ -17,5 +17,6 @@ namespace gate
         public List<int> obj_ids_to_remove { get; set; }
         public float x_position { get; set; }
         public float y_position { get; set; }
+        public string tag { get; set; }
     }
 }

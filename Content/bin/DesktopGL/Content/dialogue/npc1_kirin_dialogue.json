@@ -31,7 +31,11 @@
         },
         {
             "speaker": "kirin, the second shrine keeper",
-            "dialogue_line": "just hold B and use the joystick to aim, let go when you're ready to fire"
+            "dialogue_line": "just hold the Left Trigger to pull out the bow and use the joystick to aim"
+        },
+        {
+            "speaker": "kirin, the second shrine keeper",
+            "dialogue_line": "while holding the trigger then also hold B to nock an arrow, and let go when you're ready to fire"
         },
         {
             "speaker": "kirin, the second shrine keeper",

@@ -19,6 +19,7 @@ namespace gate.Interface
         Vector2 get_position();
         RRect get_rect();
         List<RRect> get_sub_boxes();
+        string get_tag();
     }
 
     public class ObjectCondition {

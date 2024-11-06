@@ -20,8 +20,8 @@ namespace gate
         protected Vector2 char_offset = Vector2.Zero;
 
         protected SpriteFont font;
-        protected List<(string, string)> msgs;
-        protected List<(string, List<string>)> speaker_msg_screens;
+        protected List<(string, string, string)> msgs;
+        protected List<(string, List<(string, string)>)> speaker_msg_screens;
         protected string current_msg;
         protected int current_msg_index, current_msg_screen_idx;
         protected float width, height;
@@ -39,7 +39,7 @@ namespace gate
 
         private Random random;
 
-        public TextBox(Vector2 position, SpriteFont font, List<(string, string)> msgs, string box_title_name, float width, float height, Color box_color, Color text_color) {
+        public TextBox(Vector2 position, SpriteFont font, List<(string, string, string)> msgs, string box_title_name, float width, float height, Color box_color, Color text_color) {
             this.position = position;
             this.font = font;
             this.msgs = msgs;
@@ -54,7 +54,7 @@ namespace gate
 
             //Cannot have a text box without text
             if (msgs.Count <= 0) {
-                throw new Exception("Messages can not be zero for a text box!");
+                throw new Exception("Messages can not be empty for a text box!");
             }
 
             //build msg screens
@@ -65,11 +65,46 @@ namespace gate
             current_msg_index = 0;
             current_msg_screen_idx = 0;
             //current_msg = msg_screens[current_msg_screen_idx][current_msg_index];
-            current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
+            //current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
+            current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index].Item1;
             
             this.box_title_name = box_title_name;
 
             this.random = new Random();
+        }
+
+        public virtual TextBox filter_messages_on_tag(string tag_id) {
+            //return a new textbox that filters the messages currently in this textbox on tag
+            //build new msg list with matching tag
+            List<(string, string, string)> filtered_msgs = new List<(string, string, string)>();
+            foreach ((string, string, string) msg in msgs) {
+                string tag = msg.Item3;
+                //idk why it has to be two nested if statements instead of an and statement
+                //but this works and if it is an and statement it breaks, so I guess we keep it
+                if (tag == null) {
+                    if (tag_id == null) {
+                        //append
+                        filtered_msgs.Add(msg);
+                    }
+                } else if (tag.Equals(tag_id)){
+                    filtered_msgs.Add(msg);
+                }
+            }
+            Console.WriteLine("filtered_msgs:");
+            foreach ((string, string, string) msg in filtered_msgs) {
+                Console.WriteLine(msg);
+            }
+            //return new textbox with filtered_messages
+            return new TextBox(
+                this.position,
+                this.font,
+                filtered_msgs,
+                this.box_title_name,
+                this.width,
+                this.height,
+                this.box_color,
+                this.text_color
+            );
         }
 
         public virtual void Update(GameTime gameTime, World world) {
@@ -129,7 +164,7 @@ namespace gate
                 return "";
             }
             //pull message based on current index
-            return speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
+            return speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index].Item1;
         }
 
         protected int key_down(Keys key) {
@@ -152,39 +187,44 @@ namespace gate
             end_of_text = false;
             current_msg_index = 0;
             current_msg_screen_idx = 0;
-            current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
+            current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index].Item1;
+        }
+
+        public List<(string, string, string)> get_msgs() {
+            return this.msgs;
         }
 
         //NOTE: going with list of lists here because messages will be formed like thoughts, meaning we can't just concat all the messages together
         //we need to preserve the spacing of the messages so like there should be empty space at the end of a message that runs over onto the next msg screen
         //will flow better that way for story purposes rather than just concatenating all messages together I think
-        public List<List<string>> msgs_to_msg_screens(SpriteFont sf, List<string> messages, float max_line_width) {
+        /*public List<List<string>> msgs_to_msg_screens(SpriteFont sf, List<string> messages, float max_line_width) {
             List<List<string>> msg_screens_list = new List<List<string>>();
             //loop over messages provided and wrap text + produce msg screens to iterate through in sign
             foreach (string message in messages) {
                 msg_screens_list.Add(msg_to_msg_screens(sf, message, max_line_width));
             }
             return msg_screens_list;
-        }
+        }*/
 
-        public List<(string, List<string>)> msgs_to_msg_screens2(SpriteFont sf, List<(string, string)> messages, float max_line_width) {
-            List<(string, List<string>)> msg_screens_list = new List<(string, List<string>)>();
+        public List<(string, List<(string, string)>)> msgs_to_msg_screens2(SpriteFont sf, List<(string, string, string)> messages, float max_line_width) {
+            List<(string, List<(string, string)>)> msg_screens_list = new List<(string, List<(string, string)>)>();
             foreach (var tuple in messages) {
                 string speaker = tuple.Item1;
                 string message = tuple.Item2;
-                msg_screens_list.Add((speaker, msg_to_msg_screens(sf, message, max_line_width)));
+                string tag = tuple.Item3;
+                msg_screens_list.Add((speaker, msg_to_msg_screens(sf, message, tag, max_line_width)));
             }
             return msg_screens_list;
         }
 
-        public List<string> msg_to_msg_screens(SpriteFont sf, string message, float max_line_width) {
+        public List<(string, string)> msg_to_msg_screens(SpriteFont sf, string message, string tag, float max_line_width) {
             //wrap text for message and translate into msg screens
             //break msgs into words
             string[] words = message.Split(" ");
             float space_width = sf.MeasureString(" ").X;
             float current_line_width = 0f;
             StringBuilder sb = new StringBuilder();
-            List<string> msg_screens = new List<string>();
+            List<(string, string)> msg_screens = new List<(string, string)>();
             bool wrap_once = false;
 
             //loop over words in message
@@ -198,7 +238,7 @@ namespace gate
                     if (wrap_once) {
                         //we have already reached the end of the message box, need to start a new message screen
                         //append current msg to screens
-                        msg_screens.Add(sb.ToString());
+                        msg_screens.Add((sb.ToString(), tag));
                         //empty out string builder
                         sb.Clear();
                         //set current line_length
@@ -212,7 +252,7 @@ namespace gate
                     wrap_once = true;
                 }
             }
-            msg_screens.Add(sb.ToString());
+            msg_screens.Add((sb.ToString(), tag));
             return msg_screens;
         }
 

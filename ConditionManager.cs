@@ -38,6 +38,8 @@ namespace gate
                 if (condition_value) {
                     c.trigger_behavior();
                     c.set_triggered(condition_value);
+                    //update tag in world dictionary of trigger value
+                    world.upsert_condition_tags(c.get_tag(), condition_value);
                 }
                 //update rect
                 if (world.is_editor_active()) {
@@ -186,7 +188,8 @@ namespace gate
                             enemy_ids = edroc.get_enemy_ids(),
                             obj_ids_to_remove = edroc.get_obj_ids_to_remove(),
                             x_position = edroc.get_position().X,
-                            y_position = edroc.get_position().Y
+                            y_position = edroc.get_position().Y,
+                            tag = edroc.get_tag()
                         }
                     );
                 } else if (c is SwitchCondition) {
@@ -198,7 +201,8 @@ namespace gate
                             enemy_ids = sw_cond.get_switch_ids(),
                             obj_ids_to_remove = sw_cond.get_obj_ids_to_remove(),
                             x_position = sw_cond.get_position().X,
-                            y_position = sw_cond.get_position().Y
+                            y_position = sw_cond.get_position().Y,
+                            tag = sw_cond.get_tag()
                         }
                     );
                 }

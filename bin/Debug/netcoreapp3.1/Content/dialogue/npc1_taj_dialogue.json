@@ -3,35 +3,48 @@
     "dialogue": [
         {
             "speaker": "taj",
-            "dialogue_line": "aww man, what am i going to do?"
+            "dialogue_line": "aww man, what am i going to do?",
+            "tag": "taj_switch_condition"
         },
         {
             "speaker": "taj",
-            "dialogue_line": "sim is going to kill me for this..."
+            "dialogue_line": "sim is going to kill me for this...",
+            "tag": "taj_switch_condition"
         },
         {
             "speaker": "taj",
-            "dialogue_line": "oh hey there!"
+            "dialogue_line": "oh hey there!",
+            "tag": "taj_switch_condition"
         },
         {
             "speaker": "taj",
-            "dialogue_line": "apologies, but i might need some help"
+            "dialogue_line": "apologies, but i might need some help",
+            "tag": "taj_switch_condition"
         },
         {
             "speaker": "taj",
-            "dialogue_line": "i sorta, accidentally closed the gate up ahead and dropped the switch behind the rocks"
+            "dialogue_line": "i sorta, accidentally closed the gate up ahead and dropped the switch behind the rocks",
+            "tag": "taj_switch_condition"
         },
         {
             "speaker": "taj",
-            "dialogue_line": "i can't exactly reach far enough to grab it and i don't have anything to hit it with"
+            "dialogue_line": "i can't exactly reach far enough to grab it and i don't have anything to hit it with",
+            "tag": "taj_switch_condition"
         },
         {
             "speaker": "taj",
-            "dialogue_line": "there has to be something around here that we can grab to hit it with..."
+            "dialogue_line": "there has to be something around here that we can grab to hit it with...",
+            "tag": "taj_switch_condition"
         },
         {
             "speaker": "taj",
-            "dialogue_line": "think you could help me out?"
+            "dialogue_line": "think you could help me out?",
+            "tag": "taj_switch_condition"
+        },
+        {
+            "speaker": "taj",
+            "dialogue_line": "oh man, thanks so much! good luck on your adventure",
+            "tag": null
         }
     ]
 }
