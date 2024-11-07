@@ -272,10 +272,6 @@ namespace gate.Entities
             interaction_box.update(rotation, draw_position);
         }
 
-        public void set_textbox(TextBox textbox) {
-            this.textbox = textbox;
-        }
-
         public string find_first_matching_tag(Dictionary<string, bool> condition_tags) {
             List<string> npc_tags = new List<string>();
             foreach (GameWorldDialogue gw_dialogue in conversation_file.dialogue) {
@@ -285,27 +281,32 @@ namespace gate.Entities
                     npc_tags.Add(gw_dialogue.tag);
                 }
             }
-            Console.WriteLine($"all_npc_tags:{npc_tags}");
 
-            //filter dictionary
-            Dictionary<string, bool> filtered_condition_tags = condition_tags.Where(i => npc_tags.Contains(i.Key)).ToDictionary(i => i.Key, i => i.Value);
-            //now that we have the tags we should check which conditions in the map match that tag
-            Console.WriteLine("filtered_condition_tags:");
-            foreach(KeyValuePair<string, bool> kv in filtered_condition_tags) {
-                Console.WriteLine($"{kv.Key}-{kv.Value}");
+            //filter
+            //we are using two lists here instead of a dictionary because dictionaries cannot have null keys
+            //and we need to be able to support null string tags
+            List<string> filtered_condition_tag_keys = new List<string>();
+            List<bool> filtered_condition_tag_values = new List<bool>();
+            //Dictionary<string, bool> filtered_condition_tags = condition_tags.Where(i => npc_tags.Contains(i.Key)).ToDictionary(i => i.Key, i => i.Value);
+            foreach (KeyValuePair<string, bool> kv in condition_tags) {
+                string condition_tag = kv.Key;
+                bool condition_status = kv.Value;
+                if (npc_tags.Contains(condition_tag)) {
+                    filtered_condition_tag_keys.Add(condition_tag);
+                    filtered_condition_tag_values.Add(condition_status);
+                }
             }
-            foreach (KeyValuePair<string, bool> kv in filtered_condition_tags) {
-                //find the first valid tag
-                string tag = kv.Key;
-                bool status = kv.Value;
+            //NOTE: do not need to insert null tag into this because we return null as our base case at the end of the function
+            //find the first valid tag
+            for (int i = 0; i < filtered_condition_tag_keys.Count; i++) {
+                string tag = filtered_condition_tag_keys[i];
+                bool status = filtered_condition_tag_values[i];
                 //we want to return the first tag that has not had the condition satisfied
                 //the first condition that isn't met should have the matching dialogue displayed
                 if (!status) {
-                    Console.WriteLine($"{tag}-{status}-RETURNING TAG");
                     return tag;
                 }
             }
-            Console.WriteLine("FIND FIRST MATCHING TAG RETURN NULL");
             return null;
         }
 

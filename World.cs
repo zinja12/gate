@@ -44,7 +44,7 @@ namespace gate
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
-        bool object_persistence = true;
+        bool object_persistence = false;
 
         //objects present in every world
         Camera camera;
@@ -2397,20 +2397,10 @@ namespace gate
                                     npc.orient_to_target(player.get_base_position(), camera.Rotation);
                                     //calculate screen textbox position from overhead position of npc
                                     Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
-                                    Console.WriteLine("condition tag map");
-                                    foreach (KeyValuePair<string, bool> kv in condition_tags) {
-                                        Console.WriteLine($"{kv.Key}-{kv.Value}");
-                                    }
-                                    //filter messages for textbox on first matching tag
-                                    Console.WriteLine("CONDITION TAGS:");
-                                    foreach (KeyValuePair<string, bool> kv in condition_tags) {
-                                        Console.WriteLine($"{kv.Key}-{kv.Value}");
-                                    }
+                                    //find first matching tag
                                     string tag = npc.find_first_matching_tag(condition_tags);
-                                    //set npc textbox to filtered textbox
-                                    npc.set_textbox(
-                                        npc.get_textbox().filter_messages_on_tag(tag)
-                                    );
+                                    //filter npc textbox based on tag
+                                    npc.get_textbox().filter_messages_on_tag(tag);
                                     //set textbox position
                                     npc.get_textbox().set_position(screen_position);
                                     //set npc to display
@@ -2653,6 +2643,14 @@ namespace gate
                     if (!transition_active) {
                         Console.WriteLine("LEVEL TRANSITION!");
                         Console.WriteLine($"level_transition:{level_id}");
+                        //save level
+                        save_world_level_to_file(
+                            entities_list.get_all_entities().Keys.ToList(),
+                            foreground_entities,
+                            background_entities,
+                            level_loaded_map[current_level_id],
+                            Constant.level_mod_prefix + current_level_id
+                        );
                         //transition to next level
                         set_transition(true, level_id, (LevelTrigger)trigger);
                         triggered = false;

@@ -64,8 +64,6 @@ namespace gate
             //set the current message
             current_msg_index = 0;
             current_msg_screen_idx = 0;
-            //current_msg = msg_screens[current_msg_screen_idx][current_msg_index];
-            //current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index];
             current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index].Item1;
             
             this.box_title_name = box_title_name;
@@ -73,38 +71,28 @@ namespace gate
             this.random = new Random();
         }
 
-        public virtual TextBox filter_messages_on_tag(string tag_id) {
-            //return a new textbox that filters the messages currently in this textbox on tag
-            //build new msg list with matching tag
+        public virtual void filter_messages_on_tag(string tag_id) {
+            //the goal is to reset the speaker_msg_screens based on a filtered list which is built based on tags
+            //set up filtered msgs
             List<(string, string, string)> filtered_msgs = new List<(string, string, string)>();
-            foreach ((string, string, string) msg in msgs) {
-                string tag = msg.Item3;
-                //idk why it has to be two nested if statements instead of an and statement
-                //but this works and if it is an and statement it breaks, so I guess we keep it
-                if (tag == null) {
-                    if (tag_id == null) {
-                        //append
-                        filtered_msgs.Add(msg);
-                    }
-                } else if (tag.Equals(tag_id)){
-                    filtered_msgs.Add(msg);
+            //iterate over textbox msgs
+            for (int i = 0; i < msgs.Count; i++) {
+                //pull tag out of msg
+                string current_tag = msgs[i].Item3;
+                //null compare
+                if (tag_id == null && current_tag == null) {
+                    filtered_msgs.Add(msgs[i]);
+                } else if (tag_id != null && current_tag != null && current_tag.Equals(tag_id)) {
+                    //null check + string compare
+                    filtered_msgs.Add(msgs[i]);
                 }
             }
-            Console.WriteLine("filtered_msgs:");
-            foreach ((string, string, string) msg in filtered_msgs) {
-                Console.WriteLine(msg);
-            }
-            //return new textbox with filtered_messages
-            return new TextBox(
-                this.position,
-                this.font,
-                filtered_msgs,
-                this.box_title_name,
-                this.width,
-                this.height,
-                this.box_color,
-                this.text_color
-            );
+            //rebuild msg screens based on filtered msgs
+            //making sure to reset all needed variables
+            reset();
+            advance_message_cooldown = 500f;
+            speaker_msg_screens = msgs_to_msg_screens2(font, filtered_msgs, max_line_width);
+            current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index].Item1;
         }
 
         public virtual void Update(GameTime gameTime, World world) {
@@ -187,6 +175,9 @@ namespace gate
             end_of_text = false;
             current_msg_index = 0;
             current_msg_screen_idx = 0;
+            current_msg_char_idx = 1;
+            previous_msg_char_idx = 1;
+            advance_message_elapsed = 0;
             current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index].Item1;
         }
 
