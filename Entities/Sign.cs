@@ -28,7 +28,7 @@ namespace gate.Entities
 
         private TextBox textbox;
         private bool display_text = false, display_interaction = false;
-        List<(string, string)> messages;
+        List<(string, string, string)> messages;
         List<string> raw_messages;
 
         private Texture2D texture;
@@ -63,11 +63,11 @@ namespace gate.Entities
             this.world = world;
         }
 
-        public List<(string, string)> add_sign_speaker_to_messages(List<string> messages) {
-            List<(string, string)> speaker_messages = new List<(string, string)>();
+        public List<(string, string, string)> add_sign_speaker_to_messages(List<string> messages) {
+            List<(string, string, string)> speaker_messages = new List<(string, string, string)>();
             string speaker = "Sign";
             foreach (string msg in messages) {
-                speaker_messages.Add((speaker, msg));
+                speaker_messages.Add((speaker, msg, ""));
             }
             return speaker_messages;
         }

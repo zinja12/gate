@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using gate.Serialize;
 
 namespace gate.Core
 {
@@ -405,6 +406,36 @@ namespace gate.Core
 
         public static Vector2 screen_to_world(Vector2 screen_position, Matrix camera_view_matrix) {
             return Vector2.Transform(screen_position, Matrix.Invert(camera_view_matrix));
+        }
+
+        // public List<(string, string)> parse_dialogue_file(GameWorldDialogueFile dialogue_file) {
+        //     //Create list of tuples to hold speaker and message
+        //     List<(string, string)> speaker_messages = new List<(string, string)>();
+        //     if (dialogue_file != null) {
+        //         npc_name = dialogue_file.character_name;
+        //         for (int i = 0; i < dialogue_file.dialogue.Count; i++) {
+        //             GameWorldDialogue gw_dialogue = dialogue_file.dialogue[i];
+        //             //add speaker and dialogue to speaker messages for textbox to handle
+        //             speaker_messages.Add((gw_dialogue.speaker, gw_dialogue.dialogue_line));
+        //         }
+        //     }
+        //     return speaker_messages;
+        // }
+
+        public static List<(string, string, string)> parse_dialogue_file(GameWorldDialogueFile dialogue_file) {
+            //create list of tuples to hold speaker, message and tag
+            List<(string, string, string)> speaker_message_tags = new List<(string, string, string)>();
+            //check for null dialogue file
+            if (dialogue_file != null) {
+                //iterate over dialogue in list
+                for (int i = 0; i < dialogue_file.dialogue.Count; i++) {
+                    //pull current dialogue line out of file
+                    GameWorldDialogue gw_dialogue = dialogue_file.dialogue[i];
+                    //add speaker, dialogue and tag to speaker message tags for textbox to handle
+                    speaker_message_tags.Add((gw_dialogue.speaker, gw_dialogue.dialogue_line, gw_dialogue.tag));
+                }
+            }
+            return speaker_message_tags;
         }
     }
 }

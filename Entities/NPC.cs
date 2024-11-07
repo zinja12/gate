@@ -38,7 +38,7 @@ namespace gate.Entities
         protected string npc_name;
         protected TextBox textbox;
         protected bool display_text = false, display_interaction = false;
-        protected List<(string, string)> speaker_messages;
+        protected List<(string, string, string)> speaker_message_tags;
         protected Vector2 interaction_display_position;
         
         //NPC orient to direction variables
@@ -69,26 +69,12 @@ namespace gate.Entities
             if (conversation_file != null) {
                 this.conversation_file_path_id = conversation_file_path_id;
                 this.conversation_file = conversation_file;
-                this.speaker_messages = parse_dialogue_file(this.conversation_file);
+                this.speaker_message_tags = Constant.parse_dialogue_file(this.conversation_file);
                 //initialize textbox
-                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial_mid_reg, speaker_messages, npc_name, Constant.textbox_width, Constant.textbox_height, Color.White, Color.Black);
+                textbox = new TextBox(Constant.textbox_screen_position, Constant.arial_mid_reg, speaker_message_tags, npc_name, Constant.textbox_width, Constant.textbox_height, Color.White, Color.Black);
             }
 
             this.world = world;
-        }
-
-        public List<(string, string)> parse_dialogue_file(GameWorldDialogueFile dialogue_file) {
-            //Create list of tuples to hold speaker and message
-            List<(string, string)> speaker_messages = new List<(string, string)>();
-            if (dialogue_file != null) {
-                npc_name = dialogue_file.character_name;
-                for (int i = 0; i < dialogue_file.dialogue.Count; i++) {
-                    GameWorldDialogue gw_dialogue = dialogue_file.dialogue[i];
-                    //add speaker and dialogue to speaker messages for textbox to handle
-                    speaker_messages.Add((gw_dialogue.speaker, gw_dialogue.dialogue_line));
-                }
-            }
-            return speaker_messages;
         }
 
         public override void Update(GameTime gameTime, float rotation) {
@@ -284,6 +270,44 @@ namespace gate.Entities
 
             //update interaction box
             interaction_box.update(rotation, draw_position);
+        }
+
+        public string find_first_matching_tag(Dictionary<string, bool> condition_tags) {
+            List<string> npc_tags = new List<string>();
+            foreach (GameWorldDialogue gw_dialogue in conversation_file.dialogue) {
+                //pull tags
+                if (!npc_tags.Contains(gw_dialogue.tag)) {
+                    //add if it doesn't exist
+                    npc_tags.Add(gw_dialogue.tag);
+                }
+            }
+
+            //filter
+            //we are using two lists here instead of a dictionary because dictionaries cannot have null keys
+            //and we need to be able to support null string tags
+            List<string> filtered_condition_tag_keys = new List<string>();
+            List<bool> filtered_condition_tag_values = new List<bool>();
+            //Dictionary<string, bool> filtered_condition_tags = condition_tags.Where(i => npc_tags.Contains(i.Key)).ToDictionary(i => i.Key, i => i.Value);
+            foreach (KeyValuePair<string, bool> kv in condition_tags) {
+                string condition_tag = kv.Key;
+                bool condition_status = kv.Value;
+                if (npc_tags.Contains(condition_tag)) {
+                    filtered_condition_tag_keys.Add(condition_tag);
+                    filtered_condition_tag_values.Add(condition_status);
+                }
+            }
+            //NOTE: do not need to insert null tag into this because we return null as our base case at the end of the function
+            //find the first valid tag
+            for (int i = 0; i < filtered_condition_tag_keys.Count; i++) {
+                string tag = filtered_condition_tag_keys[i];
+                bool status = filtered_condition_tag_values[i];
+                //we want to return the first tag that has not had the condition satisfied
+                //the first condition that isn't met should have the matching dialogue displayed
+                if (!status) {
+                    return tag;
+                }
+            }
+            return null;
         }
 
         public void orient_to_target(Vector2 target, float rotation) {

@@ -36,9 +36,11 @@ namespace gate.Conditions
         private List<UIButton> buttons;
         private int function_mode = 0; //0 - connect, 1 - disconnect
 
+        private string tag;
+
         private World world;
 
-        public SwitchCondition(int id, World world, List<IEntity> switches, List<int> switch_ids, List<int> obj_ids_to_remove, Vector2 position) {
+        public SwitchCondition(int id, World world, List<IEntity> switches, List<int> switch_ids, List<int> obj_ids_to_remove, Vector2 position, string tag) {
             this.id = id;
             this.world = world;
             this.switches = switches;
@@ -48,11 +50,17 @@ namespace gate.Conditions
             this.position = position;
             this.rect = new RRect(this.position, size, size);
 
+            this.tag = tag;
+
             connect = new UIButton(position + new Vector2(0, -30), 10, "c");
             disconnect = new UIButton(position + new Vector2(20, -30), 10, "d");
             buttons = new List<UIButton>();
             buttons.Add(connect);
             buttons.Add(disconnect);
+        }
+
+        public string get_tag() {
+            return tag;
         }
 
         public Vector2 get_position() {

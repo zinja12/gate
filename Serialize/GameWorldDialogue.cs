@@ -12,5 +12,6 @@ namespace gate.Serialize
     {
         public string speaker { get; set; }
         public string dialogue_line { get; set; }
+        public string tag { get; set; }
     }
 }

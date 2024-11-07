@@ -72,6 +72,7 @@ namespace gate
         SoundManager sound_manager;
         List<Light> lights;
         List<IEntity> light_excluded_entities;
+        Dictionary<string, bool> condition_tags;
         //editor ONLY objects
         List<IEntity> editor_only_objects;
 
@@ -207,6 +208,8 @@ namespace gate
             //list for lights
             lights = new List<Light>();
             light_excluded_entities = new List<IEntity>();
+            //condition tags
+            condition_tags = new Dictionary<string, bool>();
 
             //editor ONLY objects
             editor_only_objects = new List<IEntity>();
@@ -812,17 +815,27 @@ namespace gate
                         GameWorldCondition w_condition = world_file_contents.conditions[i];
                         editor_object_idx++;
                         ICondition c = null;
+                        //add condition to condition tags map
+                        if (w_condition.obj_ids_to_remove.Count == 0) {
+                            //if the condition has empty ids, that means they were removed via the condition being met
+                            //save as the condition has been met (true)
+                            upsert_condition_tags(w_condition.tag, true);
+                        } else {
+                            //the condition still has entities to remove meaning it has not been met
+                            upsert_condition_tags(w_condition.tag, false);
+                        }
+                        //create condition in world
                         switch (w_condition.object_identifier) {
                             case "all_enemies_dead_remove_objs":
                                 if (w_condition.enemy_ids == null || w_condition.enemy_ids.Count == 0) {
-                                    c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                                    c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position), w_condition.tag);
                                 } else {
-                                    c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                                    c = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position), w_condition.tag);
                                 }
                                 break;
                             case "switch_condition":
                                 if (w_condition.enemy_ids != null && w_condition.enemy_ids.Count > 0) {
-                                    c = new SwitchCondition(editor_object_idx, this, switches, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position));
+                                    c = new SwitchCondition(editor_object_idx, this, switches, w_condition.enemy_ids, w_condition.obj_ids_to_remove, new Vector2(w_condition.x_position, w_condition.y_position), w_condition.tag);
                                 }
                                 break;
                             default:
@@ -834,6 +847,12 @@ namespace gate
                 }
                 //increment editor object idx
                 editor_object_idx++;
+
+                //print dict
+                Console.WriteLine("condition_tags:");
+                foreach (KeyValuePair<string, bool> kv in condition_tags) {
+                    Console.WriteLine($"{kv.Key}-{kv.Value}");
+                }
 
                 //do not try to access particle systems should it not exist in the file
                 if (world_file_contents.particle_systems != null) {
@@ -1026,6 +1045,21 @@ namespace gate
             foreach (IAiEntity ai in enemies) { ai.set_ai_entities(all_ai_entities); }
             foreach (IAiEntity ai in npcs) { ai.set_ai_entities(all_ai_entities); }
         }
+
+        public void upsert_condition_tags(string tag_id, bool value) {
+            //check empty string and null
+            if (tag_id == null || tag_id.Length == 0) {
+                return;
+            }
+
+            if (condition_tags.ContainsKey(tag_id)) {
+                //update
+                condition_tags[tag_id] = value;
+            } else {
+                //add
+                condition_tags.Add(tag_id, value);
+            }
+        }
         #endregion
 
         private void check_and_load_tex(ref Texture2D tex, string texture_path) {
@@ -1059,6 +1093,8 @@ namespace gate
             switches.Clear();
             lights.Clear();
             light_excluded_entities.Clear();
+            condition_tags.Clear();
+            //do not need to clear or nullify world script parser as it is set to a new object on every level load
 
             //clear editor only objects
             editor_only_objects.Clear();
@@ -1786,7 +1822,7 @@ namespace gate
                     Console.WriteLine($"nightmare,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
                     break;
                 case 16:
-                    ICondition cond = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, new List<int>(), create_position);
+                    ICondition cond = new EnemiesDeadRemoveObjCondition(editor_object_idx, this, enemies, new List<int>(), create_position, "");
                     condition_manager.add_condition(cond);
                     Console.WriteLine("edroc condition created!");
                     break;
@@ -1890,7 +1926,7 @@ namespace gate
                     switches.Add(hs);
                     break;
                 case 32:
-                    ICondition s_cond = new SwitchCondition(editor_object_idx, this, switches, new List<int>(), new List<int>(), create_position);
+                    ICondition s_cond = new SwitchCondition(editor_object_idx, this, switches, new List<int>(), new List<int>(), create_position, "");
                     condition_manager.add_condition(s_cond);
                     Console.WriteLine("switch condition created!");
                     break;
@@ -2361,6 +2397,11 @@ namespace gate
                                     npc.orient_to_target(player.get_base_position(), camera.Rotation);
                                     //calculate screen textbox position from overhead position of npc
                                     Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
+                                    //find first matching tag
+                                    string tag = npc.find_first_matching_tag(condition_tags);
+                                    //filter npc textbox based on tag
+                                    npc.get_textbox().filter_messages_on_tag(tag);
+                                    //set textbox position
                                     npc.get_textbox().set_position(screen_position);
                                     //set npc to display
                                     npc.display_textbox();
@@ -2602,6 +2643,14 @@ namespace gate
                     if (!transition_active) {
                         Console.WriteLine("LEVEL TRANSITION!");
                         Console.WriteLine($"level_transition:{level_id}");
+                        //save level
+                        save_world_level_to_file(
+                            entities_list.get_all_entities().Keys.ToList(),
+                            foreground_entities,
+                            background_entities,
+                            level_loaded_map[current_level_id],
+                            Constant.level_mod_prefix + current_level_id
+                        );
                         //transition to next level
                         set_transition(true, level_id, (LevelTrigger)trigger);
                         triggered = false;
