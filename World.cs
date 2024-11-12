@@ -1278,6 +1278,11 @@ namespace gate
                 //render distance re-calculation for entities happens within the sort_list_by_distance function
                 entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
             }
+            
+            //sort on camera position if not tethered
+            if (!player_camera_tethered) {
+                entities_list.sort_list_by_depth(camera.Rotation, camera.get_camera_center(), render_distance);
+            }
 
             #region player_death
             if (player.get_health() <= 0) {
@@ -3120,7 +3125,7 @@ namespace gate
             //note: this draws entities in order, meaning our sorting after 
             //insertion should yield the proper back to front ordering that needs to be drawn
             for (int i = 0; i < floor_entities.Count; i++) {
-                if (Vector2.Distance(floor_entities[i].get_base_position(), player.get_base_position()) < render_distance) {
+                if (Vector2.Distance(floor_entities[i].get_base_position(), camera.get_camera_center()) < render_distance) {
                     floor_entities[i].Draw(_spriteBatch);
                 }
             }
@@ -3132,7 +3137,11 @@ namespace gate
             }
 
             //draw entities list
-            entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
+            if (player_camera_tethered) {
+                entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
+            } else {
+                entities_list.Draw(_spriteBatch, camera.get_camera_center(), render_distance);
+            }
 
             /*PARTICLE SYSTEMS*/
             foreach (ParticleSystem ps in particle_systems) {

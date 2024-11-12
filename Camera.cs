@@ -27,6 +27,10 @@ namespace gate
         private bool rotating = false;
         private float target_rotation = 0f;
 
+        public Vector2 get_camera_center() {
+            return center;
+        }
+
         public float X
         {
             get { return center.X; }
