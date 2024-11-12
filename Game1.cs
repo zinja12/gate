@@ -56,6 +56,7 @@ namespace gate
         public void set_pixel_shader_active(bool enabled) {
             if (enabled) {
                 _canvas.add_postprocessing_effect(Constant.pixelate_effect);
+                _canvas.add_postprocessing_effect(Constant.color_palette_effect);
             } else {
                 //_canvas.set_postprocessing_effect(null);
                 _canvas.clear_postprocessing_effects();
@@ -75,6 +76,7 @@ namespace gate
             world.resize_viewport(_graphics);
 
             _canvas.add_postprocessing_effect(Constant.pixelate_effect);
+            _canvas.add_postprocessing_effect(Constant.color_palette_effect);
 
             //debug fps initialization
             fps = new FpsCounter(this, Constant.arial_small, Vector2.Zero);

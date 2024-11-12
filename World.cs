@@ -372,6 +372,9 @@ namespace gate
             Constant.pixelate_effect = Content.Load<Effect>("fx/pixelate");
             Constant.pixelate_effect.Parameters["pixels"].SetValue(Constant.pixels);
             Constant.pixelate_effect.Parameters["pixelation"].SetValue(Constant.pixelation);
+            Constant.color_palette_effect = Content.Load<Effect>("fx/color_palette");
+            Constant.color_palette_effect.Parameters["Palette"].SetValue(Constant.palette_colors);
+            Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors.Length);
             //load content not specific to an object
             Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
             Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");

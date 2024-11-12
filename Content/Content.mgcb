@@ -65,6 +65,12 @@
 /processorParam:TextureFormat=Compressed
 /build:fonts/arial_small.spritefont
 
+#begin fx/color_palette.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:fx/color_palette.fx
+
 #begin fx/pixelate.fx
 /importer:EffectImporter
 /processor:EffectProcessor

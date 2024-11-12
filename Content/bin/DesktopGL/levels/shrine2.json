@@ -1,5 +1,6 @@
 {
     "camera_bounds": null,
+    "level_loaded_count": 0,
     "world_objects": [
         {
             "object_identifier": "player_chip",
@@ -57849,7 +57850,7 @@
             "rotation": 0,
             "goal_rotation": 0,
             "npc_path_entity_ids": [],
-            "npc_conversation_file_id": "npc1_taj_dialogue.json",
+            "npc_conversation_file_id": "npc1_kirin_dialogue.json",
             "light": null,
             "light_excluded": false
         }

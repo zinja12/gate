@@ -90,6 +90,7 @@ namespace gate.Core
 
         //shader effects
         public static Effect pixelate_effect;
+        public static Effect color_palette_effect;
         
         //subtract blend state for lights
         public static BlendState subtract_blend = new BlendState() {
@@ -183,6 +184,40 @@ namespace gate.Core
         /*SHADERS*/
         public static float pixels = 1700.0f;
         public static float pixelation = 3.55f;
+        public static Vector4[] palette_colors = new Vector4[] {
+            FromHex("#5ba675").ToVector4(),
+            FromHex("#6bc96c").ToVector4(),
+            FromHex("#abdd64").ToVector4(),
+            FromHex("#fcef8d").ToVector4(),
+            FromHex("#ffb879").ToVector4(),
+            FromHex("#ea6262").ToVector4(),
+            FromHex("#cc425e").ToVector4(),
+            FromHex("#a32858").ToVector4(),
+            FromHex("#751756").ToVector4(),
+            FromHex("#390947").ToVector4(),
+            FromHex("#611851").ToVector4(),
+            FromHex("#873555").ToVector4(),
+            FromHex("#a6555f").ToVector4(),
+            FromHex("#c97373").ToVector4(),
+            FromHex("#f2ae99").ToVector4(),
+            FromHex("#ffc3f2").ToVector4(),
+            FromHex("#ee8fcb").ToVector4(),
+            FromHex("#d46eb3").ToVector4(),
+            FromHex("#873e84").ToVector4(),
+            FromHex("#1f102a").ToVector4(),
+            FromHex("#4a3052").ToVector4(),
+            FromHex("#7b5480").ToVector4(),
+            FromHex("#a6859f").ToVector4(),
+            FromHex("#d9bdc8").ToVector4(),
+            FromHex("#ffffff").ToVector4(),
+            FromHex("#aee2ff").ToVector4(),
+            FromHex("#8db7ff").ToVector4(),
+            FromHex("#6d80fa").ToVector4(),
+            FromHex("#8465ec").ToVector4(),
+            FromHex("#834dc4").ToVector4(),
+            FromHex("#7d2da0").ToVector4(),
+            FromHex("#4e187c").ToVector4()
+        };
 
         public static Dictionary<int, (Texture2D, Color)> emotion_texture_map;
         public static Dictionary<int, (Texture2D, Color)> generate_emotion_texture_map() {
@@ -436,6 +471,38 @@ namespace gate.Core
                 }
             }
             return speaker_message_tags;
+        }
+
+        public static Color FromHex(string hex)
+        {
+            // Remove the hash at the start if it's there
+            if (hex.StartsWith("#"))
+                hex = hex.Substring(1);
+
+            byte r = 0, g = 0, b = 0, a = 255;
+
+            // Parse based on the length of the hex string
+            if (hex.Length == 6)
+            {
+                // RGB format (e.g., #RRGGBB)
+                r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            }
+            else if (hex.Length == 8)
+            {
+                // RGBA format (e.g., #RRGGBBAA)
+                r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                a = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+            }
+            else
+            {
+                throw new ArgumentException("Hex color must be in #RRGGBB or #RRGGBBAA format.");
+            }
+
+            return new Color(r, g, b, a);
         }
     }
 }
