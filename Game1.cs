@@ -57,6 +57,7 @@ namespace gate
             if (enabled) {
                 _canvas.add_postprocessing_effect(Constant.pixelate_effect);
                 _canvas.add_postprocessing_effect(Constant.color_palette_effect);
+                _canvas.add_postprocessing_effect(Constant.scanline2_effect);
             } else {
                 //_canvas.set_postprocessing_effect(null);
                 _canvas.clear_postprocessing_effects();
@@ -77,6 +78,7 @@ namespace gate
 
             _canvas.add_postprocessing_effect(Constant.pixelate_effect);
             _canvas.add_postprocessing_effect(Constant.color_palette_effect);
+            _canvas.add_postprocessing_effect(Constant.scanline2_effect);
 
             //debug fps initialization
             fps = new FpsCounter(this, Constant.arial_small, Vector2.Zero);
@@ -104,6 +106,8 @@ namespace gate
             Constant.window_height = _graphics.GraphicsDevice.Viewport.Height;
             Constant.update_ui_positions_on_screen_size_change();
             _canvas.set_destination_rectangle();
+            //reset window height value for scanline shader
+            Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
         }
 
         protected override void Draw(GameTime gameTime)

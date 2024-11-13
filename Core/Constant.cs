@@ -91,6 +91,8 @@ namespace gate.Core
         //shader effects
         public static Effect pixelate_effect;
         public static Effect color_palette_effect;
+        public static Effect scanline_effect;
+        public static Effect scanline2_effect;
         
         //subtract blend state for lights
         public static BlendState subtract_blend = new BlendState() {

@@ -77,6 +77,12 @@
 /processorParam:DebugMode=Auto
 /build:fx/pixelate.fx
 
+#begin fx/scanline2.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:fx/scanline2.fx
+
 #begin levels/arena_v1_ids.json
 /copy:levels/arena_v1_ids.json
 
