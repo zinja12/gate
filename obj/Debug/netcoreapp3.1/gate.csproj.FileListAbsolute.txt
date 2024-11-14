@@ -226,7 +226,6 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\dial
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\cracked_rocks_4.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\player_chip.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\bow_pickup.xnb
-C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sfx\footstep1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sfx\dash1.ogg
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sfx\dash2.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sfx\bow_up_aim.xnb
@@ -239,3 +238,5 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\leve
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\dialogue\npc1_kirin_dialogue.json
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\fx\color_palette.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\fx\scanline2.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sfx\click.ogg
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sfx\cfootstep.xnb

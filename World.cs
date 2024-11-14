@@ -482,7 +482,7 @@ namespace gate
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
                             //load sounds for player
-                            sound_manager.load_sfx(ref Constant.footstep_sfx, "sfx/footstep1");
+                            sound_manager.load_sfx(ref Constant.footstep_sfx, "sfx/cfootstep");
                             sound_manager.load_sfx(ref Constant.dash_sfx, "sfx/dash2");
                             sound_manager.load_sfx(ref Constant.bow_up_aim_sfx, "sfx/bow_up_aim");
                             sound_manager.load_sfx(ref Constant.sword_slash_sfx, "sfx/sword_slash");

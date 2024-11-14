@@ -1092,7 +1092,7 @@ namespace gate.Entities
             if (footprint_sound >= 2 && !is_dashing()) {
                 footprint_sound = 0;
                 //add sound for footprints
-                world.play_spatial_sfx(Constant.footstep_sfx, depth_sort_position, ((float)random.Next(-1, 2))/4f, world.get_render_distance());
+                world.play_spatial_sfx(Constant.footstep_sfx, depth_sort_position, ((float)random.Next(-2, 1))/4f, world.get_render_distance(), -0.45f);
             }
         }
 

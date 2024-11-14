@@ -119,17 +119,17 @@
 /processorParam:Quality=Best
 /build:sfx/bow_up_aim.ogg
 
+#begin sfx/cfootstep.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/cfootstep.ogg
+
 #begin sfx/dash2.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:sfx/dash2.ogg
-
-#begin sfx/footstep1.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:sfx/footstep1.ogg
 
 #begin sfx/hitHurt1.ogg
 /importer:OggImporter
