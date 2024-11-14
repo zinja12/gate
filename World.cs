@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads1.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -2031,6 +2031,9 @@ namespace gate
                         //skip entity if the placement source is via script
                         if (placement_src == (int)ObjectPlacement.Script) {
                             continue;
+                        } else {
+                            //add if not placed by script
+                            world_objs.Add(e.to_world_level_object());    
                         }
                     } else {
                         //add if not nightmare or ghost
@@ -2518,6 +2521,7 @@ namespace gate
                                     set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
                                     //add arrow charge because we hit something
                                     player.add_arrow_charge(1);
+                                    play_spatial_sfx(Constant.hit1_sfx, e.get_base_position(), ((float)random.Next(-1, 2)), get_render_distance());
                                 } else if (e.get_id().Equals("hitswitch")) {
                                     HitSwitch hs = (HitSwitch)ic;
                                     if (hs.is_hurtbox_active()) {
@@ -2527,6 +2531,7 @@ namespace gate
                                         //add arrow charge because we hit something
                                         player.add_arrow_charge(1);
                                     }
+                                    play_spatial_sfx(Constant.hit1_sfx, e.get_base_position(), ((float)random.Next(-1, 2)), get_render_distance());
                                 }
                             }
                         }
