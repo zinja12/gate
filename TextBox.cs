@@ -34,7 +34,7 @@ namespace gate
         protected float advance_message_elapsed;
         protected float advance_message_cooldown = 500f;
 
-        protected float background_opacity = 0.8f;
+        protected float background_opacity = 1.0f;
         protected float max_line_width;
 
         private Random random;

@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "1f.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -151,7 +151,7 @@ namespace gate
 
         //Lights
         private bool lights_enabled = true;
-        RenderTarget2D light_render_target;
+        RenderTarget2D light_map_target;
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content) {
             //set game objects
@@ -229,7 +229,7 @@ namespace gate
 
             //light resources
             //set up light render target
-            light_render_target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height);
+            light_map_target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height);
 
             //load first level
             load_level(content_root_directory, _graphics, load_file_name);
@@ -373,8 +373,8 @@ namespace gate
             Constant.pixelate_effect.Parameters["pixels"].SetValue(Constant.pixels);
             Constant.pixelate_effect.Parameters["pixelation"].SetValue(Constant.pixelation);
             Constant.color_palette_effect = Content.Load<Effect>("fx/color_palette");
-            Constant.color_palette_effect.Parameters["Palette"].SetValue(Constant.palette_colors);
-            Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors.Length);
+            Constant.color_palette_effect.Parameters["Palette"].SetValue(Constant.palette_colors2);
+            Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors2.Length);
             Constant.scanline2_effect = Content.Load<Effect>("fx/scanline2");
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
             //load content not specific to an object
@@ -2376,6 +2376,7 @@ namespace gate
                                     //if the shot is not a power shot then clear it on impact immediately
                                     //it will be cleared when the speed runs out (dead)
                                     if (!a.is_power_shot()) { entities_to_clear.Add(a); }
+                                    play_spatial_sfx(Constant.hit1_sfx, e.get_base_position(), 0f, get_render_distance());
                                 }
                             }
                         }
@@ -3213,7 +3214,7 @@ namespace gate
                 sound_manager.Draw(_spriteBatch);
             }
             
-            //draw_lights_world_space(new List<Light> { light }, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+            //draw_lights_world_space(lights, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
 
             _spriteBatch.End();
 
@@ -3280,6 +3281,7 @@ namespace gate
             _spriteBatch.End();
         }
         
+        #region lights
         //TODO: add exclusionary entities to lights
         //lights should not affect the entity they are being cast by
         //right now if we put a light on a lamppost it will factor in the lamp post into the algorithm to block that light
@@ -3291,10 +3293,10 @@ namespace gate
             if (lights.Count > 0) {
                 //lights
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
-                spriteBatch.Draw(light_render_target, Vector2.Zero, Color.White);
+                spriteBatch.Draw(light_map_target, Vector2.Zero, Color.White);
                 spriteBatch.End();
 
-                _graphics.GraphicsDevice.SetRenderTarget(light_render_target);
+                _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
                 _graphics.GraphicsDevice.Clear(Color.Black * 0.25f);
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, Constant.subtract_blend, SamplerState.PointClamp);
@@ -3373,14 +3375,14 @@ namespace gate
                     );
                 }
                 //draw last triangle between first and last point
-                Renderer.DrawTri(
-                    spriteBatch,
-                    light.get_center_position(),
-                    light_rays[0].Item2,
-                    light_rays[light_rays.Count-1].Item2,
-                    Color.White,
-                    0.1f
-                );
+                // Renderer.DrawTri(
+                //     spriteBatch,
+                //     light.get_center_position(),
+                //     light_rays[0].Item2,
+                //     light_rays[light_rays.Count-1].Item2,
+                //     Color.White,
+                //     0.1f
+                // );
             }
         }
         
@@ -3466,6 +3468,7 @@ namespace gate
             //return the rays (they are in clockwise order at this point)
             return rays;
         }
+        #endregion
         #endregion
     }
 }

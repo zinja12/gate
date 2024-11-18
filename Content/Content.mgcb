@@ -401,6 +401,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/lamppost_spritesheet3.png
 
+#begin sprites/light_tex1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/light_tex1.png
+
 #begin sprites/marker_spritesheet5.png
 /importer:TextureImporter
 /processor:TextureProcessor

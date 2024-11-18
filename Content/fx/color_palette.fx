@@ -10,7 +10,7 @@
 matrix WorldViewProjection;
 sampler2D TextureSampler : register(s0);
 
-float4 Palette[32]; //adjust size according to palette
+float4 Palette[8]; //adjust size according to palette
 int PaletteSize;
 
 struct VertexShaderInput

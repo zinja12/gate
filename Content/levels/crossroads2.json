@@ -33895,12 +33895,28 @@
             "goal_rotation": 0,
             "previously_activated": false,
             "retrigger": false
+        },
+        {
+            "object_identifier": "level_trigger",
+            "object_id_num": 1883,
+            "x_position": 617.1315,
+            "y_position": -1475.2395,
+            "scale": 0,
+            "width": 300,
+            "height": 300,
+            "level_id": "1f.json",
+            "entry_x_position": 230.16818,
+            "entry_y_position": 5.60237,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "previously_activated": false,
+            "retrigger": false
         }
     ],
     "conditions": [
         {
             "object_identifier": "switch_condition",
-            "object_id_num": 1883,
+            "object_id_num": 1884,
             "enemy_ids": [
                 1249
             ],
@@ -33918,7 +33934,7 @@
         },
         {
             "object_identifier": "all_enemies_dead_remove_objs",
-            "object_id_num": 1884,
+            "object_id_num": 1885,
             "enemy_ids": [
                 1867,
                 1868,

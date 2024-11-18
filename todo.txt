@@ -150,6 +150,9 @@ ToDo List:
 [DONE - but needs some tweaks and improvement](FEATURE)lighting
     -this is my white whale
     -I have never implemented this successfully yet :')
+[](FEATURE)include lights in scenes for better art effect
+[](FEATURE)gaussian blur shader to better sell fog and focus attention on the center of the camera
+    -maybe darken the edges of the scene too, but that might come with lighting
 [](FEATURE)add player death/failure animation
 [](FEATURE)background floor tex + trail textures and add to game
     -implement some type of ordering for floor textures so trails can go on top of floor textures
@@ -286,6 +289,10 @@ ToDo List:
     -while we reassign the ids to those entities we also keep the data structure updated with the new ids
     -after the reassignment process, we hot swap the lists the conditions are listening and deleting so they have the updated ids for the entities
     -then we can just save the conditions as normal
+[](BUG)lighting frame rate drops
+    -having lights in the scenes with many other objects tanks the frame rate
+    -this is most likely due to re-calculating the level geometry every frame
+    -need to try baking the geometry, except for those things that move through the scene
 [](BUG)adding particle systems for footsteps is impacting performance
     -maybe instead of spawning particle systems and removing them, we can increase the functionality of the current particle system class
     -to increase the functionality and flexibility of it maybe we can add a way to pass a function to it to decide when to spawn particles

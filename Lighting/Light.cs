@@ -57,15 +57,29 @@ namespace gate.Lighting
                     continue;
                 }
                 //if the light and player are within render_distance/2 AND if the light and the geometry are within the light distance
-                if (Vector2.Distance(center_position, player_position) < render_distance/2 && Vector2.Distance(center_position, g.get_base_position()) < Constant.light_distance*1.5f) {
-                    if (g is StackedObject) {
-                        StackedObject so = (StackedObject)g;
-                        foreach (KeyValuePair<Vector2, Vector2> kv in so.get_hurtbox().edges) {
-                            //add to geometry map
-                            geometry_edges.Add((kv.Key, kv.Value));
+                if (g is StackedObject) {
+                    //only calculate against objects that are within light distance
+                    if (Vector2.Distance(center_position, g.get_base_position()) <= Constant.light_distance) {
+                        //only calculate when player is nearby
+                        if (Vector2.Distance(center_position, player_position) < render_distance) {
+                            StackedObject so = (StackedObject)g;
+                            Dictionary<Vector2, Vector2> edges = so.get_hurtbox().edges;
+                            foreach (KeyValuePair<Vector2, Vector2> kv in edges) {
+                                //add to geometry map
+                                geometry_edges.Add((kv.Key, kv.Value));
+                            }
                         }
                     }
                 }
+                // if (Vector2.Distance(center_position, player_position) < render_distance/2 && Vector2.Distance(center_position, g.get_base_position()) < Constant.light_distance*1.5f) {
+                //     if (g is StackedObject) {
+                //         StackedObject so = (StackedObject)g;
+                //         foreach (KeyValuePair<Vector2, Vector2> kv in so.get_hurtbox().edges) {
+                //             //add to geometry map
+                //             geometry_edges.Add((kv.Key, kv.Value));
+                //         }
+                //     }
+                // }
             }
 
             //add ai hitbox geometry to geometry edges for light geometry calculation

@@ -81,6 +81,7 @@ namespace gate.Core
         public static Texture2D cracked_rocks_spritesheet;
         public static Texture2D player_chip_tex;
         public static Texture2D bow_pickup_tex;
+        public static Texture2D light_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
 
@@ -93,6 +94,7 @@ namespace gate.Core
         public static Effect color_palette_effect;
         public static Effect scanline_effect;
         public static Effect scanline2_effect;
+        public static Effect white_transparent_effect;
         
         //subtract blend state for lights
         public static BlendState subtract_blend = new BlendState() {
@@ -168,7 +170,7 @@ namespace gate.Core
         public static float nightmare_aggro_engagement_distance = 500f;
 
         /*PLAYER CONFIG*/
-        public static int player_default_dash_charge = 1, player_default_attack_charge = 2, player_default_max_arrows = 1;
+        public static int player_default_dash_charge = 2, player_default_attack_charge = 2, player_default_max_arrows = 2;
         public static int player_dash_charge = 2, player_attack_charge = 2, player_arrow_charge = 2, player_max_arrows = 2;
         public static float player_dash_cooldown = 800f;
         public static float player_doubledash_cooldown = 800f;
@@ -179,7 +181,7 @@ namespace gate.Core
         public static float player_attack_movement_speed = 0.5f;
 
         //light constants
-        public static float light_distance = 250f;
+        public static float light_distance = 300f;
 
         public static string level_mod_prefix = "mod_";
 
@@ -219,6 +221,41 @@ namespace gate.Core
             FromHex("#686f99").ToVector4(),
             FromHex("#454a6a").ToVector4(),
             FromHex("#1d2235").ToVector4()
+        };
+
+        public static Vector4[] palette_colors2 = new Vector4[] {
+            FromHex("#0e0e12").ToVector4(),
+            FromHex("#1a1a24").ToVector4(),
+            FromHex("#333346").ToVector4(),
+            FromHex("#535373").ToVector4(),
+            FromHex("#8080a4").ToVector4(),
+            FromHex("#a6a6bf").ToVector4(),
+            FromHex("#c1c1d2").ToVector4(),
+            FromHex("#e6e6ec").ToVector4()
+            // FromHex("#566a89").ToVector4(),
+            // FromHex("#8babbf").ToVector4(),
+            // FromHex("#cce2e1").ToVector4(),
+            // FromHex("#ffdba5").ToVector4(),
+            // FromHex("#ccac68").ToVector4(),
+            // FromHex("#a36d3e").ToVector4(),
+            // FromHex("#683c34").ToVector4(),
+            // FromHex("#000000").ToVector4(),
+            // FromHex("#38002c").ToVector4(),
+            // FromHex("#663b93").ToVector4(),
+            // FromHex("#8b72de").ToVector4(),
+            // FromHex("#9cd8fc").ToVector4(),
+            // FromHex("#5e96dd").ToVector4(),
+            // FromHex("#3953c0").ToVector4(),
+            // FromHex("#800c53").ToVector4(),
+            // FromHex("#c34b91").ToVector4(),
+            // FromHex("#ff94b3").ToVector4(),
+            // FromHex("#bd1f3f").ToVector4(),
+            // FromHex("#ec614a").ToVector4(),
+            // FromHex("#ffa468").ToVector4(),
+            // FromHex("#fff6ae").ToVector4(),
+            // FromHex("#ffda70").ToVector4(),
+            // FromHex("#f4b03c").ToVector4(),
+            // FromHex("#ffffff").ToVector4()
         };
 
         public static Dictionary<int, (Texture2D, Color)> emotion_texture_map;
@@ -280,6 +317,18 @@ namespace gate.Core
             identifiers.Add("bow");
             return identifiers;
         }
+        
+        public static BlendState mult = new BlendState {
+            ColorSourceBlend = Blend.DestinationColor,
+            ColorDestinationBlend = Blend.Zero,
+            ColorBlendFunction = BlendFunction.Add
+        };
+
+        public static BlendState mult2 = new BlendState {
+            ColorSourceBlend = Blend.DestinationColor,
+            ColorDestinationBlend = Blend.One,
+            ColorBlendFunction = BlendFunction.Add
+        };
 
         //function to generate a list of rectangles to draw for one stack
         public static List<Rectangle> generate_rectangles_for_stack(Texture2D texture, int sprite_count){

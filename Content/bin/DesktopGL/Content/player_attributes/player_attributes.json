@@ -1,1 +1,19 @@
-{"player_attributes":[{"identifier":"sword","active":true,"charges":2},{"identifier":"dash","active":true,"charges":1},{"identifier":"bow","active":true,"charges":1}]}
+{
+    "player_attributes": [
+        {
+            "identifier": "sword",
+            "active": true,
+            "charges": 2
+        },
+        {
+            "identifier": "dash",
+            "active": true,
+            "charges": 2
+        },
+        {
+            "identifier": "bow",
+            "active": true,
+            "charges": 2
+        }
+    ]
+}
