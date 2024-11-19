@@ -3326,6 +3326,10 @@ namespace gate
             for (int i = 0; i < player.get_arrow_charges(); i++) {
                 Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, Constant.dash_charge_ui_size*3 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Blue);
             }
+            //display grenade charges
+            for (int i = 0; i < player.get_grenade_charge(); i++) {
+                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size - 20f, Constant.dash_charge_ui_size*4 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Purple);
+            }
 
             //draw text overlays
             _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);

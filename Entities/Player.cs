@@ -53,7 +53,7 @@ namespace gate.Entities
         //movement and input
         private float base_movement_speed = 2.0f, movement_speed = 2.0f, fear_movement_speed = 0.8f;
         private float _v, _h, _dash, _attack, _interact, _heavy_attack, _fire, _aim;
-        private float _select, select_pressed_count = 0;
+        private float _select;//, select_pressed_count = 0;
         private Vector2 direction;
         private Vector2 last_direction;
         private Vector2 dash_direction;
@@ -76,6 +76,11 @@ namespace gate.Entities
         private float dash_cooldown_elapsed = Constant.player_dash_cooldown; //set cooldown elapsed to same as cooldown so you can dash on level load
         private float doubledash_cool_down = Constant.player_doubledash_cooldown; //doubledash cooldown in milliseconds
         private bool dash_queued = false;
+
+        //grenades
+        private int grenade_charge = Constant.player_grenade_charge;
+        private int max_grenades = Constant.player_grenade_charge;
+        private float grenade_cooldown_elapsed = Constant.player_grenade_cooldown;
 
         //player size
         private const float player_size = 32;
@@ -262,6 +267,7 @@ namespace gate.Entities
                 _interact = key_down(current_keyboard_state, Constant.KEY_INTERACT);
                 _aim = key_down(current_keyboard_state, Constant.KEY_AIM);
                 _fire = key_down(current_keyboard_state, Constant.KEY_FIRE);
+                _select = key_down(current_keyboard_state, Constant.KEY_GRENADE);
             } else { //controller input
                 current_gamepad_state = GamePad.GetState(PlayerIndex.One);
                 //get left thumbstick current position and set _v and _h
@@ -364,9 +370,9 @@ namespace gate.Entities
             }
             #endregion
 
-            if (_select == 1 && select_pressed_count == 0) {
-                Console.WriteLine("here");
-                select_pressed_count++;
+            if (_select == 1 && grenade_charge > 0 && grenade_cooldown_elapsed >= Constant.player_grenade_cooldown) {
+                grenade_cooldown_elapsed = 0f;
+                grenade_charge--;
                 Grenade g = new Grenade(get_base_position(), 1f, Constant.grenade_tex, 16, draw_position, hitbox_dir);
                 g.fire_grenade(aim_orbit - draw_position, 1f);
                 world.add_projectile(g);
@@ -606,9 +612,10 @@ namespace gate.Entities
             receive_damage(gameTime);
 
 
-            //add to dash and attack cooldown
+            //add to dash, attack, grenade cooldown
             dash_cooldown_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             attack_cooldown_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            grenade_cooldown_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             /*PARTICLE SYSTEMS CODE*/
             update_particle_systems(gameTime, rotation);
@@ -1486,6 +1493,10 @@ namespace gate.Entities
         public void set_attack_charges(int charges) {
             this.attack_charge = charges;
             Console.WriteLine($"attack_charges_set:{get_attack_charge()}");
+        }
+
+        public int get_grenade_charge() {
+            return grenade_charge;
         }
 
         public bool interacting() {

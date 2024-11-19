@@ -164,6 +164,7 @@ namespace gate.Core
         public static Keys KEY_HEAVY_ATTACK = Keys.B;
         public static Keys KEY_FIRE = Keys.K;
         public static Keys KEY_AIM = Keys.J;
+        public static Keys KEY_GRENADE = Keys.Q;
 
         /*GAMEPLAY FLAGS*/
         public bool debug = true;
@@ -184,6 +185,8 @@ namespace gate.Core
         public static float player_attack_cooldown = 600f;
         public static float player_doubleattack_cooldown = 800f;
         public static float player_attack_movement_speed = 0.5f;
+        public static int player_grenade_charge = 2;
+        public static float player_grenade_cooldown = 800f;
 
         //light constants
         public static float light_distance = 300f;
