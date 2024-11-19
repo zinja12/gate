@@ -131,6 +131,12 @@
 /processorParam:Quality=Best
 /build:sfx/dash2.ogg
 
+#begin sfx/explosion.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/explosion.ogg
+
 #begin sfx/hitHurt1.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
@@ -820,6 +826,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/tile6.png
+
+#begin sprites/tnt1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/tnt1.png
 
 #begin sprites/tombstone1_1_18.png
 /importer:TextureImporter

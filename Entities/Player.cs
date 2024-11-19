@@ -53,6 +53,7 @@ namespace gate.Entities
         //movement and input
         private float base_movement_speed = 2.0f, movement_speed = 2.0f, fear_movement_speed = 0.8f;
         private float _v, _h, _dash, _attack, _interact, _heavy_attack, _fire, _aim;
+        private float _select, select_pressed_count = 0;
         private Vector2 direction;
         private Vector2 last_direction;
         private Vector2 dash_direction;
@@ -273,6 +274,7 @@ namespace gate.Entities
                 //trigger has to be at least halfway held down
                 _aim = current_gamepad_state.Triggers.Left > 0 ? 1f : 0f;
                 _fire = current_gamepad_state.Buttons.B == ButtonState.Pressed ? 1f : 0f;
+                _select = current_gamepad_state.Buttons.Start == ButtonState.Pressed ? 1f : 0f;
             }
 
             //if the player is providing input, do not need to check how long they are idle for
@@ -361,6 +363,14 @@ namespace gate.Entities
                 world.play_spatial_sfx(Constant.bow_up_aim_sfx, depth_sort_position, 0.5f, world.get_render_distance());
             }
             #endregion
+
+            if (_select == 1 && select_pressed_count == 0) {
+                Console.WriteLine("here");
+                select_pressed_count++;
+                Grenade g = new Grenade(get_base_position(), 1f, Constant.grenade_tex, 16, draw_position, hitbox_dir);
+                g.fire_grenade(aim_orbit - draw_position, 1f);
+                world.add_projectile(g);
+            }
 
             if (current_gamepad_state.Triggers.Right == 0f && previous_gamepad_state.Triggers.Right != 0f && attack_charge > 1) {
                 //trigger heavy attack

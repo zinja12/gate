@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "1f.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -403,6 +403,7 @@ namespace gate
             //load universal sounds
             sound_manager.load_sfx(ref Constant.hit1_sfx, "sfx/hitHurt1");
             sound_manager.load_sfx(ref Constant.typewriter_sfx, "sfx/typewriter");
+            sound_manager.load_sfx(ref Constant.explosion_sfx, "sfx/explosion");
 
             //set pixel shader to active once it has been loaded
             game.set_pixel_shader_active(true);
@@ -484,6 +485,7 @@ namespace gate
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
+                            check_and_load_tex(ref Constant.grenade_tex, "sprites/tnt1");
                             //load sounds for player
                             sound_manager.load_sfx(ref Constant.footstep_sfx, "sfx/cfootstep");
                             sound_manager.load_sfx(ref Constant.dash_sfx, "sfx/dash2");
@@ -1267,6 +1269,17 @@ namespace gate
                     Arrow a = (Arrow)e;
                     if (a.is_dead()) {
                         entities_to_clear.Add(e);
+                    }
+                } else if (e is Grenade) {
+                    Grenade g = (Grenade)e;
+                    if (g.is_dead()) {
+                        //add explosion
+                        play_spatial_sfx(Constant.explosion_sfx, e.get_base_position(), 0f, get_render_distance());
+                        entities_to_clear.Add(e);
+                        particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        particle_systems.Add(new ParticleSystem(true, Constant.add_random_noise(Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), (float)random.NextDouble(), (float)random.NextDouble()*50f), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        particle_systems.Add(new ParticleSystem(true, Constant.add_random_noise(Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), (float)random.NextDouble(), (float)random.NextDouble()*60f), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        set_camera_shake(Constant.camera_shake_milliseconds*2, Constant.camera_shake_angle*3, Constant.camera_shake_hit_radius*2);
                     }
                 }
             }
@@ -2390,6 +2403,10 @@ namespace gate
 
                     //handle projectile collisions
                     foreach (IEntity proj in projectiles) {
+                        if (proj is Grenade) {
+                            //skip grenades because they do damage on impact, not the projectile itself
+                            continue;
+                        }
                         if (!e.Equals(proj)) {
                             if (e is Nightmare) {
                                 Nightmare nm = (Nightmare)e;
@@ -2972,7 +2989,7 @@ namespace gate
                     enemies.Remove(ai);
                 }
                 //if this is a projectile, remove it from projectiles
-                if (e is Arrow && projectiles.Contains(e)) {
+                if (projectiles.Contains(e)) {
                     projectiles.Remove(e);
                 }
                 entities_list.Delete_Hard(e);
