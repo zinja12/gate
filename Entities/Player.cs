@@ -314,6 +314,8 @@ namespace gate.Entities
                 charging_arrow = false;
                 if (arrow != null) {
                     Arrow a = (Arrow)arrow;
+                    a.set_trail_color(Color.Black);
+                    a.set_tex_color(Color.Black);
                     a.fire_arrow(aim_orbit - draw_position, speed_multiplier, power_shot);
                     world.add_projectile(arrow);
                     this.arrow = null;
@@ -321,6 +323,8 @@ namespace gate.Entities
                 }
             } else if (charging_arrow && arrow == null) {
                 arrow = new Arrow(get_base_position(), 1f, Constant.arrow_tex, 16, draw_position, hitbox_dir);
+                ((Arrow)arrow).set_trail_color(Color.Black);
+                ((Arrow)arrow).set_tex_color(Color.Black);
             }
             if (arrow != null && !aiming) { //if the arrow is out and we're not aiming, remove the arrow
                 arrow = null;

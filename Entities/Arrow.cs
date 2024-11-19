@@ -33,7 +33,7 @@ namespace gate.Entities
         private List<Footprints> reap_footprints;
         private float footprints_elapsed;
         private float footprints_delay = 100f;
-        private Color trail_color = Color.Black;
+        private Color trail_color = Color.Black, tex_color = Color.White;
 
         private int arrow_size;
         private float angle_offset;
@@ -118,7 +118,7 @@ namespace gate.Entities
             if (footprints_elapsed >= footprints_delay) {
                 Vector2 footprint_position = Constant.rotate_point(base_position, 16f, -rotation, Constant.direction_up);
                 //create new footprint and set elapsed back to 0
-                footprints.Add(new Footprints(footprint_position, 1f, Constant.arrow_tex, angle_offset, 0.5f, 0.01f, trail_color, draw_position));
+                footprints.Add(new Footprints(footprint_position, 1f, texture, angle_offset, 0.5f, 0.01f, trail_color, draw_position));
                 footprints_elapsed = 0;
             }
         }
@@ -223,6 +223,18 @@ namespace gate.Entities
         public string get_id() {
             return "arrow";
         }
+
+        public void set_trail_color(Color color) {
+            this.trail_color = color;
+        }
+
+        public void set_tex_color(Color color) {
+            this.tex_color = color;
+        }
+
+        public void set_dead(bool value) {
+            this.dead = value;
+        }
         
         //should never really need this (hopefully)
         //this entity is like footsteps, should not be available through the level editor
@@ -248,7 +260,7 @@ namespace gate.Entities
             }
 
             //draw regular arrow
-            spriteBatch.Draw(texture, draw_position, source_rect, Color.Black, angle_offset, rotation_point, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, draw_position, source_rect, tex_color, angle_offset, rotation_point, scale, SpriteEffects.None, 0f);
             //spriteBatch.Draw(Constant.tree2_tex, draw_position, null, Color.White, -rotation, rotation_point, scale, SpriteEffects.None, 0f);
             if (debug){
                 hitbox.draw(spriteBatch);

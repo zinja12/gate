@@ -31,3 +31,5 @@ LOSPEC - AREN32 Palette
 #686f99
 #454a6a
 #1d2235
+
+LOSPEC - Gothic Bit

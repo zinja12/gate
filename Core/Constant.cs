@@ -81,6 +81,9 @@ namespace gate.Core
         public static Texture2D cracked_rocks_spritesheet;
         public static Texture2D player_chip_tex;
         public static Texture2D bow_pickup_tex;
+        public static Texture2D haunter_tex;
+        public static Texture2D haunter_attack_tex;
+        public static Texture2D hex1_tex;
         public static Texture2D light_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
@@ -187,7 +190,7 @@ namespace gate.Core
 
         /*SHADERS*/
         public static float pixels = 1700.0f;
-        public static float pixelation = 3.55f;
+        public static float pixelation = 5.00f;
         public static Vector4[] palette_colors = new Vector4[] {
             FromHex("#1a1516").ToVector4(),
             FromHex("#21181b").ToVector4(),
@@ -315,6 +318,7 @@ namespace gate.Core
             identifiers.Add("cracked_rocks");
             identifiers.Add("player_chip");
             identifiers.Add("bow");
+            identifiers.Add("haunter");
             return identifiers;
         }
         

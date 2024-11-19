@@ -79,9 +79,9 @@ namespace gate.Entities
         protected float movement_speed = 1.5f;
         //circling variables
         private int circle_direction = 0;
-        private bool circling = false;
+        protected bool circling = false;
         //attack variables
-        private float attack_timer_elapsed, time_between_attacks, melee_attack_hitbox_active_elapsed, time_since_death = 0f;
+        protected float attack_timer_elapsed, time_between_attacks, melee_attack_hitbox_active_elapsed, time_since_death = 0f;
         private float hitbox_deactivate_elapsed;
         private bool melee_attack = false;
         private float melee_attack_hitbox_active_threshold = 500f, hitbox_deactivate_threshold = 200f;
@@ -427,7 +427,7 @@ namespace gate.Entities
             return max_weight_idx;
         }
 
-        public void update_animation(GameTime gameTime) {
+        public virtual void update_animation(GameTime gameTime) {
             //calculate angle
             angle = MathHelper.ToDegrees((float)Math.Atan2(direction.Y, direction.X));
             //update walk animation if moving
@@ -707,18 +707,7 @@ namespace gate.Entities
             return 1;
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch) {
-            //if dead return
-            if (is_dead()) return;
-
-            //draw shadow always
-            spriteBatch.Draw(Constant.shadow_tex, draw_position, null, Color.Black * 0.5f, -rotation, rotation_point, scale, SpriteEffects.None, 0f);
-
-            /*PARTICLE SYSTEMS*/
-            foreach (ParticleSystem ps in particle_systems) {
-                ps.Draw(spriteBatch);
-            }
-
+        public virtual void draw_animation(SpriteBatch spriteBatch) {
             //handle animation drawing (idle vs moving)
             if (health > 0) {
                 if (static_image_entity.HasValue && static_image_entity.Value) {
@@ -734,6 +723,21 @@ namespace gate.Entities
                     spriteBatch.Draw(texture, draw_position, idle_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
                 }
             }
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch) {
+            //if dead return
+            if (is_dead()) return;
+
+            //draw shadow always
+            spriteBatch.Draw(Constant.shadow_tex, draw_position, null, Color.Black * 0.5f, -rotation, rotation_point, scale, SpriteEffects.None, 0f);
+
+            /*PARTICLE SYSTEMS*/
+            foreach (ParticleSystem ps in particle_systems) {
+                ps.Draw(spriteBatch);
+            }
+
+            draw_animation(spriteBatch);
             
             //draw hits
             if (show_hit_texture && hit_confirm != null) {

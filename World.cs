@@ -301,6 +301,9 @@ namespace gate
             obj_map.Add(34, new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, Vector2.Zero, 1f, 32, 32, 4, Constant.stack_distance1, 0f, -1));
             obj_map.Add(35, new BillboardSprite(Constant.player_chip_tex, Vector2.Zero, 1f, "player_chip", -1));
             obj_map.Add(36, new BillboardSprite(Constant.bow_pickup_tex, Vector2.Zero, 1f, "bow", -1));
+            obj_map.Add(37, new Haunter(Constant.haunter_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "haunter", this));
+            Haunter haunter1 = (Haunter)obj_map[37];
+            haunter1.set_behavior_enabled(false);
         }
         #endregion
 
@@ -770,6 +773,15 @@ namespace gate
                             entities_list.Add(bow);
                             collision_entities.Add(bow);
                             break;
+                        case "haunter":
+                            check_and_load_tex(ref Constant.haunter_tex, "sprites/haunter1");
+                            check_and_load_tex(ref Constant.hex1_tex, "sprites/hex1");
+                            check_and_load_tex(ref Constant.haunter_attack_tex, "sprites/haunter_attack1");
+                            Haunter haunter = new Haunter(Constant.haunter_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this);
+                            entities_list.Add(haunter);
+                            collision_entities.Add(haunter);
+                            enemies.Add(haunter);
+                            break;
                         default:
                             break;
                     }
@@ -1010,6 +1022,11 @@ namespace gate
                             break;
                         case "bow":
                             check_and_load_tex(ref Constant.bow_pickup_tex, "sprites/bow_pickup");
+                            break;
+                        case "haunter":
+                            check_and_load_tex(ref Constant.haunter_tex, "sprites/haunter1");
+                            check_and_load_tex(ref Constant.hex1_tex, "sprites/hex1");
+                            check_and_load_tex(ref Constant.haunter_attack_tex, "sprites/haunter_attack1");
                             break;
                         default:
                             //don't load anything
@@ -1960,6 +1977,12 @@ namespace gate
                     entities_list.Add(bow);
                     collision_entities.Add(bow);
                     break;
+                case 37:
+                    Haunter haunter = new Haunter(Constant.haunter_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "haunter", this);
+                    entities_list.Add(haunter);
+                    collision_entities.Add(haunter);
+                    enemies.Add(haunter);
+                    break;
                 default:
                     break;
             }
@@ -2320,6 +2343,7 @@ namespace gate
                                     freeze_frames = 2;
                                     //shake the camera
                                     set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                    play_spatial_sfx(Constant.hit1_sfx, e.get_base_position(), 0f, get_render_distance());
                                 }
                             }
                         }
@@ -2375,7 +2399,7 @@ namespace gate
                                     nm.take_hit(a, 1);
                                     //if the shot is not a power shot then clear it on impact immediately
                                     //it will be cleared when the speed runs out (dead)
-                                    if (!a.is_power_shot()) { entities_to_clear.Add(a); }
+                                    if (!a.is_power_shot()) { a.set_dead(true); entities_to_clear.Add(a); }
                                     play_spatial_sfx(Constant.hit1_sfx, e.get_base_position(), 0f, get_render_distance());
                                 }
                             }
@@ -2595,6 +2619,24 @@ namespace gate
                                 }
                             }
                         }
+                    }
+                }
+            }
+            
+            //check projectiles against player
+            foreach (IEntity proj in projectiles) {
+                if (proj is Arrow) {
+                    //check collision against player
+                    Arrow arrow = (Arrow)proj;
+                    bool collision = player.get_hurtbox().collision(arrow.get_hitbox());
+                    if (collision) {
+                        player.take_hit(arrow, 1);
+                        arrow.set_dead(true);
+                        entities_to_clear.Add(arrow);
+                        //shake the camera
+                        set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                        //play hit sound effect
+                        play_spatial_sfx(Constant.hit1_sfx, player.get_base_position(), 0f, get_render_distance());
                     }
                 }
             }
