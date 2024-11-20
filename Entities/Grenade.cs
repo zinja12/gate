@@ -8,6 +8,7 @@ using gate.Serialize;
 using gate.Interface;
 using gate.Core;
 using gate.Collision;
+using gate.Particles;
 
 namespace gate.Entities
 {
@@ -44,6 +45,8 @@ namespace gate.Entities
 
         public static bool debug = false;
 
+        ParticleSystem trail_particle_system;
+
         public Grenade(Vector2 base_position, float scale, Texture2D texture, int size, Vector2 parent_position, Vector2 direction) {
             this.base_position = base_position;
             this.draw_position = new Vector2(base_position.X - (texture.Width / 2), 
@@ -63,6 +66,8 @@ namespace gate.Entities
             this.hitbox = new RRect(this.draw_position, 16, 16);
 
             random = new Random();
+
+            trail_particle_system = new ParticleSystem(true, draw_position, 2, 250f, 2, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex });
         }
 
         public void Update(GameTime gameTime, float rotation) {
@@ -75,6 +80,9 @@ namespace gate.Entities
             }
 
             hitbox.update(rotation, draw_position);
+
+            trail_particle_system.Update(gameTime, rotation);
+            trail_particle_system.set_position(draw_position);
         }
 
         public void update_aim(Vector2 center_position, Vector2 direction) {
@@ -206,6 +214,9 @@ namespace gate.Entities
         }
 
         public void Draw(SpriteBatch spriteBatch) {
+            //draw particle system
+            trail_particle_system.Draw(spriteBatch);
+            //draw texture
             spriteBatch.Draw(texture, draw_position, source_rect, Color.White, angle_offset, rotation_point, scale, SpriteEffects.None, 0f);
         }
     }
