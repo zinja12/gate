@@ -188,6 +188,10 @@ namespace gate.Core
         public static int player_grenade_charge = 2;
         public static float player_grenade_cooldown = 800f;
 
+        /*GRENADE CONSTANTS*/
+        public static float grenade_radius = 100f;
+        public static int grenade_damage = 3;
+
         //light constants
         public static float light_distance = 300f;
 

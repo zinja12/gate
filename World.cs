@@ -1279,7 +1279,7 @@ namespace gate
                     if (g.is_dead()) {
                         //explosion
                         //add to explosion list (point of origin for explosion, radius of explosion)
-                        explosion_list.Add((g, e.get_base_position(), 100f));
+                        explosion_list.Add((g, e.get_base_position(), Constant.grenade_radius));
                         //play sound
                         play_spatial_sfx(Constant.explosion_sfx, e.get_base_position(), 0f, get_render_distance());
                         //clear grenade entity
@@ -2362,7 +2362,7 @@ namespace gate
                         //we have already validated they are all IEntities
                         if (enemy is ICollisionEntity) {
                             ICollisionEntity ce = (ICollisionEntity)enemy;
-                            ce.take_hit(grenade, 3);
+                            ce.take_hit(grenade, Constant.grenade_damage);
                         }
                     }
                 }
