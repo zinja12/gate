@@ -84,6 +84,7 @@ namespace gate.Core
         public static Texture2D haunter_tex;
         public static Texture2D haunter_attack_tex;
         public static Texture2D hex1_tex;
+        public static Texture2D grenade_tex;
         public static Texture2D light_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
@@ -127,6 +128,7 @@ namespace gate.Core
         public static SoundEffect sword_slash_sfx;
         public static SoundEffect hit1_sfx;
         public static SoundEffect typewriter_sfx;
+        public static SoundEffect explosion_sfx;
 
         //Reference directions in relation to the game world
         public static Vector2 direction_down = new Vector2(0, 1);
@@ -162,6 +164,7 @@ namespace gate.Core
         public static Keys KEY_HEAVY_ATTACK = Keys.B;
         public static Keys KEY_FIRE = Keys.K;
         public static Keys KEY_AIM = Keys.J;
+        public static Keys KEY_GRENADE = Keys.Q;
 
         /*GAMEPLAY FLAGS*/
         public bool debug = true;
@@ -182,6 +185,12 @@ namespace gate.Core
         public static float player_attack_cooldown = 600f;
         public static float player_doubleattack_cooldown = 800f;
         public static float player_attack_movement_speed = 0.5f;
+        public static int player_grenade_charge = 2;
+        public static float player_grenade_cooldown = 800f;
+
+        /*GRENADE CONSTANTS*/
+        public static float grenade_radius = 100f;
+        public static int grenade_damage = 3;
 
         //light constants
         public static float light_distance = 300f;
@@ -558,6 +567,10 @@ namespace gate.Core
             }
 
             return new Color(r, g, b, a);
+        }
+
+        public static Vector2 add_random_noise(Vector2 position, float noise_angle, float noise_radius) {
+            return position + new Vector2((float)(Math.Sin(noise_angle) * noise_radius), (float)(Math.Cos(noise_angle) * noise_radius));
         }
     }
 }

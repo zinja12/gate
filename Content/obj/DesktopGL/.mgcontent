@@ -14,6 +14,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/bow_up_aim.ogg</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/cfootstep.ogg</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/dash2.ogg</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/explosion.ogg</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/hitHurt1.ogg</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/sword_slash.ogg</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/typewriter.ogg</File>
@@ -73,6 +74,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile4.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile5.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile6.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tnt1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tombstone1_1_18.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/trail1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tree_spritesheet2.png</File>
@@ -83,6 +85,8 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

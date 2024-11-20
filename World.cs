@@ -73,6 +73,7 @@ namespace gate
         List<Light> lights;
         List<IEntity> light_excluded_entities;
         Dictionary<string, bool> condition_tags;
+        List<(IEntity, Vector2, float)> explosion_list;
         //editor ONLY objects
         List<IEntity> editor_only_objects;
 
@@ -210,6 +211,8 @@ namespace gate
             light_excluded_entities = new List<IEntity>();
             //condition tags
             condition_tags = new Dictionary<string, bool>();
+            //explosion list
+            explosion_list = new List<(IEntity, Vector2, float)>();
 
             //editor ONLY objects
             editor_only_objects = new List<IEntity>();
@@ -403,6 +406,7 @@ namespace gate
             //load universal sounds
             sound_manager.load_sfx(ref Constant.hit1_sfx, "sfx/hitHurt1");
             sound_manager.load_sfx(ref Constant.typewriter_sfx, "sfx/typewriter");
+            sound_manager.load_sfx(ref Constant.explosion_sfx, "sfx/explosion");
 
             //set pixel shader to active once it has been loaded
             game.set_pixel_shader_active(true);
@@ -484,6 +488,7 @@ namespace gate
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
+                            check_and_load_tex(ref Constant.grenade_tex, "sprites/tnt1");
                             //load sounds for player
                             sound_manager.load_sfx(ref Constant.footstep_sfx, "sfx/cfootstep");
                             sound_manager.load_sfx(ref Constant.dash_sfx, "sfx/dash2");
@@ -1117,6 +1122,7 @@ namespace gate
             light_excluded_entities.Clear();
             condition_tags.Clear();
             //do not need to clear or nullify world script parser as it is set to a new object on every level load
+            explosion_list.Clear();
 
             //clear editor only objects
             editor_only_objects.Clear();
@@ -1267,6 +1273,23 @@ namespace gate
                     Arrow a = (Arrow)e;
                     if (a.is_dead()) {
                         entities_to_clear.Add(e);
+                    }
+                } else if (e is Grenade) {
+                    Grenade g = (Grenade)e;
+                    if (g.is_dead()) {
+                        //explosion
+                        //add to explosion list (point of origin for explosion, radius of explosion)
+                        explosion_list.Add((g, e.get_base_position(), Constant.grenade_radius));
+                        //play sound
+                        play_spatial_sfx(Constant.explosion_sfx, e.get_base_position(), 0f, get_render_distance());
+                        //clear grenade entity
+                        entities_to_clear.Add(e);
+                        //particle effects with noise
+                        particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        particle_systems.Add(new ParticleSystem(true, Constant.add_random_noise(Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), (float)random.NextDouble(), (float)random.NextDouble()*50f), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        particle_systems.Add(new ParticleSystem(true, Constant.add_random_noise(Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), (float)random.NextDouble(), (float)random.NextDouble()*60f), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        //shake camera a bit more
+                        set_camera_shake(Constant.camera_shake_milliseconds*2, Constant.camera_shake_angle*3, Constant.camera_shake_hit_radius*2);
                     }
                 }
             }
@@ -1715,6 +1738,9 @@ namespace gate
             //check collisions
             check_entity_collision(gameTime);
 
+            //update and process explosions
+            process_explosions(gameTime);
+            
             //clear entities
             clear_entities();
 
@@ -2044,7 +2070,7 @@ namespace gate
             foreach (IEntity e in entities) {
                 //we need to exclude deleted objects from being saved to the world level file
                 //we also need to exclude the player form being saved as we are using player chips to denote spawn points
-                if (!entities_to_clear.Contains(e) && !(e is Player) && !(e is Arrow) && !(e is Footprints)) {
+                if (!entities_to_clear.Contains(e) && !(e is Player) && !(e is Arrow) && !(e is Grenade) && !(e is Footprints)) {
                     //also need to check further for AI and exclude those added via script
                     if (((e is Nightmare) || (e is Ghost)) && !(e is NPC)) {
                         //check for object placement source
@@ -2314,6 +2340,36 @@ namespace gate
             }
         }
 
+        public void process_explosions(GameTime gameTime) {
+            //only process explosions if we have explosions to process
+            if (explosion_list.Count > 0) {
+                foreach ((IEntity, Vector2, float) explosion in explosion_list) {
+                    IEntity grenade = explosion.Item1;
+                    Vector2 explosion_origin = explosion.Item2;
+                    float explosion_radius = explosion.Item3;
+                    //calculate in range entities using radius
+                    List<IAiEntity> in_range_enemies = new List<IAiEntity>();
+                    foreach (IAiEntity enemy in enemies) {
+                        if (enemy is IEntity) {
+                            IEntity enemy_entity = (IEntity)enemy;
+                            if (Vector2.Distance(enemy_entity.get_base_position(), explosion_origin) <= explosion_radius) {
+                                in_range_enemies.Add(enemy);
+                            }
+                        }
+                    }
+                    foreach (IAiEntity enemy in in_range_enemies) {
+                        //damage
+                        //we have already validated they are all IEntities
+                        if (enemy is ICollisionEntity) {
+                            ICollisionEntity ce = (ICollisionEntity)enemy;
+                            ce.take_hit(grenade, Constant.grenade_damage);
+                        }
+                    }
+                }
+                explosion_list.Clear();
+            }
+        }
+
         //function to check player dash and shake camera
         private void check_player_dash_camera_shake() {
             if (player.is_dashing()) {
@@ -2390,6 +2446,10 @@ namespace gate
 
                     //handle projectile collisions
                     foreach (IEntity proj in projectiles) {
+                        if (proj is Grenade) {
+                            //skip grenades because they do damage on impact, not the projectile itself
+                            continue;
+                        }
                         if (!e.Equals(proj)) {
                             if (e is Nightmare) {
                                 Nightmare nm = (Nightmare)e;
@@ -2972,7 +3032,7 @@ namespace gate
                     enemies.Remove(ai);
                 }
                 //if this is a projectile, remove it from projectiles
-                if (e is Arrow && projectiles.Contains(e)) {
+                if (projectiles.Contains(e)) {
                     projectiles.Remove(e);
                 }
                 entities_list.Delete_Hard(e);
@@ -3308,6 +3368,10 @@ namespace gate
             //display arrow charges
             for (int i = 0; i < player.get_arrow_charges(); i++) {
                 Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, Constant.dash_charge_ui_size*3 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Blue);
+            }
+            //display grenade charges
+            for (int i = 0; i < player.get_grenade_charge(); i++) {
+                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size - 20f, Constant.dash_charge_ui_size*4 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Purple);
             }
 
             //draw text overlays
