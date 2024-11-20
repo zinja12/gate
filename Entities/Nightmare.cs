@@ -634,12 +634,12 @@ namespace gate.Entities
         }
 
         public void take_hit(IEntity entity, int damage) {
-            int health_decrease_value = 1;
+            int health_decrease_value = damage;
             if (entity is Arrow) {
                 Arrow a = (Arrow)entity;
                 if (a.is_power_shot()) {
                     //upgrade the health decrease value if the arrow is a power shot
-                    health_decrease_value = 3;
+                    health_decrease_value += 3;
                 }
                 //don't take damage from an arrow that has already struck (supposed to pass through)
                 if (seen_projectiles.Contains(entity)) return;

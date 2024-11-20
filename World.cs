@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "1f.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -73,6 +73,7 @@ namespace gate
         List<Light> lights;
         List<IEntity> light_excluded_entities;
         Dictionary<string, bool> condition_tags;
+        List<(IEntity, Vector2, float)> explosion_list;
         //editor ONLY objects
         List<IEntity> editor_only_objects;
 
@@ -210,6 +211,8 @@ namespace gate
             light_excluded_entities = new List<IEntity>();
             //condition tags
             condition_tags = new Dictionary<string, bool>();
+            //explosion list
+            explosion_list = new List<(IEntity, Vector2, float)>();
 
             //editor ONLY objects
             editor_only_objects = new List<IEntity>();
@@ -1119,6 +1122,7 @@ namespace gate
             light_excluded_entities.Clear();
             condition_tags.Clear();
             //do not need to clear or nullify world script parser as it is set to a new object on every level load
+            explosion_list.Clear();
 
             //clear editor only objects
             editor_only_objects.Clear();
@@ -1273,12 +1277,18 @@ namespace gate
                 } else if (e is Grenade) {
                     Grenade g = (Grenade)e;
                     if (g.is_dead()) {
-                        //add explosion
+                        //explosion
+                        //add to explosion list (point of origin for explosion, radius of explosion)
+                        explosion_list.Add((g, e.get_base_position(), 100f));
+                        //play sound
                         play_spatial_sfx(Constant.explosion_sfx, e.get_base_position(), 0f, get_render_distance());
+                        //clear grenade entity
                         entities_to_clear.Add(e);
+                        //particle effects with noise
                         particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
                         particle_systems.Add(new ParticleSystem(true, Constant.add_random_noise(Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), (float)random.NextDouble(), (float)random.NextDouble()*50f), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
                         particle_systems.Add(new ParticleSystem(true, Constant.add_random_noise(Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), (float)random.NextDouble(), (float)random.NextDouble()*60f), 8, 400f, 2, 8, 1, 6, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        //shake camera a bit more
                         set_camera_shake(Constant.camera_shake_milliseconds*2, Constant.camera_shake_angle*3, Constant.camera_shake_hit_radius*2);
                     }
                 }
@@ -1728,6 +1738,9 @@ namespace gate
             //check collisions
             check_entity_collision(gameTime);
 
+            //update and process explosions
+            process_explosions(gameTime);
+            
             //clear entities
             clear_entities();
 
@@ -2057,7 +2070,7 @@ namespace gate
             foreach (IEntity e in entities) {
                 //we need to exclude deleted objects from being saved to the world level file
                 //we also need to exclude the player form being saved as we are using player chips to denote spawn points
-                if (!entities_to_clear.Contains(e) && !(e is Player) && !(e is Arrow) && !(e is Footprints)) {
+                if (!entities_to_clear.Contains(e) && !(e is Player) && !(e is Arrow) && !(e is Grenade) && !(e is Footprints)) {
                     //also need to check further for AI and exclude those added via script
                     if (((e is Nightmare) || (e is Ghost)) && !(e is NPC)) {
                         //check for object placement source
@@ -2324,6 +2337,36 @@ namespace gate
                 if (t.is_finished()) {
                     clear_entity(t);
                 }
+            }
+        }
+
+        public void process_explosions(GameTime gameTime) {
+            //only process explosions if we have explosions to process
+            if (explosion_list.Count > 0) {
+                foreach ((IEntity, Vector2, float) explosion in explosion_list) {
+                    IEntity grenade = explosion.Item1;
+                    Vector2 explosion_origin = explosion.Item2;
+                    float explosion_radius = explosion.Item3;
+                    //calculate in range entities using radius
+                    List<IAiEntity> in_range_enemies = new List<IAiEntity>();
+                    foreach (IAiEntity enemy in enemies) {
+                        if (enemy is IEntity) {
+                            IEntity enemy_entity = (IEntity)enemy;
+                            if (Vector2.Distance(enemy_entity.get_base_position(), explosion_origin) <= explosion_radius) {
+                                in_range_enemies.Add(enemy);
+                            }
+                        }
+                    }
+                    foreach (IAiEntity enemy in in_range_enemies) {
+                        //damage
+                        //we have already validated they are all IEntities
+                        if (enemy is ICollisionEntity) {
+                            ICollisionEntity ce = (ICollisionEntity)enemy;
+                            ce.take_hit(grenade, 3);
+                        }
+                    }
+                }
+                explosion_list.Clear();
             }
         }
 
