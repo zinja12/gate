@@ -1499,6 +1499,10 @@ namespace gate.Entities
             return grenade_charge;
         }
 
+        public void set_grenade_charge(int value) {
+            this.grenade_charge = value;
+        }
+
         public bool interacting() {
             return _interact != 0;
         }
