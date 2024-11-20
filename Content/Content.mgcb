@@ -95,6 +95,12 @@
 #begin levels/crossroads1.json
 /copy:levels/crossroads1.json
 
+#begin levels/crossroads2.json
+/copy:levels/crossroads2.json
+
+#begin levels/d_branch1.json
+/copy:levels/d_branch1.json
+
 #begin levels/demo1_v2_ids.json
 /copy:levels/demo1_v2_ids.json
 

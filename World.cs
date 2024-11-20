@@ -2005,9 +2005,12 @@ namespace gate
                     break;
                 case 37:
                     Haunter haunter = new Haunter(Constant.haunter_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "haunter", this);
+                    haunter.set_behavior_enabled(false);
+                    haunter.set_placement_source(placement_source);
                     entities_list.Add(haunter);
                     collision_entities.Add(haunter);
                     enemies.Add(haunter);
+                    set_ai_entities_for_all_ais();
                     break;
                 default:
                     break;

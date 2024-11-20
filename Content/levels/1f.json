@@ -20285,12 +20285,26 @@
             "entry_y_position": -1162.6697,
             "rotation": 0,
             "goal_rotation": 0
+        },
+        {
+            "object_identifier": "level_trigger",
+            "object_id_num": 1127,
+            "x_position": 894.2698,
+            "y_position": -663.1637,
+            "scale": 0,
+            "width": 300,
+            "height": 300,
+            "level_id": "d_branch1.json",
+            "entry_x_position": 154.9038,
+            "entry_y_position": 131.6697,
+            "rotation": 0,
+            "goal_rotation": 0
         }
     ],
     "conditions": [
         {
             "object_identifier": "switch_condition",
-            "object_id_num": 1127,
+            "object_id_num": 1128,
             "enemy_ids": [
                 21
             ],
@@ -20308,7 +20322,7 @@
         },
         {
             "object_identifier": "switch_condition",
-            "object_id_num": 1128,
+            "object_id_num": 1129,
             "enemy_ids": [
                 22
             ],
