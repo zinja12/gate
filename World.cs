@@ -2365,6 +2365,23 @@ namespace gate
                             ce.take_hit(grenade, Constant.grenade_damage);
                         }
                     }
+                    List<IEntity> in_range_geometry = new List<IEntity>();
+                    foreach (IEntity e in collision_geometry) {
+                        if (e.get_id().Equals("hitswitch") || e.get_id().Equals("box")) {
+                            if (Vector2.Distance(e.get_base_position(), explosion_origin) <= explosion_radius) {
+                                in_range_geometry.Add(e);
+                            }
+                        }
+                    }
+                    foreach (IEntity e in in_range_geometry) {
+                        ICollisionEntity ce = (ICollisionEntity)e;
+                        if (e.get_id().Equals("hitswitch")) {
+                            ce.take_hit(grenade, 0);
+                        } else if (e.get_id().Equals("box")) {
+                            clear_entity(e);
+                            particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                        }
+                    }
                 }
                 explosion_list.Clear();
             }
