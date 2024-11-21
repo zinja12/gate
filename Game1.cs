@@ -123,6 +123,8 @@ namespace gate
             //actually draw render target in canvas to the screen
             _canvas.Draw(_spriteBatch);
 
+            world.draw_textbox(_spriteBatch);
+
             //draw fps counter
             _spriteBatch.Begin();
             fps.Draw(gameTime);

@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "1f.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -86,9 +86,9 @@ namespace gate
         //dictionary for level loaded counts
         Dictionary<string, int> level_loaded_map;
 
-        TextBox current_textbox = null;
-        Sign current_sign = null;
-        NPC current_npc = null;
+        public TextBox current_textbox = null;
+        public Sign current_sign = null;
+        public NPC current_npc = null;
 
         float rotation = 0f;
         
@@ -3339,15 +3339,6 @@ namespace gate
             //draw_lights_world_space(lights, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
 
             _spriteBatch.End();
-
-            //draw textboxes without camera matrix (screen positioning)
-            //however, this is still drawing to the render target under point filtering so it will come out stylized
-            _spriteBatch.Begin();
-            //draw textboxes on screen
-            if ((current_sign != null || current_npc != null) && current_textbox != null) {
-                current_textbox.Draw(_spriteBatch);
-            }
-            _spriteBatch.End();
             
             /* LIGHTING PASS */
             if (lights_enabled) {
@@ -3405,6 +3396,17 @@ namespace gate
             _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
             _spriteBatch.End();
+        }
+
+        public void draw_textbox(SpriteBatch spriteBatch) {
+            //draw textboxes without camera matrix (screen positioning)
+            //draw also without point filtering applied
+            spriteBatch.Begin();
+            //draw textboxes on screen
+            if ((current_sign != null || current_npc != null) && current_textbox != null) {
+                current_textbox.Draw(spriteBatch);
+            }
+            spriteBatch.End();
         }
         
         #region lights
