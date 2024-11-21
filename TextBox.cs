@@ -24,7 +24,7 @@ namespace gate
         protected List<(string, List<(string, string)>)> speaker_msg_screens;
         protected string current_msg;
         protected int current_msg_index, current_msg_screen_idx;
-        protected float width, height;
+        protected float width, height, original_width, original_height;
         protected Color box_color, text_color;
         protected bool end_of_text = false;
         protected int current_msg_char_idx, previous_msg_char_idx;
@@ -45,6 +45,8 @@ namespace gate
             this.msgs = msgs;
             this.width = width;
             this.height = height;
+            this.original_width = width;
+            this.original_height = height;
             this.box_color = box_color;
             this.text_color = text_color;
             this.max_line_width = width - 20;
@@ -249,6 +251,31 @@ namespace gate
 
         public void set_position(Vector2 position) {
             this.position = position;
+        }
+
+        public float get_width() {
+            return width;
+        }
+
+        public float get_height() {
+            return height;
+        }
+
+        public void set_width(float value) {
+            width = value;
+            max_line_width = width - 20;
+        }
+
+        public void set_height(float value) {
+            height = value;
+        }
+
+        public float get_original_height() {
+            return original_height;
+        }
+
+        public float get_original_width() {
+            return original_width;
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {

@@ -397,6 +397,7 @@ namespace gate
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
             Constant.arial_mid_reg = Content.Load<SpriteFont>("fonts/arial_mid_reg");
+            Constant.pxf_font = Content.Load<SpriteFont>("fonts/pxf_font");
             //load emotions
             Constant.fear_tex = Content.Load<Texture2D>("sprites/fear_anger");
             Constant.anxiety_tex = Content.Load<Texture2D>("sprites/anxiety");
@@ -2343,6 +2344,26 @@ namespace gate
             }
         }
 
+        public List<TextBox> get_all_textboxes() {
+            List<TextBox> textboxes = new List<TextBox>();
+            foreach (NPC npc in npcs) {
+                TextBox t = npc.get_textbox();
+                if (t != null) {
+                    textboxes.Add(t);
+                }
+            }
+            Dictionary<IEntity, int> all_entities = entities_list.get_all_entities();
+            foreach (KeyValuePair<IEntity, int> kv in all_entities) {
+                IEntity e = kv.Key;
+                if (e is Sign) {
+                    Sign s = (Sign)e;
+                    //these textboxes will not ever be null because what is the point of a sign without text?
+                    textboxes.Add(s.get_textbox());
+                }
+            }
+            return textboxes;
+        }
+
         public void process_explosions(GameTime gameTime) {
             //only process explosions if we have explosions to process
             if (explosion_list.Count > 0) {
@@ -2498,6 +2519,8 @@ namespace gate
                             if (collision) {
                                 //calculate screen textbox position
                                 Vector2 textbox_screen_position = Constant.world_position_to_screen_position(s.get_overhead_position(), camera);
+                                textbox_screen_position *= game.get_game_canvas().get_current_scale();
+                                textbox_screen_position += new Vector2(game.get_game_canvas().get_destination_rectangle().X, game.get_game_canvas().get_destination_rectangle().Y);
                                 //set textbox screen position
                                 s.get_textbox().set_position(textbox_screen_position);
                                 //set sign to display
@@ -2515,6 +2538,10 @@ namespace gate
                                     npc.orient_to_target(player.get_base_position(), camera.Rotation);
                                     //calculate screen textbox position from overhead position of npc
                                     Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
+                                    //scale position by current canvas scale
+                                    screen_position *= game.get_game_canvas().get_current_scale();
+                                    //offset position based on desination rectangle
+                                    screen_position += new Vector2(game.get_game_canvas().get_destination_rectangle().X, game.get_game_canvas().get_destination_rectangle().Y);
                                     //find first matching tag
                                     string tag = npc.find_first_matching_tag(condition_tags);
                                     //filter npc textbox based on tag
@@ -3237,6 +3264,23 @@ namespace gate
             return player;
         }
 
+        public void update_textbox_scale(Canvas canvas) {
+            //scale ui elements
+            //to be used in Game1 class on window scaling
+            //textboxes
+            List<TextBox> textboxes = get_all_textboxes();
+            foreach (TextBox t in textboxes) {
+                if (t != null) {
+                    t.set_width(
+                        t.get_original_width()*canvas.get_current_scale()
+                    );
+                    t.set_height(
+                        t.get_original_height()*canvas.get_current_scale()
+                    );
+                }
+            }
+        }
+
         #region sounds
         public void play_spatial_sfx(SoundEffect sfx, Vector2 sfx_position, float pitch, float player_hearing_distance, float volume_offset = 0f) {
             sound_manager.play_spatial_sfx(sfx, sfx_position, player.get_base_position(), pitch, player_hearing_distance, volume_offset);
@@ -3401,7 +3445,7 @@ namespace gate
         public void draw_textbox(SpriteBatch spriteBatch) {
             //draw textboxes without camera matrix (screen positioning)
             //draw also without point filtering applied
-            spriteBatch.Begin();
+            spriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
             //draw textboxes on screen
             if ((current_sign != null || current_npc != null) && current_textbox != null) {
                 current_textbox.Draw(spriteBatch);
