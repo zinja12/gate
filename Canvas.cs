@@ -14,6 +14,8 @@ namespace gate
         private readonly GraphicsDevice _graphicsDevice;
         private Rectangle _destination_rectangle;
 
+        private float current_scale;
+
         private List<Effect> postprocessing_effects;
         private RenderTarget2D _intermediateTarget1, _intermediateTarget2;
         private RenderTarget2D current_source, current_destination;
@@ -51,12 +53,21 @@ namespace gate
             postprocessing_effects.Clear();
         }
 
+        public Rectangle get_destination_rectangle() {
+            return _destination_rectangle;
+        }
+
+        public float get_current_scale() {
+            return current_scale;
+        }
+
         public void set_destination_rectangle() {
             var screen_size = _graphicsDevice.PresentationParameters.Bounds;
 
             float scale_x = (float)screen_size.Width / _target.Width;
             float scale_y = (float)screen_size.Height / _target.Height;
             float scale = Math.Min(scale_x, scale_y);
+            current_scale = scale;
 
             int new_width = (int)(_target.Width * scale);
             int new_height = (int)(_target.Height * scale);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -68,6 +69,10 @@ namespace gate
             return this._spriteBatch;
         }
 
+        public Canvas get_game_canvas() {
+            return _canvas;
+        }
+
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -106,6 +111,7 @@ namespace gate
             Constant.window_height = _graphics.GraphicsDevice.Viewport.Height;
             Constant.update_ui_positions_on_screen_size_change();
             _canvas.set_destination_rectangle();
+            world.update_textbox_scale(_canvas);
             //reset window height value for scanline shader
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
         }

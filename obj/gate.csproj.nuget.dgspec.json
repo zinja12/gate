@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Shaan\\Documents\\test_projects\\gate\\gate.csproj": {}
+    "C:\\Users\\x3zin\\Documents\\monogame_projects\\gate\\gate.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Shaan\\Documents\\test_projects\\gate\\gate.csproj": {
+    "C:\\Users\\x3zin\\Documents\\monogame_projects\\gate\\gate.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Shaan\\Documents\\test_projects\\gate\\gate.csproj",
+        "projectUniqueName": "C:\\Users\\x3zin\\Documents\\monogame_projects\\gate\\gate.csproj",
         "projectName": "gate",
-        "projectPath": "C:\\Users\\Shaan\\Documents\\test_projects\\gate\\gate.csproj",
-        "packagesPath": "C:\\Users\\Shaan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Shaan\\Documents\\test_projects\\gate\\obj\\",
+        "projectPath": "C:\\Users\\x3zin\\Documents\\monogame_projects\\gate\\gate.csproj",
+        "packagesPath": "C:\\Users\\x3zin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\x3zin\\Documents\\monogame_projects\\gate\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Shaan\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\x3zin\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -70,7 +70,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
         }
       }
     }

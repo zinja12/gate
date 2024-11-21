@@ -120,6 +120,7 @@ namespace gate.Core
         public static SpriteFont arial;
         public static SpriteFont arial_small;
         public static SpriteFont arial_mid_reg;
+        public static SpriteFont pxf_font;
 
         //sounds
         public static SoundEffect footstep_sfx;
@@ -330,6 +331,73 @@ namespace gate.Core
             identifiers.Add("haunter");
             return identifiers;
         }
+
+        public static int pixelfont_char_size = 12;
+        public static Dictionary<string, Rectangle> pixelfont_char_map = new Dictionary<string, Rectangle> {
+            {"A", new Rectangle(pixelfont_char_size*0, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"B", new Rectangle(pixelfont_char_size*1, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"C", new Rectangle(pixelfont_char_size*2, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"D", new Rectangle(pixelfont_char_size*3, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"E", new Rectangle(pixelfont_char_size*4, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"F", new Rectangle(pixelfont_char_size*5, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"G", new Rectangle(pixelfont_char_size*6, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"H", new Rectangle(pixelfont_char_size*7, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"I", new Rectangle(pixelfont_char_size*8, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"J", new Rectangle(pixelfont_char_size*9, pixelfont_char_size*0, pixelfont_char_size, pixelfont_char_size)},
+            {"K", new Rectangle(pixelfont_char_size*0, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"L", new Rectangle(pixelfont_char_size*1, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"M", new Rectangle(pixelfont_char_size*2, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"N", new Rectangle(pixelfont_char_size*3, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"O", new Rectangle(pixelfont_char_size*4, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"P", new Rectangle(pixelfont_char_size*5, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"Q", new Rectangle(pixelfont_char_size*6, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"R", new Rectangle(pixelfont_char_size*7, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"S", new Rectangle(pixelfont_char_size*8, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"T", new Rectangle(pixelfont_char_size*9, pixelfont_char_size*1, pixelfont_char_size, pixelfont_char_size)},
+            {"U", new Rectangle(pixelfont_char_size*0, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {"V", new Rectangle(pixelfont_char_size*1, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {"W", new Rectangle(pixelfont_char_size*2, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {"X", new Rectangle(pixelfont_char_size*3, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {"Y", new Rectangle(pixelfont_char_size*4, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {"Z", new Rectangle(pixelfont_char_size*5, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {".", new Rectangle(pixelfont_char_size*6, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {",", new Rectangle(pixelfont_char_size*7, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {":", new Rectangle(pixelfont_char_size*8, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {"+", new Rectangle(pixelfont_char_size*9, pixelfont_char_size*2, pixelfont_char_size, pixelfont_char_size)},
+            {"-", new Rectangle(pixelfont_char_size*0, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {"=", new Rectangle(pixelfont_char_size*1, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {"<", new Rectangle(pixelfont_char_size*2, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {">", new Rectangle(pixelfont_char_size*3, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {"^", new Rectangle(pixelfont_char_size*4, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {"$", new Rectangle(pixelfont_char_size*5, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {"(", new Rectangle(pixelfont_char_size*6, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {")", new Rectangle(pixelfont_char_size*7, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {"'", new Rectangle(pixelfont_char_size*8, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {"!", new Rectangle(pixelfont_char_size*9, pixelfont_char_size*3, pixelfont_char_size, pixelfont_char_size)},
+            {"?", new Rectangle(pixelfont_char_size*0, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"#", new Rectangle(pixelfont_char_size*1, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"~", new Rectangle(pixelfont_char_size*2, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"[", new Rectangle(pixelfont_char_size*3, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"]", new Rectangle(pixelfont_char_size*4, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"/", new Rectangle(pixelfont_char_size*5, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"\\", new Rectangle(pixelfont_char_size*6, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"\"", new Rectangle(pixelfont_char_size*7, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"*", new Rectangle(pixelfont_char_size*8, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {"_", new Rectangle(pixelfont_char_size*9, pixelfont_char_size*4, pixelfont_char_size, pixelfont_char_size)},
+            {";", new Rectangle(pixelfont_char_size*0, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"|", new Rectangle(pixelfont_char_size*1, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"1", new Rectangle(pixelfont_char_size*2, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"2", new Rectangle(pixelfont_char_size*3, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"3", new Rectangle(pixelfont_char_size*4, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"4", new Rectangle(pixelfont_char_size*5, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"5", new Rectangle(pixelfont_char_size*6, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"6", new Rectangle(pixelfont_char_size*7, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"7", new Rectangle(pixelfont_char_size*8, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"8", new Rectangle(pixelfont_char_size*9, pixelfont_char_size*5, pixelfont_char_size, pixelfont_char_size)},
+            {"9", new Rectangle(pixelfont_char_size*0, pixelfont_char_size*6, pixelfont_char_size, pixelfont_char_size)},
+            {"0", new Rectangle(pixelfont_char_size*1, pixelfont_char_size*6, pixelfont_char_size, pixelfont_char_size)},
+            {"%", new Rectangle(pixelfont_char_size*2, pixelfont_char_size*6, pixelfont_char_size, pixelfont_char_size)}
+        };
         
         public static BlendState mult = new BlendState {
             ColorSourceBlend = Blend.DestinationColor,
