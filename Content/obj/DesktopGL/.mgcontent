@@ -8,6 +8,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial.spritefont</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial_mid_reg.spritefont</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial_small.spritefont</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/pixel_font1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fx/color_palette.fx</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fx/pixelate.fx</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fx/scanline2.fx</File>
@@ -85,6 +86,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
