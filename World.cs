@@ -3435,14 +3435,14 @@ namespace gate
             _spriteBatch.Draw(Constant.sword_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32), null, Color.White);
             _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_attack_charge()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32), Color.White);
             //display health
-            _spriteBatch.Draw(Constant.sword_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 64), null, Color.Green);
-            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_health()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 64), Color.Green);
+            _spriteBatch.Draw(Constant.sword_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32*2), null, Color.Green);
+            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_health()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32*2), Color.Green);
             //display arrow charges
-            _spriteBatch.Draw(Constant.bow_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 96), null, Color.White);
-            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_arrow_charges()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 96), Color.White);
+            _spriteBatch.Draw(Constant.bow_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32*3), null, Color.White);
+            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_arrow_charges()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32*3), Color.White);
             //display grenade charges
-            _spriteBatch.Draw(Constant.bow_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 128), null, Color.Red);
-            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_grenade_charge()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 128), Color.Red);
+            _spriteBatch.Draw(Constant.bow_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32*4), null, Color.Red);
+            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_grenade_charge()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32*4), Color.Red);
 
             //draw text overlays
             _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);
