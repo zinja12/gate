@@ -126,14 +126,14 @@ namespace gate.Core
 
         public void Draw(SpriteBatch spriteBatch, Vector2 focus_position, float render_distance)
         {
-            Constant.profiler.Start("renderlist_draw");
+            Constant.profiler.start("renderlist_draw");
             for (int i = 0; i < entities.Count; i++)
             {
                 if (Vector2.Distance(entities[i].get_base_position(), focus_position) < render_distance){
                     entities[i].Draw(spriteBatch);
                 }
             }
-            Constant.profiler.End("renderlist_draw");
+            Constant.profiler.end("renderlist_draw");
         }
     }
 }

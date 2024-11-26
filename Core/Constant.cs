@@ -415,6 +415,7 @@ namespace gate.Core
             ColorBlendFunction = BlendFunction.Add
         };
 
+        //instantiate common profiler for use in all classes
         public static Profiler profiler = new Profiler(false);
 
         //function to generate a list of rectangles to draw for one stack

@@ -19,7 +19,7 @@ public class Profiler
     }
 
     //starts timing a specific section
-    public void Start(string sectionName) {
+    public void start(string sectionName) {
         if (!active) return;
 
         if (timings.ContainsKey(sectionName)) {
@@ -30,7 +30,7 @@ public class Profiler
     }
 
     //ends timing the specified section and logs the elapsed time
-    public void End(string sectionName) {
+    public void end(string sectionName) {
         if (!active) return;
 
         if (!timings.ContainsKey(sectionName) && !logOrder.Contains(sectionName)) {
@@ -41,32 +41,32 @@ public class Profiler
     }
 
     //logs the total time taken by all sections in the frame
-    public void FrameSummary() {
+    public void print_frame_summary() {
         if (!active) return;
 
         Console.WriteLine("---- Frame Profile Summary ----");
         double total_elapsed = 0;
         foreach (var section in logOrder) {
             if (timings.TryGetValue(section, out long elapsed)) {
-                Console.WriteLine($"{section}: {ElapsedMilliseconds(elapsed)} ms");
+                Console.WriteLine($"{section}: {elapsed_milliseconds(elapsed)} ms");
                 total_elapsed += elapsed;
             }
         }
-        Console.WriteLine($"TOTAL_ELAPSED:{ElapsedMilliseconds((long)total_elapsed)} ms");
+        Console.WriteLine($"TOTAL_ELAPSED:{elapsed_milliseconds((long)total_elapsed)} ms");
         total_elapsed = 0;
         Console.WriteLine("-------------------------------");
-        Clear();
+        clear();
     }
 
     //converts Stopwatch ticks to milliseconds
-    private double ElapsedMilliseconds(long ticks) {
+    private double elapsed_milliseconds(long ticks) {
         return ticks / (double)Stopwatch.Frequency * 1000.0;
     }
 
     //clears profiler for next frame
-    private void Clear() {
+    private void clear() {
         if (!active) return;
-        
+
         timings.Clear();
         logOrder.Clear();
     }

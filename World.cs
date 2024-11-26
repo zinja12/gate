@@ -1258,14 +1258,14 @@ namespace gate
             #region update render entities
             //UPDATE RENDERLIST ENTITIES
             //update active entities (also updates some collision entities)
-            Constant.profiler.Start("world_entities_update");
+            Constant.profiler.start("world_entities_update");
             for (int i = 0; i < entities_list.get_entities().Count; i++) {
                 IEntity e = entities_list.get_entities()[i];
                 if (e.get_flag().Equals(Constant.ENTITY_ACTIVE)) {
                     e.Update(gameTime, camera.Rotation);
                 }
             }
-            Constant.profiler.End("world_entities_update");
+            Constant.profiler.end("world_entities_update");
             #endregion
 
             foreach (IAiEntity e in enemies) {
@@ -1743,14 +1743,14 @@ namespace gate
             update_temp_tiles(gameTime, camera.Rotation);
 
             //update particle systems
-            Constant.profiler.Start("world_particle_systems_update");
+            Constant.profiler.start("world_particle_systems_update");
             update_world_particle_systems(gameTime, camera.Rotation);
-            Constant.profiler.Start("world_particle_systems_update");
+            Constant.profiler.end("world_particle_systems_update");
 
             //check collisions
-            Constant.profiler.Start("world_check_entity_collisions_update");
+            Constant.profiler.start("world_check_entity_collisions_update");
             check_entity_collision(gameTime);
-            Constant.profiler.End("world_check_entity_collisions_update");
+            Constant.profiler.end("world_check_entity_collisions_update");
 
             //update and process explosions
             process_explosions(gameTime);
@@ -1759,9 +1759,9 @@ namespace gate
             clear_entities();
 
             //check trigger volumes
-            Constant.profiler.Start("world_check_triggers_update");
+            Constant.profiler.start("world_check_triggers_update");
             check_triggers(gameTime, camera.Rotation);
-            Constant.profiler.End("world_check_triggers_update");
+            Constant.profiler.end("world_check_triggers_update");
 
             //shake camera update
             shake_camera(gameTime);
@@ -1785,7 +1785,7 @@ namespace gate
                 light.Update(gameTime, camera.Rotation);
             }
             
-            Constant.profiler.FrameSummary();
+            Constant.profiler.print_frame_summary();
         }
 
         /*editor tooling*/
@@ -3306,7 +3306,7 @@ namespace gate
         
         #region draw
         public void Draw(SpriteBatch _spriteBatch){
-            Constant.profiler.Start("world_entities_draw");
+            Constant.profiler.start("world_entities_draw");
             // TODO: Add drawing code here
 
             _spriteBatch.Begin(SpriteSortMode.Deferred,
@@ -3421,11 +3421,11 @@ namespace gate
                 }
                 _spriteBatch.End();
             }
-            Constant.profiler.End("world_entities_draw");
+            Constant.profiler.end("world_entities_draw");
         }
 
         public void DrawTextOverlays(SpriteBatch _spriteBatch) {
-            Constant.profiler.Start("world_text_overlays_draw");
+            Constant.profiler.start("world_text_overlays_draw");
             //draw UI
             _spriteBatch.Begin();
             //display dash charges
@@ -3455,7 +3455,7 @@ namespace gate
             _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
             _spriteBatch.End();
-            Constant.profiler.End("world_text_overlays_draw");
+            Constant.profiler.end("world_text_overlays_draw");
         }
 
         public void draw_textbox(SpriteBatch spriteBatch) {
