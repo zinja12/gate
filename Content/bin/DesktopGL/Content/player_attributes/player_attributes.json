@@ -15,5 +15,6 @@
             "active": true,
             "charges": 2
         }
-    ]
+    ],
+    "player_money": 100
 }

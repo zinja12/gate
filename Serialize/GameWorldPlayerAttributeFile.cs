@@ -12,5 +12,7 @@ namespace gate.Serialize
     {
         //player attribute fields
         public List<GameWorldPlayerAttribute> player_attributes { get; set; }
+        //player money
+        public int player_money { get; set; }
     }
 }

@@ -31,13 +31,14 @@ namespace gate.Entities
         protected ParticleSystem ps = null;
 
         protected Texture2D texture;
+        protected Texture2D interact_texture = null;
 
         public static bool debug = false;
 
         private int ID;
         private string identifier;
 
-        public BillboardSprite(Texture2D texture, Vector2 base_position, float scale, string identifier, int ID, bool background_particle_system = false) {
+        public BillboardSprite(Texture2D texture, Vector2 base_position, float scale, string identifier, int ID, bool background_particle_system = false, Texture2D custom_interaction_tex = null) {
             this.texture = texture;
             this.base_position = base_position;
             this.draw_position = new Vector2(base_position.X - (texture.Width / 2), 
@@ -56,6 +57,10 @@ namespace gate.Entities
             
             if (background_particle_system) {
                 ps = new ParticleSystem(true, this.draw_position, 1, 800f, 10, 1, 3, Constant.black_particles, new List<Texture2D> { Constant.footprint_tex });
+            }
+
+            if (custom_interaction_tex != null) {
+                this.interact_texture = custom_interaction_tex;
             }
         }
 
@@ -169,7 +174,11 @@ namespace gate.Entities
             spriteBatch.Draw(texture, draw_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
             //display interaction
             if (display_interaction && !display_text) {
-                spriteBatch.Draw(Constant.read_interact_tex, interaction_display_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+                if (interact_texture != null) {
+                    spriteBatch.Draw(interact_texture, interaction_display_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+                } else {
+                    spriteBatch.Draw(Constant.read_interact_tex, interaction_display_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+                }
             }
             if (debug) {
                 interaction_box.draw(spriteBatch);

@@ -155,6 +155,8 @@ namespace gate.Entities
 
         /*PLAYER HEALTH*/
         private int health = 3;
+        /*PLAYER MONEY*/
+        private int money = 0;
 
         //idle variables
         private bool idle;
@@ -1619,6 +1621,14 @@ namespace gate.Entities
                 default:
                     return false;
             }
+        }
+
+        public int get_money() {
+            return money;
+        }
+
+        public void set_money(int value) {
+            this.money = value;
         }
 
         public Emotion get_player_emote() {

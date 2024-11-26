@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "1f.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -519,6 +519,8 @@ namespace gate
                                         p.set_attribute_charges(pa.identifier, 0);
                                     }
                                 }
+                                //read and set player money
+                                p.set_money(player_attribute_file_contents.player_money);
                             }
                             entities_list.Add(p);
                             collision_entities.Add(p);
@@ -3450,6 +3452,8 @@ namespace gate
             //display grenade charges
             _spriteBatch.Draw(Constant.bow_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32*4), null, Color.Red);
             _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_grenade_charge()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32*4), Color.Red);
+            //display money
+            _spriteBatch.DrawString(Constant.pxf_font, $"${player.get_money()}", Constant.dash_charge_ui_screen_position + new Vector2(-64, 32*5), Color.White);
 
             //draw text overlays
             _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);
