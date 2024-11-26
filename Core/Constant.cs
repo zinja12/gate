@@ -93,6 +93,10 @@ namespace gate.Core
         public static Texture2D lamppost_spritesheet;
         public static Texture2D tree_spritesheet;
 
+        public static Texture2D dash_icon;
+        public static Texture2D sword_icon;
+        public static Texture2D bow_icon;
+
         //shader effects
         public static Effect pixelate_effect;
         public static Effect color_palette_effect;
@@ -410,6 +414,8 @@ namespace gate.Core
             ColorDestinationBlend = Blend.One,
             ColorBlendFunction = BlendFunction.Add
         };
+
+        public static Profiler profiler = new Profiler(false);
 
         //function to generate a list of rectangles to draw for one stack
         public static List<Rectangle> generate_rectangles_for_stack(Texture2D texture, int sprite_count){

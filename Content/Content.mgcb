@@ -219,6 +219,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/attack_sprites2.png
 
+#begin sprites/bow_icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/bow_icon.png
+
 #begin sprites/bow_pickup.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -278,6 +290,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/dash_cloak_pickup.png
+
+#begin sprites/dash_icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/dash_icon.png
 
 #begin sprites/fear_anger.png
 /importer:TextureImporter
@@ -650,6 +674,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/switch2_inactive_8.png
+
+#begin sprites/sword_icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/sword_icon.png
 
 #begin sprites/sword1_22.png
 /importer:TextureImporter

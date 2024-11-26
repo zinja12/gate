@@ -480,6 +480,10 @@ namespace gate
                             if (player_count > 0) {
                                 throw new Exception("World File Error: Too many player objects found in world file. There can only be one player to rule them all.");
                             }
+                            //load ui icons
+                            check_and_load_tex(ref Constant.dash_icon, "sprites/dash_icon");
+                            check_and_load_tex(ref Constant.sword_icon, "sprites/sword_icon");
+                            check_and_load_tex(ref Constant.bow_icon, "sprites/bow_icon");
                             //load textures for player
                             check_and_load_tex(ref Constant.player_tex, "sprites/test_player_spritesheet6");
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
@@ -919,6 +923,9 @@ namespace gate
                             check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
+                            check_and_load_tex(ref Constant.dash_icon, "sprites/dash_icon");
+                            check_and_load_tex(ref Constant.sword_icon, "sprites/sword_icon");
+                            check_and_load_tex(ref Constant.bow_icon, "sprites/bow_icon");
                             break;
                         case "tree":
                             check_and_load_tex(ref Constant.tree_spritesheet, "sprites/tree_spritesheet5");
@@ -1251,12 +1258,14 @@ namespace gate
             #region update render entities
             //UPDATE RENDERLIST ENTITIES
             //update active entities (also updates some collision entities)
+            Constant.profiler.Start("world_entities_update");
             for (int i = 0; i < entities_list.get_entities().Count; i++) {
                 IEntity e = entities_list.get_entities()[i];
                 if (e.get_flag().Equals(Constant.ENTITY_ACTIVE)) {
                     e.Update(gameTime, camera.Rotation);
                 }
             }
+            Constant.profiler.End("world_entities_update");
             #endregion
 
             foreach (IAiEntity e in enemies) {
@@ -1734,10 +1743,14 @@ namespace gate
             update_temp_tiles(gameTime, camera.Rotation);
 
             //update particle systems
+            Constant.profiler.Start("world_particle_systems_update");
             update_world_particle_systems(gameTime, camera.Rotation);
+            Constant.profiler.Start("world_particle_systems_update");
 
             //check collisions
+            Constant.profiler.Start("world_check_entity_collisions_update");
             check_entity_collision(gameTime);
+            Constant.profiler.End("world_check_entity_collisions_update");
 
             //update and process explosions
             process_explosions(gameTime);
@@ -1746,7 +1759,9 @@ namespace gate
             clear_entities();
 
             //check trigger volumes
+            Constant.profiler.Start("world_check_triggers_update");
             check_triggers(gameTime, camera.Rotation);
+            Constant.profiler.End("world_check_triggers_update");
 
             //shake camera update
             shake_camera(gameTime);
@@ -1769,6 +1784,8 @@ namespace gate
             foreach (Light light in lights) {
                 light.Update(gameTime, camera.Rotation);
             }
+            
+            Constant.profiler.FrameSummary();
         }
 
         /*editor tooling*/
@@ -3289,6 +3306,7 @@ namespace gate
         
         #region draw
         public void Draw(SpriteBatch _spriteBatch){
+            Constant.profiler.Start("world_entities_draw");
             // TODO: Add drawing code here
 
             _spriteBatch.Begin(SpriteSortMode.Deferred,
@@ -3403,31 +3421,28 @@ namespace gate
                 }
                 _spriteBatch.End();
             }
+            Constant.profiler.End("world_entities_draw");
         }
 
         public void DrawTextOverlays(SpriteBatch _spriteBatch) {
+            Constant.profiler.Start("world_text_overlays_draw");
             //draw UI
             _spriteBatch.Begin();
             //display dash charges
-            for (int i = 0; i < player.get_dash_charge(); i++) {
-                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, 0), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Black);
-            }
+            _spriteBatch.Draw(Constant.dash_icon, Constant.dash_charge_ui_screen_position, null, Color.White);
+            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_dash_charge()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 0), Color.White);
             //display attack charges
-            for (int i = 0; i < player.get_attack_charge(); i++) {
-                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, Constant.dash_charge_ui_size + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.White);
-            }
+            _spriteBatch.Draw(Constant.sword_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32), null, Color.White);
+            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_attack_charge()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32), Color.White);
             //display health
-            for (int i = 0; i < player.get_health(); i++) {
-                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size - 20f, Constant.dash_charge_ui_size*2 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Red);
-            }
+            _spriteBatch.Draw(Constant.sword_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32*2), null, Color.Green);
+            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_health()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32*2), Color.Green);
             //display arrow charges
-            for (int i = 0; i < player.get_arrow_charges(); i++) {
-                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size + 10f, Constant.dash_charge_ui_size*3 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Blue);
-            }
+            _spriteBatch.Draw(Constant.bow_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32*3), null, Color.White);
+            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_arrow_charges()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32*3), Color.White);
             //display grenade charges
-            for (int i = 0; i < player.get_grenade_charge(); i++) {
-                Renderer.FillRectangle(_spriteBatch, Constant.dash_charge_ui_screen_position + new Vector2(i*Constant.dash_charge_ui_size - 20f, Constant.dash_charge_ui_size*4 + 5), Constant.dash_charge_ui_size - 5, Constant.dash_charge_ui_size - 5, Color.Purple);
-            }
+            _spriteBatch.Draw(Constant.bow_icon, Constant.dash_charge_ui_screen_position + new Vector2(0, 32*4), null, Color.Red);
+            _spriteBatch.DrawString(Constant.pxf_font, $"{player.get_grenade_charge()}", Constant.dash_charge_ui_screen_position + new Vector2(32, 32*4), Color.Red);
 
             //draw text overlays
             _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);
@@ -3440,6 +3455,7 @@ namespace gate
             _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
             _spriteBatch.End();
+            Constant.profiler.End("world_text_overlays_draw");
         }
 
         public void draw_textbox(SpriteBatch spriteBatch) {
