@@ -8,6 +8,7 @@ using gate;
 using gate.Serialize;
 using gate.Core;
 using gate.Collision;
+using gate.Entities;
 
 namespace gate.Particles
 {
@@ -34,6 +35,10 @@ namespace gate.Particles
         private int frame_count = 0;
 
         private RRect hurtbox;
+
+        //access to world functions
+        private World world;
+        private bool impact_particles = false;
 
         //constant emission constructor
         public ParticleSystem(bool in_world, Vector2 base_position, int max_speed, float particle_life_duration, float frequency, int particle_min_scale, int particle_max_scale, List<Color> particle_colors, List<Texture2D> particle_textures, Vector2? direction = null) {
@@ -78,6 +83,11 @@ namespace gate.Particles
             this.end_position = end_position;
         }
 
+        public void set_world(World world) {
+            this.world = world;
+            impact_particles = true;
+        }
+
         public void Update(GameTime gameTime, float rotation) {
             //generate new particle
             float speed = (float)random.Next(1, max_speed);
@@ -120,6 +130,22 @@ namespace gate.Particles
                 //check for dead particles
                 if (p.is_dead()) {
                     dead_particles.Add(p);
+                    if (impact_particles && world != null) {
+                        //set temp tiles where particles were
+                        world.add_temp_tile(
+                            new TempTile(
+                                p.draw_position,
+                                (float)(random.NextDouble() + 1),
+                                (float)(MathHelper.ToRadians(random.Next(0, 360))),
+                                Constant.footprint_tex,
+                                p.get_color(),
+                                "hit_conf",
+                                (int)DrawWeight.Light,
+                                world.get_editor_object_idx(),
+                                true
+                            )
+                        );
+                    }
                 }
             }
             foreach (Particle p in dead_particles) {

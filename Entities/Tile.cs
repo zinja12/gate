@@ -131,8 +131,12 @@ namespace gate.Entities
 
         private bool debug = false;
 
-        public TempTile(Vector2 draw_position, float scale, float rotation, Texture2D texture, string identifier, int draw_weight, int ID, bool fade = false)
+        private Color color;
+
+        public TempTile(Vector2 draw_position, float scale, float rotation, Texture2D texture, Color color, string identifier, int draw_weight, int ID, bool fade = false)
             : base(draw_position, scale, texture, identifier, draw_weight, ID) {
+            //set color
+            this.color = color;
             //set rotation offset
             set_rotation_offset(rotation);
             //set up hurtbox
@@ -177,7 +181,7 @@ namespace gate.Entities
         }
 
         public override void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(texture, draw_position, null, Color.White * opacity, rotation/1000, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, draw_position, null, color * opacity, rotation/1000, Vector2.Zero, scale, SpriteEffects.None, 0f);
             
             //debug draw
             if (debug) {

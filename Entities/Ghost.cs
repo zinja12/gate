@@ -80,7 +80,7 @@ namespace gate.Entities
                 sludge_elapsed = 0f;
                 //place sludge
                 world.add_temp_tile(
-                    new TempTile(draw_position, 1f, rotation, Constant.sludge_tex, "sludge_tile", (int)DrawWeight.Light, world.get_editor_object_idx(), true)
+                    new TempTile(draw_position, 1f, rotation, Constant.sludge_tex, Color.White, "sludge_tile", (int)DrawWeight.Light, world.get_editor_object_idx(), true)
                 );
                 //good practice increment editor idx
                 world.increment_editor_idx();

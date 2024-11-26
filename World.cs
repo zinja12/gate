@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "1f.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -2450,7 +2450,12 @@ namespace gate
                             if (ic.is_hurtbox_active()) {
                                 bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
                                 if (collision) {
+                                    //collision entity takes hit
                                     ic.take_hit(player, 1);
+                                    //particle effect
+                                    ParticleSystem p = new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.black_particles, new List<Texture2D>() { Constant.footprint_tex });
+                                    p.set_world(this);
+                                    particle_systems.Add(p);
                                     //add to arrows charges for player
                                     player.add_arrow_charge(1);
                                     //freeze frames to add weight to collision
@@ -2495,10 +2500,12 @@ namespace gate
                         }
                     } else if (e is TempTile) {
                         TempTile tt = (TempTile)e;
-                        if (player.is_hurtbox_active()) {
-                            bool collision = player.check_hurtbox_collisions(tt.get_hurtbox());
-                            //collision only results with true if the opacity of the temp tile is greater than a threshold
-                            collision_tile_map[tt] = collision && (tt.get_opacity() >= 0.15f);
+                        if (e.get_id().Equals("sludge_tile")) {
+                            if (player.is_hurtbox_active()) {
+                                bool collision = player.check_hurtbox_collisions(tt.get_hurtbox());
+                                //collision only results with true if the opacity of the temp tile is greater than a threshold
+                                collision_tile_map[tt] = collision && (tt.get_opacity() >= 0.15f);
+                            }
                         }
                     }
 

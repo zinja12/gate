@@ -73,6 +73,10 @@ namespace gate.Particles
             elapsed_life += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
         }
 
+        public Color get_color() {
+            return colors[color_idx];
+        }
+
         public bool is_dead() {
             return dead;
         }
