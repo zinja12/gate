@@ -23,11 +23,13 @@
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/anxiety.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/arrow1.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/attack_sprites2.png</File>
+    <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/bow_icon.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/bow_pickup.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/box_spritesheet1.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/box1_2_18.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/cracked_rocks_4.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/dash_cloak_pickup.png</File>
+    <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/dash_icon.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/fear_anger.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/fence1.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/flower1_1_12.png</File>
@@ -59,6 +61,7 @@
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/sludge1.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/switch2_active_8.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/switch2_inactive_8.png</File>
+    <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/sword_icon.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/sword1_22.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/tent_spritesheet1.png</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/test_nightmare_attacks_spritesheet1.png</File>
@@ -87,6 +90,9 @@
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

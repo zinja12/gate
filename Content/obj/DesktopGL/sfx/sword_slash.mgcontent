@@ -3,7 +3,7 @@
   <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sfx/sword_slash.ogg</SourceFile>
   <SourceTime>2024-11-06T10:19:56.1300903-05:00</SourceTime>
   <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/sfx/sword_slash.xnb</DestFile>
-  <DestTime>2024-11-21T16:14:14.6421837-05:00</DestTime>
+  <DestTime>2024-11-25T21:07:57.5008292-05:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>

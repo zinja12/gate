@@ -251,6 +251,7 @@ namespace gate.Entities
         }
 
         public void Update(GameTime gameTime, float rotation) {
+            Constant.profiler.Start("player_update");
             // set rotation
             this.rotation = rotation;
             
@@ -653,6 +654,8 @@ namespace gate.Entities
 
             this.center_position = Constant.rotate_point(depth_sort_position, rotation, 16f, Constant.direction_up);
             this.emotion_display_position = Constant.rotate_point(draw_position, rotation, -(player_size/2), Constant.direction_down);
+
+            Constant.profiler.End("player_update");
         }
 
         public void update_particle_systems(GameTime gameTime, float rotation) {
@@ -1631,6 +1634,7 @@ namespace gate.Entities
         }
 
         public void Draw(SpriteBatch spriteBatch) {
+            Constant.profiler.Start("player_draw");
             //draw footprints
             foreach (Footprints f in footprints) {
                 f.Draw(spriteBatch);
@@ -1710,6 +1714,7 @@ namespace gate.Entities
 
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Purple, 1f, get_base_position(), get_base_position()+resultant*50f);
             }
+            Constant.profiler.End("player_draw");
         }
     }
 }
