@@ -196,6 +196,12 @@ ToDo List:
          "start_value": 0.4,
          "end_value": 0
     }
+[](FEATURE)enemies drop money
+[](FEATURE)shops + buying functionality + talking to shopkeepers
+[](FEATURE)placing checkpoints (markers) to save progress at certain points
+    -on death, player reverts to previous checkpoint
+    -shade spawned like hollow knight that player needs to track down to get certain items back
+[](FEATURE)shade enemy functionality
 
 (BUGS):
 [DONE](BUG)fix ghastly hitbox and positioning
