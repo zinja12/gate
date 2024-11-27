@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "1f.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -74,6 +74,7 @@ namespace gate
         List<IEntity> light_excluded_entities;
         Dictionary<string, bool> condition_tags;
         List<(IEntity, Vector2, float)> explosion_list;
+        Dictionary<IEntity, float> dropped_items; //entity -> elapsed time
         //editor ONLY objects
         List<IEntity> editor_only_objects;
 
@@ -213,6 +214,8 @@ namespace gate
             condition_tags = new Dictionary<string, bool>();
             //explosion list
             explosion_list = new List<(IEntity, Vector2, float)>();
+            //dropped items list
+            dropped_items = new Dictionary<IEntity, float>();
 
             //editor ONLY objects
             editor_only_objects = new List<IEntity>();
@@ -393,6 +396,7 @@ namespace gate
             Constant.shadow_tex = Content.Load<Texture2D>("sprites/shadow0");
             Constant.green_tree = Content.Load<Texture2D>("sprites/green_tree1_1_26");
             Constant.read_interact_tex = Content.Load<Texture2D>("sprites/read_interact");
+            Constant.crystal_tex = Content.Load<Texture2D>("sprites/crystal1");
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
@@ -1742,7 +1746,9 @@ namespace gate
             #endregion
 
             //update temp tiles
+            Constant.profiler.start("world_temp_tiles_update");
             update_temp_tiles(gameTime, camera.Rotation);
+            Constant.profiler.end("world_temp_tiles_update");
 
             //update particle systems
             Constant.profiler.start("world_particle_systems_update");
@@ -1755,7 +1761,14 @@ namespace gate
             Constant.profiler.end("world_check_entity_collisions_update");
 
             //update and process explosions
+            Constant.profiler.start("world_process_explosions_update");
             process_explosions(gameTime);
+            Constant.profiler.end("world_process_explosions_update");
+
+            //update dropped items
+            Constant.profiler.start("world_update_dropped_items_update");
+            update_dropped_items(gameTime, camera.Rotation);
+            Constant.profiler.end("world_update_dropped_items_update");
             
             //clear entities
             clear_entities();
@@ -2086,14 +2099,18 @@ namespace gate
             }
             //check for player chip to save level (should only be one within the level)
             if (player_chip_count != 1) {
-                //Console.WriteLine($"File Save Error. There should be exactly 1 player chip (player spawn point) in the level, but {player_chip_count} were found.");
                 throw new Exception($"File Save Error. There should be exactly 1 player chip (player spawn point) in the level, but {player_chip_count} were found.");
             }
             //iterate over all entities
             foreach (IEntity e in entities) {
                 //we need to exclude deleted objects from being saved to the world level file
                 //we also need to exclude the player form being saved as we are using player chips to denote spawn points
-                if (!entities_to_clear.Contains(e) && !(e is Player) && !(e is Arrow) && !(e is Grenade) && !(e is Footprints)) {
+                if (!entities_to_clear.Contains(e) && 
+                    !(e is Player) && 
+                    !(e is Arrow) && 
+                    !(e is Grenade) && 
+                    !(e is Footprints) && 
+                    !e.get_id().Equals("money")) {
                     //also need to check further for AI and exclude those added via script
                     if (((e is Nightmare) || (e is Ghost)) && !(e is NPC)) {
                         //check for object placement source
@@ -2402,7 +2419,7 @@ namespace gate
                     }
                     foreach (IAiEntity enemy in in_range_enemies) {
                         //damage
-                        //we have already validated they are all IEntities
+                        //we have already validated they are all of class IEntity
                         if (enemy is ICollisionEntity) {
                             ICollisionEntity ce = (ICollisionEntity)enemy;
                             ce.take_hit(grenade, Constant.grenade_damage);
@@ -2465,6 +2482,17 @@ namespace gate
                                     //shake the camera
                                     set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
                                     play_spatial_sfx(Constant.hit1_sfx, e.get_base_position(), 0f, get_render_distance());
+                                    //drop item
+                                    //every enemy extends nightmare so we can just cast it to that to get the health value regardless of the real class value
+                                    Nightmare n = (Nightmare)e;
+                                    if (n.get_health() <= 0) {
+                                        Console.WriteLine("dropping item");
+                                        //drop item on death
+                                        add_dropped_item(
+                                            new BillboardSprite(Constant.crystal_tex, e.get_base_position(), 0.5f, "crystal_money", get_editor_object_idx()),
+                                            0f
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -2773,6 +2801,24 @@ namespace gate
                     }
                 }
             }
+
+            //check dropped item collision
+            foreach (KeyValuePair<IEntity, float> kv in dropped_items) {
+                //every entity in here should be a collision entity, if not something is really messed up
+                IEntity e = kv.Key;
+                //convert to collision entity
+                ICollisionEntity ic = (ICollisionEntity)e;
+                bool collision = player.get_hurtbox().collision(ic.get_hurtbox());
+                if (collision) {
+                    //entity specific logic for different dropped items
+                    if (e.get_id().Equals("crystal_money")) {
+                        //collect money and remove entity
+                        clear_entity(e);
+                        //add money to player
+                        player.set_money(player.get_money() + 1);
+                    }
+                }
+            }
         }
 
         private void player_item_pickup(Player p, IEntity item) {
@@ -2940,6 +2986,25 @@ namespace gate
             temp_tiles.Add(tt);
             collision_entities.Add(tt);
         }
+
+        public void add_dropped_item(IEntity e, float elapsed) {
+            dropped_items.Add(e, elapsed);
+            entities_list.Add(e);
+        }
+
+        public void update_dropped_items(GameTime gameTime, float rotation) {
+            List<IEntity> keys = new List<IEntity>(dropped_items.Keys);
+            foreach (IEntity k in keys) {
+                //increase counter by updating value in dictionary
+                float item_elapsed = dropped_items[k];
+                item_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                dropped_items[k] = item_elapsed;
+                //15 second timer for dropped items (15000 milliseconds)
+                if (item_elapsed >= 15000f) {
+                    clear_entity(k);
+                }
+            }
+        }
         
         //function to set all or specific ai entity behavior enabled or disabled
         //can extend this function in the future to also pass in a value to set the ai behavior to a certain type
@@ -3086,6 +3151,10 @@ namespace gate
                         temp_tiles.Remove(tt);
                     }
                 }
+                //remove from dropped items
+                if (dropped_items.ContainsKey(e)) {
+                    dropped_items.Remove(e);
+                }
                 if (collision_geometry_map.ContainsKey(e)) {
                     collision_geometry_map.Remove(e);
                 }
@@ -3108,8 +3177,10 @@ namespace gate
                 if (projectiles.Contains(e)) {
                     projectiles.Remove(e);
                 }
+                //hard delete from entities list
                 entities_list.Delete_Hard(e);
             }
+            //clear out list after deletion has finished
             entities_to_clear.Clear();
         }
 

@@ -290,3 +290,4 @@ C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\bow_icon.xnb
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\dash_icon.xnb
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\sword_icon.xnb
+C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\crystal1.xnb

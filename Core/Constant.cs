@@ -85,6 +85,7 @@ namespace gate.Core
         public static Texture2D haunter_attack_tex;
         public static Texture2D hex1_tex;
         public static Texture2D grenade_tex;
+        public static Texture2D crystal_tex;
         public static Texture2D light_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
