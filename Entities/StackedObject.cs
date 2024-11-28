@@ -17,6 +17,7 @@ namespace gate.Entities
         public Vector2 base_position;
         public Vector2 draw_position;
         public Vector2 depth_sort_position;
+        public Vector2 interaction_display_position;
 
         protected Vector2 rotation_point;
         protected float scale;
@@ -43,11 +44,15 @@ namespace gate.Entities
         private float sway_elapsed0, sway_elapsed1, sway_elapsed2, sway_threshold = 3000f;
         private Random random;
 
+        protected RRect interaction_box;
+        private bool interaction = false, display_interaction = false;
+        private Texture2D interaction_texture;
+
         protected Texture2D texture;
         protected string id;
         protected int ID;
 
-        public StackedObject(string id, Texture2D texture, Vector2 base_position, float scale, float width, float height, int stack_frame_count, int stack_distance, float rotation_degrees, int ID) {
+        public StackedObject(string id, Texture2D texture, Vector2 base_position, float scale, float width, float height, int stack_frame_count, int stack_distance, float rotation_degrees, int ID, bool interaction = false, Texture2D custom_interaction_tex = null) {
             this.object_width = width;
             this.object_height = height;
             this.texture = texture;
@@ -77,6 +82,16 @@ namespace gate.Entities
             sway_elapsed0 = (float)random.Next(0, (int)sway_threshold*2);
             sway_elapsed1 = (float)random.Next(0, (int)sway_threshold*2);
             sway_elapsed2 = (float)random.Next(0, (int)sway_threshold*2);
+
+            if (interaction) {
+                Console.WriteLine("setting up interaction box");
+                this.interaction = interaction;
+                this.interaction_display_position = new Vector2(depth_sort_position.X, depth_sort_position.Y);
+                this.interaction_box = new RRect(this.draw_position, width*2.5f, height*2.5f);
+                if (custom_interaction_tex != null) {
+                    this.interaction_texture = custom_interaction_tex;
+                }
+            }
         }
 
         public virtual void Update(GameTime gameTime, float rotation) {
@@ -86,6 +101,12 @@ namespace gate.Entities
             if (update_once) {
                 hitbox.update(rotation, draw_position);
                 update_once = false;
+            }
+
+            //update interaction box
+            if (interaction) {
+                this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-object_height*1.5f), Constant.direction_down);
+                interaction_box.update(rotation, draw_position);
             }
             
             //handle sway elapsed
@@ -101,6 +122,24 @@ namespace gate.Entities
 
         public void update_animation(GameTime gameTime) {
             //update animation
+        }
+
+        public RRect get_interaction_box() {
+            //return the interaction box if this stacked object is interactable, otherwise null
+            return interaction ? interaction_box : null;
+        }
+
+        public Vector2 get_overhead_position() {
+            Vector2 overhead_position = Constant.rotate_point(interaction_display_position, rotation, (-object_height/2), Constant.direction_down);
+            return overhead_position;
+        }
+
+        public void set_display_interaction(bool display_interaction) {
+            this.display_interaction = display_interaction;
+        }
+
+        public bool get_display_interaction() {
+            return display_interaction;
         }
 
         public Vector2 get_base_position(){
@@ -215,6 +254,19 @@ namespace gate.Entities
                 float rotation_calc = (-rotation + rotation_offset)/1000;
                 spriteBatch.Draw(texture, draw_pos+offset, sprite_rectangles[i], Color.White, rotation_calc, rotation_point, scale, SpriteEffects.None, 0f);
             }
+
+            if (display_interaction) {
+                if (interaction_texture != null) {
+                    spriteBatch.Draw(interaction_texture, interaction_display_position, null, Color.White, rotation + rotation_offset, new Vector2(8, 8), scale, SpriteEffects.None, 0f);
+                } else {
+                    spriteBatch.Draw(Constant.read_interact_tex, interaction_display_position, null, Color.White, rotation + rotation_offset, new Vector2(8, 8), scale, SpriteEffects.None, 0f);
+                }
+            }
+
+            if (interaction) {
+                interaction_box.draw(spriteBatch);
+            }
+
             if (debug){
                 hitbox.draw(spriteBatch);
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Red, 1f, base_position, base_position + new Vector2(0, -10));

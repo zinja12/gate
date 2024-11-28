@@ -202,6 +202,7 @@ ToDo List:
     -on death, player reverts to previous checkpoint
     -shade spawned like hollow knight that player needs to track down to get certain items back
 [](FEATURE)shade enemy functionality
+    -needs to be saved into the modified level file
 
 (BUGS):
 [DONE](BUG)fix ghastly hitbox and positioning

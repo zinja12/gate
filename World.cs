@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "1f.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -310,6 +310,7 @@ namespace gate
             obj_map.Add(37, new Haunter(Constant.haunter_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "haunter", this));
             Haunter haunter1 = (Haunter)obj_map[37];
             haunter1.set_behavior_enabled(false);
+            obj_map.Add(38, new StackedObject("checkpoint", Constant.checkpoint_marker_spritesheet, Vector2.Zero, 1f, 32, 32, 15, Constant.stack_distance, 0f, -1));
         }
         #endregion
 
@@ -606,6 +607,13 @@ namespace gate
                             entities_list.Add(m);
                             collision_geometry.Add(m);
                             collision_geometry_map[m] = false;
+                            break;
+                        case "checkpoint":
+                            check_and_load_tex(ref Constant.checkpoint_marker_spritesheet, "sprites/checkpoint_spritesheet1_15");
+                            StackedObject cpm = new StackedObject(w_obj.object_identifier, Constant.checkpoint_marker_spritesheet, obj_position, w_obj.scale, 32, 32, 15, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num, true);
+                            entities_list.Add(cpm);
+                            collision_geometry.Add(cpm);
+                            collision_geometry_map[cpm] = false;
                             break;
                         case "lamp":
                             //load texture
@@ -1046,6 +1054,9 @@ namespace gate
                             check_and_load_tex(ref Constant.haunter_tex, "sprites/haunter1");
                             check_and_load_tex(ref Constant.hex1_tex, "sprites/hex1");
                             check_and_load_tex(ref Constant.haunter_attack_tex, "sprites/haunter_attack1");
+                            break;
+                        case "checkpoint":
+                            check_and_load_tex(ref Constant.checkpoint_marker_spritesheet, "sprites/checkpoint_spritesheet1_15");
                             break;
                         default:
                             //don't load anything
@@ -2045,6 +2056,13 @@ namespace gate
                     enemies.Add(haunter);
                     set_ai_entities_for_all_ais();
                     break;
+                case 38:
+                    StackedObject cpm = new StackedObject("checkpoint", Constant.checkpoint_marker_spritesheet, create_position, 1f, 32, 32, 15, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx, true);
+                    entities_list.Add(cpm);
+                    collision_geometry.Add(cpm);
+                    collision_geometry_map[cpm] = false;
+                    Console.WriteLine("checkpoint," + create_position.X + "," + create_position.Y + ",1");
+                    break;
                 default:
                     break;
             }
@@ -2682,6 +2700,13 @@ namespace gate
                     if (e is StackedObject) {
                         StackedObject obj = (StackedObject)e;
                         bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
+
+                        //check and set interaction box
+                        if (obj.get_interaction_box() != null) {
+                            //interaction is enabled for this stacked object so set display interaction accordingly
+                            bool interaction_collision = obj.get_interaction_box().collision(player.get_hurtbox());
+                            obj.set_display_interaction(interaction_collision);
+                        }
 
                         //specific check for cracked rocks / objects player can dash through
                         if (collision && e.get_id().Equals("cracked_rocks") && player.is_dashing()) {

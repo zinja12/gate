@@ -267,6 +267,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/box1_2_18.png
 
+#begin sprites/checkpoint_spritesheet1_15.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/checkpoint_spritesheet1_15.png
+
 #begin sprites/cracked_rocks_4.png
 /importer:TextureImporter
 /processor:TextureProcessor

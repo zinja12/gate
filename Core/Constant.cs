@@ -86,6 +86,7 @@ namespace gate.Core
         public static Texture2D hex1_tex;
         public static Texture2D grenade_tex;
         public static Texture2D crystal_tex;
+        public static Texture2D checkpoint_marker_spritesheet;
         public static Texture2D light_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
@@ -334,6 +335,7 @@ namespace gate.Core
             identifiers.Add("player_chip");
             identifiers.Add("bow");
             identifiers.Add("haunter");
+            identifiers.Add("checkpoint");
             return identifiers;
         }
 
