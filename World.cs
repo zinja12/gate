@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "blank_level.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -109,6 +109,9 @@ namespace gate
         //script variables
         private bool post_level_load_script_trigger = false, gameplay_script_trigger = false;
         private ScriptTrigger current_script_trigger = null;
+        //checkpoint variables
+        private float checkpoint_interact_elapsed = 0f, checkpoint_interact_threshold = 500f;
+        private string checkpoint_level_id = null;
 
         //camera world variables
         private bool camera_shake = false;
@@ -458,6 +461,11 @@ namespace gate
                     GameWorldObject bounds = world_file_contents.camera_bounds;
                     camera_bounds_center = new Vector2(bounds.x_position, bounds.y_position);
                     camera_bounds = new RRect(camera_bounds_center, bounds.width, bounds.height);
+                }
+                //parse checkpoint level id
+                if (world_file_contents.checkpoint_level_id != null) {
+                    //set checkpoint level id
+                    this.checkpoint_level_id = world_file_contents.checkpoint_level_id;
                 }
                 //Iterate over world objects
                 Dictionary<int, string> unique_obj_id_map = new Dictionary<int, string>();
@@ -1355,9 +1363,14 @@ namespace gate
 
             #region player_death
             if (player.get_health() <= 0) {
-                //player has died, transition and reload the current level
+                //player has died, transition and reload to the saved checkpoint level
                 if (!transition_active) {
-                    set_transition(true, current_level_id, null);
+                    if (checkpoint_level_id == null) {
+                        //reload current level
+                        set_transition(true, current_level_id, null);
+                    } else {
+                        set_transition(true, checkpoint_level_id, null);
+                    }
                 }
             }
 
@@ -2347,6 +2360,7 @@ namespace gate
             //generate GameWorldFile object with all saved objects
             GameWorldFile world_file = new GameWorldFile {
                 level_loaded_count = level_load_count,
+                checkpoint_level_id = this.checkpoint_level_id,
                 world_objects = sorted_world_objs,
                 world_triggers = sorted_world_triggers,
                 conditions = sorted_world_conditions,
@@ -2694,6 +2708,9 @@ namespace gate
                 }
             }
 
+            //add to checkpoint interactions
+            checkpoint_interact_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
             //check player-geometry collisions
             foreach (IEntity e in collision_geometry) {
                 if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2) && !editor_active) {
@@ -2744,6 +2761,29 @@ namespace gate
                                     }
                                     play_spatial_sfx(Constant.hit1_sfx, e.get_base_position(), ((float)random.Next(-1, 2)), get_render_distance());
                                 }
+                            }
+                        }
+
+                        //check player-stacked object interactions
+                        if (player.interacting()) {
+                            if (e.get_id().Equals("checkpoint") && checkpoint_interact_elapsed >= checkpoint_interact_threshold) {
+                                //save player checkpoint
+                                checkpoint_interact_elapsed = 0f;
+                                //update player chip position
+                                update_player_chip(player.get_base_position());
+                                //set current level id to checkpoint level
+                                checkpoint_level_id = current_level_id;
+                                //save modification to level file
+                                save_world_level_to_file(
+                                    entities_list.get_all_entities().Keys.ToList(),
+                                    foreground_entities,
+                                    background_entities,
+                                    level_loaded_map[current_level_id],
+                                    Constant.level_mod_prefix + current_level_id
+                                );
+                                //add particle effects to signify it worked
+                                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                                Console.WriteLine("updating player chip position...");
                             }
                         }
                     }
@@ -3028,6 +3068,23 @@ namespace gate
                 if (item_elapsed >= 15000f) {
                     clear_entity(k);
                 }
+            }
+        }
+
+        public void update_player_chip(Vector2 player_chip_position) {
+            //access editor only objects and find player chip
+            IEntity player_chip = null;
+            foreach (IEntity e in editor_only_objects) {
+                if (e.get_id().Equals("player_chip")) {
+                    player_chip = e;
+                    break;
+                }
+            }
+            if (player_chip != null) {
+                //set player_chip position to passed in position
+                player_chip.set_base_position(player_chip_position);
+            } else {
+                throw new Exception("Entity Not Found Error: Player chip was not found within editor only objects when trying to update its position.");
             }
         }
         

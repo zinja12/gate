@@ -117,9 +117,11 @@ namespace gate.Entities
             return identifier;
         }
 
-        public void set_base_position(Vector2 position) {
-            this.draw_position = new Vector2(position.X - (texture.Width / 2), 
-                                            position.Y - texture.Height);
+        public void set_base_position(Vector2 base_position) {
+            this.base_position = base_position;
+            this.draw_position = new Vector2(base_position.X - (texture.Width / 2), 
+                                            base_position.Y - texture.Height);
+            this.depth_sort_position = this.draw_position + new Vector2(0, texture.Height / 2);
         }
 
         public void set_display_interaction(bool display_interaction) {
