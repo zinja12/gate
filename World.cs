@@ -1373,9 +1373,6 @@ namespace gate
             }
 
             #region player_death
-            if (Keyboard.GetState().IsKeyDown(Keys.D9)) {
-                player.set_health(0);
-            }
             if (player.get_health() <= 0) {
                 //player has died, transition and reload to the saved checkpoint level
                 //transition on player death
