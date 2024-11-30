@@ -2542,6 +2542,13 @@ namespace gate
                                     Nightmare n = (Nightmare)e;
                                     if (n.get_health() <= 0) {
                                         Console.WriteLine("dropping item");
+                                        if (e.get_id("shade")) {
+                                            //we probably don't have to check null here since it is basically a given that the shade will be in this level if we get here (current level)
+                                            if (shade_level_id != null) {
+                                                remove_shade_from_level_file(shade_level_id);
+                                            }
+                                            //drop player cash from last time
+                                        }
                                         //drop item on death
                                         add_dropped_item(
                                             new BillboardSprite(Constant.crystal_tex, e.get_base_position(), 0.5f, "crystal_money", get_editor_object_idx()),
