@@ -51,7 +51,7 @@ namespace gate.Entities
         protected int animation_case = 0;
         protected bool? static_image_entity;
 
-        protected Texture2D texture;
+        protected Texture2D texture, attack_texture;
         protected Texture2D hit_texture;
         protected HitConfirm hit_confirm;
         protected HitConfirm slash_confirm;
@@ -116,12 +116,13 @@ namespace gate.Entities
 
         protected GameTime gt;
 
-        public Nightmare(Texture2D texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier, bool? static_image_entity = null) {
+        public Nightmare(Texture2D texture, Texture2D attack_texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier, bool? static_image_entity = null) {
             this.nightmare_size = 32;
             this.hitbox_center_distance = nightmare_size/2;
             this.draw_color = Color.White;
 
             this.texture = texture;
+            this.attack_texture = (attack_texture == null) ? Constant.nightmare_attack_tex : attack_texture;
             this.base_position = base_position;
             this.draw_position = new Vector2(base_position.X - (nightmare_size / 2), 
                                             base_position.Y - nightmare_size);
@@ -717,7 +718,7 @@ namespace gate.Entities
                     spriteBatch.Draw(texture, draw_position, walk_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
                 } else if (melee_attack) {
                     //draw attack animation
-                    spriteBatch.Draw(Constant.nightmare_attack_tex, attack_draw_position, attack_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(attack_texture, attack_draw_position, attack_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
                 } else {
                     //draw idle
                     spriteBatch.Draw(texture, draw_position, idle_animation.source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);

@@ -111,7 +111,7 @@ namespace gate
         private ScriptTrigger current_script_trigger = null;
         //checkpoint variables
         private float checkpoint_interact_elapsed = 0f, checkpoint_interact_threshold = 500f;
-        private string checkpoint_level_id = null;
+        private string checkpoint_level_id = null, shade_level_id = null;
 
         //camera world variables
         private bool camera_shake = false;
@@ -278,7 +278,7 @@ namespace gate
             obj_map.Add(12, new StackedObject("wall", Constant.wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
             obj_map.Add(13, new StackedObject("fence", Constant.fence_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
             obj_map.Add(14, new InvisibleObject("deathbox", Vector2.Zero, 1f, 48, 48, 0f, -1));
-            obj_map.Add(15, new Nightmare(Constant.nightmare_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "nightmare"));
+            obj_map.Add(15, new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "nightmare"));
             //set obj 14 to visible so we can see it
             InvisibleObject io = (InvisibleObject)obj_map[14];
             io.set_debug(true);
@@ -664,7 +664,7 @@ namespace gate
                         case "nightmare":
                             check_and_load_tex(ref Constant.nightmare_tex, "sprites/test_nightmare_spritesheet2");
                             check_and_load_tex(ref Constant.nightmare_attack_tex, "sprites/test_nightmare_attacks_spritesheet1");
-                            Nightmare nightmare = new Nightmare(Constant.nightmare_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            Nightmare nightmare = new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
                             entities_list.Add(nightmare);
                             collision_entities.Add(nightmare);
                             enemies.Add(nightmare);
@@ -1364,6 +1364,14 @@ namespace gate
             #region player_death
             if (player.get_health() <= 0) {
                 //player has died, transition and reload to the saved checkpoint level
+                //set shade for current level if there is not a current shade
+                if (shade_level_id != null) {
+                    //shade already exists in a level, need to delete that shade and set a new one for the current level and player
+                    remove_shade_from_level_file(shade_level_id);
+                }
+                spawn_shade();
+
+                //transition on player death
                 if (!transition_active) {
                     if (checkpoint_level_id == null) {
                         //reload current level
@@ -1921,7 +1929,7 @@ namespace gate
                     Console.WriteLine($"deathbox,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
                     break;
                 case 15:
-                    Nightmare n = new Nightmare(Constant.nightmare_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "nightmare");
+                    Nightmare n = new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "nightmare");
                     n.set_behavior_enabled(false);
                     n.set_placement_source(placement_source);
                     entities_list.Add(n);
@@ -2115,7 +2123,7 @@ namespace gate
         }
         
         #region save_world_file
-        public List<GameWorldObject> build_world_objs(List<IEntity> entities, List<ForegroundEntity> foreground_entities, List<BackgroundEntity> background_entities) {
+        public List<GameWorldObject> build_world_objs(List<IEntity> entities, List<ForegroundEntity> foreground_entities, List<BackgroundEntity> background_entities, out IEntity shade) {
             //track player chip count
             int player_chip_count = 0;
             //set up object lists to return
@@ -2133,7 +2141,12 @@ namespace gate
                 throw new Exception($"File Save Error. There should be exactly 1 player chip (player spawn point) in the level, but {player_chip_count} were found.");
             }
             //iterate over all entities
+            shade = null;
             foreach (IEntity e in entities) {
+                //set out param to shade
+                if (e.get_id().Equals("shade")) {
+                    shade = e;
+                }
                 //we need to exclude deleted objects from being saved to the world level file
                 //we also need to exclude the player form being saved as we are using player chips to denote spawn points
                 if (!entities_to_clear.Contains(e) && 
@@ -2141,7 +2154,8 @@ namespace gate
                     !(e is Arrow) && 
                     !(e is Grenade) && 
                     !(e is Footprints) && 
-                    !e.get_id().Equals("money")) {
+                    !e.get_id().Equals("money") && 
+                    !e.get_id().Equals("shade")) {
                     //also need to check further for AI and exclude those added via script
                     if (((e is Nightmare) || (e is Ghost)) && !(e is NPC)) {
                         //check for object placement source
@@ -2218,7 +2232,8 @@ namespace gate
             }
 
             //sort world objects by numerical id
-            List<GameWorldObject> sorted_world_objs = build_world_objs(entities, foreground_entities, background_entities).OrderBy (o => o.object_id_num).ToList();
+            IEntity shade = null;
+            List<GameWorldObject> sorted_world_objs = build_world_objs(entities, foreground_entities, background_entities, out shade).OrderBy (o => o.object_id_num).ToList();
             List<GameWorldTrigger> sorted_world_triggers = world_triggers.OrderBy (t => t.object_id_num).ToList();
 
             //pull and store all of the conditions into a separate data structure in this function
@@ -2291,7 +2306,7 @@ namespace gate
                 obj_reissue_id++;
             }
             //rebuild sorted world objs with new ids that have been assigned
-            sorted_world_objs = build_world_objs(entities, foreground_entities, background_entities).OrderBy (o => o.object_id_num).ToList();
+            sorted_world_objs = build_world_objs(entities, foreground_entities, background_entities, out shade).OrderBy (o => o.object_id_num).ToList();
 
             //triggers
             for (int i = 0; i < sorted_world_triggers.Count; i++) {
@@ -2320,6 +2335,13 @@ namespace gate
             //set world particle systems object id (this number is irrelevant to particle systems, but it should still be in order as good practice and for consistency)
             for (int i = 0; i < world_particle_systems.Count; i++) {
                 world_particle_systems[i].object_id_num = obj_reissue_id;
+                obj_reissue_id++;
+            }
+            
+            GameWorldObject saved_shade = null;
+            if (shade != null) {
+                saved_shade = shade.to_world_level_object();
+                saved_shade.object_id_num = obj_reissue_id;
                 obj_reissue_id++;
             }
 
@@ -2365,6 +2387,7 @@ namespace gate
                 world_triggers = sorted_world_triggers,
                 conditions = sorted_world_conditions,
                 particle_systems = world_particle_systems,
+                shade = saved_shade,
                 world_script = world_script_parser.get_game_world_script()
             };
             //take world file and serialize to json then write to file
@@ -3086,6 +3109,46 @@ namespace gate
             } else {
                 throw new Exception("Entity Not Found Error: Player chip was not found within editor only objects when trying to update its position.");
             }
+        }
+
+        public void spawn_shade() {
+            //set shade level
+            shade_level_id = current_level_id;
+            //create shade entity and save to modified level file
+            Nightmare n = new Nightmare(Constant.player_tex, Constant.player_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, get_editor_object_idx(), "shade");
+            n.set_behavior_enabled(false);
+            n.set_placement_source((int)ObjectPlacement.Level);
+            entities_list.Add(n);
+            collision_entities.Add(n);
+            enemies.Add(n);
+            //NOTE: do not need to set the other ais into this enemy because presumably the level is going to be reloaded so no need to spend time setting it since it will be unloaded shortly
+            //increment editor idx because we are saving this entity to the world level file
+            increment_editor_idx();
+            //save level with new shade 
+            save_world_level_to_file(
+                entities_list.get_all_entities().Keys.ToList(),
+                foreground_entities,
+                background_entities,
+                level_loaded_map[current_level_id],
+                Constant.level_mod_prefix + current_level_id
+            );
+        }
+
+        public void remove_shade_from_level_file(string level_id) {
+            //set up and read level file
+            string level_file_path = "levels/";
+            //check for existence of modified level file to load for gameplay and world continuity sake
+            string modified_level_id = get_modified_level_file(content_root_directory, level_file_path, level_id);
+            string file_contents = read_from_file(content_root_directory, level_file_path, modified_level_id);
+            /*Read object from contents as json*/
+            GameWorldFile world_file_contents = JsonSerializer.Deserialize<GameWorldFile>(file_contents);
+            //remove shade from world file contents
+            //NOTE:do not need to worry about re-shifting or re-issuing ids because the shade is always guaranteed to be the last entity
+            world_file_contents.shade = null;
+            //take world file and serialize to json then write to file
+            string save_file_contents = JsonSerializer.Serialize(world_file_contents);
+            //write
+            write_to_file(level_file_path, modified_level_id, save_file_contents);
         }
         
         //function to set all or specific ai entity behavior enabled or disabled

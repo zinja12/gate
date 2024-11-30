@@ -263,12 +263,11 @@ namespace gate.Entities
                 }
             }
 
-            if (interaction) {
-                interaction_box.draw(spriteBatch);
-            }
-
             if (debug){
                 hitbox.draw(spriteBatch);
+                if (interaction) {
+                    interaction_box.draw(spriteBatch);
+                }
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Red, 1f, base_position, base_position + new Vector2(0, -10));
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Green, 1f, draw_position, draw_position + new Vector2(0, -10));
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Yellow, 1f, depth_sort_position, depth_sort_position + new Vector2(0, -10));

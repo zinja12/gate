@@ -24,7 +24,7 @@ namespace gate.Entities
         private float sludge_elapsed = 0f, sludge_threshold = 1000f;
 
         public Ghost(Texture2D texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier, World world, bool? static_image_entity = null)
-            : base(texture, base_position, scale, hit_texture, player, ID, identifier, static_image_entity) {               
+            : base(texture, null, base_position, scale, hit_texture, player, ID, identifier, static_image_entity) {               
             //set world reference
             this.world = world;
             //set health value for this enemy specifically
