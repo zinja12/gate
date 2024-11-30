@@ -826,9 +826,6 @@ namespace gate
                     throw new Exception("World File Error: No player_chip found in file for player to spawn at. Please add a player chip object to world file.");
                 }
 
-                //set ai entities for all ai entities
-                set_ai_entities_for_all_ais();
-
                 //set up triggers
                 if (world_file_contents.world_triggers != null) {
                     for (int i = 0; i < world_file_contents.world_triggers.Count; i++) {
@@ -923,6 +920,20 @@ namespace gate
                         editor_object_idx++;
                     }
                 }
+                
+                //handle loading in the shade if needed
+                if (world_file_contents.shade != null) {
+                    GameWorldObject shade = world_file_contents.shade;
+                    Nightmare n = new Nightmare(Constant.player_tex, Constant.player_attack_tex, new Vector2(shade.x_position, shade.y_position), shade.scale, Constant.hit_confirm_spritesheet, player, editor_object_idx, "shade");
+                    n.set_placement_source((int)ObjectPlacement.Level);
+                    entities_list.Add(n);
+                    collision_entities.Add(n);
+                    enemies.Add(n);
+                    editor_object_idx++;
+                }
+
+                //set ai entities for all ai entities
+                set_ai_entities_for_all_ais();
 
                 Console.WriteLine($"editor object idx:{editor_object_idx}");
             } else {
@@ -1362,17 +1373,22 @@ namespace gate
             }
 
             #region player_death
+            if (Keyboard.GetState().IsKeyDown(Keys.D9)) {
+                player.set_health(0);
+            }
             if (player.get_health() <= 0) {
                 //player has died, transition and reload to the saved checkpoint level
-                //set shade for current level if there is not a current shade
-                if (shade_level_id != null) {
-                    //shade already exists in a level, need to delete that shade and set a new one for the current level and player
-                    remove_shade_from_level_file(shade_level_id);
-                }
-                spawn_shade();
-
                 //transition on player death
                 if (!transition_active) {
+                    //set shade for current level if there is not a current shade
+                    if (object_persistence) {
+                        if (shade_level_id != null) {
+                            //shade already exists in a level, need to delete that shade and set a new one for the current level and player
+                            remove_shade_from_level_file(shade_level_id);
+                        }
+                        spawn_shade();
+                    }
+
                     if (checkpoint_level_id == null) {
                         //reload current level
                         set_transition(true, current_level_id, null);
@@ -2343,6 +2359,9 @@ namespace gate
                 saved_shade = shade.to_world_level_object();
                 saved_shade.object_id_num = obj_reissue_id;
                 obj_reissue_id++;
+                Console.WriteLine("SHADE SAVED");
+            } else {
+                Console.WriteLine("SHADE IS NULL");
             }
 
             //once object ids have been re-issued, modify the lists to add the light data in
@@ -2542,7 +2561,7 @@ namespace gate
                                     Nightmare n = (Nightmare)e;
                                     if (n.get_health() <= 0) {
                                         Console.WriteLine("dropping item");
-                                        if (e.get_id("shade")) {
+                                        if (e.get_id().Equals("shade")) {
                                             //we probably don't have to check null here since it is basically a given that the shade will be in this level if we get here (current level)
                                             if (shade_level_id != null) {
                                                 remove_shade_from_level_file(shade_level_id);
@@ -3119,6 +3138,7 @@ namespace gate
         }
 
         public void spawn_shade() {
+            Console.WriteLine("spawning_shade");
             //set shade level
             shade_level_id = current_level_id;
             //create shade entity and save to modified level file
@@ -3139,9 +3159,11 @@ namespace gate
                 level_loaded_map[current_level_id],
                 Constant.level_mod_prefix + current_level_id
             );
+            Console.WriteLine("finished spawning shade");
         }
 
         public void remove_shade_from_level_file(string level_id) {
+            Console.WriteLine("removing shade from level file");
             //set up and read level file
             string level_file_path = "levels/";
             //check for existence of modified level file to load for gameplay and world continuity sake
@@ -3156,6 +3178,7 @@ namespace gate
             string save_file_contents = JsonSerializer.Serialize(world_file_contents);
             //write
             write_to_file(level_file_path, modified_level_id, save_file_contents);
+            Console.WriteLine("finished removing shade from level file");
         }
         
         //function to set all or specific ai entity behavior enabled or disabled
@@ -3234,6 +3257,7 @@ namespace gate
                         //tether camera back to player
                         player_camera_tethered = true;
                         transition_percentage = 0;
+                        next_level_id = null;
                     }
                 }
             }

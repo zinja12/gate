@@ -1,5 +1,7 @@
 {
     "camera_bounds": null,
+    "level_loaded_count": 0,
+    "checkpoint_level_id": null,
     "world_objects": [
         {
             "object_identifier": "player_chip",
@@ -15,11 +17,14 @@
             "rotation": 0,
             "goal_rotation": 0,
             "npc_path_entity_ids": null,
-            "npc_conversation_file_id": null
+            "npc_conversation_file_id": null,
+            "light": null,
+            "light_excluded": false
         }
     ],
-    "conditions": [
-    ],
+    "world_triggers": null,
+    "conditions": [],
     "particle_systems": [],
+    "shade": null,
     "world_script": []
 }
