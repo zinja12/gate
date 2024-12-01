@@ -3148,7 +3148,9 @@ namespace gate
             //NOTE: do not need to set the other ais into this enemy because presumably the level is going to be reloaded so no need to spend time setting it since it will be unloaded shortly
             //increment editor idx because we are saving this entity to the world level file
             increment_editor_idx();
-            //save level with new shade 
+            //spawn particle system
+            particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(n.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.black_particles, new List<Texture2D>() { Constant.footprint_tex }));
+            //save level with new shade
             save_world_level_to_file(
                 entities_list.get_all_entities().Keys.ToList(),
                 foreground_entities,
