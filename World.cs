@@ -3139,7 +3139,7 @@ namespace gate
             //set shade level
             shade_level_id = current_level_id;
             //create shade entity and save to modified level file
-            Nightmare n = new Nightmare(Constant.player_tex, Constant.player_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, get_editor_object_idx(), "shade");
+            Nightmare n = new Nightmare(Constant.player_tex, Constant.player_attack_tex, player.get_base_position(), 1f, Constant.hit_confirm_spritesheet, player, get_editor_object_idx(), "shade");
             n.set_behavior_enabled(false);
             n.set_placement_source((int)ObjectPlacement.Level);
             entities_list.Add(n);
