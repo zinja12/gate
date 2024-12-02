@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "blank_level.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -386,8 +386,8 @@ namespace gate
             Constant.pixelate_effect.Parameters["pixels"].SetValue(Constant.pixels);
             Constant.pixelate_effect.Parameters["pixelation"].SetValue(Constant.pixelation);
             Constant.color_palette_effect = Content.Load<Effect>("fx/color_palette");
-            Constant.color_palette_effect.Parameters["Palette"].SetValue(Constant.palette_colors2);
-            Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors2.Length);
+            Constant.color_palette_effect.Parameters["Palette"].SetValue(Constant.palette_colors);
+            Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors.Length);
             Constant.scanline2_effect = Content.Load<Effect>("fx/scanline2");
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
             //load content not specific to an object

@@ -93,7 +93,7 @@ namespace gate.Particles
             float speed = (float)random.Next(1, max_speed);
             speed /= 3;
             //TODO: need to continually rotate direction based on rotation of the world/camera
-            Vector2 direction = dir.HasValue ? dir.Value : new Vector2((float)random.Next(-100, 100), (float)random.Next(-100, 0));
+            Vector2 direction = dir.HasValue ? dir.Value : new Vector2((float)random.Next(-100, 100), (float)random.Next(-100, 100));
             //normalize and rotate
             direction = Vector2.Normalize(direction);
             //rotate the direction vector as needed depending on whether this is an in world effect vs a screen effect
