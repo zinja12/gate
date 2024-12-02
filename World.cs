@@ -2630,6 +2630,10 @@ namespace gate
                                 bool collision = nm.get_hurtbox().collision(a.get_hitbox());
                                 if (collision) {
                                     nm.take_hit(a, 1);
+                                    //particle effect for hit
+                                    ParticleSystem p = new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.black_particles, new List<Texture2D>() { Constant.footprint_tex });
+                                    p.set_world(this);
+                                    particle_systems.Add(p);
                                     //if the shot is not a power shot then clear it on impact immediately
                                     //it will be cleared when the speed runs out (dead)
                                     if (!a.is_power_shot()) { a.set_dead(true); entities_to_clear.Add(a); }
