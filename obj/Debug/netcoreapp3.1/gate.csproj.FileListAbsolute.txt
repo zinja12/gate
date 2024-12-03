@@ -26,7 +26,6 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\spri
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\hit_confirm_spritesheet.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\lamppost_spritesheet3.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\marker_spritesheet5.xnb
-C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\player_spritesheet3.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\rock1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\shadow0.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\sign1.xnb
@@ -34,13 +33,10 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\spri
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\tent_spritesheet1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_nightmare_attacks_spritesheet1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_nightmare_spritesheet2.xnb
-C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_attacks_spritesheet5.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_bow_aim_spritesheet1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_charging_spritesheet1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_dash_spritesheet1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_heavy_attack_spritesheet1.xnb
-C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_spritesheet5.xnb
-C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_spritesheet6.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\tile1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\tile3.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\tile4.xnb
@@ -300,3 +296,5 @@ C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\spri
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\crystal1.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\dash_icon.xnb
 C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\sword_icon.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_spritesheet7.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_attacks_spritesheet6.xnb

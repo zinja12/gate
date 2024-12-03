@@ -22,7 +22,7 @@ namespace gate.Entities
 
         private bool fire_projectile;
         private float fire_projectile_elapsed;
-        private float projectile_speed = 0.75f;
+        private float projectile_speed = 0.65f;
 
         private Rectangle fire_anim_rect;
 

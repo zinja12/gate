@@ -38,7 +38,7 @@ namespace gate.Entities
             attack_animation,
             heavy_attack_animation;
         private Rectangle charging_animation_rect, aiming_animation_rect;
-        private float walk_animation_duration = 170f;
+        private float walk_animation_duration = 125f;
         private float idle_animation_duration = 300f;
         private float dash_animation_duration = 85f;
         private float attack_animation_duration = 120f;
@@ -47,7 +47,7 @@ namespace gate.Entities
         private List<Footprints> footprints;
         private List<Footprints> reap_footprints;
         private float footprints_elapsed;
-        private float footprints_delay = 250f;
+        private float footprints_delay = 200f;
         private int footprint_sound = 0;
 
         //movement and input
@@ -198,8 +198,8 @@ namespace gate.Entities
             this.scale = scale;
             this.rotation_point = new Vector2(player_size / 2, player_size /2);
             //initialize animations with their appropriate starting frames on the spritesheets
-            this.walk_animation = new Animation(walk_animation_duration, 3, (int)player_size * 1, 0, (int)player_size, (int)player_size);
-            this.idle_animation = new Animation(idle_animation_duration, 3, (int)player_size * 1, 0, (int)player_size, (int)player_size);
+            this.walk_animation = new Animation(walk_animation_duration, 6, (int)player_size * 1, 0, (int)player_size, (int)player_size);
+            this.idle_animation = new Animation(idle_animation_duration, 6, (int)player_size * 1, 0, (int)player_size, (int)player_size);
             this.dash_animation = new Animation(dash_animation_duration, 4, (int)player_size * 1, 0, (int)player_size, (int)player_size);
             this.attack_animation = new Animation(attack_animation_duration, 5, (int)player_size * 2 * 1, 0, (int)player_size*2, (int)player_size*2);
             this.heavy_attack_animation = new Animation(attack_animation_duration, 5, (int)player_size*2 * 1, 0, (int)player_size*2, (int)player_size*2);
@@ -811,13 +811,13 @@ namespace gate.Entities
 
             if (_v < 0){ //up
                 if (_h > 0) { //up right
-                    walk_animation.set_y_offset((int)player_size*1);
+                    walk_animation.set_y_offset((int)player_size*6);
                     if (!dash_active)
                         dash_animation.set_y_offset((int)player_size*7);
                     //up attack animation
                     if (!attack_active) {
-                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*0); }
-                        else { attack_animation.set_y_offset((int)player_size*2*2); }
+                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*12); }
+                        else { attack_animation.set_y_offset((int)player_size*2*14); }
                     }
                     //up heavy attack animation
                     if (!heavy_attack_active)
@@ -827,13 +827,13 @@ namespace gate.Entities
                         charging_animation_rect.Y = (int)player_size*2*0;
                     aiming_animation_rect.Y = (int)player_size*6;
                 } else if (_h < 0) { //up left
-                    walk_animation.set_y_offset((int)player_size*0);
+                    walk_animation.set_y_offset((int)player_size*7);
                     if (!dash_active)
                         dash_animation.set_y_offset((int)player_size*6);
                     //up attack animation
                     if (!attack_active) {
-                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*1); }
-                        else { attack_animation.set_y_offset((int)player_size*2*3); }
+                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*13); }
+                        else { attack_animation.set_y_offset((int)player_size*2*15); }
                     }
                     //up heavy attack animation
                     if (!heavy_attack_active)
@@ -868,8 +868,8 @@ namespace gate.Entities
                         dash_animation.set_y_offset((int)player_size*5);
                     //attack animation
                     if (!attack_active) {
-                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*0); }
-                        else { attack_animation.set_y_offset((int)player_size*2*2); }
+                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*9); }
+                        else { attack_animation.set_y_offset((int)player_size*2*11); }
                     }
                     //heavy attack animation
                     if (!heavy_attack_active)
@@ -885,8 +885,8 @@ namespace gate.Entities
                         dash_animation.set_y_offset((int)player_size*4);
                     //attack animation
                     if (!attack_active) {
-                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*1); }
-                        else { attack_animation.set_y_offset((int)player_size*2*3); }
+                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*8); }
+                        else { attack_animation.set_y_offset((int)player_size*2*10); }
                     }
                     //heavy attack animation
                     if (!heavy_attack_active)
@@ -955,29 +955,29 @@ namespace gate.Entities
 
                 if (lv < 0){ //up
                     if (lh > 0) { //up right
-                        idle_animation.set_y_offset((int)player_size*7);
+                        idle_animation.set_y_offset((int)player_size*14);
                         dash_animation.set_y_offset((int)player_size*7);
                         //up attack animation
-                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*0); }
-                        else { attack_animation.set_y_offset((int)player_size*2*2); }
+                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*12); }
+                        else { attack_animation.set_y_offset((int)player_size*2*14); }
                         //up heavy attack animation
                         heavy_attack_animation.set_y_offset((int)player_size*2*0);
                         //up charging animation rect
                         charging_animation_rect.Y = (int)player_size*2*0;
                         aiming_animation_rect.Y = (int)player_size*6;
                     } else if (lh < 0) { //up left
-                        idle_animation.set_y_offset((int)player_size*6);
+                        idle_animation.set_y_offset((int)player_size*15);
                         dash_animation.set_y_offset((int)player_size*6);
                         //up attack animation
-                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*1); }
-                        else { attack_animation.set_y_offset((int)player_size*2*3); }
+                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*13); }
+                        else { attack_animation.set_y_offset((int)player_size*2*15); }
                         //up heavy attack animation
                         heavy_attack_animation.set_y_offset((int)player_size*2*1);
                         //up charging animation rect
                         charging_animation_rect.Y = (int)player_size*2*1;
                         aiming_animation_rect.Y = (int)player_size*7;
                     } else { //directly up
-                        idle_animation.set_y_offset((int)player_size*9);
+                        idle_animation.set_y_offset((int)player_size*11);
                         dash_animation.set_y_offset((int)player_size*3);
                         //up attack animation
                         if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*5); }
@@ -990,29 +990,29 @@ namespace gate.Entities
                     }
                 } else if (lv > 0){ //down
                     if (lh > 0){ //down right
-                        idle_animation.set_y_offset((int)player_size*11);
+                        idle_animation.set_y_offset((int)player_size*13);
                         dash_animation.set_y_offset((int)player_size*5);
                         //up attack animation
-                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*0); }
-                        else { attack_animation.set_y_offset((int)player_size*2*2); }
+                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*9); }
+                        else { attack_animation.set_y_offset((int)player_size*2*11); }
                         //down heavy attack animation
                         heavy_attack_animation.set_y_offset((int)player_size*2*0);
                         //down charging animation rect
                         charging_animation_rect.Y = (int)player_size*2*0;
                         aiming_animation_rect.Y = (int)player_size*5;
                     } else if (lh < 0){ //down left
-                        idle_animation.set_y_offset((int)player_size*10);
+                        idle_animation.set_y_offset((int)player_size*12);
                         dash_animation.set_y_offset((int)player_size*4);
                         //down attack animation
-                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*1); }
-                        else { attack_animation.set_y_offset((int)player_size*2*3); }
+                        if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*8); }
+                        else { attack_animation.set_y_offset((int)player_size*2*10); }
                         //down heavy attack animation
                         heavy_attack_animation.set_y_offset((int)player_size*2*1);
                         //down charging animation rect
                         charging_animation_rect.Y = (int)player_size*2*1;
                         aiming_animation_rect.Y = (int)player_size*4;
                     } else { //directly down
-                        idle_animation.set_y_offset((int)player_size*8);
+                        idle_animation.set_y_offset((int)player_size*10);
                         dash_animation.set_y_offset((int)player_size*2);
                         //down attack animation
                         if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*4); }
@@ -1024,7 +1024,7 @@ namespace gate.Entities
                         aiming_animation_rect.Y = (int)player_size*2;
                     }
                 } else if (lh < 0) { //directly left
-                    idle_animation.set_y_offset((int)player_size*6);
+                    idle_animation.set_y_offset((int)player_size*8);
                     dash_animation.set_y_offset((int)player_size*0);
                     //attack animation
                     if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*1); }
@@ -1035,7 +1035,7 @@ namespace gate.Entities
                     charging_animation_rect.Y = (int)player_size*2*1;
                     aiming_animation_rect.Y = (int)player_size*0;
                 } else if (lh > 0) { //directly right
-                    idle_animation.set_y_offset((int)player_size*7);
+                    idle_animation.set_y_offset((int)player_size*9);
                     dash_animation.set_y_offset((int)player_size*1);
                     //attack animation
                     if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*0); }
@@ -1048,7 +1048,7 @@ namespace gate.Entities
                 } else {
                     //do nothing (maybe panic?)
                     // should not get here
-                    idle_animation.set_y_offset((int)player_size*6);
+                    idle_animation.set_y_offset((int)player_size*8);
                     dash_animation.set_y_offset((int)player_size*0);
                     //up attack animation
                     if (attack_charge == 1) { attack_animation.set_y_offset((int)player_size*2*0); }
