@@ -83,13 +83,14 @@ namespace gate.Entities
         //attack variables
         protected float attack_timer_elapsed, time_between_attacks, melee_attack_hitbox_active_elapsed, time_since_death = 0f;
         private float hitbox_deactivate_elapsed;
-        private bool melee_attack = false;
-        private float melee_attack_hitbox_active_threshold = 500f, hitbox_deactivate_threshold = 200f;
+        protected bool melee_attack = false;
+        protected float melee_attack_hitbox_active_threshold = 500f, hitbox_deactivate_threshold = 200f;
         protected RRect hitbox;
         protected float hitbox_center_distance;
         protected Vector2 hitbox_center;
         protected bool ai_behavior_enabled = true;
         protected float striking_distance = 35f;
+        protected int damage = 1;
 
         //Damage variables
         List<IEntity> seen_projectiles;
@@ -393,13 +394,16 @@ namespace gate.Entities
                 float weight_modifier = 0f;
                 foreach (IAiEntity e in enemies) {
                     //ensure we are not checking against this object (ourselves) because it will break everything and throw off all calculations
-                    if (get_ID_num() !=  e.get_ID_num()) {
+                    //also do a distance check to make sure we are not checking against enemies that are far away
+                    if (e is IEntity) {
                         IEntity entity = (IEntity)e;
-                        float dist = Vector2.Distance(draw_position, entity.get_base_position());
-                        if (dist <= nightmare_size) {
-                            weight_modifier = Vector2.Dot(movement_directions[i], -(entity.get_base_position() - draw_position));
-                        } else {
-                            weight_modifier = 0f;
+                        if (get_ID_num() !=  e.get_ID_num() && Vector2.Distance(entity.get_base_position(), get_base_position()) <= nightmare_size*3f) {
+                            float dist = Vector2.Distance(draw_position, entity.get_base_position());
+                            if (dist <= nightmare_size) {
+                                weight_modifier = Vector2.Dot(movement_directions[i], -(entity.get_base_position() - draw_position)) * 5f;
+                            } else {
+                                weight_modifier = 0f;
+                            }
                         }
                     }
                 }
@@ -705,7 +709,7 @@ namespace gate.Entities
         }
 
         public int get_damage() {
-            return 1;
+            return damage;
         }
 
         public virtual void draw_animation(SpriteBatch spriteBatch) {

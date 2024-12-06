@@ -314,6 +314,12 @@ namespace gate
             Haunter haunter1 = (Haunter)obj_map[37];
             haunter1.set_behavior_enabled(false);
             obj_map.Add(38, new StackedObject("checkpoint", Constant.checkpoint_marker_spritesheet, Vector2.Zero, 1f, 32, 32, 15, Constant.stack_distance, 0f, -1));
+            obj_map.Add(39, new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "skeleton"));
+            Skeleton skeleton1 = (Skeleton)obj_map[39];
+            skeleton1.set_behavior_enabled(false);
+            obj_map.Add(40, new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "shadowknight"));
+            ShadowKnight sk = (ShadowKnight)obj_map[40];
+            sk.set_behavior_enabled(false);
         }
         #endregion
 
@@ -814,6 +820,24 @@ namespace gate
                             collision_entities.Add(haunter);
                             enemies.Add(haunter);
                             break;
+                        case "skeleton":
+                            check_and_load_tex(ref Constant.skelly_tex, "sprites/skelly_spritesheet1");
+                            check_and_load_tex(ref Constant.skelly_attack_tex, "sprites/skelly_attacks_spritesheet1");
+                            check_and_load_tex(ref Constant.skelly_attack_charge_tex, "sprites/skelly_charge_attack_spritesheet1");
+                            Skeleton skelly = new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            entities_list.Add(skelly);
+                            collision_entities.Add(skelly);
+                            enemies.Add(skelly);
+                            break;
+                        case "shadowknight":
+                            check_and_load_tex(ref Constant.shadow_knight_tex, "sprites/shadow_knight_spritesheet1");
+                            check_and_load_tex(ref Constant.shadow_knight_attack_tex, "sprites/shadow_knight_attacks_spritesheet1");
+                            check_and_load_tex(ref Constant.shadow_knight_charge_attack_tex, "sprites/shadow_knight_charge_attack_spritesheet1");
+                            ShadowKnight sk = new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            entities_list.Add(sk);
+                            collision_entities.Add(sk);
+                            enemies.Add(sk);
+                            break;
                         default:
                             break;
                     }
@@ -1076,6 +1100,16 @@ namespace gate
                             break;
                         case "checkpoint":
                             check_and_load_tex(ref Constant.checkpoint_marker_spritesheet, "sprites/checkpoint_spritesheet1_15");
+                            break;
+                        case "skeleton":
+                            check_and_load_tex(ref Constant.skelly_tex, "sprites/skelly_spritesheet1");
+                            check_and_load_tex(ref Constant.skelly_attack_tex, "sprites/skelly_attacks_spritesheet1");
+                            check_and_load_tex(ref Constant.skelly_attack_charge_tex, "sprites/skelly_charge_attack_spritesheet1");
+                            break;
+                        case "shadowknight":
+                            check_and_load_tex(ref Constant.shadow_knight_tex, "sprites/shadow_knight_spritesheet1");
+                            check_and_load_tex(ref Constant.shadow_knight_attack_tex, "sprites/shadow_knight_attacks_spritesheet1");
+                            check_and_load_tex(ref Constant.shadow_knight_charge_attack_tex, "sprites/shadow_knight_charge_attack_spritesheet1");
                             break;
                         default:
                             //don't load anything
@@ -2097,9 +2131,28 @@ namespace gate
                     collision_geometry_map[cpm] = false;
                     Console.WriteLine("checkpoint," + create_position.X + "," + create_position.Y + ",1");
                     break;
+                case 39:
+                    Skeleton skelly = new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "skeleton");
+                    skelly.set_behavior_enabled(false);
+                    skelly.set_placement_source(placement_source);
+                    entities_list.Add(skelly);
+                    collision_entities.Add(skelly);
+                    enemies.Add(skelly);
+                    set_ai_entities_for_all_ais();
+                    break;
+                case 40:
+                    ShadowKnight sk = new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "shadowknight");
+                    sk.set_behavior_enabled(false);
+                    sk.set_placement_source(placement_source);
+                    entities_list.Add(sk);
+                    collision_entities.Add(sk);
+                    enemies.Add(sk);
+                    set_ai_entities_for_all_ais();
+                    break;
                 default:
                     break;
             }
+            //increment_editor_idx();
         }
 
         public int get_editor_object_idx() {
@@ -2604,6 +2657,20 @@ namespace gate
                                     player.take_hit(g, g.get_damage());
                                     set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
                                 }
+                            }
+                        } else if (e.get_id().Equals("skeleton")) {
+                            Skeleton skelly = (Skeleton)e;
+                            bool collision = player.check_hurtbox_collisions(skelly.get_hitbox());
+                            if (collision && player.is_hurtbox_active() && skelly.hitbox_active()) {
+                                player.take_hit(skelly, skelly.get_damage());
+                                set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                            }
+                        } else if (e.get_id().Equals("shadowknight")) {
+                            ShadowKnight sk = (ShadowKnight)e;
+                            bool collision = player.check_hurtbox_collisions(sk.get_hitbox());
+                            if (collision && player.is_hurtbox_active() && sk.hitbox_active()) {
+                                player.take_hit(sk, sk.get_damage());
+                                set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
                             }
                         }
                     } else if (e is TempTile) {

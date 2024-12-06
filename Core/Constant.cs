@@ -87,6 +87,12 @@ namespace gate.Core
         public static Texture2D grenade_tex;
         public static Texture2D crystal_tex;
         public static Texture2D checkpoint_marker_spritesheet;
+        public static Texture2D skelly_tex;
+        public static Texture2D skelly_attack_tex;
+        public static Texture2D skelly_attack_charge_tex;
+        public static Texture2D shadow_knight_tex;
+        public static Texture2D shadow_knight_attack_tex;
+        public static Texture2D shadow_knight_charge_attack_tex;
         public static Texture2D light_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
@@ -206,7 +212,7 @@ namespace gate.Core
 
         /*SHADERS*/
         public static float pixels = 1700.0f;
-        public static float pixelation = 5.00f;
+        public static float pixelation = 4.00f;
         public static Vector4[] palette_colors = new Vector4[] {
             FromHex("#1a1516").ToVector4(),
             FromHex("#21181b").ToVector4(),
@@ -336,6 +342,8 @@ namespace gate.Core
             identifiers.Add("bow");
             identifiers.Add("haunter");
             identifiers.Add("checkpoint");
+            identifiers.Add("skeleton");
+            identifiers.Add("shadowknight");
             return identifiers;
         }
 
