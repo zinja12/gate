@@ -15,27 +15,23 @@
         },
         {
             "speaker": "zahir, the first shrine keeper",
-            "dialogue_line": "i take it there are some boxes blocking your path? that's the third time this season"
+            "dialogue_line": "the forest might not take kindly to a traveler showing up unprepared"
         },
         {
             "speaker": "zahir, the first shrine keeper",
-            "dialogue_line": "i keep telling those *youths* to stop pulling pranks like that"
+            "dialogue_line": "grab that blade over there, it is not as sharp as it used to be..."
         },
         {
             "speaker": "zahir, the first shrine keeper",
-            "dialogue_line": "anyways, go grab the sword over there, it should help you clear the way if you tap the 'X' button"
+            "dialogue_line": "though it should give you the spark of a chance if you tap the 'X' button"
         },
         {
             "speaker": "zahir, the first shrine keeper",
-            "dialogue_line": "it is not as sharp as it used to be, lent it to a foolish samurai warrior once, but it should still get the job done"
+            "dialogue_line": "if you're nervous, try to take it for a spin on that scarecrow down there"
         },
         {
             "speaker": "zahir, the first shrine keeper",
-            "dialogue_line": "feel free to take it for a spin on that scarecrow down there"
-        },
-        {
-            "speaker": "zahir, the first shrine keeper",
-            "dialogue_line": "good luck out there!"
+            "dialogue_line": "may you find what you are looking for..."
         }
     ]
 }

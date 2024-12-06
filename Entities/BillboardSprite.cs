@@ -79,7 +79,7 @@ namespace gate.Entities
             }
         }
 
-        public void update_animation(GameTime gameTime) {}
+        public virtual void update_animation(GameTime gameTime) {}
 
         public void take_hit(IEntity entity, int damage) {}
 

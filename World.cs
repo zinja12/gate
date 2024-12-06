@@ -518,6 +518,7 @@ namespace gate
                             sound_manager.load_sfx(ref Constant.dash_sfx, "sfx/dash2");
                             sound_manager.load_sfx(ref Constant.bow_up_aim_sfx, "sfx/bow_up_aim");
                             sound_manager.load_sfx(ref Constant.sword_slash_sfx, "sfx/sword_slash");
+                            sound_manager.load_sfx(ref Constant.coin_pickup_sfx, "sfx/coin_pickup");
                             //create player object
                             if (player_start_point.HasValue){
                                 obj_position = player_start_point.Value;
@@ -3001,6 +3002,7 @@ namespace gate
                         clear_entity(e);
                         //add money to player
                         player.set_money(player.get_money() + 1);
+                        play_spatial_sfx(Constant.coin_pickup_sfx, player.get_base_position(), ((float)random.Next(-2, 1))/4f, render_distance, -0.15f);
                     }
                 }
             }

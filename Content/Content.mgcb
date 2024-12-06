@@ -153,6 +153,12 @@
 /processorParam:Quality=Best
 /build:sfx/cfootstep.ogg
 
+#begin sfx/coin_pickup.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/coin_pickup.ogg
+
 #begin sfx/dash2.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor

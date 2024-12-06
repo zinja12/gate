@@ -143,6 +143,7 @@ namespace gate.Core
         public static SoundEffect hit1_sfx;
         public static SoundEffect typewriter_sfx;
         public static SoundEffect explosion_sfx;
+        public static SoundEffect coin_pickup_sfx;
 
         //Reference directions in relation to the game world
         public static Vector2 direction_down = new Vector2(0, 1);

@@ -3,23 +3,23 @@
     "dialogue": [
         {
             "speaker": "felix",
-            "dialogue_line": "hi!"
+            "dialogue_line": "ah, yet another it seems?"
         },
         {
             "speaker": "felix",
-            "dialogue_line": "oh, you must be here for the pilgrimage..."
+            "dialogue_line": "and from the look of you..."
         },
         {
             "speaker": "felix",
-            "dialogue_line": "head down the path to town and they'll get you all sorted"
+            "dialogue_line": "you seem to be lost in more ways than one..."
         },
         {
             "speaker": "felix",
-            "dialogue_line": "but make sure to be careful, i think some of the path might be blocked"
+            "dialogue_line": "the forest path may help you yet, but it is not without its dangers"
         },
         {
             "speaker": "felix",
-            "dialogue_line": "you might want to go talk to zahir, the shrine keeper, he might be able to help you out"
+            "dialogue_line": "you might want to go talk to zahir, the first shrine keeper, he might be able to protect you better than I"
         }
     ]
 }
