@@ -60,6 +60,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/shadow_knight_charge_attack_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/shadow_knight_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/shadow0.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/short_grass2_4.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/sign1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/skelly_attacks_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/skelly_charge_attack_spritesheet1.png</File>
@@ -70,6 +71,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/switch2_inactive_8.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/sword_icon.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/sword1_22.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tall_grass2_9.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tent_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_nightmare_attacks_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_nightmare_spritesheet2.png</File>
@@ -96,6 +98,8 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
