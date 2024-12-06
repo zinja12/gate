@@ -216,6 +216,24 @@ namespace gate.Entities
             return id;
         }
 
+        public void set_texture(Texture2D texture, float width, float height, int stack_frame_count, int stack_distance) {
+            this.texture = texture;
+            this.object_width = width;
+            this.object_height = height;
+            this.stack_count = stack_frame_count;
+            this.stack_distance = stack_distance;
+            this.draw_position = new Vector2(base_position.X - (object_width / 2), 
+                                            base_position.Y - object_height);
+            this.depth_sort_position = this.draw_position + new Vector2(0, object_height / 2);
+            this.rotation_point = new Vector2(object_width / 2, object_height / 2);
+            //regenerate the stack rectangles
+            sprite_rectangles = Constant.generate_rectangles_for_stack(this.texture, stack_count);
+        }
+
+        public Texture2D get_texture() {
+            return texture;
+        }
+
         public virtual void Draw(SpriteBatch spriteBatch) {
             //calculate the number of sprites that will be moving (round down to make sure we don't try to access any sprites that are out of bounds)
             int stack_div3 = (int)Math.Floor((double)stack_count/3);

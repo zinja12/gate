@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "blank_level.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -292,7 +292,7 @@ namespace gate
             obj_map.Add(19, new StackedObject("yellow_tree", Constant.yellow_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
             obj_map.Add(20, new StackedObject("green_tree", Constant.green_tree, Vector2.Zero, 1f, 64, 64, 26, Constant.stack_distance, 0f, -1));
             obj_map.Add(21, new StackedObject("flower", Constant.flower_tex, Vector2.Zero, 1f, 32, 32, 12, Constant.stack_distance1, 0f, -1));
-            obj_map.Add(22, new StackedObject("grass2", Constant.stacked_grass, Vector2.Zero, 1f, 32, 32, 17, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(22, new StackedObject("grass2", Constant.tall_grass_tex, Vector2.Zero, 1f, 32, 32, 9, Constant.stack_distance1, 0f, -1));
             obj_map.Add(23, new Tile(Vector2.Zero, 2f, Constant.trail_tex, "trail_tile", (int)DrawWeight.Medium, -1));
             obj_map.Add(24, new Tile(Vector2.Zero, 2f, Constant.sand_tex, "sand_tile", (int)DrawWeight.Medium, -1));
             obj_map.Add(25, new StackedObject("sword", Constant.sword_tex, Vector2.Zero, 1f, 16, 16, 22, Constant.stack_distance1, 0f, -1));
@@ -587,10 +587,10 @@ namespace gate
                             break;
                         case "grass":
                             //load texture
-                            check_and_load_tex(ref Constant.grass_tex, "sprites/grass_0");
-                            Grass g = new Grass(obj_position, w_obj.scale, w_obj.object_id_num);
-                            plants.Add(g);
-                            entities_list.Add(g);
+                            // check_and_load_tex(ref Constant.grass_tex, "sprites/grass_0");
+                            // Grass g = new Grass(obj_position, w_obj.scale, w_obj.object_id_num);
+                            // plants.Add(g);
+                            // entities_list.Add(g);
                             break;
                         case "sign":
                             //load texture
@@ -754,8 +754,9 @@ namespace gate
                             plants.Add(fl);
                             break;
                         case "grass2":
-                            check_and_load_tex(ref Constant.stacked_grass, "sprites/grass1_2_17");
-                            StackedObject g2 = new StackedObject(w_obj.object_identifier, Constant.stacked_grass, obj_position, w_obj.scale, 32, 32, 17, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            check_and_load_tex(ref Constant.short_grass_tex, "sprites/short_grass2_4");
+                            check_and_load_tex(ref Constant.tall_grass_tex, "sprites/tall_grass2_9");
+                            StackedObject g2 = new StackedObject(w_obj.object_identifier, Constant.tall_grass_tex, obj_position, w_obj.scale, 32, 32, 9, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(g2);
                             plants.Add(g2);
                             break;
@@ -997,7 +998,8 @@ namespace gate
                             check_and_load_tex(ref Constant.green_tree, "sprites/green_tree1_1_26");
                             break;
                         case "grass":
-                            check_and_load_tex(ref Constant.grass_tex, "sprites/grass_0");
+                            check_and_load_tex(ref Constant.short_grass_tex, "sprites/short_grass2_4");
+                            check_and_load_tex(ref Constant.tall_grass_tex, "sprites/tall_grass2_9");
                             break;
                         case "sign":
                             check_and_load_tex(ref Constant.sign_tex, "sprites/sign1");
@@ -1044,7 +1046,8 @@ namespace gate
                             check_and_load_tex(ref Constant.flower_tex, "sprites/flower1_1_12");
                             break;
                         case "grass2":
-                            check_and_load_tex(ref Constant.stacked_grass, "sprites/grass1_2_17");
+                            check_and_load_tex(ref Constant.short_grass_tex, "sprites/short_grass2_4");
+                            check_and_load_tex(ref Constant.tall_grass_tex, "sprites/tall_grass2_9");
                             break;
                         case "trail_tile":
                             check_and_load_tex(ref Constant.trail_tex, "sprites/trail1");
@@ -2021,7 +2024,7 @@ namespace gate
                     Console.WriteLine("flower," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 22:
-                    StackedObject g2 = new StackedObject("grass2", Constant.stacked_grass, create_position, 1f, 32, 32, 17, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    StackedObject g2 = new StackedObject("grass2", Constant.tall_grass_tex, create_position, 1f, 32, 32, 9, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
                     plants.Add(g2);
                     entities_list.Add(g2);
                     Console.WriteLine("grass2," + create_position.X + "," + create_position.Y + ",1");
@@ -2998,6 +3001,32 @@ namespace gate
                         clear_entity(e);
                         //add money to player
                         player.set_money(player.get_money() + 1);
+                    }
+                }
+            }
+
+            //check collisions with interactable plants
+            foreach (IEntity e in plants) {
+                //distance calculation to cut down on how many interactions we are checking
+                if (Vector2.Distance(player.get_base_position(), e.get_base_position()) <= render_distance && player.hitbox_active()) {
+                    if (e is ICollisionEntity) {
+                        ICollisionEntity ic = (ICollisionEntity)e;
+                        if (e.get_id().Equals("grass2")) {
+                            StackedObject so = (StackedObject)e;
+                            bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
+                            if (collision && so.get_texture() != Constant.short_grass_tex) {
+                                //player has "cut" the grass so set the stack texture to the short grass texture
+                                so.set_texture(Constant.short_grass_tex, 32, 32, 4, Constant.stack_distance1);
+                                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                                //random chance to drop money (16% chance)
+                                if (random.Next(0, 6) == 1) {
+                                    add_dropped_item(
+                                        new BillboardSprite(Constant.crystal_tex, e.get_base_position(), 0.5f, "crystal_money", get_editor_object_idx()),
+                                        0f
+                                    );
+                                }
+                            }
+                        }
                     }
                 }
             }

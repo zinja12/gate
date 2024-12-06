@@ -31,11 +31,11 @@ namespace gate.Entities
 
         public Grass(Vector2 base_position, float scale, int ID) {
             this.base_position = base_position;
-            this.draw_position = new Vector2(base_position.X - (Constant.grass_tex.Height / 2), 
-                                            base_position.Y - Constant.grass_tex.Height);
-            this.depth_sort_position = this.draw_position + new Vector2(0, Constant.grass_tex.Height / 2);
+            this.draw_position = new Vector2(base_position.X - (Constant.tall_grass_tex.Height / 2), 
+                                            base_position.Y - Constant.tall_grass_tex.Height);
+            this.depth_sort_position = this.draw_position + new Vector2(0, Constant.tall_grass_tex.Height / 2);
             this.scale = scale;
-            this.rotation_point = new Vector2(Constant.grass_tex.Height / 2, Constant.grass_tex.Height / 2);
+            this.rotation_point = new Vector2(Constant.tall_grass_tex.Height / 2, Constant.tall_grass_tex.Height / 2);
 
             random = new Random();
             int animation_duration = random.Next(1200, 1800);
@@ -46,7 +46,7 @@ namespace gate.Entities
 
         public void Update(GameTime gameTime, float rotation) {
             this.rotation = rotation;
-            depth_sort_position = Constant.rotate_point(draw_position, rotation, (Constant.grass_tex.Height/2), Constant.direction_down);
+            depth_sort_position = Constant.rotate_point(draw_position, rotation, (Constant.tall_grass_tex.Height/2), Constant.direction_down);
         }
 
         public void update_animation(GameTime gameTime) {
@@ -107,7 +107,7 @@ namespace gate.Entities
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(Constant.grass_tex, draw_position, animation.source_rect, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(Constant.tall_grass_tex, draw_position, animation.source_rect, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
             //spriteBatch.Draw(Constant.tree2_tex, draw_position, null, Color.White, -rotation, rotation_point, scale, SpriteEffects.None, 0f);
             if (debug){
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Red, 1f, base_position, base_position + new Vector2(0, -10));

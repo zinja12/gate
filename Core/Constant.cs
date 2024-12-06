@@ -40,7 +40,8 @@ namespace gate.Core
         public static Texture2D tree4_tex;
         public static Texture2D tan_tile_tex;
         public static Texture2D grass_tile_tex;
-        public static Texture2D grass_tex;
+        public static Texture2D tall_grass_tex;
+        public static Texture2D short_grass_tex;
         public static Texture2D player_tex;
         public static Texture2D player_dash_tex;
         public static Texture2D player_attack_tex;
