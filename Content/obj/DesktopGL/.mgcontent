@@ -29,6 +29,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/box_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/box1_2_18.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/checkpoint_spritesheet1_15.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/closed_gate1_28.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/cracked_rocks_4.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/crystal1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/dash_cloak_pickup.png</File>
@@ -99,6 +100,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

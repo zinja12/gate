@@ -94,6 +94,7 @@ namespace gate.Core
         public static Texture2D shadow_knight_tex;
         public static Texture2D shadow_knight_attack_tex;
         public static Texture2D shadow_knight_charge_attack_tex;
+        public static Texture2D gate_spritesheet;
         public static Texture2D light_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
@@ -346,6 +347,7 @@ namespace gate.Core
             identifiers.Add("checkpoint");
             identifiers.Add("skeleton");
             identifiers.Add("shadowknight");
+            identifiers.Add("gate");
             return identifiers;
         }
 

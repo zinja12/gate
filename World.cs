@@ -320,6 +320,7 @@ namespace gate
             obj_map.Add(40, new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "shadowknight"));
             ShadowKnight sk = (ShadowKnight)obj_map[40];
             sk.set_behavior_enabled(false);
+            obj_map.Add(41, new StackedObject("gate", Constant.gate_spritesheet, Vector2.Zero, 1f, 32, 32, 28, Constant.stack_distance1, 0f, -1));
         }
         #endregion
 
@@ -725,6 +726,13 @@ namespace gate
                             collision_geometry.Add(f);
                             collision_geometry_map[f] = false;
                             break;
+                        case "gate":
+                            check_and_load_tex(ref Constant.gate_spritesheet, "sprites/closed_gate1_28");
+                            StackedObject closedgate = new StackedObject(w_obj.object_identifier, Constant.gate_spritesheet, obj_position, w_obj.scale, 32, 32, 28, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(closedgate);
+                            collision_geometry.Add(closedgate);
+                            collision_geometry_map[closedgate] = false;
+                            break;
                         case "box":
                             check_and_load_tex(ref Constant.box_spritesheet, "sprites/box1_2_18");
                             StackedObject box = new StackedObject(w_obj.object_identifier, Constant.box_spritesheet, obj_position, w_obj.scale, 32, 32, 18, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
@@ -1114,6 +1122,9 @@ namespace gate
                             check_and_load_tex(ref Constant.shadow_knight_tex, "sprites/shadow_knight_spritesheet1");
                             check_and_load_tex(ref Constant.shadow_knight_attack_tex, "sprites/shadow_knight_attacks_spritesheet1");
                             check_and_load_tex(ref Constant.shadow_knight_charge_attack_tex, "sprites/shadow_knight_charge_attack_spritesheet1");
+                            break;
+                        case "gate":
+                            check_and_load_tex(ref Constant.gate_spritesheet, "sprites/closed_gate1_28");
                             break;
                         default:
                             //don't load anything
@@ -2152,6 +2163,13 @@ namespace gate
                     collision_entities.Add(sk);
                     enemies.Add(sk);
                     set_ai_entities_for_all_ais();
+                    break;
+                case 41:
+                    StackedObject closedgate = new StackedObject("gate", Constant.gate_spritesheet, create_position, 1f, 32, 32, 28, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    closedgate.Update(gameTime, rotation);
+                    entities_list.Add(closedgate);
+                    collision_geometry.Add(closedgate);
+                    collision_geometry_map[closedgate] = false;
                     break;
                 default:
                     break;
