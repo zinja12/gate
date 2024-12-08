@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "blank_level.json", current_level_id;
+        public string load_file_name = "shrine1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -766,6 +766,7 @@ namespace gate
                             check_and_load_tex(ref Constant.short_grass_tex, "sprites/short_grass2_4");
                             check_and_load_tex(ref Constant.tall_grass_tex, "sprites/tall_grass2_9");
                             StackedObject g2 = new StackedObject(w_obj.object_identifier, Constant.tall_grass_tex, obj_position, w_obj.scale, 32, 32, 9, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            g2.set_sway(true);
                             entities_list.Add(g2);
                             plants.Add(g2);
                             break;
