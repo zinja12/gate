@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/crystal1.png</SourceFile>
-  <SourceTime>2024-11-30T12:29:21.3442048-05:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sprites/crystal1.xnb</DestFile>
-  <DestTime>2024-12-10T10:53:13.5945131-05:00</DestTime>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/crystal2.png</SourceFile>
+  <SourceTime>2024-12-06T17:20:27.4413438-05:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/sprites/crystal2.xnb</DestFile>
+  <DestTime>2024-12-10T12:17:26.1230017-05:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

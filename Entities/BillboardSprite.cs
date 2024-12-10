@@ -35,8 +35,8 @@ namespace gate.Entities
 
         public static bool debug = false;
 
-        private int ID;
-        private string identifier;
+        protected int ID;
+        protected string identifier;
 
         public BillboardSprite(Texture2D texture, Vector2 base_position, float scale, string identifier, int ID, bool background_particle_system = false, Texture2D custom_interaction_tex = null) {
             this.texture = texture;
@@ -77,6 +77,8 @@ namespace gate.Entities
                 ps.Update(gameTime, rotation);
                 ps.set_position(Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up));
             }
+
+            update_animation(gameTime);
         }
 
         public virtual void update_animation(GameTime gameTime) {}
@@ -165,6 +167,11 @@ namespace gate.Entities
             this.scale = scale_value;
         }
 
+        public virtual void draw_sprite(SpriteBatch spriteBatch) {
+            //draw texture
+            spriteBatch.Draw(texture, draw_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+        }
+
         public virtual void Draw(SpriteBatch spriteBatch) {
             //draw shadow
             spriteBatch.Draw(Constant.shadow_tex, draw_position, null, Color.Black * 0.5f, -rotation, rotation_point, scale, SpriteEffects.None, 0f);
@@ -172,8 +179,7 @@ namespace gate.Entities
             if (ps != null) {
                 ps.Draw(spriteBatch);
             }
-            //draw texture
-            spriteBatch.Draw(texture, draw_position, null, Color.White, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
+            draw_sprite(spriteBatch);
             //display interaction
             if (display_interaction && !display_text) {
                 if (interact_texture != null) {

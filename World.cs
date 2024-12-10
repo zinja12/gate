@@ -410,7 +410,7 @@ namespace gate
             Constant.shadow_tex = Content.Load<Texture2D>("sprites/shadow0");
             Constant.green_tree = Content.Load<Texture2D>("sprites/green_tree1_1_26");
             Constant.read_interact_tex = Content.Load<Texture2D>("sprites/read_interact");
-            Constant.crystal_tex = Content.Load<Texture2D>("sprites/crystal1");
+            Constant.crystal_tex = Content.Load<Texture2D>("sprites/crystal2");
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
@@ -2709,7 +2709,10 @@ namespace gate
                                         }
                                         //drop item on death
                                         add_dropped_item(
-                                            new BillboardSprite(Constant.crystal_tex, e.get_base_position(), 0.5f, "crystal_money", get_editor_object_idx()),
+                                            new AnimatedSprite(Constant.crystal_tex, e.get_base_position(), 0.8f, 
+                                                150f, 9, 0, 0, 16, 16, //animation variables
+                                                "crystal_money", get_editor_object_idx()
+                                            ),
                                             0f
                                         );
                                     }
@@ -3108,7 +3111,10 @@ namespace gate
                                 //random chance to drop money (16% chance)
                                 if (random.Next(0, 6) == 1) {
                                     add_dropped_item(
-                                        new BillboardSprite(Constant.crystal_tex, e.get_base_position(), 0.5f, "crystal_money", get_editor_object_idx()),
+                                        new AnimatedSprite(Constant.crystal_tex, e.get_base_position(), 0.8f, 
+                                            150f, 9, 0, 0, 16, 16, //animation variables
+                                            "crystal_money", get_editor_object_idx()
+                                        ),
                                         0f
                                     );
                                 }
