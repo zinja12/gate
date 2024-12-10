@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "shrine1.json", current_level_id;
+        public string load_file_name = "blank_level.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -138,14 +138,17 @@ namespace gate
         private Keys previous_key;
         private ICondition selected_condition;
         //editor tools: (object_placement, object/linkage editor)
-        private int editor_tool_idx, editor_object_idx, editor_tool_count, editor_layer, editor_layer_count;
+        private int editor_tool_idx, editor_object_idx, editor_layer, editor_layer_count, editor_tile_idx;
         private Dictionary<int, string> editor_tool_name_map = new Dictionary<int, string>() {
             {0, "place"},
             {1, "cond."},
             {2, "delete"},
             {3, "tile"},
-            {4, "tree_brush"}
+            {4, "tree_brush"},
+            {5, "tile2_snap"}
         };
+        private Dictionary<Vector2, int> editor_floor_tile_map;
+        private Dictionary<int, (Texture2D, string, int)> editor_tiles_map;
 
         //Random variable
         private Random random = new Random();
@@ -259,9 +262,15 @@ namespace gate
         private void editor_init() {
             /*Editor Initialization*/
             editor_tool_idx = 0;
-            editor_tool_count = 5;
             editor_layer = 0;
             editor_layer_count = 2;
+            //tile map dictionary init
+            editor_floor_tile_map = new Dictionary<Vector2, int>();
+            editor_tiles_map = new Dictionary<int, (Texture2D, string, int)>() {
+                {0, (Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy)},
+                {1, (Constant.stone_tile_tex, "stone_tile", (int)DrawWeight.Heavy)}
+            };
+            editor_tile_idx = 0;
             //obj map init
             obj_map = new Dictionary<int, IEntity>();
             obj_map.Add(1, new Tree(Vector2.Zero, 1f, Constant.tree_spritesheet, false, "tree", -1));
@@ -749,6 +758,19 @@ namespace gate
                             check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
                             Tile gt_tile = new Tile(obj_position, w_obj.scale, Constant.grass_tile_tex, w_obj.object_identifier, (int)DrawWeight.Heavy, w_obj.object_id_num);
                             add_floor_entity(gt_tile);
+                            if (editor_enabled && !editor_floor_tile_map.ContainsKey(obj_position)) {
+                                //add to editor tile map
+                                editor_floor_tile_map.Add(obj_position, 0);
+                            }
+                            break;
+                        case "stone_tile":
+                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile2");
+                            Tile st_tile = new Tile(obj_position, w_obj.scale, Constant.stone_tile_tex, w_obj.object_identifier, (int)DrawWeight.Heavy, w_obj.object_id_num);
+                            add_floor_entity(st_tile);
+                            if (editor_enabled && !editor_floor_tile_map.ContainsKey(obj_position)) {
+                                //add to editor tile map
+                                editor_floor_tile_map.Add(obj_position, 1);
+                            }
                             break;
                         case "deathbox":
                             //don't need to check and load texture because this object is meant to be invisible/not drawn
@@ -1051,6 +1073,9 @@ namespace gate
                             break;
                         case "grass_tile":
                             check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
+                            break;
+                        case "stone_tile":
+                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile2");
                             break;
                         case "flower":
                             check_and_load_tex(ref Constant.flower_tex, "sprites/flower1_1_12");
@@ -1603,6 +1628,14 @@ namespace gate
                     editor_object_rotation = 0;
                     editor_object_scale = 1f;
                 }
+                //scroll through tiles available
+                if (Keyboard.GetState().IsKeyDown(Keys.D5) && selection_elapsed >= selection_cooldown) {
+                    editor_tile_idx--;
+                    selection_elapsed = 0f;
+                } else if (Keyboard.GetState().IsKeyDown(Keys.D6) && selection_elapsed >= selection_cooldown) {
+                    editor_tile_idx++;
+                    selection_elapsed = 0f;
+                }
                 
                 //handle object rotation for editor objects
                 if (Keyboard.GetState().IsKeyDown(Keys.OemOpenBrackets)) {
@@ -1624,12 +1657,12 @@ namespace gate
                 selected_entity.set_scale(editor_object_scale);
                 
                 //wrap editor tool
-                if (editor_tool_idx >= editor_tool_count) {
+                if (editor_tool_idx >= editor_tool_name_map.Count) {
                     Console.WriteLine("wrap selection down");
                     editor_tool_idx = 0;
                 } else if (editor_tool_idx < 0) {
                     Console.WriteLine("wrap selection up");
-                    editor_tool_idx = editor_tool_count - 1;
+                    editor_tool_idx = editor_tool_name_map.Count - 1;
                 }
                 //wrap editor layer
                 if (editor_layer >= editor_layer_count) {
@@ -1644,6 +1677,12 @@ namespace gate
                 } else if (selected_object <= 0) {
                     Console.WriteLine("wrap selection up");
                     selected_object = obj_map.Count;
+                }
+                //wrap selected tile
+                if (editor_tile_idx >= editor_tiles_map.Count) {
+                    editor_tile_idx = 0;
+                } else if (editor_tile_idx < 0) {
+                    editor_tile_idx = editor_tiles_map.Count - 1;
                 }
 
                 if (Keyboard.GetState().IsKeyDown(Keys.P)) {
@@ -1788,15 +1827,24 @@ namespace gate
                         selection_elapsed = 0f;
                         MouseState mouse_state = Mouse.GetState();
                         //calculate 10 tiles to the right and up
-                        Vector2 tile_start = new Vector2(create_position.X - 10*64, create_position.Y - 10*64);
+                        //Vector2 tile_start = new Vector2(create_position.X - 10*64, create_position.Y - 10*64);
+                        Vector2 tile_start = (new Vector2(
+                            (float)Math.Floor(create_position.X / 64f),
+                            (float)Math.Floor(create_position.Y / 64f)
+                        )) * 64f;
                         //iterate over 10 tiles and place them
                         for (int i = 0; i < 10; i++) {
                             for (int j = 0; j < 10; j++) {
+                                //compute tile position
                                 Vector2 tile_position = new Vector2(tile_start.X + i*64, tile_start.Y + j*64);
-                                Tile gt_tile = new Tile(tile_position, editor_object_scale, Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy, editor_object_idx);
-                                add_floor_entity(gt_tile);
-                                Console.WriteLine($"grass_tile,{tile_position.X},{tile_position.Y},{editor_object_scale}");
-                                editor_object_idx++;
+                                //check dictionary and add to level
+                                if (!editor_floor_tile_map.ContainsKey(tile_position)) {
+                                    Tile tile = new Tile(tile_position, editor_object_scale, editor_tiles_map[editor_tile_idx].Item1, editor_tiles_map[editor_tile_idx].Item2, editor_tiles_map[editor_tile_idx].Item3, editor_object_idx);
+                                    add_floor_entity(tile);
+                                    editor_floor_tile_map.Add(tile_position, editor_tile_idx);
+                                    Console.WriteLine($"{editor_tiles_map[editor_tile_idx].Item2},{tile_position.X},{tile_position.Y},{editor_object_scale}");
+                                    editor_object_idx++;
+                                }
                             }
                         }
                     }
@@ -1834,6 +1882,25 @@ namespace gate
                             if (tree_type >= 3) {
                                 tree_type = 0;
                             }
+                        }
+                    }
+                } else if (editor_tool_idx == 5) {
+                    //lock tile tool
+                    if (Mouse.GetState().LeftButton == ButtonState.Pressed && selection_elapsed >= selection_cooldown) {
+                        selection_elapsed = 0f;
+                        //calculate tile position
+                        Vector2 tile_position = (new Vector2(
+                            (float)Math.Floor(create_position.X / 64f),
+                            (float)Math.Floor(create_position.Y / 64f)
+                        )) * 64f;
+                        //only add to the floor in this certain spot if there is not a tile there already
+                        if (!editor_floor_tile_map.ContainsKey(tile_position)) {
+                            Tile tile = new Tile(tile_position, editor_object_scale, editor_tiles_map[editor_tile_idx].Item1, editor_tiles_map[editor_tile_idx].Item2, editor_tiles_map[editor_tile_idx].Item3, editor_object_idx);
+                            add_floor_entity(tile);
+                            //add to tile map
+                            editor_floor_tile_map.Add(tile_position, editor_tile_idx);
+                            Console.WriteLine($"{editor_tiles_map[editor_tile_idx].Item2},{tile_position.X},{tile_position.Y},{editor_object_scale}");
+                            editor_object_idx++;
                         }
                     }
                 }
@@ -3754,6 +3821,8 @@ namespace gate
                     //draw preview of object
                     IEntity selected_entity = obj_map[selected_object];
                     selected_entity.Draw(_spriteBatch);
+                } else if (editor_tool_idx == 3 || editor_tool_idx == 5) {
+                    _spriteBatch.Draw(editor_tiles_map[editor_tile_idx].Item1, create_position, null, Color.White);
                 } else if (editor_tool_idx == 4) {
                     //draw brush area
                     brush_box.draw(_spriteBatch);
@@ -3832,6 +3901,7 @@ namespace gate
             _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}-{editor_tool_name_map[editor_tool_idx]}", new Vector2(0, 17*6), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
             _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_tile_idx:{editor_tile_idx}", new Vector2(0, 17*9), Color.Black);
             _spriteBatch.End();
             Constant.profiler.end("world_text_overlays_draw");
         }
