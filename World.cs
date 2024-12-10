@@ -147,7 +147,7 @@ namespace gate
             {4, "tree_brush"},
             {5, "tile2_snap"}
         };
-        private Dictionary<Vector2, int> editor_floor_tile_map;
+        private Dictionary<Vector2, int> editor_floor_tile_map = new Dictionary<Vector2, int>();
         private Dictionary<int, (Texture2D, string, int)> editor_tiles_map;
 
         //Random variable
@@ -264,12 +264,6 @@ namespace gate
             editor_tool_idx = 0;
             editor_layer = 0;
             editor_layer_count = 2;
-            //tile map dictionary init
-            editor_floor_tile_map = new Dictionary<Vector2, int>();
-            editor_tiles_map = new Dictionary<int, (Texture2D, string, int)>() {
-                {0, (Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy)},
-                {1, (Constant.stone_tile_tex, "stone_tile", (int)DrawWeight.Heavy)}
-            };
             editor_tile_idx = 0;
             //obj map init
             obj_map = new Dictionary<int, IEntity>();
@@ -757,14 +751,14 @@ namespace gate
                         case "grass_tile":
                             check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
                             Tile gt_tile = new Tile(obj_position, w_obj.scale, Constant.grass_tile_tex, w_obj.object_identifier, (int)DrawWeight.Heavy, w_obj.object_id_num);
-                            add_floor_entity(gt_tile);
                             if (editor_enabled && !editor_floor_tile_map.ContainsKey(obj_position)) {
                                 //add to editor tile map
                                 editor_floor_tile_map.Add(obj_position, 0);
+                                add_floor_entity(gt_tile);
                             }
                             break;
                         case "stone_tile":
-                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile2");
+                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile3");
                             Tile st_tile = new Tile(obj_position, w_obj.scale, Constant.stone_tile_tex, w_obj.object_identifier, (int)DrawWeight.Heavy, w_obj.object_id_num);
                             add_floor_entity(st_tile);
                             if (editor_enabled && !editor_floor_tile_map.ContainsKey(obj_position)) {
@@ -1075,7 +1069,7 @@ namespace gate
                             check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
                             break;
                         case "stone_tile":
-                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile2");
+                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile3");
                             break;
                         case "flower":
                             check_and_load_tex(ref Constant.flower_tex, "sprites/flower1_1_12");
@@ -1158,6 +1152,11 @@ namespace gate
                             break;
                     }
                 }
+
+                editor_tiles_map = new Dictionary<int, (Texture2D, string, int)>() {
+                    {0, (Constant.grass_tile_tex, "grass_tile", (int)DrawWeight.Heavy)},
+                    {1, (Constant.stone_tile_tex, "stone_tile", (int)DrawWeight.Heavy)}
+                };
                 
                 editor_init();
                 Console.WriteLine("initialized editor");

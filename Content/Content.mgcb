@@ -765,7 +765,7 @@
 /processorParam:TextureFormat=Color
 /build:sprites/sludge1.png
 
-#begin sprites/stone_tile2.png
+#begin sprites/stone_tile3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -775,7 +775,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/stone_tile2.png
+/build:sprites/stone_tile3.png
 
 #begin sprites/switch2_active_8.png
 /importer:TextureImporter
