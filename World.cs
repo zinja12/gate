@@ -1607,7 +1607,17 @@ namespace gate
 
                 //keep selected object updated
                 IEntity selected_entity = obj_map[selected_object];
-                selected_entity.set_base_position(mouse_world_position);
+                //modify selected entity position to tiled position if M key is held
+                if (Keyboard.GetState().IsKeyDown(Keys.M)) {
+                    selected_entity.set_base_position(
+                        (new Vector2(
+                            (float)Math.Floor(create_position.X / 32f),
+                            (float)Math.Floor(create_position.Y / 32f)
+                        )) * 32f
+                    );
+                } else {
+                    selected_entity.set_base_position(mouse_world_position);
+                }
                 selected_entity.Update(gameTime, camera.Rotation);
                 
                 //scroll through available editor tools
@@ -1701,10 +1711,18 @@ namespace gate
                 }
                 
                 //only able to place objects if the editor_tool_idx == 0 (object placement tool)
-                if (editor_tool_idx == 0 && (Keyboard.GetState().IsKeyDown(Keys.M) || Mouse.GetState().LeftButton == ButtonState.Pressed) && selection_elapsed >= selection_cooldown) {
+                if (editor_tool_idx == 0 && (Mouse.GetState().LeftButton == ButtonState.Pressed) && selection_elapsed >= selection_cooldown) {
                     selection_elapsed = 0f;
                     MouseState mouse_state = Mouse.GetState();
                     //mouse_world_position = Constant.world_position_transform(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), camera);
+                    //snap functionality for tiles
+                    if (Keyboard.GetState().IsKeyDown(Keys.M)) {
+                        //modify and snap create position
+                        create_position = (new Vector2(
+                            (float)Math.Floor(create_position.X / 32f),
+                            (float)Math.Floor(create_position.Y / 32f)
+                        )) * 32f;
+                    }
                     previous_key = Keys.M;
                     //rotate point with rotation value
                     //create_position = Constant.rotate_point(mouse_world_position, -camera.Rotation, 0f, Constant.direction_down);
