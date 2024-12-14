@@ -20,6 +20,8 @@ namespace gate
         //Canvas that controls the render target that the world is drawn to
         Canvas _canvas;
 
+        private Color clear_color = Color.CornflowerBlue;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -116,12 +118,16 @@ namespace gate
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
         }
 
+        public void set_clear_color(Color color) {
+            this.clear_color = color;
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             //activate canvas for render target to capture draw calls
             _canvas.Activate();
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(clear_color);
 
             //draw world
             world.Draw(_spriteBatch);
