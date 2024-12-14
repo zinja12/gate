@@ -324,6 +324,7 @@ namespace gate
             ShadowKnight sk = (ShadowKnight)obj_map[40];
             sk.set_behavior_enabled(false);
             obj_map.Add(41, new StackedObject("gate", Constant.gate_spritesheet, Vector2.Zero, 1f, 32, 32, 28, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(42, new StackedObject("green_wall", Constant.green_wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
         }
         #endregion
 
@@ -865,6 +866,13 @@ namespace gate
                             collision_entities.Add(sk);
                             enemies.Add(sk);
                             break;
+                        case "green_wall":
+                            check_and_load_tex(ref Constant.green_wall_tex, "sprites/green_box2_8");
+                            StackedObject gw = new StackedObject(w_obj.object_identifier, Constant.green_wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(gw);
+                            collision_geometry.Add(gw);
+                            collision_geometry_map[gw] = false;
+                            break;
                         default:
                             break;
                     }
@@ -1145,6 +1153,9 @@ namespace gate
                             break;
                         case "gate":
                             check_and_load_tex(ref Constant.gate_spritesheet, "sprites/closed_gate1_28");
+                            break;
+                        case "green_wall":
+                            check_and_load_tex(ref Constant.green_wall_tex, "sprites/green_box2_8");
                             break;
                         default:
                             //don't load anything
@@ -2245,6 +2256,15 @@ namespace gate
                     entities_list.Add(closedgate);
                     collision_geometry.Add(closedgate);
                     collision_geometry_map[closedgate] = false;
+                    Console.WriteLine("gate," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 42:
+                    StackedObject gw = new StackedObject("green_wall", Constant.green_wall_tex, create_position, 1f, 32, 32, 8, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    gw.Update(gameTime, rotation);
+                    entities_list.Add(gw);
+                    collision_geometry.Add(gw);
+                    collision_geometry_map[gw] = false;
+                    Console.WriteLine("green_wall," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 default:
                     break;
