@@ -135,6 +135,9 @@
 #begin levels/shrine2.json
 /copy:levels/shrine2.json
 
+#begin levels/t1_d.json
+/copy:levels/t1_d.json
+
 #begin levels/trails_v1.json
 /copy:levels/trails_v1.json
 

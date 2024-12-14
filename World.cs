@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "blank_level.json", current_level_id;
+        public string load_file_name = "t1_d.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -1799,6 +1799,14 @@ namespace gate
                                     if (floor_entities.Contains(fe)) {
                                         //remove
                                         clear_entity(t);
+                                        //check tile and remove from map
+                                        Vector2 tile_position = (new Vector2(
+                                            (float)Math.Floor(create_position.X / 64f),
+                                            (float)Math.Floor(create_position.Y / 64f)
+                                        )) * 64f;
+                                        if (editor_floor_tile_map.ContainsKey(tile_position)) {
+                                            editor_floor_tile_map.Remove(tile_position);
+                                        }
                                     }
                                 }
                                 break;
