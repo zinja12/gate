@@ -20,7 +20,7 @@ namespace gate
         //Canvas that controls the render target that the world is drawn to
         Canvas _canvas;
 
-        private Color clear_color = Color.CornflowerBlue;
+        public Color clear_color { get; set; }
 
         public Game1()
         {
@@ -116,10 +116,6 @@ namespace gate
             world.update_textbox_scale(_canvas);
             //reset window height value for scanline shader
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
-        }
-
-        public void set_clear_color(Color color) {
-            this.clear_color = color;
         }
 
         protected override void Draw(GameTime gameTime)

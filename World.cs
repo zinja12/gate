@@ -482,15 +482,15 @@ namespace gate
                 if (world_file_contents.clear_color != null) {
                     //try to parse clear color
                     try {
-                        game.set_clear_color(Constant.FromHex(world_file_contents.clear_color));
+                        game.clear_color = Constant.FromHex(world_file_contents.clear_color);
                     } catch (Exception e) {
                         Console.WriteLine($"Warning: Unable to parse clear color hex value from world file. Exception:{e.ToString()}");
                         //default color
-                        game.set_clear_color(Color.CornflowerBlue);
+                        game.clear_color = Color.CornflowerBlue;
                     }
                 } else {
                     //default color if clear color is unspecified
-                    game.set_clear_color(Color.CornflowerBlue);
+                    game.clear_color = Color.CornflowerBlue;
                 }
                 //Iterate over world objects
                 Dictionary<int, string> unique_obj_id_map = new Dictionary<int, string>();
@@ -2596,11 +2596,19 @@ namespace gate
                     }
                 }
             }
+
+            //clear color saving
+            string clear_color_hex = null;
+            if (!game.clear_color.Equals(Color.CornflowerBlue)) {
+                //convert clear color to hex
+                clear_color_hex = $"#{game.clear_color.R:X2}{game.clear_color.G:X2}{game.clear_color.B:X2}";
+            }
             
             //generate GameWorldFile object with all saved objects
             GameWorldFile world_file = new GameWorldFile {
                 level_loaded_count = level_load_count,
                 checkpoint_level_id = this.checkpoint_level_id,
+                clear_color = clear_color_hex,
                 world_objects = sorted_world_objs,
                 world_triggers = sorted_world_triggers,
                 conditions = sorted_world_conditions,
