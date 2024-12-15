@@ -478,6 +478,20 @@ namespace gate
                     //set checkpoint level id
                     this.checkpoint_level_id = world_file_contents.checkpoint_level_id;
                 }
+                //parse and set clear color
+                if (world_file_contents.clear_color != null) {
+                    //try to parse clear color
+                    try {
+                        game.set_clear_color(Constant.FromHex(world_file_contents.clear_color));
+                    } catch (Exception e) {
+                        Console.WriteLine($"Warning: Unable to parse clear color hex value from world file. Exception:{e.ToString()}");
+                        //default color
+                        game.set_clear_color(Color.CornflowerBlue);
+                    }
+                } else {
+                    //default color if clear color is unspecified
+                    game.set_clear_color(Color.CornflowerBlue);
+                }
                 //Iterate over world objects
                 Dictionary<int, string> unique_obj_id_map = new Dictionary<int, string>();
                 for (int i = 0; i < world_file_contents.world_objects.Count; i++) {
