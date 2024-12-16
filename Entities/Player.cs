@@ -539,9 +539,11 @@ namespace gate.Entities
                     } else {
                         //collision, need to calculate resultant direction from the collision object and the player
                         resultant = calculate_resultant_vector(fcd.Item1, direction);
+                        Console.WriteLine($"res:{resultant}");
                         //move the player slowing along the result direction from the collision
                         base_position += resultant * movement_speed * 0.01f;
                         draw_position += resultant * movement_speed * 0.01f;
+                        Console.WriteLine($"bp:{base_position}");
                     }
                     //change depth sort position based on draw position regardless of camera rotation
                     depth_sort_position = draw_position + (player_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
@@ -1307,8 +1309,10 @@ namespace gate.Entities
                 Vector2 edge_normal = ic.get_hurtbox().get_edge_normal(edge.Key, edge.Value);
                 //calculate the resultant direction by combining the edge_normal and the players current direction
                 Vector2 addition = edge_normal + direction;
-                //normalize and return
-                addition.Normalize();
+                //normalize and return (if not zero -> normalizing a zero vector yields (NaN, NaN))
+                if (!addition.Equals(Vector2.Zero)) {
+                    addition.Normalize();
+                }
                 return addition;
             }
             return direction * -1;
