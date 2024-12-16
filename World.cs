@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "t1_d.json", current_level_id;
+        public string load_file_name = "p_g_m2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -325,6 +325,7 @@ namespace gate
             sk.set_behavior_enabled(false);
             obj_map.Add(41, new StackedObject("gate", Constant.gate_spritesheet, Vector2.Zero, 1f, 32, 32, 28, Constant.stack_distance1, 0f, -1));
             obj_map.Add(42, new StackedObject("green_wall", Constant.green_wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
+            obj_map.Add(43, new StackedObject("torii", Constant.torii_spritesheet, Vector2.Zero, 1f, 64, 64, 43, Constant.stack_distance, 0f, -1));
         }
         #endregion
 
@@ -887,6 +888,13 @@ namespace gate
                             collision_geometry.Add(gw);
                             collision_geometry_map[gw] = false;
                             break;
+                        case "torii":
+                            check_and_load_tex(ref Constant.torii_spritesheet, "sprites/torii_gate_43");
+                            StackedObject torii = new StackedObject(w_obj.object_identifier, Constant.torii_spritesheet, obj_position, w_obj.scale, 64, 64, 43, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(torii);
+                            //not adding to collision geometry because we essentially are going to hide a trigger under it
+                            //basically just for decoration
+                            break;
                         default:
                             break;
                     }
@@ -1170,6 +1178,9 @@ namespace gate
                             break;
                         case "green_wall":
                             check_and_load_tex(ref Constant.green_wall_tex, "sprites/green_box2_8");
+                            break;
+                        case "torii":
+                            check_and_load_tex(ref Constant.torii_spritesheet, "sprites/torii_gate_43");
                             break;
                         default:
                             //don't load anything
@@ -2298,6 +2309,12 @@ namespace gate
                     collision_geometry_map[gw] = false;
                     Console.WriteLine("green_wall," + create_position.X + "," + create_position.Y + ",1");
                     break;
+                case 43:
+                    StackedObject torii = new StackedObject("torii", Constant.torii_spritesheet, create_position, 1f, 64, 64, 43, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    torii.Update(gameTime, rotation);
+                    entities_list.Add(torii);
+                    Console.WriteLine("torii," + create_position.X + "," + create_position.Y + ",1");
+                    break;
                 default:
                     break;
             }
@@ -2767,7 +2784,6 @@ namespace gate
                                     //every enemy extends nightmare so we can just cast it to that to get the health value regardless of the real class value
                                     Nightmare n = (Nightmare)e;
                                     if (n.get_health() <= 0) {
-                                        Console.WriteLine("dropping item");
                                         if (e.get_id().Equals("shade")) {
                                             //we probably don't have to check null here since it is basically a given that the shade will be in this level if we get here (current level)
                                             if (shade_level_id != null) {
@@ -2865,6 +2881,24 @@ namespace gate
                                     //it will be cleared when the speed runs out (dead)
                                     if (!a.is_power_shot()) { a.set_dead(true); entities_to_clear.Add(a); }
                                     play_spatial_sfx(Constant.hit1_sfx, e.get_base_position(), 0f, get_render_distance());
+                                    //handle dropped items on enemy death from projectiles
+                                    if (nm.get_health() <= 0) {
+                                        if (e.get_id().Equals("shade")) {
+                                            //we probably don't have to check null here since it is basically a given that the shade will be in this level if we get here (current level)
+                                            if (shade_level_id != null) {
+                                                remove_shade_from_level_file(shade_level_id);
+                                            }
+                                            //drop player cash from last time
+                                        }
+                                        //drop item on death
+                                        add_dropped_item(
+                                            new AnimatedSprite(Constant.crystal_tex, e.get_base_position(), 0.8f, 
+                                                150f, 9, 0, 0, 16, 16, //animation variables
+                                                "crystal_money", get_editor_object_idx()
+                                            ),
+                                            0f
+                                        );
+                                    }
                                 }
                             }
                         }

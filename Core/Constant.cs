@@ -97,6 +97,7 @@ namespace gate.Core
         public static Texture2D gate_spritesheet;
         public static Texture2D stone_tile_tex;
         public static Texture2D green_wall_tex;
+        public static Texture2D torii_spritesheet;
         public static Texture2D light_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
@@ -352,6 +353,7 @@ namespace gate.Core
             identifiers.Add("gate");
             identifiers.Add("stone_tile");
             identifiers.Add("green_wall");
+            identifiers.Add("torii");
             return identifiers;
         }
 

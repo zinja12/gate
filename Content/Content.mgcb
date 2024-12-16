@@ -1056,6 +1056,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/tombstone1_1_18.png
 
+#begin sprites/torii_gate_43.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/torii_gate_43.png
+
 #begin sprites/trail1.png
 /importer:TextureImporter
 /processor:TextureProcessor
