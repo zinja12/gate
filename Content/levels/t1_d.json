@@ -16583,8 +16583,46 @@
             "light_excluded": false
         }
     ],
-    "world_triggers": [],
-    "conditions": [],
+    "world_triggers": [
+        {
+            "object_identifier": "level_trigger",
+            "object_id_num": 921,
+            "x_position": -1624.317,
+            "y_position": 1728.3862,
+            "scale": 0,
+            "width": 300,
+            "height": 300,
+            "level_id": "crossroads2.json",
+            "entry_x_position": 54.188553,
+            "entry_y_position": 143.37204,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "previously_activated": false,
+            "retrigger": false
+        }
+    ],
+    "conditions": [
+        {
+            "object_identifier": "all_enemies_dead_remove_objs",
+            "object_id_num": 922,
+            "enemy_ids": [
+                877,
+                878,
+                879,
+                880,
+                881
+            ],
+            "obj_ids_to_remove": [
+                871,
+                872,
+                873,
+                874
+            ],
+            "x_position": -913.9669,
+            "y_position": 2120.8984,
+            "tag": ""
+        }
+    ],
     "particle_systems": [],
     "shade": null,
     "world_script": []

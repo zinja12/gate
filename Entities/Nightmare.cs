@@ -91,6 +91,7 @@ namespace gate.Entities
         protected bool ai_behavior_enabled = true;
         protected float striking_distance = 35f;
         protected int damage = 1;
+        protected bool variable_between_attack_timing = true;
 
         //Damage variables
         List<IEntity> seen_projectiles;
@@ -189,8 +190,8 @@ namespace gate.Entities
                 circle_direction = 1;
             }
             //set the timer for attacks for this specific enemy
-            //time_between_attacks = random.Next(1000, 5000);
-            time_between_attacks = 500;
+            variable_between_attack_timing = true;
+            time_between_attacks = 50f;
 
             //particle system code
             this.particle_systems = new List<ParticleSystem>();
@@ -304,6 +305,10 @@ namespace gate.Entities
                     moving = false;
                     //trigger attack
                     melee_attack = true;
+                    //set time between attacks differently after
+                    if (variable_between_attack_timing) {
+                        time_between_attacks = (float)random.Next(100, 400);   
+                    }
                 }
             }
             
