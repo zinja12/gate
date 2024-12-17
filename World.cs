@@ -1275,11 +1275,16 @@ namespace gate
             lights.Clear();
             light_excluded_entities.Clear();
             condition_tags.Clear();
+            dropped_items.Clear();
+            condition_tags.Clear();
+            switches.Clear();
             //do not need to clear or nullify world script parser as it is set to a new object on every level load
             explosion_list.Clear();
 
             //clear editor only objects
             editor_only_objects.Clear();
+            editor_floor_tile_map.Clear();
+            editor_tiles_map.Clear();
             //clear sound manager
             sound_manager.clear();
             //clear entities
