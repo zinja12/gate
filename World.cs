@@ -3273,13 +3273,15 @@ namespace gate
             ITrigger trigger = null;
 
             foreach (ITrigger t in triggers) {
-                t.Update(gameTime, rotation);
+                if (Vector2.Distance(player.get_base_position(), t.get_trigger_collision_box().position) < render_distance) {
+                    t.Update(gameTime, rotation);
 
-                //if trigger volume is triggered, set trigger to check, break and then handle trigger set
-                if (t.is_triggered()) {
-                    triggered = true;
-                    trigger = t;
-                    break;
+                    //if trigger volume is triggered, set trigger to check, break and then handle trigger set
+                    if (t.is_triggered()) {
+                        triggered = true;
+                        trigger = t;
+                        break;
+                    }
                 }
             }
 
