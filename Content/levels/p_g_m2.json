@@ -59565,6 +59565,22 @@
             "goal_rotation": 0,
             "previously_activated": false,
             "retrigger": false
+        },
+        {
+            "object_identifier": "level_trigger",
+            "object_id_num": 3309,
+            "x_position": -878.36456,
+            "y_position": 325.83145,
+            "scale": 0,
+            "width": 32,
+            "height": 32,
+            "level_id": "t1_d.json",
+            "entry_x_position": -1397.6725,
+            "entry_y_position": 1786.0673,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "previously_activated": false,
+            "retrigger": false
         }
     ],
     "conditions": [],
