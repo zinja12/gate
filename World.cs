@@ -2762,6 +2762,7 @@ namespace gate
         public void check_entity_collision(GameTime gameTime) {
             //check collisions against player hitbox
             if (player.hitbox_active()) {
+                Constant.profiler.start("world_check_entity_collisions_player_hitbox_check");
                 foreach (IEntity e in collision_entities) {
                     //distance check
                     if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2)) {
@@ -2810,9 +2811,11 @@ namespace gate
                         }
                     }
                 }
+                Constant.profiler.end("world_check_entity_collisions_player_hitbox_check");
             }
 
             //check enemy collisions against player
+            Constant.profiler.start("world_check_entity_collisions_enemy hitboxes");
             foreach (IEntity e in collision_entities) {
                 //distance check to save cycles
                 if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < render_distance) {
@@ -2910,8 +2913,10 @@ namespace gate
                     }
                 }
             }
+            Constant.profiler.end("world_check_entity_collisions_enemy hitboxes");
 
             //check player interactions with collision_entities (dialogue specific - signs, npc dialogue, etc)
+            Constant.profiler.start("world_check_entity_collisions_player_interaction");
             foreach (IEntity e in collision_entities) {
                 if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/3)) {
                     if (player.interacting()) {
@@ -3023,11 +3028,13 @@ namespace gate
                     }
                 }
             }
+            Constant.profiler.end("world_check_entity_collisions_player_interaction");
 
             //add to checkpoint interactions
             checkpoint_interact_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             //check player-geometry collisions
+            Constant.profiler.start("world_check_entity_collisions_player_geometry_collision");
             foreach (IEntity e in collision_geometry) {
                 if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2) && !editor_active) {
                     if (e is StackedObject) {
@@ -3122,9 +3129,11 @@ namespace gate
                 }
             }
             player.set_collision_geometry_map(collision_geometry_map, collision_tile_map);
+            Constant.profiler.end("world_check_entity_collisions_player_geometry_collision");
 
             //check projectile collision against geometry
             //TODO: why isn't collision geometry a collection of icollisionentity?
+            Constant.profiler.start("world_check_entity_collisions_projectile_collision");
             foreach (IEntity e in collision_geometry) {
                 foreach (IEntity proj in projectiles) {
                     //make sure we are not checking the same entity
@@ -3164,8 +3173,10 @@ namespace gate
                     }
                 }
             }
+            Constant.profiler.end("world_check_entity_collisions_projectile_collision");
             
             //check projectiles against player
+            Constant.profiler.start("world_check_entity_collisions_player_projectile_collision");
             foreach (IEntity proj in projectiles) {
                 if (proj is Arrow) {
                     //check collision against player
@@ -3182,8 +3193,10 @@ namespace gate
                     }
                 }
             }
+            Constant.profiler.end("world_check_entity_collisions_player_projectile_collision");
 
             //check dropped item collision
+            Constant.profiler.start("world_check_entity_collisions_player_dropped_item_collision");
             foreach (KeyValuePair<IEntity, float> kv in dropped_items) {
                 //every entity in here should be a collision entity, if not something is really messed up
                 IEntity e = kv.Key;
@@ -3201,8 +3214,10 @@ namespace gate
                     }
                 }
             }
+            Constant.profiler.end("world_check_entity_collisions_player_dropped_item_collision");
 
             //check collisions with interactable plants
+            Constant.profiler.start("world_check_entity_collisions_player_plant_hitbox_collision");
             foreach (IEntity e in plants) {
                 //distance calculation to cut down on how many interactions we are checking
                 if (Vector2.Distance(player.get_base_position(), e.get_base_position()) <= render_distance && player.hitbox_active()) {
@@ -3230,6 +3245,7 @@ namespace gate
                     }
                 }
             }
+            Constant.profiler.end("world_check_entity_collisions_player_plant_hitbox_collision");
         }
 
         private void player_item_pickup(Player p, IEntity item) {
