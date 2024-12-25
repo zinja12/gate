@@ -44,16 +44,14 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float4 original_color = tex2D(TextureSampler, input.TexCoord);
 
-	float min_distance = 1e5;
-	float4 closest_color = float4(1, 1, 1, 1);
+	float4 closest_color = Palette[0];
+	float min_distance = distance(original_color.rgb, closest_color.rgb);
 
 	//loop through palette to find closest color
 	for (int i = 0; i < PaletteSize; i++) {
 		float dist = distance(original_color.rgb, Palette[i].rgb);
-		if (dist < min_distance) {
-			min_distance = dist;
-			closest_color = Palette[i];
-		}
+		closest_color = (dist < min_distance) ? Palette[i] : closest_color;
+		min_distance = min(dist, min_distance);
 	}
 	
 	return float4(closest_color.rgb, original_color.a);
