@@ -65,6 +65,18 @@
 /processorParam:TextureFormat=Compressed
 /build:fonts/arial_small.spritefont
 
+#begin fonts/p_thin1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fonts/p_thin1.png
+
 #begin fonts/pixel_font1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -86,6 +98,16 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:fonts/pxf_font.spritefont
+
+#begin fonts/pxf_thin_font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fonts/pxf_thin_font.spritefont
+
+#begin fonts/pxf_thin1.ttf
+/copy:fonts/pxf_thin1.ttf
 
 #begin fx/color_palette.fx
 /importer:EffectImporter

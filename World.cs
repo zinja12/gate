@@ -31,20 +31,22 @@ namespace gate
         float fps;
 
         //Graphics and game objects
-        GraphicsDeviceManager _graphics;
-        string content_root_directory;
-        ContentManager Content;
+        public GraphicsDeviceManager _graphics;
+        public string content_root_directory;
+        public ContentManager Content;
 
         //loaded textures
         List<string> loaded_textures;
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "p_g_m2.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
+        //game config
         bool object_persistence = false;
+        public bool run_intro_text = true;
 
         //objects present in every world
         Camera camera;
@@ -124,6 +126,11 @@ namespace gate
         float camera_gamepad_h_input = 0f;
         private bool player_camera_rotate_enabled = true, camera_invert = false;
         public bool player_camera_tethered = true;
+
+        //intro text variables
+        public bool intro_text_playing = false;
+        public List<string> intro_text;
+        public float intro_text_opacity = 1f, intro_text_elapsed = 0f, intro_text_threshold, intro_text_finish_elapsed = 0f, intro_text_finished_threshold;
 
         //editor variables
         private bool editor_active = false, editor_enabled = true;
@@ -418,6 +425,7 @@ namespace gate
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
             Constant.arial_mid_reg = Content.Load<SpriteFont>("fonts/arial_mid_reg");
             Constant.pxf_font = Content.Load<SpriteFont>("fonts/pxf_font");
+            Constant.pxf_thin = Content.Load<SpriteFont>("fonts/pxf_thin_font");
             //load emotions
             Constant.fear_tex = Content.Load<Texture2D>("sprites/fear_anger");
             Constant.anxiety_tex = Content.Load<Texture2D>("sprites/anxiety");
@@ -2026,6 +2034,12 @@ namespace gate
             //keep the lights on lol
             foreach (Light light in lights) {
                 light.Update(gameTime, camera.Rotation);
+            }
+
+            //intro text timer update
+            if (intro_text_playing) {
+                //increase timer for intro text
+                intro_text_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             }
             
             Constant.profiler.print_frame_summary();
@@ -3997,6 +4011,25 @@ namespace gate
                 _spriteBatch.End();
             }
             Constant.profiler.end("world_entities_draw");
+
+            if (intro_text_playing) {
+                _spriteBatch.Begin();
+                if (intro_text_elapsed < intro_text_threshold) {
+                    intro_text_opacity = 1f;
+                } else {
+                    intro_text_opacity = 1 - (intro_text_finish_elapsed / intro_text_finished_threshold);
+                }
+                Renderer.FillRectangle(_spriteBatch, Vector2.Zero, _graphics.GraphicsDevice.PresentationParameters.BackBufferWidth, _graphics.GraphicsDevice.PresentationParameters.BackBufferHeight, Color.Black, intro_text_opacity);
+                //draw text based on timer
+                //calculate percentage
+                float percentage = MathHelper.Clamp(intro_text_elapsed / intro_text_threshold, 0f, 1f);
+                //calculate and return index based on percentage of message length
+                int intro_tex_idx = (int)(percentage * (intro_text.Count - 1));
+                for (int i = 0; i <= intro_tex_idx; i++) {
+                    _spriteBatch.DrawString(Constant.pxf_thin, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), Color.White * intro_text_opacity);
+                }
+                _spriteBatch.End();
+            }
         }
 
         public void DrawTextOverlays(SpriteBatch _spriteBatch) {

@@ -156,6 +156,14 @@ namespace gate
                     //increase command idx as we have finished this command
                     safe_increase_command_idx(script);
                     break;
+                case "intro_text":
+                    //call intro text function
+                    if (world.run_intro_text) {
+                        intro_text_command(gameTime, command, script);
+                    } else {
+                        safe_increase_command_idx(script);
+                    }
+                    break;
                 default:
                     Console.WriteLine($"command action:{command.action} not supported. ignoring and continuing...");
                     //increase command idx as we have finished this command
@@ -240,6 +248,30 @@ namespace gate
 
         public int get_current_command_idx() {
             return current_command_idx;
+        }
+
+        public void intro_text_command(GameTime gameTime, GameWorldScriptElement command, List<GameWorldScriptElement> script) {
+            //turn player movement off
+            world.get_player().set_movement_disabled(true);
+            //set intro text playing
+            world.intro_text_playing = true;
+            world.intro_text_opacity = 1f;
+            world.intro_text_threshold = 12000f;
+            world.intro_text_finished_threshold = 6000f;
+            world.intro_text = command.parameters.text_items;
+            
+            if (world.intro_text_elapsed >= world.intro_text_threshold) {
+                world.intro_text_finish_elapsed += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
+
+            if (world.intro_text_finish_elapsed >= world.intro_text_finished_threshold) {
+                //finish
+                world.intro_text_elapsed = 0f;
+                world.intro_text_finish_elapsed = 0f;
+                world.intro_text_playing = false;
+                world.get_player().set_movement_disabled(false);
+                safe_increase_command_idx(script);
+            }
         }
 
         public void camera_move_command(GameTime gameTime, GameWorldScriptElement command, List<GameWorldScriptElement> script) {

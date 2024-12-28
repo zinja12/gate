@@ -138,6 +138,7 @@ namespace gate.Core
         public static SpriteFont arial_small;
         public static SpriteFont arial_mid_reg;
         public static SpriteFont pxf_font;
+        public static SpriteFont pxf_thin;
 
         //sounds
         public static SoundEffect footstep_sfx;

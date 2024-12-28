@@ -16,5 +16,6 @@ namespace gate.Serialize
         public bool disable { get; set; }
         public int target_entity_id { get; set; }
         public int trigger_id { get; set; }
+        public List<string> text_items { get; set; }
     }
 }

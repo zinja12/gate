@@ -33954,6 +33954,26 @@
     "particle_systems": [],
     "world_script": [
         {
+            "trigger": "ON_LOAD",
+            "action": "intro_text",
+            "parameters": {
+                "text_items": [
+                    "I can't remember how long I've walked",
+                    "these lands...",
+                    "My feeling slowly lost to the",
+                    "sands of time...",
+                    "There once was a rumor of a gateway",
+                    "existing...",
+                    "One that had the power to grant any wish,",
+                    "should the traveler only have the strength",
+                    "to walk through it...",
+                    "I am not sure I have that strength any",
+                    "longer..."
+                ]
+            },
+            "level_load_count_required": 1
+        },
+        {
             "trigger": "ON_TRIGGER",
             "action": "ai_behavior",
             "parameters": {
