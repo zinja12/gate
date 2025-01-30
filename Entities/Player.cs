@@ -87,7 +87,7 @@ namespace gate.Entities
         private const float player_attack_sprite_size = player_size*2;
 
         //larger context variables
-        public static bool DEBUG = false;
+        public static bool DEBUG = true;
         public float screen_width;
         public float screen_height;
 
@@ -1248,7 +1248,7 @@ namespace gate.Entities
 
         public RRect get_future_hurtbox() {
             //need to update this to factor in dash direction and attack dash direction
-            Vector2 draw = draw_position + direction * movement_speed*2f;
+            Vector2 draw = draw_position + direction * movement_speed*3f;
             // if (!dash_active && !attack_active) {
             //     draw = draw_position + direction * movement_speed;
             // } else if (dash_active) {

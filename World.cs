@@ -46,7 +46,7 @@ namespace gate
 
         //game config
         bool object_persistence = false;
-        public bool run_intro_text = true;
+        public bool run_intro_text = false;
 
         //objects present in every world
         Camera camera;
@@ -405,8 +405,8 @@ namespace gate
             Constant.pixelate_effect.Parameters["pixels"].SetValue(Constant.pixels);
             Constant.pixelate_effect.Parameters["pixelation"].SetValue(Constant.pixelation);
             Constant.color_palette_effect = Content.Load<Effect>("fx/color_palette");
-            Constant.color_palette_effect.Parameters["Palette"].SetValue(Constant.palette_colors);
-            Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors.Length);
+            Constant.color_palette_effect.Parameters["Palette"].SetValue(Constant.palette_colors3);
+            Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors3.Length);
             Constant.scanline2_effect = Content.Load<Effect>("fx/scanline2");
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
             //load content not specific to an object
