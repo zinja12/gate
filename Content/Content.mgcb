@@ -26,6 +26,18 @@
 /processorParam:TextureFormat=Color
 /build:color_palettte/color_palette_gba2.png
 
+#begin color_palettte/color_palette_test1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:color_palettte/color_palette_test1.png
+
 #begin dialogue/npc1_felix_dialogue.json
 /copy:dialogue/npc1_felix_dialogue.json
 
