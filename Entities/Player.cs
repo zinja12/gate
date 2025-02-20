@@ -87,7 +87,7 @@ namespace gate.Entities
         private const float player_attack_sprite_size = player_size*2;
 
         //larger context variables
-        public static bool DEBUG = true;
+        public static bool DEBUG = false;
         public float screen_width;
         public float screen_height;
 

@@ -46,7 +46,7 @@ namespace gate
 
         //game config
         bool object_persistence = false;
-        public bool run_intro_text = false;
+        public bool run_intro_text = true;
 
         //objects present in every world
         Camera camera;
