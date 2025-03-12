@@ -217,6 +217,8 @@ namespace gate.Core
 
         public static string level_mod_prefix = "mod_";
 
+        public static int collision_map_chunk_size = 250;
+
         /*SHADERS*/
         public static float pixels = 1700.0f;
         public static float pixelation = 4.00f;
