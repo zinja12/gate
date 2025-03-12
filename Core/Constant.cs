@@ -217,6 +217,8 @@ namespace gate.Core
 
         public static string level_mod_prefix = "mod_";
 
+        public static int collision_map_chunk_size = 250;
+
         /*SHADERS*/
         public static float pixels = 1700.0f;
         public static float pixelation = 4.00f;
@@ -288,6 +290,33 @@ namespace gate.Core
             // FromHex("#ffda70").ToVector4(),
             // FromHex("#f4b03c").ToVector4(),
             // FromHex("#ffffff").ToVector4()
+        };
+
+        public static Vector4[] palette_colors3 = new Vector4[] {
+            FromHex("#6ecfd4").ToVector4(),
+            FromHex("#b1b198").ToVector4(),
+            FromHex("#4c75c2").ToVector4(),
+            FromHex("#86837c").ToVector4(),
+            FromHex("#32528f").ToVector4(),
+            FromHex("#555356").ToVector4(),
+            FromHex("#f6f6e5").ToVector4(),
+            FromHex("#5fb65f").ToVector4(),
+            FromHex("#4f9367").ToVector4(),
+            FromHex("#316c45").ToVector4(),
+            FromHex("#204752").ToVector4(),
+            FromHex("#201e23").ToVector4(),
+            FromHex("#2d0e49").ToVector4(),
+            FromHex("#67337d").ToVector4(),
+            FromHex("#944b97").ToVector4(),
+            FromHex("#cb70b7").ToVector4(),
+            FromHex("#681d42").ToVector4(),
+            FromHex("#a02c42").ToVector4(),
+            FromHex("#cf6654").ToVector4(),
+            FromHex("#eecd56").ToVector4(),
+            FromHex("#baa82e").ToVector4(),
+            FromHex("#ba7e20").ToVector4(),
+            FromHex("#704f1c").ToVector4(),
+            FromHex("#41352c").ToVector4()
         };
 
         public static Dictionary<int, (Texture2D, Color)> emotion_texture_map;

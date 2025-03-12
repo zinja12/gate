@@ -1248,7 +1248,7 @@ namespace gate.Entities
 
         public RRect get_future_hurtbox() {
             //need to update this to factor in dash direction and attack dash direction
-            Vector2 draw = draw_position + direction * movement_speed*2f;
+            Vector2 draw = draw_position + direction * movement_speed*3f;
             // if (!dash_active && !attack_active) {
             //     draw = draw_position + direction * movement_speed;
             // } else if (dash_active) {
