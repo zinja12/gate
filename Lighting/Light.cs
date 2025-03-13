@@ -44,12 +44,12 @@ namespace gate.Lighting
             }
         }
 
-        public void calculate_in_range_geometry(List<IEntity> geometry, List<IEntity> entity_geometry, List<IEntity> excluded_geometry, Vector2 player_position, float render_distance) {
+        public void calculate_in_range_geometry(List<IEntity> nearby_geometry, List<IEntity> entity_geometry, List<IEntity> excluded_geometry, Vector2 player_position, float render_distance) {
             //clear geometry edges
             geometry_edges.Clear();
             //calculate geometry to calculate against for this light
             //construct list of edges from shadow caster geometry
-            foreach (IEntity g in geometry) {
+            foreach (IEntity g in nearby_geometry) {
                 //skip any entities that are excluded
                 //this will make is so they are not included in the geometry that the light needs to be built against
                 //which should allow it to not be affected by lights when it is in range of a light
@@ -71,15 +71,6 @@ namespace gate.Lighting
                         }
                     }
                 }
-                // if (Vector2.Distance(center_position, player_position) < render_distance/2 && Vector2.Distance(center_position, g.get_base_position()) < Constant.light_distance*1.5f) {
-                //     if (g is StackedObject) {
-                //         StackedObject so = (StackedObject)g;
-                //         foreach (KeyValuePair<Vector2, Vector2> kv in so.get_hurtbox().edges) {
-                //             //add to geometry map
-                //             geometry_edges.Add((kv.Key, kv.Value));
-                //         }
-                //     }
-                // }
             }
 
             //add ai hitbox geometry to geometry edges for light geometry calculation

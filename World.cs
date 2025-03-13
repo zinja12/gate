@@ -2729,13 +2729,15 @@ namespace gate
             }
         }
 
-        public List<IEntity> get_nearby_chunk_geometry_entities((int, int) chunk_indices) {
+        public List<IEntity> get_nearby_chunk_geometry_entities((int, int) chunk_indices, int n_x_n_size) {
+            int min = n_x_n_size - 1;
+            int max = n_x_n_size;
             List<IEntity> nearby_geometry = new List<IEntity>();
             //get the 9 closest chunk entities
             int chunk_x = chunk_indices.Item1;
             int chunk_y = chunk_indices.Item2;
-            for (int i = chunk_x-2; i < chunk_x+3; i++) {
-                for (int j = chunk_y-2; j < chunk_y+3; j++) {
+            for (int i = chunk_x-min; i < chunk_x+max; i++) {
+                for (int j = chunk_y-min; j < chunk_y+max; j++) {
                     if (chunked_collision_geometry.ContainsKey((i,j))) {
                         //add range to nearby geometry
                         nearby_geometry.AddRange(chunked_collision_geometry[(i,j)]);
@@ -2795,7 +2797,7 @@ namespace gate
                     int explosion_chunk_x = (int)Math.Floor(explosion_origin.X / Constant.collision_map_chunk_size);
                     int explosion_chunk_y = (int)Math.Floor(explosion_origin.Y / Constant.collision_map_chunk_size);
                     //pull geometry for chunk and 9 adjacent chunks
-                    List<IEntity> nearby_chunk_entity_geometry = get_nearby_chunk_geometry_entities((explosion_chunk_x, explosion_chunk_y));
+                    List<IEntity> nearby_chunk_entity_geometry = get_nearby_chunk_geometry_entities((explosion_chunk_x, explosion_chunk_y), 2);
                     foreach (IEntity e in nearby_chunk_entity_geometry) {
                         if (e.get_id().Equals("hitswitch") || e.get_id().Equals("box")) {
                             if (Vector2.Distance(e.get_base_position(), explosion_origin) <= explosion_radius) {
@@ -3104,7 +3106,7 @@ namespace gate
             Constant.profiler.start("world_check_entity_collisions_player_geometry_collision");
             int chunk_x = (int)Math.Floor(player.get_base_position().X / Constant.collision_map_chunk_size);
             int chunk_y = (int)Math.Floor(player.get_base_position().Y / Constant.collision_map_chunk_size);
-            List<IEntity> nearby_chunk_entity_geometry = get_nearby_chunk_geometry_entities((chunk_x, chunk_y));
+            List<IEntity> nearby_chunk_entity_geometry = get_nearby_chunk_geometry_entities((chunk_x, chunk_y), 2);
             foreach (IEntity e in nearby_chunk_entity_geometry) {
                 if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2) && !editor_active) {
                     if (e is StackedObject) {
@@ -3782,7 +3784,7 @@ namespace gate
             }
             int chunk_x = (int)Math.Floor(r.position.X / Constant.collision_map_chunk_size);
             int chunk_y = (int)Math.Floor(r.position.Y / Constant.collision_map_chunk_size);
-            List<IEntity> nearby_chunk_entity_geometry = get_nearby_chunk_geometry_entities((chunk_x, chunk_y));
+            List<IEntity> nearby_chunk_entity_geometry = get_nearby_chunk_geometry_entities((chunk_x, chunk_y), 2);
             foreach (IEntity e in nearby_chunk_entity_geometry) {
                 //cast to collision entity
                 if (e is ICollisionEntity) {
@@ -4058,7 +4060,7 @@ namespace gate
             /* LIGHTING PASS */
             if (lights_enabled) {
                 //draw lights over top of the scene if lights are enabled
-                //draw_lights(lights, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+                draw_lights(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
             }
 
             //draw transition
@@ -4151,7 +4153,7 @@ namespace gate
         //need to add an exclusionary list so if an edge or endpoint of a segment is found in that list or as a part of an entity in that list, then it is ignored from the algorithm
         //also need to add the option to pass in npcs and signs and other non collision objects to affect light and cast shadows
         //they have hurtboxes so we should be able to leverage that geometry to cast shadows as well
-        public void draw_lights(List<Light> lights, List<IEntity> geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
+        public void draw_lights(List<Light> lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
             //only render if we have lights
             if (lights.Count > 0) {
                 //lights
@@ -4165,7 +4167,10 @@ namespace gate
                 spriteBatch.Begin(SpriteSortMode.Immediate, Constant.subtract_blend, SamplerState.PointClamp);
                 foreach (Light light in lights) {
                     //calculate in range geometry for light
-                    light.calculate_in_range_geometry(geometry_shadow_casters, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
+                    int light_chunk_x = (int)Math.Floor(light.get_center_position().X / Constant.collision_map_chunk_size);
+                    int light_chunk_y = (int)Math.Floor(light.get_center_position().Y / Constant.collision_map_chunk_size);
+                    List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities((light_chunk_x, light_chunk_y), 2);
+                    light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
                     //calculate geometry of this light
                     List<(float, Vector2)> light_geometry = calculate_light_geometry(light, light.get_geometry_edges());
                     Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
