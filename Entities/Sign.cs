@@ -56,7 +56,7 @@ namespace gate.Entities
             this.messages = add_sign_speaker_to_messages(messages);
 
             //initialize textbox
-            textbox = new TextBox(Constant.textbox_screen_position, Constant.pxf_font, this.messages, "sign", Constant.textbox_width, Constant.textbox_height, Color.White, Color.Black);
+            textbox = new TextBox(Constant.textbox_screen_position, Constant.pxf_font, this.messages, "sign", Constant.textbox_width, Constant.textbox_height, Color.Black, Color.White);
 
             this.ID = ID;
 

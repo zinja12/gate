@@ -279,10 +279,12 @@ namespace gate
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {
+            float text_scale = 4;
             //draw rectangle as backdrop for text
             Renderer.FillRectangle(spriteBatch, position, (int)width, (int)height, box_color * background_opacity);
             //draw box title
-            spriteBatch.DrawString(Constant.arial_mid_reg, speaker_msg_screens[current_msg_screen_idx].Item1, position + box_title_offset, box_color);
+            //spriteBatch.DrawString(Constant.arial_mid_reg, speaker_msg_screens[current_msg_screen_idx].Item1, position + box_title_offset, box_color);
+            Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, speaker_msg_screens[current_msg_screen_idx].Item1, position + box_title_offset, 4f, box_color);
             //start position
             text_draw_position = position + text_offset;
             //track offset
@@ -301,13 +303,14 @@ namespace gate
                     continue;
                 }
                 //calculate size of current character
-                Vector2 char_size = font.MeasureString(current_char.ToString());
+                //Vector2 char_size = font.MeasureString(current_char.ToString());
+                Vector2 char_size = new Vector2(Constant.pixelfont_char_size*text_scale, Constant.pixelfont_char_size*text_scale);
                 //draw current character at appropriate positioning
-                spriteBatch.DrawString(font, current_char.ToString(), text_draw_position + char_offset, text_color);
+                //spriteBatch.DrawString(font, current_char.ToString(), text_draw_position + char_offset, text_color);
+                Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, current_char.ToString(), text_draw_position + char_offset, 4f, text_color);
                 //increase offset on x axis
                 char_offset.X += char_size.X;
             }
-            //spriteBatch.DrawString(font, current_msg, position + text_offset, text_color);
             //draw continue button for all but the last message screen
             if (current_msg_screen_idx < speaker_msg_screens.Count-1) {
                 spriteBatch.DrawString(font, "...", position + new Vector2(width - 50, height - 80), text_color);

@@ -10,6 +10,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial_mid_reg.spritefont</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/arial_small.spritefont</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/p_thin1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/p_thin2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/pixel_font1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/pxf_font.spritefont</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/pxf_thin_font.spritefont</File>
@@ -106,6 +107,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

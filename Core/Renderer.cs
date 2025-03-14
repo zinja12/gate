@@ -81,6 +81,42 @@ namespace gate.Core
 
             return texture;
         }
+
+        public static void DrawCustomString(SpriteBatch spriteBatch, Texture2D font_texture, Dictionary<string, Rectangle> char_map, String text, Vector2 text_position, float scale, Color color) {
+            //set up current cursor
+            Vector2 cursor = text_position;
+            
+            //loop over text
+            for (int i = 0; i < text.Length; i++) {
+                char current = text[i];
+                char next = (i < text.Length - 1) ? text[i+1] : '\0';
+                
+                //try to pull the value
+                int spacing = 0;
+                Rectangle source_rect = new Rectangle(0, 0, 0, 0);
+                if (char_map.ContainsKey(current.ToString())) {
+                    source_rect = char_map[current.ToString()];
+                    spacing = source_rect.Width;
+                }
+
+                if (current == 'e') {
+                    spacing -= 1;
+                } else if (current == 'm' || current == 'M' || current == 'W' || current == 'w') {
+                    spacing += 1;
+                }
+                
+                //apply kerning
+                int kerning = 0;
+                if (next != '\0' && Constant.kerning_pairs.ContainsKey((current, next))) {
+                    kerning = Constant.kerning_pairs[(current, next)];
+                }
+                //draw character
+                //spriteBatch.Draw(font_texture, cursor, source_rect, color);
+                spriteBatch.Draw(font_texture, cursor, source_rect, color, 0f /*rotation*/, Vector2.Zero /*rotation origin*/, scale /*scale*/, SpriteEffects.None, 0f);
+                //advance cursor position (letter_size*scale + kerning)
+                cursor.X += (spacing*scale) + kerning;
+            }
+        }
         
         //NOTE: Monogame has a built in way to draw triangles via primitives on the gpu, but they're difficult to work with
         //plus I cannot for the life of me figure out how to draw the primitive in the view of the camera

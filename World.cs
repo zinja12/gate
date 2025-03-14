@@ -46,7 +46,7 @@ namespace gate
 
         //game config
         bool object_persistence = false;
-        public bool run_intro_text = true;
+        public bool run_intro_text = false;
 
         //objects present in every world
         Camera camera;
@@ -426,6 +426,7 @@ namespace gate
             Constant.arial_mid_reg = Content.Load<SpriteFont>("fonts/arial_mid_reg");
             Constant.pxf_font = Content.Load<SpriteFont>("fonts/pxf_font");
             Constant.pxf_thin = Content.Load<SpriteFont>("fonts/pxf_thin_font");
+            Constant.pixel_font1 = Content.Load<Texture2D>("fonts/p_thin2");
             //load emotions
             Constant.fear_tex = Content.Load<Texture2D>("sprites/fear_anger");
             Constant.anxiety_tex = Content.Load<Texture2D>("sprites/anxiety");
@@ -4079,7 +4080,7 @@ namespace gate
             Constant.profiler.end("world_entities_draw");
 
             if (intro_text_playing) {
-                _spriteBatch.Begin();
+                _spriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
                 if (intro_text_elapsed < intro_text_threshold) {
                     intro_text_opacity = 1f;
                 } else {
@@ -4092,7 +4093,8 @@ namespace gate
                 //calculate and return index based on percentage of message length
                 int intro_tex_idx = (int)(percentage * (intro_text.Count - 1));
                 for (int i = 0; i <= intro_tex_idx; i++) {
-                    _spriteBatch.DrawString(Constant.pxf_thin, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), Color.White * intro_text_opacity);
+                    //_spriteBatch.DrawString(Constant.pxf_thin, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), Color.White * intro_text_opacity);
+                    Renderer.DrawCustomString(_spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), 5f, Color.White * intro_text_opacity);
                 }
                 _spriteBatch.End();
             }

@@ -71,7 +71,7 @@ namespace gate.Entities
                 this.conversation_file = conversation_file;
                 this.speaker_message_tags = Constant.parse_dialogue_file(this.conversation_file);
                 //initialize textbox
-                textbox = new TextBox(Constant.textbox_screen_position, Constant.pxf_font, speaker_message_tags, npc_name, Constant.textbox_width, Constant.textbox_height, Color.White, Color.Black);
+                textbox = new TextBox(Constant.textbox_screen_position, Constant.pxf_font, speaker_message_tags, npc_name, Constant.textbox_width, Constant.textbox_height, Color.Black, Color.White);
             }
 
             this.world = world;
