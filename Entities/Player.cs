@@ -508,7 +508,7 @@ namespace gate.Entities
             #region Movement
             if (!movement_disabled && !hitstun_active) {
                 //check for future collision
-                (IEntity, bool) fcd = future_collision_detected();
+                (List<IEntity>, bool) fcd = future_collision_detected();
                 //normal movement code
                 if (!dash_active && !attack_active && !heavy_attack_active && !charging_active && !charging_arrow && !aiming) {
                     /*Update player position*/
@@ -1261,13 +1261,16 @@ namespace gate.Entities
             return future_hurtbox;
         }
 
-        public (IEntity, bool) future_collision_detected() {
+        public (List<IEntity>, bool) future_collision_detected() {
+            List<IEntity> collisions = new List<IEntity>();
+            bool collision = false;
             foreach (KeyValuePair<IEntity, bool> kv in collision_geometry_map) {
                 if (kv.Value) {
-                    return (kv.Key, true);
+                    collisions.Add(kv.Key);
+                    collision = kv.Value;
                 }
             }
-            return (null, false);
+            return (collisions, collision);
         }
 
         public void update_temp_tile_movement_speed() {
@@ -1287,33 +1290,41 @@ namespace gate.Entities
             }
         }
 
-        public Vector2 calculate_resultant_vector(IEntity e, Vector2 direction) {
-            if (e is ICollisionEntity) {
-                ICollisionEntity ic = (ICollisionEntity)e;
-                //center of collision entity hurtbox
-                Vector2 center = ic.get_hurtbox().position;
-                //base position for player
-                Vector2 base_pos = get_base_position();
-                //calculate direction between the two (end - start, giving the direction to the player from the collision entity)
-                Vector2 center_to_player = base_pos - center;
-                //normalize
-                center_to_player.Normalize();
-                
-                //find the closest edge from the player
-                int closest_edge = ic.get_hurtbox().closest_edge(get_future_hurtbox().position);
-                //use that edge index pulled from the collision entity hitbox to pull the start and end points of that edge
-                KeyValuePair<Vector2, Vector2> edge = ic.get_hurtbox().get_edges()[closest_edge];
-                //given the start end end of that edge, get the edge normal
-                Vector2 edge_normal = ic.get_hurtbox().get_edge_normal(edge.Key, edge.Value);
-                //calculate the resultant direction by combining the edge_normal and the players current direction
-                Vector2 addition = edge_normal + direction;
-                //normalize and return (if not zero -> normalizing a zero vector yields (NaN, NaN))
-                if (!addition.Equals(Vector2.Zero)) {
-                    addition.Normalize();
+        public Vector2 calculate_resultant_vector(List<IEntity> collision_entities, Vector2 direction) {
+            List<Vector2> resultants = new List<Vector2>();
+            foreach (IEntity e in collision_entities) {
+                if (e is ICollisionEntity) {
+                    ICollisionEntity ic = (ICollisionEntity)e;
+                    //center of collision entity hurtbox
+                    Vector2 center = ic.get_hurtbox().position;
+                    //base position for player
+                    Vector2 base_pos = get_base_position();
+                    //calculate direction between the two (end - start, giving the direction to the player from the collision entity)
+                    Vector2 center_to_player = base_pos - center;
+                    //normalize
+                    center_to_player.Normalize();
+                    
+                    //find the closest edge from the player
+                    int closest_edge = ic.get_hurtbox().closest_edge(get_future_hurtbox().position);
+                    //use that edge index pulled from the collision entity hitbox to pull the start and end points of that edge
+                    KeyValuePair<Vector2, Vector2> edge = ic.get_hurtbox().get_edges()[closest_edge];
+                    //given the start end end of that edge, get the edge normal
+                    Vector2 edge_normal = ic.get_hurtbox().get_edge_normal(edge.Key, edge.Value);
+                    //calculate the resultant direction by combining the edge_normal and the players current direction
+                    Vector2 addition = edge_normal + direction;
+                    //normalize and return (if not zero -> normalizing a zero vector yields (NaN, NaN))
+                    if (!addition.Equals(Vector2.Zero)) {
+                        addition.Normalize();
+                    }
+                    resultants.Add(addition);
                 }
-                return addition;
             }
-            return direction * -1;
+            //calculate average vector from resultants
+            Vector2 sum = Vector2.Zero;
+            foreach (Vector2 v in resultants) {
+                sum += v;
+            }
+            return sum / resultants.Count;
         }
 
         public void set_collision_geometry_map(Dictionary<IEntity, bool> geometry_map, Dictionary<IEntity, bool> tile_map) {
