@@ -262,6 +262,53 @@ namespace gate.Collision
             return false;
         }
 
+        public Vector2 calculate_mtv(RRect r) {
+            float min_overlap = 1000000000f;
+            Vector2 mtv_axis = Vector2.Zero;
+
+            //get all normals
+            List<Vector2> axes = new List<Vector2>();
+            axes.AddRange(get_edge_normals(get_edges()));
+            axes.AddRange(r.get_edge_normals(r.get_edges()));
+
+            foreach (Vector2 axis in axes) {
+                // project both rectangles onto the axis
+                (float min_a, float max_a) = project_onto_axis(axis, verts);
+                (float min_b, float max_b) = project_onto_axis(axis, r.verts);
+
+                //check overlap
+                float overlap = Math.Min(max_a, max_b) - Math.Max(min_a, min_b);
+
+                if (overlap <= 0) return Vector2.Zero; //no collision
+
+                if (overlap < min_overlap) {
+                    min_overlap = overlap;
+                    mtv_axis = axis;
+                }
+            }
+
+            //ensure mtv points in the right direction
+            Vector2 direction = r.position - position;
+            if (Vector2.Dot(direction, mtv_axis) < 0) {
+                mtv_axis = -mtv_axis;
+            }
+
+            return mtv_axis * min_overlap; // mtv vector
+        }
+
+        private (float, float) project_onto_axis(Vector2 axis, List<Vector2> vertices) {
+            float min = 1000000000f;
+            float max = -1000000000f;
+
+            foreach (Vector2 v in vertices) {
+                float projection = Vector2.Dot(v, axis);
+                min = Math.Min(min, projection);
+                max = Math.Max(max, projection);
+            }
+
+            return (min, max);
+        }
+
         public void set_color(Color color) {
             this.draw_color = color;
         }

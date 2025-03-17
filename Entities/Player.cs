@@ -87,7 +87,7 @@ namespace gate.Entities
         private const float player_attack_sprite_size = player_size*2;
 
         //larger context variables
-        public static bool DEBUG = false;
+        public static bool DEBUG = true;
         public float screen_width;
         public float screen_height;
 
@@ -539,9 +539,11 @@ namespace gate.Entities
                     } else {
                         //collision, need to calculate resultant direction from the collision object and the player
                         resultant = calculate_resultant_vector(fcd.Item1, direction);
+                        //Vector2 res = calculate_resultant_vector2(fcd.Item1, direction);
+                        Vector2 res = (resultant+(direction*-1)) / 2;
                         //move the player slowing along the result direction from the collision
-                        base_position += resultant * movement_speed * 0.01f;
-                        draw_position += resultant * movement_speed * 0.01f;
+                        base_position += ((resultant)) * 0.05f;//movement_speed * 0.5f;
+                        draw_position += ((resultant)) * 0.05f;//movement_speed * 0.5f;
                     }
                     //change depth sort position based on draw position regardless of camera rotation
                     depth_sort_position = draw_position + (player_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
@@ -1319,6 +1321,23 @@ namespace gate.Entities
                     resultants.Add(addition);
                 }
             }
+            //calculate average vector from resultants
+            Vector2 sum = Vector2.Zero;
+            foreach (Vector2 v in resultants) {
+                sum += v;
+            }
+            return sum / resultants.Count;
+        }
+
+        public Vector2 calculate_resultant_vector2(List<IEntity> collision_entities, Vector2 direction) {
+            List<Vector2> resultants = new List<Vector2>();
+            foreach (IEntity e in collision_entities) {
+                if (e is ICollisionEntity) {
+                    ICollisionEntity ic = (ICollisionEntity)e;
+                    resultants.Add(get_hurtbox().calculate_mtv(ic.get_hurtbox()));
+                }
+            }
+            
             //calculate average vector from resultants
             Vector2 sum = Vector2.Zero;
             foreach (Vector2 v in resultants) {

@@ -25,7 +25,7 @@ namespace gate.Entities
         protected Vector2 direction_down = new Vector2(0, 1);
         protected Vector2 direction_up = new Vector2(0, -1);
 
-        public static bool debug = false;
+        public static bool debug = true;
 
         protected float object_width = 32;
         protected float object_height = 32;
@@ -38,7 +38,7 @@ namespace gate.Entities
         protected RRect hitbox;
         protected List<Vector2> hitbox_normals;
         
-        protected bool update_once = true;
+        protected bool update_once = false;
 
         private bool sway = false;
         private float sway_elapsed0, sway_elapsed1, sway_elapsed2, sway_threshold = 3000f;
@@ -71,7 +71,7 @@ namespace gate.Entities
             sprite_rectangles = Constant.generate_rectangles_for_stack(this.texture, stack_count);
             this.rotation_factor = this.draw_position;
 
-            this.hitbox = new RRect(this.draw_position, 20, 5);
+            this.hitbox = new RRect(this.draw_position, width, height);
             this.hitbox_normals = new List<Vector2>();
 
             this.ID = ID;
