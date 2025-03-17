@@ -442,7 +442,7 @@
 /processorParam:TextureFormat=Color
 /build:sprites/footprint.png
 
-#begin sprites/ghastly1.png
+#begin sprites/ghastly2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -452,7 +452,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/ghastly1.png
+/build:sprites/ghastly2.png
+
+#begin sprites/ghastly2_downed.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/ghastly2_downed.png
 
 #begin sprites/grass_0.png
 /importer:TextureImporter

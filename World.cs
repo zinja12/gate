@@ -631,13 +631,13 @@ namespace gate
                             break;
                         case "ghastly":
                             //load texture
-                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly2");
                             Ghastly ghast = new Ghastly(Constant.ghastly_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, w_obj.object_id_num);
                             entities_list.Add(ghast);
                             collision_entities.Add(ghast);
                             break;
                         case "ghost":
-                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly2");
                             check_and_load_tex(ref Constant.sludge_tex, "sprites/sludge1");
                             Ghost ghost = new Ghost(Constant.ghastly_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this);
                             entities_list.Add(ghost);
@@ -1071,7 +1071,7 @@ namespace gate
                             check_and_load_tex(ref Constant.read_interact_tex, "sprites/read_interact");
                             break;
                         case "ghastly":
-                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly2");
                             break;
                         case "marker":
                             check_and_load_tex(ref Constant.marker_spritesheet, "sprites/marker_spritesheet5");
@@ -1136,7 +1136,7 @@ namespace gate
                             check_and_load_tex(ref Constant.scarecrow_tex, "sprites/scarecrow1");
                             break;
                         case "ghost":
-                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly1");
+                            check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly2");
                             check_and_load_tex(ref Constant.sludge_tex, "sprites/sludge1");
                             break;
                         case "hitswitch":
@@ -2731,21 +2731,31 @@ namespace gate
         }
 
         public List<IEntity> get_nearby_chunk_geometry_entities((int, int) chunk_indices, int n_x_n_size) {
+            List<IEntity> nearby_geometry = new List<IEntity>();
+            List<(int, int)> chunk_indices_list = get_chunk_indicies(chunk_indices, n_x_n_size);
+            foreach ((int, int) chunk_index in chunk_indices_list) {
+                if (chunked_collision_geometry.ContainsKey(chunk_index)) {
+                    //add range to nearby geometry
+                    nearby_geometry.AddRange(chunked_collision_geometry[chunk_index]);
+                }
+            }
+            return nearby_geometry;
+        }
+
+        //function to generate the coordinate pairs for grid chunk traversal
+        public List<(int, int)> get_chunk_indicies((int, int) chunk_indices, int n_x_n_size) {
             int min = n_x_n_size - 1;
             int max = n_x_n_size;
-            List<IEntity> nearby_geometry = new List<IEntity>();
-            //get the 9 closest chunk entities
+            List<(int, int)> indices = new List<(int, int)>();
+            //get closest chunk_entities
             int chunk_x = chunk_indices.Item1;
             int chunk_y = chunk_indices.Item2;
             for (int i = chunk_x-min; i < chunk_x+max; i++) {
                 for (int j = chunk_y-min; j < chunk_y+max; j++) {
-                    if (chunked_collision_geometry.ContainsKey((i,j))) {
-                        //add range to nearby geometry
-                        nearby_geometry.AddRange(chunked_collision_geometry[(i,j)]);
-                    }
+                    indices.Add((i,j));
                 }
             }
-            return nearby_geometry;
+            return indices;
         }
 
         public List<TextBox> get_all_textboxes() {
@@ -3140,6 +3150,7 @@ namespace gate
                                     //add particles for effect
                                     particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
                                     //remove box
+                                    Console.WriteLine($"clearing box:{e.get_obj_ID_num()}");
                                     clear_entity(e);
                                     //shake the camera
                                     set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
@@ -3684,11 +3695,18 @@ namespace gate
                 //remove from collisions geometry
                 int chunk_x = (int)Math.Floor(e.get_base_position().X / Constant.collision_map_chunk_size);
                 int chunk_y = (int)Math.Floor(e.get_base_position().Y / Constant.collision_map_chunk_size);
-                if (chunked_collision_geometry[(chunk_x, chunk_y)].Contains(e)) {
-                    chunked_collision_geometry[(chunk_x, chunk_y)].Remove(e);
+                List<IEntity> nearby_chunk_entity_geometry = get_nearby_chunk_geometry_entities((chunk_x, chunk_y), 3);
+                if (nearby_chunk_entity_geometry.Contains(e)) {
+                    Console.WriteLine($"found chunked entity to delete:{e.get_obj_ID_num()}");
+                    clear_chunked_entity(e, (chunk_x, chunk_y));
                 }
                 if (collision_geometry_map.ContainsKey(e)) {
                     collision_geometry_map.Remove(e);
+                }
+                //remove from collision entities
+                if (collision_entities.Contains(e)) {
+                    Console.WriteLine($"found chunked entity to delete:{e.get_obj_ID_num()}");
+                    collision_entities.Remove(e);
                 }
                 //remove from plant entities
                 if (plants.Contains(e)) {
@@ -3763,6 +3781,16 @@ namespace gate
                 return;
             }
             clear_entity(e);
+        }
+
+        public void clear_chunked_entity(IEntity e, (int, int) chunk_indices) {
+            List<(int, int)> chunk_index_list = get_chunk_indicies(chunk_indices, 3);
+            foreach ((int, int) chunk_index in chunk_index_list) {
+                if (chunked_collision_geometry.ContainsKey(chunk_index) && chunked_collision_geometry[chunk_index].Contains(e)) {
+                    Console.WriteLine($"found and clearing entity:{e.get_obj_ID_num()}");
+                    chunked_collision_geometry[chunk_index].Remove(e);
+                }
+            }
         }
 
         //find entity by id (O(n)-time)

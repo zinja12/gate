@@ -33958,17 +33958,15 @@
             "action": "intro_text",
             "parameters": {
                 "text_items": [
-                    "I can't remember how long I've walked",
-                    "these lands...",
-                    "My feeling slowly lost to the",
-                    "sands of time...",
-                    "There once was a rumor of a gateway",
-                    "existing...",
-                    "One that had the power to grant any wish,",
-                    "should the traveler only have the strength",
-                    "to walk through it...",
-                    "I am not sure I have that strength any",
-                    "longer..."
+                    "I CANNOT REMEMBER HOW LONG I HAVE WALKED",
+                    "THESE LANDS...",
+                    "My FEELING SLOWLY LOST TO THE",
+                    "SANDS OF TIME...",
+                    "THERE ONCE WAS A RUMOR OF A GATEWAY...",
+                    "ONE THAT HAD THE POWER TO GRANT ANY WISH,",
+                    "SHOULD THE TRAVELER ONLY HAVE THE STRENGTH",
+                    "TO WALK THROUGH IT...",
+                    "I AM NOT SURE I HAVE THAT STRENGTH ANY LONGER..."
                 ]
             },
             "level_load_count_required": 1
