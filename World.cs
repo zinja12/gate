@@ -3150,7 +3150,6 @@ namespace gate
                                     //add particles for effect
                                     particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
                                     //remove box
-                                    Console.WriteLine($"clearing box:{e.get_obj_ID_num()}");
                                     clear_entity(e);
                                     //shake the camera
                                     set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
@@ -3697,7 +3696,6 @@ namespace gate
                 int chunk_y = (int)Math.Floor(e.get_base_position().Y / Constant.collision_map_chunk_size);
                 List<IEntity> nearby_chunk_entity_geometry = get_nearby_chunk_geometry_entities((chunk_x, chunk_y), 3);
                 if (nearby_chunk_entity_geometry.Contains(e)) {
-                    Console.WriteLine($"found chunked entity to delete:{e.get_obj_ID_num()}");
                     clear_chunked_entity(e, (chunk_x, chunk_y));
                 }
                 if (collision_geometry_map.ContainsKey(e)) {
@@ -3705,7 +3703,6 @@ namespace gate
                 }
                 //remove from collision entities
                 if (collision_entities.Contains(e)) {
-                    Console.WriteLine($"found chunked entity to delete:{e.get_obj_ID_num()}");
                     collision_entities.Remove(e);
                 }
                 //remove from plant entities
@@ -3787,7 +3784,6 @@ namespace gate
             List<(int, int)> chunk_index_list = get_chunk_indicies(chunk_indices, 3);
             foreach ((int, int) chunk_index in chunk_index_list) {
                 if (chunked_collision_geometry.ContainsKey(chunk_index) && chunked_collision_geometry[chunk_index].Contains(e)) {
-                    Console.WriteLine($"found and clearing entity:{e.get_obj_ID_num()}");
                     chunked_collision_geometry[chunk_index].Remove(e);
                 }
             }
