@@ -169,6 +169,9 @@
 #begin levels/d_branch1.json
 /copy:levels/d_branch1.json
 
+#begin levels/dd1.json
+/copy:levels/dd1.json
+
 #begin levels/demo1_v2_ids.json
 /copy:levels/demo1_v2_ids.json
 
@@ -849,6 +852,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/stone_tile3.png
+
+#begin sprites/stone_tile4_gray.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/stone_tile4_gray.png
 
 #begin sprites/switch2_active_8.png
 /importer:TextureImporter

@@ -50,7 +50,7 @@ namespace gate.Entities
             //this enemy should constantly move towards the player if within engagement distance
             if (Vector2.Distance(get_base_position(), player.get_base_position()) < engagement_distance) {
                 //sludge
-                add_sludge(gt, rotation);
+                //add_sludge(gt, rotation);
                 //movement
                 engagement_distance = Constant.nightmare_aggro_engagement_distance;
                 direction_weights = assign_weights(movement_directions.ToArray(), player, false);

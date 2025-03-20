@@ -76,6 +76,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/slash_confirm_spritesheet.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/sludge1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/stone_tile3.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/stone_tile4_gray.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/switch2_active_8.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/switch2_inactive_8.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/sword_icon.png</File>
@@ -108,6 +109,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

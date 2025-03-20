@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "dd1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -783,7 +783,7 @@ namespace gate
                             }
                             break;
                         case "stone_tile":
-                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile3");
+                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile4_gray");
                             Tile st_tile = new Tile(obj_position, w_obj.scale, Constant.stone_tile_tex, w_obj.object_identifier, (int)DrawWeight.Heavy, w_obj.object_id_num);
                             add_floor_entity(st_tile);
                             if (editor_enabled && !editor_floor_tile_map.ContainsKey(obj_position)) {
@@ -1108,7 +1108,7 @@ namespace gate
                             check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
                             break;
                         case "stone_tile":
-                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile3");
+                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile4_gray");
                             break;
                         case "flower":
                             check_and_load_tex(ref Constant.flower_tex, "sprites/flower1_1_12");

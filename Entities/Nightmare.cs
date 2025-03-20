@@ -643,7 +643,7 @@ namespace gate.Entities
             return this.placement_source;
         }
 
-        public void take_hit(IEntity entity, int damage) {
+        public virtual void take_hit(IEntity entity, int damage) {
             int health_decrease_value = damage;
             if (entity is Arrow) {
                 Arrow a = (Arrow)entity;
