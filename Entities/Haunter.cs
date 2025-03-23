@@ -26,8 +26,8 @@ namespace gate.Entities
 
         private Rectangle fire_anim_rect;
 
-        public Haunter(Texture2D texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier, World world, bool? static_image_entity = null)
-            : base(texture, null, base_position, scale, hit_texture, player, ID, identifier, static_image_entity) {
+        public Haunter(Texture2D texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, Dictionary<(int, int), List<IEntity>> chunked_collision_geometry, int ID, string identifier, World world, bool? static_image_entity = null)
+            : base(texture, null, base_position, scale, hit_texture, player, chunked_collision_geometry, ID, identifier, static_image_entity) {
             //set world reference
             this.world = world;
             //set health

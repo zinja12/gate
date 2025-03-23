@@ -18,8 +18,8 @@ namespace gate.Entities
         protected Texture2D charge_attack_texture;
         protected Rectangle attack_charge_rectangle;
 
-        public Skeleton(Texture2D texture, Texture2D attack_texture, Texture2D charge_attack_texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier, bool? static_image_entity = null)
-            : base(texture, attack_texture, base_position, scale, hit_texture, player, ID, identifier, static_image_entity) {
+        public Skeleton(Texture2D texture, Texture2D attack_texture, Texture2D charge_attack_texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, Dictionary<(int, int), List<IEntity>> chunked_collision_geometry, int ID, string identifier, bool? static_image_entity = null)
+            : base(texture, attack_texture, base_position, scale, hit_texture, player, chunked_collision_geometry, ID, identifier, static_image_entity) {
             //set charge attack texture if it is not null
             if (charge_attack_texture != null) {
                 this.charge_attack_texture = charge_attack_texture;

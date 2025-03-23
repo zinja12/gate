@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/ghastly2_downed.png</SourceFile>
-  <SourceTime>2025-03-17T17:25:02.7291577-04:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/sprites/ghastly2_downed.xnb</DestFile>
-  <DestTime>2025-03-17T17:34:00.4914843-04:00</DestTime>
+  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/ghastly2_downed.png</SourceFile>
+  <SourceTime>2025-03-20T15:25:41.5554212-04:00</SourceTime>
+  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/Content/sprites/ghastly2_downed.xnb</DestFile>
+  <DestTime>2025-03-21T17:58:49.9498944-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

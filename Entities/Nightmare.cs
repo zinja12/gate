@@ -106,6 +106,7 @@ namespace gate.Entities
         protected Random random;
 
         protected List<IAiEntity> enemies;
+        protected Dictionary<(int, int), List<IEntity>> chunked_collision_geometry;
         
         public static bool DEBUG = false;
         
@@ -118,7 +119,7 @@ namespace gate.Entities
 
         protected GameTime gt;
 
-        public Nightmare(Texture2D texture, Texture2D attack_texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, int ID, string identifier, bool? static_image_entity = null) {
+        public Nightmare(Texture2D texture, Texture2D attack_texture, Vector2 base_position, float scale, Texture2D hit_texture, Player player, Dictionary<(int, int), List<IEntity>> chunked_collision_geometry, int ID, string identifier, bool? static_image_entity = null) {
             this.nightmare_size = 32;
             this.hitbox_center_distance = nightmare_size/2;
             this.draw_color = Color.White;
@@ -202,6 +203,9 @@ namespace gate.Entities
             //offset the start of the animation slightly for each entity so they all do not start with the same animation frames (animation syncing)
             idle_animation.set_elapsed((float)random.Next(0, (int)idle_animation_duration-1));
             this.static_image_entity = static_image_entity;
+
+            //set chunked collision geometry for ai pathfinding weight calculations
+            this.chunked_collision_geometry = chunked_collision_geometry;
         }
 
         public virtual void Update(GameTime gameTime, float rotation) {
@@ -369,7 +373,7 @@ namespace gate.Entities
                 //make sure the movement direction is normalized
                 movement_directions[i].Normalize();
                 float weight = 0f;
-                //if the player is within striking distance (55f) we can start to prioritize horizontal movemnet to circle around the player for better strafing hits
+                //if the player is within striking distance (55f) we can start to prioritize horizontal movement to circle around the player for better strafing hits
                 if (Vector2.Distance(get_base_position(), goal_entity.get_base_position()) <= striking_distance && !ignore_circling) {
                     circling = true;
                     //note: need to calculate the dot product with the normal vector as the goal rather than just the player because we want to be moving perpendicular to the goal rather than directly towards it
@@ -395,8 +399,8 @@ namespace gate.Entities
                     //dot_product_weights.Add(Vector2.Dot(movement_directions[i], (goal_entity.get_base_position() - draw_position)));
                     weight += Vector2.Dot(movement_directions[i], (goal_entity.get_base_position() - draw_position));
                 }
-                //loop over enemies
-                float weight_modifier = 0f;
+                //loop over enemies to modify the weight for this direction
+                float enemy_weight_modifier = 0f;
                 foreach (IAiEntity e in enemies) {
                     //ensure we are not checking against this object (ourselves) because it will break everything and throw off all calculations
                     //also do a distance check to make sure we are not checking against enemies that are far away
@@ -405,15 +409,28 @@ namespace gate.Entities
                         if (get_ID_num() !=  e.get_ID_num() && Vector2.Distance(entity.get_base_position(), get_base_position()) <= nightmare_size*3f) {
                             float dist = Vector2.Distance(draw_position, entity.get_base_position());
                             if (dist <= nightmare_size) {
-                                weight_modifier = Vector2.Dot(movement_directions[i], -(entity.get_base_position() - draw_position)) * 5f;
+                                enemy_weight_modifier += Vector2.Dot(movement_directions[i], -(entity.get_base_position() - draw_position)) * 5f;
                             } else {
-                                weight_modifier = 0f;
+                                enemy_weight_modifier += 0f;
                             }
                         }
                     }
                 }
+                //pull relative collision chunks and modify weight for direction
+                //NOTE: need to see how this decision works, but I might just pull out of the current chunk for collision detection instead of pulling the 9 chunks around the entity
+                //trying to reduce iterations in this loop as it is
+                int chunk_x = (int)Math.Floor(get_base_position().X / Constant.collision_map_chunk_size);
+                int chunk_y = (int)Math.Floor(get_base_position().Y / Constant.collision_map_chunk_size);
+                List<IEntity> chunk_geometry_list = chunked_collision_geometry.ContainsKey((chunk_x, chunk_y)) ? chunked_collision_geometry[(chunk_x, chunk_y)] : new List<IEntity>();
+                float geometry_weight_modifier = 0f;
+                foreach (IEntity geometry_entity in chunk_geometry_list) {
+                    float dist = Vector2.Distance(draw_position, geometry_entity.get_base_position());
+                    if (dist <= nightmare_size) {
+                        geometry_weight_modifier += Vector2.Dot(movement_directions[i], -(geometry_entity.get_base_position() - draw_position)) * 10f;
+                    }
+                }
                 //add to weights list
-                dot_product_weights.Add(weight+weight_modifier);
+                dot_product_weights.Add(weight+enemy_weight_modifier+geometry_weight_modifier);
             }
 
             // return weights

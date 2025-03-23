@@ -48,8 +48,8 @@ namespace gate.Entities
 
         private World world;
 
-        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, int ID, string identifier, World world, bool? static_image_entity = null) 
-            : base(texture, null, base_position, scale, hit_texture, player, ID, identifier, static_image_entity) {
+        public NPC(Texture2D texture, Vector2 base_position, float scale, int size, int initial_ai_behavior, GameWorldDialogueFile conversation_file, string conversation_file_path_id, Texture2D hit_texture, Player player, Dictionary<(int, int), List<IEntity>> chunked_collision_geometry, int ID, string identifier, World world, bool? static_image_entity = null) 
+            : base(texture, null, base_position, scale, hit_texture, player, chunked_collision_geometry, ID, identifier, static_image_entity) {
             //NPC constructor
             this.size = size;
             this.interaction_box = new RRect(this.draw_position, (int)size*2f, (int)size*2f);

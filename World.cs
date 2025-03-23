@@ -288,7 +288,7 @@ namespace gate
             obj_map.Add(12, new StackedObject("wall", Constant.wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
             obj_map.Add(13, new StackedObject("fence", Constant.fence_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
             obj_map.Add(14, new InvisibleObject("deathbox", Vector2.Zero, 1f, 48, 48, 0f, -1));
-            obj_map.Add(15, new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "nightmare"));
+            obj_map.Add(15, new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, -1, "nightmare"));
             //set obj 14 to visible so we can see it
             InvisibleObject io = (InvisibleObject)obj_map[14];
             io.set_debug(true);
@@ -309,8 +309,8 @@ namespace gate
             obj_map.Add(26, new StackedObject("box", Constant.box_spritesheet, Vector2.Zero, 1f, 32, 32, 18, Constant.stack_distance1, 0f, -1));
             obj_map.Add(27, new StackedObject("house", Constant.house_spritesheet, Vector2.Zero, 1f, 128, 128, 54, Constant.stack_distance1, 0f, -1));
             obj_map.Add(28, new PlaceHolderEntity(Vector2.Zero, "ParticleSystem", -1));
-            obj_map.Add(29, new NPC(Constant.scarecrow_tex, Vector2.Zero, 1, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, -1, "scarecrow", this, true));
-            obj_map.Add(30, new Ghost(Constant.ghastly_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "ghost", this));
+            obj_map.Add(29, new NPC(Constant.scarecrow_tex, Vector2.Zero, 1, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, -1, "scarecrow", this, true));
+            obj_map.Add(30, new Ghost(Constant.ghastly_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, -1, "ghost", this));
             Ghost ghost1 = (Ghost)obj_map[30];
             //turn off ai for editor
             ghost1.set_behavior_enabled(false);
@@ -320,14 +320,14 @@ namespace gate
             obj_map.Add(34, new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, Vector2.Zero, 1f, 32, 32, 4, Constant.stack_distance1, 0f, -1));
             obj_map.Add(35, new BillboardSprite(Constant.player_chip_tex, Vector2.Zero, 1f, "player_chip", -1));
             obj_map.Add(36, new BillboardSprite(Constant.bow_pickup_tex, Vector2.Zero, 1f, "bow", -1));
-            obj_map.Add(37, new Haunter(Constant.haunter_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "haunter", this));
+            obj_map.Add(37, new Haunter(Constant.haunter_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, -1, "haunter", this));
             Haunter haunter1 = (Haunter)obj_map[37];
             haunter1.set_behavior_enabled(false);
             obj_map.Add(38, new StackedObject("checkpoint", Constant.checkpoint_marker_spritesheet, Vector2.Zero, 1f, 32, 32, 15, Constant.stack_distance, 0f, -1));
-            obj_map.Add(39, new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "skeleton"));
+            obj_map.Add(39, new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, -1, "skeleton"));
             Skeleton skeleton1 = (Skeleton)obj_map[39];
             skeleton1.set_behavior_enabled(false);
-            obj_map.Add(40, new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, -1, "shadowknight"));
+            obj_map.Add(40, new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, -1, "shadowknight"));
             ShadowKnight sk = (ShadowKnight)obj_map[40];
             sk.set_behavior_enabled(false);
             obj_map.Add(41, new StackedObject("gate", Constant.gate_spritesheet, Vector2.Zero, 1f, 32, 32, 28, Constant.stack_distance1, 0f, -1));
@@ -639,7 +639,7 @@ namespace gate
                         case "ghost":
                             check_and_load_tex(ref Constant.ghastly_tex, "sprites/ghastly2");
                             check_and_load_tex(ref Constant.sludge_tex, "sprites/sludge1");
-                            Ghost ghost = new Ghost(Constant.ghastly_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this);
+                            Ghost ghost = new Ghost(Constant.ghastly_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier, this);
                             entities_list.Add(ghost);
                             collision_entities.Add(ghost);
                             enemies.Add(ghost);
@@ -700,7 +700,7 @@ namespace gate
                         case "nightmare":
                             check_and_load_tex(ref Constant.nightmare_tex, "sprites/test_nightmare_spritesheet2");
                             check_and_load_tex(ref Constant.nightmare_attack_tex, "sprites/test_nightmare_attacks_spritesheet1");
-                            Nightmare nightmare = new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            Nightmare nightmare = new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier);
                             entities_list.Add(nightmare);
                             collision_entities.Add(nightmare);
                             enemies.Add(nightmare);
@@ -715,7 +715,7 @@ namespace gate
                                 dialogue_file = JsonSerializer.Deserialize<GameWorldDialogueFile>(dialogue_file_contents);
                             }
                             //initialize npc as stationary to start
-                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, dialogue_file, w_obj.npc_conversation_file_id, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this);
+                            NPC npc = new NPC(Constant.player_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, dialogue_file, w_obj.npc_conversation_file_id, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier, this);
                             //if there are path points specified then set the path points and set the behavior to loop
                             if (w_obj.npc_path_entity_ids != null && w_obj.npc_path_entity_ids.Count > 0) {
                                 //add all path points to npc
@@ -733,7 +733,7 @@ namespace gate
                         case "scarecrow":
                             //no need for dialogue file (yet)
                             check_and_load_tex(ref Constant.scarecrow_tex, "sprites/scarecrow1");
-                            NPC scrow = new NPC(Constant.scarecrow_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this, true);
+                            NPC scrow = new NPC(Constant.scarecrow_tex, obj_position, w_obj.scale, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier, this, true);
                             scrow.set_health(10000);
                             //add to entities list and npcs
                             entities_list.Add(scrow);
@@ -867,7 +867,7 @@ namespace gate
                             check_and_load_tex(ref Constant.haunter_tex, "sprites/haunter1");
                             check_and_load_tex(ref Constant.hex1_tex, "sprites/hex1");
                             check_and_load_tex(ref Constant.haunter_attack_tex, "sprites/haunter_attack1");
-                            Haunter haunter = new Haunter(Constant.haunter_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier, this);
+                            Haunter haunter = new Haunter(Constant.haunter_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier, this);
                             entities_list.Add(haunter);
                             collision_entities.Add(haunter);
                             enemies.Add(haunter);
@@ -876,7 +876,7 @@ namespace gate
                             check_and_load_tex(ref Constant.skelly_tex, "sprites/skelly_spritesheet1");
                             check_and_load_tex(ref Constant.skelly_attack_tex, "sprites/skelly_attacks_spritesheet1");
                             check_and_load_tex(ref Constant.skelly_attack_charge_tex, "sprites/skelly_charge_attack_spritesheet1");
-                            Skeleton skelly = new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            Skeleton skelly = new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier);
                             entities_list.Add(skelly);
                             collision_entities.Add(skelly);
                             enemies.Add(skelly);
@@ -885,7 +885,7 @@ namespace gate
                             check_and_load_tex(ref Constant.shadow_knight_tex, "sprites/shadow_knight_spritesheet1");
                             check_and_load_tex(ref Constant.shadow_knight_attack_tex, "sprites/shadow_knight_attacks_spritesheet1");
                             check_and_load_tex(ref Constant.shadow_knight_charge_attack_tex, "sprites/shadow_knight_charge_attack_spritesheet1");
-                            ShadowKnight sk = new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, w_obj.object_id_num, w_obj.object_identifier);
+                            ShadowKnight sk = new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier);
                             entities_list.Add(sk);
                             collision_entities.Add(sk);
                             enemies.Add(sk);
@@ -1014,7 +1014,7 @@ namespace gate
                 //handle loading in the shade if needed
                 if (world_file_contents.shade != null) {
                     GameWorldObject shade = world_file_contents.shade;
-                    Nightmare n = new Nightmare(Constant.player_tex, Constant.player_attack_tex, new Vector2(shade.x_position, shade.y_position), shade.scale, Constant.hit_confirm_spritesheet, player, editor_object_idx, "shade");
+                    Nightmare n = new Nightmare(Constant.player_tex, Constant.player_attack_tex, new Vector2(shade.x_position, shade.y_position), shade.scale, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "shade");
                     n.set_placement_source((int)ObjectPlacement.Level);
                     entities_list.Add(n);
                     collision_entities.Add(n);
@@ -2142,7 +2142,7 @@ namespace gate
                     Console.WriteLine($"deathbox,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
                     break;
                 case 15:
-                    Nightmare n = new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "nightmare");
+                    Nightmare n = new Nightmare(Constant.nightmare_tex, Constant.nightmare_attack_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "nightmare");
                     n.set_behavior_enabled(false);
                     n.set_placement_source(placement_source);
                     entities_list.Add(n);
@@ -2230,7 +2230,7 @@ namespace gate
                     Console.WriteLine($"particle_system,true,{create_position.X},{create_position.Y},1,800,5,2,4,white,footprint");
                     break;
                 case 29:
-                    NPC scrow = new NPC(Constant.scarecrow_tex, create_position, 1f, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, editor_object_idx, "scarecrow", this, true);
+                    NPC scrow = new NPC(Constant.scarecrow_tex, create_position, 1f, 32, (int)AIBehavior.Stationary, null, "", Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "scarecrow", this, true);
                     scrow.set_health(10000);
                     entities_list.Add(scrow);
                     collision_entities.Add(scrow);
@@ -2238,7 +2238,7 @@ namespace gate
                     Console.WriteLine($"scarecrow,{create_position.X},{create_position.Y}");
                     break;
                 case 30:
-                    Ghost ghost = new Ghost(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "ghost", this);
+                    Ghost ghost = new Ghost(Constant.ghastly_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "ghost", this);
                     ghost.set_behavior_enabled(false);
                     ghost.set_placement_source(placement_source);
                     entities_list.Add(ghost);
@@ -2282,7 +2282,7 @@ namespace gate
                     collision_entities.Add(bow);
                     break;
                 case 37:
-                    Haunter haunter = new Haunter(Constant.haunter_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "haunter", this);
+                    Haunter haunter = new Haunter(Constant.haunter_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "haunter", this);
                     haunter.set_behavior_enabled(false);
                     haunter.set_placement_source(placement_source);
                     entities_list.Add(haunter);
@@ -2298,7 +2298,7 @@ namespace gate
                     Console.WriteLine("checkpoint," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 39:
-                    Skeleton skelly = new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "skeleton");
+                    Skeleton skelly = new Skeleton(Constant.skelly_tex, Constant.skelly_attack_tex, Constant.skelly_attack_charge_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "skeleton");
                     skelly.set_behavior_enabled(false);
                     skelly.set_placement_source(placement_source);
                     entities_list.Add(skelly);
@@ -2307,7 +2307,7 @@ namespace gate
                     set_ai_entities_for_all_ais();
                     break;
                 case 40:
-                    ShadowKnight sk = new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, editor_object_idx, "shadowknight");
+                    ShadowKnight sk = new ShadowKnight(Constant.shadow_knight_tex, Constant.shadow_knight_attack_tex, Constant.shadow_knight_charge_attack_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "shadowknight");
                     sk.set_behavior_enabled(false);
                     sk.set_placement_source(placement_source);
                     entities_list.Add(sk);
@@ -3543,7 +3543,7 @@ namespace gate
             //set shade level
             shade_level_id = current_level_id;
             //create shade entity and save to modified level file
-            Nightmare n = new Nightmare(Constant.player_tex, Constant.player_attack_tex, player.get_base_position(), 1f, Constant.hit_confirm_spritesheet, player, get_editor_object_idx(), "shade");
+            Nightmare n = new Nightmare(Constant.player_tex, Constant.player_attack_tex, player.get_base_position(), 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, get_editor_object_idx(), "shade");
             n.set_behavior_enabled(false);
             n.set_placement_source((int)ObjectPlacement.Level);
             entities_list.Add(n);
