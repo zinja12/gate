@@ -15,7 +15,7 @@ namespace gate
         public Vector2 position;
 
         protected Vector2 text_offset = new Vector2(30, 20);
-        protected Vector2 box_title_offset = new Vector2(0, -10);
+        protected Vector2 box_title_offset = new Vector2(0, -20);
         protected Vector2 text_draw_position = Vector2.Zero;
         protected Vector2 char_offset = Vector2.Zero;
 
@@ -296,8 +296,6 @@ namespace gate
         public virtual void Draw(SpriteBatch spriteBatch) {
             //draw rectangle as backdrop for text
             Renderer.FillRectangle(spriteBatch, position, (int)width, (int)height, box_color * background_opacity);
-            //draw box title
-            Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, speaker_msg_screens[current_msg_screen_idx].Item1.ToUpper(), position + box_title_offset, this.text_scale, box_color);
             //start position
             text_draw_position = position + text_offset;
             //track offset
@@ -316,17 +314,17 @@ namespace gate
                     continue;
                 }
                 //calculate size of current character
-                //Vector2 char_size = font.MeasureString(current_char.ToString());
                 Vector2 char_size = new Vector2(Constant.pixelfont_char_size*text_scale, Constant.pixelfont_char_size*text_scale);
                 //draw current character at appropriate positioning
-                //spriteBatch.DrawString(font, current_char.ToString(), text_draw_position + char_offset, text_color);
                 Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, current_char.ToString(), text_draw_position + char_offset, this.text_scale, text_color);
                 //increase offset on x axis
                 char_offset.X += char_size.X;
             }
+            //draw box title
+            Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, speaker_msg_screens[current_msg_screen_idx].Item1.ToUpper(), position + box_title_offset, this.text_scale, text_color);
             //draw continue button for all but the last message screen
             if (current_msg_screen_idx < speaker_msg_screens.Count-1) {
-                Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, "...", position + new Vector2(width - 20, height - 10), this.text_scale, Color.White);
+                Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, "...", position + new Vector2(width - 40, height - 20), this.text_scale, Color.White);
             }
         }
     }
