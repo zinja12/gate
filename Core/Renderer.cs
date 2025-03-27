@@ -117,6 +117,16 @@ namespace gate.Core
                 cursor.X += (spacing*scale) + kerning;
             }
         }
+
+        public static float MeasureCustomString(Dictionary<string, Rectangle> char_map, float scale, String text) {
+            float width = 0;
+            for (int i = 0; i < text.Length; i++) {
+                char current = text[i];
+                width += char_map.ContainsKey(current.ToString()) ? (float)char_map[current.ToString()].Width*scale: 0f;
+            }
+
+            return width;
+        }
         
         //NOTE: Monogame has a built in way to draw triangles via primitives on the gpu, but they're difficult to work with
         //plus I cannot for the life of me figure out how to draw the primitive in the view of the camera

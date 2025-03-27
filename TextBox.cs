@@ -15,7 +15,7 @@ namespace gate
         public Vector2 position;
 
         protected Vector2 text_offset = new Vector2(30, 20);
-        protected Vector2 box_title_offset = new Vector2(0, -50);
+        protected Vector2 box_title_offset = new Vector2(0, -10);
         protected Vector2 text_draw_position = Vector2.Zero;
         protected Vector2 char_offset = Vector2.Zero;
 
@@ -34,8 +34,11 @@ namespace gate
         protected float advance_message_elapsed;
         protected float advance_message_cooldown = 500f;
 
-        protected float background_opacity = 1.0f;
+        protected float background_opacity = 0.85f;
         protected float max_line_width;
+
+        protected float text_scale = 5f;
+        protected float line_spacing = 50f;
 
         private Random random;
 
@@ -49,7 +52,7 @@ namespace gate
             this.original_height = height;
             this.box_color = box_color;
             this.text_color = text_color;
-            this.max_line_width = width - 20;
+            this.max_line_width = width - 40;
 
             this.current_msg_char_idx = 1;
             this.previous_msg_char_idx = 1;
@@ -214,7 +217,8 @@ namespace gate
             //wrap text for message and translate into msg screens
             //break msgs into words
             string[] words = message.Split(" ");
-            float space_width = sf.MeasureString(" ").X;
+            //float space_width = sf.MeasureString(" ").X;
+            float space_width = Renderer.MeasureCustomString(Constant.pixelfont_char_map, text_scale, " ");
             float current_line_width = 0f;
             StringBuilder sb = new StringBuilder();
             List<(string, string)> msg_screens = new List<(string, string)>();
@@ -222,7 +226,8 @@ namespace gate
 
             //loop over words in message
             foreach (string word in words) {
-                float word_length = sf.MeasureString(word).X;
+                //float word_length = sf.MeasureString(word).X;
+                float word_length = Renderer.MeasureCustomString(Constant.pixelfont_char_map, text_scale, word);
                 //compare current line length with the word and space to the max line width
                 if (current_line_width + word_length + space_width <= max_line_width) {
                     current_line_width += (word_length + space_width);
@@ -270,6 +275,11 @@ namespace gate
             height = value;
         }
 
+        public void set_font_scale(float value) {
+            this.text_scale = value;
+            this.line_spacing *= text_scale;
+        }
+
         public float get_original_height() {
             return original_height;
         }
@@ -279,12 +289,10 @@ namespace gate
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {
-            float text_scale = 4;
             //draw rectangle as backdrop for text
             Renderer.FillRectangle(spriteBatch, position, (int)width, (int)height, box_color * background_opacity);
             //draw box title
-            //spriteBatch.DrawString(Constant.arial_mid_reg, speaker_msg_screens[current_msg_screen_idx].Item1, position + box_title_offset, box_color);
-            Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, speaker_msg_screens[current_msg_screen_idx].Item1, position + box_title_offset, 4f, box_color);
+            Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, speaker_msg_screens[current_msg_screen_idx].Item1.ToUpper(), position + box_title_offset, this.text_scale, box_color);
             //start position
             text_draw_position = position + text_offset;
             //track offset
@@ -298,7 +306,7 @@ namespace gate
                     //set offset back to zero for x axis
                     char_offset.X = 0;
                     //set offset to line spacing for y axis
-                    char_offset.Y += font.LineSpacing;
+                    char_offset.Y += line_spacing;
                     //skip and don't draw this character obviously
                     continue;
                 }
@@ -307,13 +315,13 @@ namespace gate
                 Vector2 char_size = new Vector2(Constant.pixelfont_char_size*text_scale, Constant.pixelfont_char_size*text_scale);
                 //draw current character at appropriate positioning
                 //spriteBatch.DrawString(font, current_char.ToString(), text_draw_position + char_offset, text_color);
-                Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, current_char.ToString(), text_draw_position + char_offset, 4f, text_color);
+                Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, current_char.ToString(), text_draw_position + char_offset, this.text_scale, text_color);
                 //increase offset on x axis
                 char_offset.X += char_size.X;
             }
             //draw continue button for all but the last message screen
             if (current_msg_screen_idx < speaker_msg_screens.Count-1) {
-                spriteBatch.DrawString(font, "...", position + new Vector2(width - 50, height - 80), text_color);
+                Renderer.DrawCustomString(spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, "...", position + new Vector2(width - 20, height - 10), this.text_scale, Color.White);
             }
         }
     }

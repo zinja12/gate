@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/fonts/pxf_thin_font.spritefont</SourceFile>
-  <SourceTime>2024-12-27T22:49:17.2218899-05:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/fonts/pxf_thin_font.xnb</DestFile>
-  <DestTime>2025-03-19T21:21:18.3857357-04:00</DestTime>
+  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fonts/pxf_thin_font.spritefont</SourceFile>
+  <SourceTime>2024-12-30T21:43:44.9942043-05:00</SourceTime>
+  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/fonts/pxf_thin_font.xnb</DestFile>
+  <DestTime>2025-03-24T21:41:03.5706354-04:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

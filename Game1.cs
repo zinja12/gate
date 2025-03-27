@@ -18,7 +18,7 @@ namespace gate
         //Game world (overseer/manager)
         World world;
         //Canvas that controls the render target that the world is drawn to
-        Canvas _canvas;
+        ScreenCanvas screen_canvas;
 
         public Color clear_color { get; set; }
 
@@ -40,9 +40,6 @@ namespace gate
             _graphics.PreferredBackBufferHeight = (int)Constant.window_height;
             _graphics.ApplyChanges();
 
-            _canvas = new Canvas(_graphics.GraphicsDevice, (int)Constant.window_width, (int)Constant.window_height, 1.0f);
-            _canvas.set_destination_rectangle();
-
             //allow window_resizing
             Window.AllowUserResizing = true;
             //create listener for changing window size
@@ -58,12 +55,10 @@ namespace gate
         //TODO: Come up with a better name for this function
         public void set_pixel_shader_active(bool enabled) {
             if (enabled) {
-                _canvas.add_postprocessing_effect(Constant.pixelate_effect);
-                _canvas.add_postprocessing_effect(Constant.color_palette_effect);
-                _canvas.add_postprocessing_effect(Constant.scanline2_effect);
+                //screen_canvas.add_postprocessing_effect(Constant.pixelate_effect);
+                screen_canvas.add_postprocessing_effect(Constant.scanline2_effect);
             } else {
-                //_canvas.set_postprocessing_effect(null);
-                _canvas.clear_postprocessing_effects();
+                screen_canvas.clear_postprocessing_effects();
             }
         }
 
@@ -71,21 +66,19 @@ namespace gate
             return this._spriteBatch;
         }
 
-        public Canvas get_game_canvas() {
-            return _canvas;
-        }
-
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            screen_canvas = new ScreenCanvas(_graphics.GraphicsDevice, Constant.internal_resolution_width, Constant.internal_resolution_height, clear_color);
+
             //initialize world after all content is loaded
             world = new World(this, _graphics, Content.RootDirectory, Content);
             world.resize_viewport(_graphics);
-
-            _canvas.add_postprocessing_effect(Constant.pixelate_effect);
-            _canvas.add_postprocessing_effect(Constant.color_palette_effect);
-            _canvas.add_postprocessing_effect(Constant.scanline2_effect);
+            
+            screen_canvas.set_world(world);
+            
+            world.update_textbox_scale();
 
             //debug fps initialization
             fps = new FpsCounter(this, Constant.arial_small, Vector2.Zero);
@@ -112,26 +105,18 @@ namespace gate
             Constant.window_width = _graphics.GraphicsDevice.Viewport.Width;
             Constant.window_height = _graphics.GraphicsDevice.Viewport.Height;
             Constant.update_ui_positions_on_screen_size_change();
-            _canvas.set_destination_rectangle();
-            world.update_textbox_scale(_canvas);
+            screen_canvas.reset(Constant.internal_resolution_width, Constant.internal_resolution_height, clear_color);
+            world.update_textbox_scale();
             //reset window height value for scanline shader
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            //activate canvas for render target to capture draw calls
-            _canvas.Activate();
-
             GraphicsDevice.Clear(clear_color);
 
-            //draw world
-            world.Draw(_spriteBatch);
-            
-            //actually draw render target in canvas to the screen
-            _canvas.Draw(_spriteBatch);
-
-            world.draw_textbox(_spriteBatch);
+            //draw render target that game is rendered to screen canvas
+            screen_canvas.Draw(_spriteBatch);
 
             //draw fps counter
             _spriteBatch.Begin();

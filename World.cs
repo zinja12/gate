@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "dd1.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -165,8 +165,11 @@ namespace gate
         private List<ParticleSystem> dead_particle_systems;
 
         //Lights
-        private bool lights_enabled = true;
+        public bool lights_enabled = true;
         RenderTarget2D light_map_target;
+
+        private VertexBuffer vertexBuffer;
+        private BasicEffect basicEffect;
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content) {
             //set game objects
@@ -176,8 +179,8 @@ namespace gate
             this.Content = Content;
 
             //set up camera to draw with
-            camera = new Camera(_graphics.GraphicsDevice.Viewport, Vector2.Zero);
-            camera.Zoom = 1.75f;
+            camera = new Camera(new Viewport(0, 0, Constant.internal_resolution_width, Constant.internal_resolution_height), Vector2.Zero);
+            camera.Zoom = 1.25f;
 
             //set up mouse hitbox
             mouse_hitbox = new RRect(Vector2.Zero, 10, 10);
@@ -248,7 +251,7 @@ namespace gate
 
             //light resources
             //set up light render target
-            light_map_target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height);
+            this.light_map_target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None);
 
             //load first level
             load_level(content_root_directory, _graphics, load_file_name);
@@ -258,6 +261,10 @@ namespace gate
 
             //run first sort so everything looks good initially
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+
+            basicEffect = new BasicEffect(_graphics.GraphicsDevice) {
+                VertexColorEnabled = true
+            };
         }
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content, string level_id) : this(game, _graphics, content_root_directory, Content) {
@@ -409,6 +416,7 @@ namespace gate
             Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors3.Length);
             Constant.scanline2_effect = Content.Load<Effect>("fx/scanline2");
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
+            Constant.light_mask_effect = Content.Load<Effect>("fx/light_shader");
             //load content not specific to an object
             Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
             Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");
@@ -3004,12 +3012,10 @@ namespace gate
                             Sign s = (Sign)e;
                             bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
                             if (collision) {
-                                //calculate screen textbox position
-                                Vector2 textbox_screen_position = Constant.world_position_to_screen_position(s.get_overhead_position(), camera);
-                                textbox_screen_position *= game.get_game_canvas().get_current_scale();
-                                textbox_screen_position += new Vector2(game.get_game_canvas().get_destination_rectangle().X, game.get_game_canvas().get_destination_rectangle().Y);
-                                //set textbox screen position
-                                s.get_textbox().set_position(textbox_screen_position);
+                                //calculate screen textbox position with native resolution
+                                s.get_textbox().set_position(
+                                    Constant.native_resolution_world_to_screen_position(s.get_overhead_position(), _graphics.GraphicsDevice, camera)
+                                );
                                 //set sign to display
                                 s.display_textbox();
                                 //set current textbox to correct instance
@@ -3023,18 +3029,14 @@ namespace gate
                                 if (collision) {
                                     //orient npc to target for speaking
                                     npc.orient_to_target(player.get_base_position(), camera.Rotation);
-                                    //calculate screen textbox position from overhead position of npc
-                                    Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
-                                    //scale position by current canvas scale
-                                    screen_position *= game.get_game_canvas().get_current_scale();
-                                    //offset position based on desination rectangle
-                                    screen_position += new Vector2(game.get_game_canvas().get_destination_rectangle().X, game.get_game_canvas().get_destination_rectangle().Y);
                                     //find first matching tag
                                     string tag = npc.find_first_matching_tag(condition_tags);
                                     //filter npc textbox based on tag
                                     npc.get_textbox().filter_messages_on_tag(tag);
                                     //set textbox position
-                                    npc.get_textbox().set_position(screen_position);
+                                    npc.get_textbox().set_position(
+                                        Constant.native_resolution_world_to_screen_position(npc.get_overhead_position(), _graphics.GraphicsDevice, camera)
+                                    );
                                     //set npc to display
                                     npc.display_textbox();
                                     //set current textbox to correct instance
@@ -3875,7 +3877,7 @@ namespace gate
             }
             //update camera viewport
             camera.set_camera_offset(Vector2.Zero);
-            camera.update_viewport(_graphics.GraphicsDevice.Viewport, Constant.rotate_point(player.base_position, -camera.Rotation, 0f, Constant.direction_down));
+            camera.update_viewport(new Viewport(0, 0, Constant.internal_resolution_width, Constant.internal_resolution_height), Constant.rotate_point(player.base_position, -camera.Rotation, 0f, Constant.direction_down));
         }
 
         private void set_camera_shake(float shake_milliseconds, float angle, float radius) {
@@ -3956,19 +3958,21 @@ namespace gate
             return player;
         }
 
-        public void update_textbox_scale(Canvas canvas) {
+        public void update_textbox_scale() {
             //scale ui elements
             //to be used in Game1 class on window scaling
             //textboxes
             List<TextBox> textboxes = get_all_textboxes();
             foreach (TextBox t in textboxes) {
                 if (t != null) {
+                    float res_scale = Constant.get_res_scale(_graphics.GraphicsDevice);
                     t.set_width(
-                        t.get_original_width()*canvas.get_current_scale()
+                        t.get_original_width() * res_scale
                     );
                     t.set_height(
-                        t.get_original_height()*canvas.get_current_scale()
+                        t.get_original_height() * res_scale
                     );
+                    //t.set_font_scale(res_scale);
                 }
             }
         }
@@ -4038,16 +4042,6 @@ namespace gate
             foreach (ForegroundEntity f in foreground_entities) {
                 f.Draw(_spriteBatch);
             }
-            
-            //draw camera bounds
-            // if (camera_bounds != null && debug_triggers) {
-            //     //draw bounds rectangle
-            //     camera_bounds.draw(_spriteBatch);
-            //     //draw viewport boundary points
-            //     foreach (Vector2 v in camera.get_viewport_boundary_points()) {
-            //         Renderer.FillRectangle(_spriteBatch, v, 10, 10, Color.Blue);
-            //     }
-            // }
 
             //draw editor elements
             if (editor_active) {
@@ -4082,11 +4076,12 @@ namespace gate
 
             _spriteBatch.End();
             
-            /* LIGHTING PASS */
-            if (lights_enabled) {
-                //draw lights over top of the scene if lights are enabled
-                draw_lights(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
-            }
+            // /* LIGHTING PASS */
+            // if (lights_enabled) {
+            //     //draw lights over top of the scene if lights are enabled
+            //     //draw_lights(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+            //     draw_lights2(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+            // }
 
             //draw transition
             if (transition_active) {
@@ -4121,6 +4116,15 @@ namespace gate
                     Renderer.DrawCustomString(_spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), 5f, Color.White * intro_text_opacity);
                 }
                 _spriteBatch.End();
+            }
+        }
+
+        public void draw_lightssss(SpriteBatch _spriteBatch) {
+            /* LIGHTING PASS */
+            if (lights_enabled) {
+                //draw lights over top of the scene if lights are enabled
+                //draw_lights(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+                draw_lights2(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
             }
         }
 
@@ -4161,7 +4165,7 @@ namespace gate
             Constant.profiler.end("world_text_overlays_draw");
         }
 
-        public void draw_textbox(SpriteBatch spriteBatch) {
+        public void draw_textbox(SpriteBatch spriteBatch, float position_scale_factor) {
             //draw textboxes without camera matrix (screen positioning)
             //draw also without point filtering applied
             spriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
@@ -4173,6 +4177,77 @@ namespace gate
         }
         
         #region lights
+        public void draw_lights2(List<Light> lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
+            if (lights.Count == 0)
+                return;
+            
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.light_mask_effect);
+            spriteBatch.Draw(light_map_target, Vector2.Zero, Color.White);
+            spriteBatch.End();
+
+            _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
+            _graphics.GraphicsDevice.Clear(Color.Black);
+
+            List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
+
+            foreach (Light light in lights) {
+                //calculate in range geometry for light
+                int light_chunk_x = (int)Math.Floor(light.get_center_position().X / Constant.collision_map_chunk_size);
+                int light_chunk_y = (int)Math.Floor(light.get_center_position().Y / Constant.collision_map_chunk_size);
+                List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities((light_chunk_x, light_chunk_y), 2);
+                light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
+                //calculate geometry of this light
+                List<(float, Vector2)> light_geometry = calculate_light_geometry(light, light.get_geometry_edges());
+
+                Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
+                Vector3 light_screen_space_v3 = new Vector3(light_screen_space, 0);
+
+                Color light_color = light.get_color() * light.get_intensity();
+
+                for (int i = 0; i < light_geometry.Count - 1; i++) {
+                    Vector2 ray1 = light_geometry[i].Item2;
+                    Vector2 ray2 = light_geometry[i+1].Item2;
+                    Vector2 ray1_vector_screen_space = Vector2.Transform(ray1, camera.Transform);
+                    Vector2 ray2_vector_screen_space = Vector2.Transform(ray2, camera.Transform);
+                    Vector3 ray1_screen_space_v3 = new Vector3(ray1_vector_screen_space, 0);
+                    Vector3 ray2_screen_space_v3 = new Vector3(ray2_vector_screen_space, 0);
+                    vertex_list.Add(new VertexPositionColor(light_screen_space_v3, light_color));
+                    vertex_list.Add(new VertexPositionColor(ray1_screen_space_v3, light_color));
+                    vertex_list.Add(new VertexPositionColor(ray2_screen_space_v3, light_color));
+                }
+                //draw last triangle between first and last point (also screen space)
+                Vector2 ray_first_screen_space = Vector2.Transform(light_geometry[0].Item2, camera.Transform);
+                Vector2 ray_last_screen_space = Vector2.Transform(light_geometry[light_geometry.Count-1].Item2, camera.Transform);
+                Vector3 ray_first_screen_space_v3 = new Vector3(ray_first_screen_space, 0);
+                Vector3 ray_last_screen_space_v3 = new Vector3(ray_last_screen_space, 0);
+                vertex_list.Add(new VertexPositionColor(light_screen_space_v3, light_color));
+                vertex_list.Add(new VertexPositionColor(ray_last_screen_space_v3, light_color));
+                vertex_list.Add(new VertexPositionColor(ray_first_screen_space_v3, light_color));
+            }
+
+            if (vertex_list.Count == 0)
+                return;
+
+            // create and set vertex buffer
+            if (vertexBuffer == null || vertexBuffer.VertexCount < vertex_list.Count) {
+                vertexBuffer?.Dispose(); // Dispose the old buffer if it exists
+                vertexBuffer = new VertexBuffer(_graphics.GraphicsDevice, typeof(VertexPositionColor), vertex_list.Count, BufferUsage.WriteOnly);
+            }
+            vertexBuffer.SetData(vertex_list.ToArray());
+            _graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
+
+            // set up the BasicEffect
+            basicEffect.World = Matrix.Identity;
+            basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), Vector3.Up);
+            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, 0, 0.1f, 100f);
+
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) {
+                pass.Apply();
+                _graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, vertex_list.Count / 3);
+            }
+
+            _graphics.GraphicsDevice.SetRenderTarget(null);
+        }
         //TODO: add exclusionary entities to lights
         //lights should not affect the entity they are being cast by
         //right now if we put a light on a lamppost it will factor in the lamp post into the algorithm to block that light

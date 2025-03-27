@@ -15,6 +15,7 @@
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fonts/pxf_font.spritefont</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fonts/pxf_thin_font.spritefont</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fx/color_palette.fx</File>
+    <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fx/light_shader.fx</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fx/pixelate.fx</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fx/scanline2.fx</File>
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sfx/bow_up_aim.ogg</File>
@@ -109,6 +110,7 @@
     <File>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
