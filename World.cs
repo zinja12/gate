@@ -3972,7 +3972,17 @@ namespace gate
                     t.set_height(
                         t.get_original_height() * res_scale
                     );
-                    //t.set_font_scale(res_scale);
+                    if (current_npc != null) {
+                        t.set_position(
+                            Constant.native_resolution_world_to_screen_position(current_npc.get_overhead_position(), _graphics.GraphicsDevice, camera)
+                        );
+                    }
+                    if (current_sign != null) {
+                        t.set_position(
+                            Constant.native_resolution_world_to_screen_position(current_sign.get_overhead_position(), _graphics.GraphicsDevice, camera)
+                        );
+                    }
+                    t.recompute_msg_screens();
                 }
             }
         }

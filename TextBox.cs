@@ -38,7 +38,7 @@ namespace gate
         protected float max_line_width;
 
         protected float text_scale = 5f;
-        protected float line_spacing = 50f;
+        protected float line_spacing = 40f;
 
         private Random random;
 
@@ -286,6 +286,11 @@ namespace gate
 
         public float get_original_width() {
             return original_width;
+        }
+
+        public void recompute_msg_screens() {
+            speaker_msg_screens = msgs_to_msg_screens2(font, msgs, max_line_width);
+            current_msg_index--;
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {
