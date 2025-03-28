@@ -55,7 +55,7 @@ namespace gate
         //TODO: Come up with a better name for this function
         public void set_pixel_shader_active(bool enabled) {
             if (enabled) {
-                //screen_canvas.add_postprocessing_effect(Constant.pixelate_effect);
+                screen_canvas.add_postprocessing_effect(Constant.pixelate_effect);
                 screen_canvas.add_postprocessing_effect(Constant.scanline2_effect);
             } else {
                 screen_canvas.clear_postprocessing_effects();

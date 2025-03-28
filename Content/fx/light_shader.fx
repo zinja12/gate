@@ -7,50 +7,35 @@
 	#define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
-matrix WorldViewProjection;
-sampler2D LightMaskSampler : register(s0);
+Texture2D SpriteTexture;
 
-struct VertexShaderInput
+sampler2D SpriteTextureSampler = sampler_state
 {
-	float4 Position : POSITION0;
-	float4 Color : COLOR0;
-    float2 TexCoord : TEXCOORD0;
+	Texture = <SpriteTexture>;
 };
 
 struct VertexShaderOutput
 {
 	float4 Position : SV_POSITION;
 	float4 Color : COLOR0;
-    float2 TexCoord : TEXCOORD0;
+	float2 TextureCoordinates: TEXCOORD0;
 };
 
-VertexShaderOutput MainVS(in VertexShaderInput input)
-{
-	VertexShaderOutput output = (VertexShaderOutput)0;
-
-	output.Position = mul(input.Position, WorldViewProjection);
-	output.Color = input.Color;
-    output.TexCoord = input.TexCoord;
-
-	return output;
-}
-
+//pixel shader
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    float4 original_color = tex2D(LightMaskSampler, input.TexCoord);
+	float4 original_color = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+	if (original_color.r != 0 || original_color.g != 0 || original_color.b != 0) {
+		original_color.rgba = 0;
+	}
 
-    if (original_color.r > 0.9 && original_color.g > 0.9 && original_color.b > 0.9) {
-        return float4(original_color.rgb, 0);
-    }
-    
-	return float4(0, 0, 0, 0.25);
+	return original_color;
 }
 
-technique LightMaskEffect
+technique SpriteDrawing
 {
 	pass P0
 	{
-		VertexShader = compile VS_SHADERMODEL MainVS();
 		PixelShader = compile PS_SHADERMODEL MainPS();
 	}
 };

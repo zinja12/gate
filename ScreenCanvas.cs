@@ -30,8 +30,8 @@ namespace gate
             this.base_height = base_height;
             this.back_buffer_color = back_buffer_color;
 
-            this.world_render_target = new RenderTarget2D(this.graphics_device, this.base_width, this.base_height);
-            this.render_target1 = new RenderTarget2D(this.graphics_device, this.base_width, this.base_height);
+            this.world_render_target = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
+            this.render_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
 
             this.postprocessing_effects = new List<Effect>();
         }
@@ -65,8 +65,8 @@ namespace gate
             this.base_height = base_height;
             this.back_buffer_color = back_buffer_color;
 
-            this.world_render_target = new RenderTarget2D(this.graphics_device, this.base_width, this.base_height);
-            this.render_target1 = new RenderTarget2D(this.graphics_device, this.base_width, this.base_height);
+            this.world_render_target = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
+            this.render_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
@@ -77,15 +77,36 @@ namespace gate
             graphics_device.Clear(back_buffer_color);
             
             //draw world
-            world.Draw(spriteBatch);
+            world.draw_floor_background_entities(spriteBatch);
 
             // reset render target to finalize and draw to screen
+            graphics_device.SetRenderTarget(null);
+
+            //generate and pull light target from world
+            world.draw_lights_to_render_target(spriteBatch);
+            RenderTarget2D light_render_target = world.light_map_target;
+
+            RenderTarget2D intermediate_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
+            graphics_device.SetRenderTarget(intermediate_target1);
+            graphics_device.Clear(Color.Transparent);
+            //draw floor render target
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp);
+            spriteBatch.Draw(world_render_target, Vector2.Zero, Color.White);
+            spriteBatch.End();
+            //draw lights render target
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.light_mask_effect);
+            spriteBatch.Draw(light_render_target, Vector2.Zero, Color.White * 0.3f);
+            spriteBatch.End();
+            //draw world objects on top
+            world.draw_object_entities(spriteBatch);
+            world.draw_transitions_and_intro_text(spriteBatch);
+
             graphics_device.SetRenderTarget(null);
 
             //**************************************************************************
             //PING PONG RENDER TARGET BUFFERS TO APPLY SHADERS
             //**************************************************************************
-            RenderTarget2D first_render_target = world_render_target;
+            RenderTarget2D first_render_target = intermediate_target1;
             RenderTarget2D second_render_target = new RenderTarget2D(this.graphics_device, this.base_width, this.base_height); ;
 
             foreach(Effect e in postprocessing_effects) {

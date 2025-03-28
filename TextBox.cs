@@ -288,9 +288,39 @@ namespace gate
             return original_width;
         }
 
-        public void recompute_msg_screens() {
+        public void recompute_msg_screens(float new_width, float new_height) {
+            //store current message index and character index to maintain progress
+            string current_msg_backup = current_msg;
+            int char_idx_backup = current_msg_char_idx;
+
+            //update textbox size
+            this.width = new_width;
+            this.height = new_height;
+             // adjust text wrapping width
+            this.max_line_width = width - 40;
+
+            //recompute message screens with new dimensions
             speaker_msg_screens = msgs_to_msg_screens2(font, msgs, max_line_width);
-            current_msg_index--;
+
+            // try to restore the closest matching position in the new text layout
+            current_msg_index = 0;
+            current_msg_screen_idx = 0;
+
+            //iterate over speaker msg screens
+            foreach (var screen in speaker_msg_screens) {
+                //iterate over messages
+                for (int i = 0; i < screen.Item2.Count; i++) {
+                    if (screen.Item2[i].Item1.StartsWith(current_msg_backup.Substring(0, Math.Min(10, current_msg_backup.Length)))) {
+                        current_msg_screen_idx = speaker_msg_screens.IndexOf(screen);
+                        current_msg_index = i;
+                        break;
+                    }
+                }
+            }
+
+            //restore message text and character index
+            current_msg = speaker_msg_screens[current_msg_screen_idx].Item2[current_msg_index].Item1;
+            current_msg_char_idx = Math.Min(char_idx_backup, current_msg.Length - 1);
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {

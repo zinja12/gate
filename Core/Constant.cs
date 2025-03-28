@@ -31,8 +31,8 @@ namespace gate.Core
         //screen width and height
         public static float window_width = 1280f;
         public static float window_height = 720f;
-        public static int internal_resolution_width = 480;
-        public static int internal_resolution_height = 320;
+        public static int internal_resolution_width = 640;
+        public static int internal_resolution_height = 360;
 
         //textures, colors and fonts
         public static Texture2D tile_tex;

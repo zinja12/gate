@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "dd1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -166,7 +166,7 @@ namespace gate
 
         //Lights
         public bool lights_enabled = true;
-        RenderTarget2D light_map_target;
+        public RenderTarget2D light_map_target;
 
         private VertexBuffer vertexBuffer;
         private BasicEffect basicEffect;
@@ -180,7 +180,7 @@ namespace gate
 
             //set up camera to draw with
             camera = new Camera(new Viewport(0, 0, Constant.internal_resolution_width, Constant.internal_resolution_height), Vector2.Zero);
-            camera.Zoom = 1.25f;
+            camera.Zoom = 1.35f;
 
             //set up mouse hitbox
             mouse_hitbox = new RRect(Vector2.Zero, 10, 10);
@@ -3982,7 +3982,7 @@ namespace gate
                             Constant.native_resolution_world_to_screen_position(current_sign.get_overhead_position(), _graphics.GraphicsDevice, camera)
                         );
                     }
-                    t.recompute_msg_screens();
+                    t.recompute_msg_screens(t.get_width(), t.get_height());
                 }
             }
         }
@@ -3994,14 +3994,13 @@ namespace gate
         #endregion
         
         #region draw
-        public void Draw(SpriteBatch _spriteBatch){
+        public void draw_floor_background_entities(SpriteBatch _spriteBatch) {
             Constant.profiler.start("world_entities_draw");
-            // TODO: Add drawing code here
-
             _spriteBatch.Begin(SpriteSortMode.Deferred,
                                 BlendState.AlphaBlend,
                                 SamplerState.PointClamp, null, null, null,
                                 camera.Transform);
+
             //draw floor itself
             //note: this draws entities in order, meaning our sorting after 
             //insertion should yield the proper back to front ordering that needs to be drawn
@@ -4016,6 +4015,27 @@ namespace gate
                     background_entities[i].Draw(_spriteBatch);
                 }
             }
+
+            _spriteBatch.End();
+            Constant.profiler.end("world_entities_draw");
+        }
+
+        public void draw_lights_to_render_target(SpriteBatch _spriteBatch) {
+            _spriteBatch.Begin();
+            // /* LIGHTING PASS */
+            if (lights_enabled) {
+                //draw lights over top of the scene if lights are enabled
+                draw_lights2render_target(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+            }
+            _spriteBatch.End();
+        }
+
+        public void draw_object_entities(SpriteBatch _spriteBatch) {
+            Constant.profiler.start("world_object_entities_draw");
+            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, null,
+                                camera.Transform);
 
             //draw entities list
             if (player_camera_tethered) {
@@ -4081,18 +4101,12 @@ namespace gate
                 //draw sound effects in editor
                 sound_manager.Draw(_spriteBatch);
             }
-            
-            //draw_lights_world_space(lights, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
 
             _spriteBatch.End();
-            
-            // /* LIGHTING PASS */
-            // if (lights_enabled) {
-            //     //draw lights over top of the scene if lights are enabled
-            //     //draw_lights(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
-            //     draw_lights2(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
-            // }
+            Constant.profiler.end("world_object_entities_draw");
+        }
 
+        public void draw_transitions_and_intro_text(SpriteBatch _spriteBatch) {
             //draw transition
             if (transition_active) {
                 _spriteBatch.Begin();
@@ -4106,7 +4120,6 @@ namespace gate
                 }
                 _spriteBatch.End();
             }
-            Constant.profiler.end("world_entities_draw");
 
             if (intro_text_playing) {
                 _spriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
@@ -4122,20 +4135,20 @@ namespace gate
                 //calculate and return index based on percentage of message length
                 int intro_tex_idx = (int)(percentage * (intro_text.Count - 1));
                 for (int i = 0; i <= intro_tex_idx; i++) {
-                    //_spriteBatch.DrawString(Constant.pxf_thin, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), Color.White * intro_text_opacity);
                     Renderer.DrawCustomString(_spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), 5f, Color.White * intro_text_opacity);
                 }
                 _spriteBatch.End();
             }
         }
 
-        public void draw_lightssss(SpriteBatch _spriteBatch) {
-            /* LIGHTING PASS */
-            if (lights_enabled) {
-                //draw lights over top of the scene if lights are enabled
-                //draw_lights(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
-                draw_lights2(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
-            }
+
+        public void Draw(SpriteBatch _spriteBatch){
+            Constant.profiler.start("world_draw");
+            draw_floor_background_entities(_spriteBatch);
+            //drawlightshere
+            draw_object_entities(_spriteBatch);
+            draw_transitions_and_intro_text(_spriteBatch);
+            Constant.profiler.end("world_draw");
         }
 
         public void DrawTextOverlays(SpriteBatch _spriteBatch) {
@@ -4161,16 +4174,15 @@ namespace gate
             _spriteBatch.DrawString(Constant.pxf_font, $"${player.get_money()}", Constant.dash_charge_ui_screen_position + new Vector2(-64, 32*5), Color.White);
 
             //draw text overlays
-            _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, "camera_rotation: " + camera.Rotation, new Vector2(0, 17*2), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, "camera_zoom:" + camera.Zoom, new Vector2(0, 17*3), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, "editor:" + editor_active, new Vector2(0, 17*4), Color.Black);
-            //_spriteBatch.DrawString(Constant.arial_small, "selected_object:" + selected_object, new Vector2(0, 17*5), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"selected_object:{selected_object},obj_id:{obj_map[selected_object].get_id()}", new Vector2(0, 17*5), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}-{editor_tool_name_map[editor_tool_idx]}", new Vector2(0, 17*6), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_tile_idx:{editor_tile_idx}", new Vector2(0, 17*9), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, "camera_rotation: " + camera.Rotation, new Vector2(0, 17*2), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, "camera_zoom:" + camera.Zoom, new Vector2(0, 17*3), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, "editor:" + editor_active, new Vector2(0, 17*4), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"selected_object:{selected_object},obj_id:{obj_map[selected_object].get_id()}", new Vector2(0, 17*5), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}-{editor_tool_name_map[editor_tool_idx]}", new Vector2(0, 17*6), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_tile_idx:{editor_tile_idx}", new Vector2(0, 17*9), Color.White);
             _spriteBatch.End();
             Constant.profiler.end("world_text_overlays_draw");
         }
@@ -4187,13 +4199,13 @@ namespace gate
         }
         
         #region lights
-        public void draw_lights2(List<Light> lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
+        public void draw_lights2render_target(List<Light> lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
             if (lights.Count == 0)
                 return;
             
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.light_mask_effect);
-            spriteBatch.Draw(light_map_target, Vector2.Zero, Color.White);
-            spriteBatch.End();
+            // spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.light_mask_effect);
+            // spriteBatch.Draw(light_map_target, Vector2.Zero, Color.White);
+            // spriteBatch.End();
 
             _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
             _graphics.GraphicsDevice.Clear(Color.Black);
