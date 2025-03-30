@@ -135,5 +135,28 @@ namespace gate.Core
             }
             Constant.profiler.end("renderlist_draw");
         }
+
+        public void draw_unlight_entities(SpriteBatch spriteBatch, Vector2 focus_position, float render_distance, List<IEntity> light_visible_entities) {
+            Constant.profiler.start("renderlist_unlit_draw");
+            for (int i = 0; i < entities.Count; i++)
+            {
+                //potential improvement: swap the list of light_visible_entities for a dictionary for faster lookups
+                if (Vector2.Distance(entities[i].get_base_position(), focus_position) < render_distance && !light_visible_entities.Contains(entities[i])) {
+                    entities[i].Draw(spriteBatch);
+                }
+            }
+            Constant.profiler.end("renderlist_unlit_draw");
+        }
+
+        public void draw_lit_entities(SpriteBatch spriteBatch, Vector2 focus_position, float render_distance, List<IEntity> light_visible_entities) {
+            Constant.profiler.start("renderlist_lit_draw");
+            for (int i = 0; i < light_visible_entities.Count; i++)
+            {
+                if (Vector2.Distance(light_visible_entities[i].get_base_position(), focus_position) < render_distance){
+                    light_visible_entities[i].Draw(spriteBatch);
+                }
+            }
+            Constant.profiler.end("renderlist_lit_draw");
+        }
     }
 }

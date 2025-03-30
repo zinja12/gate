@@ -72,7 +72,7 @@ namespace gate
         Dictionary<IEntity, bool> collision_tile_map;
         List<IEntity> switches;
         SoundManager sound_manager;
-        List<Light> lights;
+        Dictionary<(int, int), List<Light>> chunked_lights;
         List<IEntity> light_excluded_entities;
         Dictionary<string, bool> condition_tags;
         List<(IEntity, Vector2, float)> explosion_list;
@@ -223,8 +223,8 @@ namespace gate
             switches = new List<IEntity>();
             //sound manager
             sound_manager = new SoundManager(this, Content);
-            //list for lights
-            lights = new List<Light>();
+            //chunked dictionary for lights
+            chunked_lights = new Dictionary<(int, int), List<Light>>();
             light_excluded_entities = new List<IEntity>();
             //condition tags
             condition_tags = new Dictionary<string, bool>();
@@ -674,7 +674,7 @@ namespace gate
                             //check if object has light assigned
                             if (w_obj.light != null) {
                                 Light light = new Light(l.get_base_position(), 250f, 0.45f, Color.White, l);
-                                lights.Add(light);
+                                add_chunked_light(light);
                                 if (w_obj.light_excluded) {
                                     light_excluded_entities.Add(l);
                                 }
@@ -1289,7 +1289,7 @@ namespace gate
             collision_geometry_map.Clear();
             collision_tile_map.Clear();
             switches.Clear();
-            lights.Clear();
+            chunked_lights.Clear();
             light_excluded_entities.Clear();
             condition_tags.Clear();
             dropped_items.Clear();
@@ -2043,8 +2043,11 @@ namespace gate
             //update_camera_bounds();
 
             //keep the lights on lol
-            foreach (Light light in lights) {
-                light.Update(gameTime, camera.Rotation);
+            foreach (KeyValuePair<(int, int), List<Light>> kv in chunked_lights) {
+                List<Light> chunk_lights = kv.Value;
+                foreach (Light l in chunk_lights) {
+                    l.Update(gameTime, camera.Rotation);
+                }
             }
 
             //intro text timer update
@@ -2088,7 +2091,7 @@ namespace gate
                     Lamppost l = new Lamppost(create_position, 1f, editor_object_idx);
                     Light light = new Light(l.get_base_position(), 250f, 0.45f, Color.White, l);
                     //add light + light excluded
-                    lights.Add(light);
+                    add_chunked_light(light);
                     light_excluded_entities.Add(l);
                     entities_list.Add(l);
                     Console.WriteLine($"added light");
@@ -2617,8 +2620,11 @@ namespace gate
             //build dictionary with entity ids
             //see comments below about performance and runtime
             Dictionary<Light, int> light_entity_ids = new Dictionary<Light, int>();
-            foreach (Light light in lights) {
-                light_entity_ids.Add(light, light.get_parent_entity().get_obj_ID_num());
+            foreach (KeyValuePair<(int, int), List<Light>> kv in chunked_lights) {
+                List<Light> chunk_lights = kv.Value;
+                foreach (Light l in chunk_lights) {
+                    light_entity_ids.Add(l, l.get_parent_entity().get_obj_ID_num());
+                }
             }
             //iterate over dictionary and set lights for game world objs
             foreach (GameWorldObject gwo in sorted_world_objs) {
@@ -2727,14 +2733,24 @@ namespace gate
         //add to chunked collision map
         public void add_chunked_collision_geometry(IEntity e) {
             //calculate chunk_position
-            int chunk_x = (int)Math.Floor(e.get_base_position().X / Constant.collision_map_chunk_size);
-            int chunk_y = (int)Math.Floor(e.get_base_position().Y / Constant.collision_map_chunk_size);
-            if (chunked_collision_geometry.ContainsKey((chunk_x, chunk_y))) {
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(e.get_base_position());
+            if (chunked_collision_geometry.ContainsKey(chunk_indices)) {
                 //add to existing list
-                chunked_collision_geometry[(chunk_x, chunk_y)].Add(e);
+                chunked_collision_geometry[chunk_indices].Add(e);
             } else {
                 //add to map with new list
-                chunked_collision_geometry.Add((chunk_x, chunk_y), new List<IEntity>{e});
+                chunked_collision_geometry.Add(chunk_indices, new List<IEntity>{e});
+            }
+        }
+
+        public void add_chunked_light(Light light) {
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
+            if (chunked_lights.ContainsKey(chunk_indices)) {
+                //add to existing list
+                chunked_lights[chunk_indices].Add(light);
+            } else {
+                //add to map with new list
+                chunked_lights.Add(chunk_indices, new List<Light>{ light });
             }
         }
 
@@ -2748,6 +2764,18 @@ namespace gate
                 }
             }
             return nearby_geometry;
+        }
+
+        public List<Light> get_nearby_chunk_lights((int, int) chunk_indices, int n_x_n_size) {
+            List<Light> nearby_lights = new List<Light>();
+            List<(int, int)> chunk_indices_list = get_chunk_indicies(chunk_indices, n_x_n_size);
+            foreach ((int, int) chunk_index in chunk_indices_list) {
+                if (chunked_lights.ContainsKey(chunk_index)) {
+                    //add range to nearby lights
+                    nearby_lights.AddRange(chunked_lights[chunk_index]);
+                }
+            }
+            return nearby_lights;
         }
 
         //function to generate the coordinate pairs for grid chunk traversal
@@ -3476,6 +3504,30 @@ namespace gate
             return null;
         }
 
+        public Dictionary<Light, List<IEntity>> find_visible_light_cast_geometry(Vector2 position) {
+            Dictionary<Light, List<IEntity>> visible_light_geometry = new Dictionary<Light, List<IEntity>>();
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(position);
+            List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
+            //loop over that geomery and check distance for visibility
+            foreach (Light light in nearby_lights) {
+                if (Vector2.Distance(light.get_center_position(), player.get_base_position()) <= render_distance*1.5f) {
+                    (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
+                    List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities(light_chunk_indices, 3);
+                    //loop over that geomery and check distance for visibility
+                    foreach (IEntity geometry_entity in nearby_light_geometry) {
+                        if (Vector2.Distance(light.get_center_position(), geometry_entity.get_base_position()) <= light.get_radius()) {
+                            if (visible_light_geometry.ContainsKey(light)) {
+                                visible_light_geometry[light].Add(geometry_entity);
+                            } else {
+                                visible_light_geometry.Add(light, new List<IEntity> { geometry_entity });
+                            }
+                        }
+                    }
+                }
+            }
+            return visible_light_geometry;
+        }
+
         public void remove_floor_entity(int id){
             IEntity e = find_entity_by_id(id);
             if (!(e is FloorEntity)) {
@@ -4025,7 +4077,7 @@ namespace gate
             // /* LIGHTING PASS */
             if (lights_enabled) {
                 //draw lights over top of the scene if lights are enabled
-                draw_lights2render_target(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+                draw_lights2render_target(chunked_lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
             }
             _spriteBatch.End();
         }
@@ -4106,6 +4158,21 @@ namespace gate
             Constant.profiler.end("world_object_entities_draw");
         }
 
+        public void draw_light_cast_entities(SpriteBatch _spriteBatch) {
+            Dictionary<Light, List<IEntity>> light_cast_entities = find_visible_light_cast_geometry(player.get_base_position());
+            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, null,
+                                camera.Transform);
+            foreach (KeyValuePair<Light, List<IEntity>> kv in light_cast_entities) {
+                List<IEntity> light_cast_geometry = kv.Value;
+                foreach (IEntity e in light_cast_geometry) {
+                    e.Draw(_spriteBatch);
+                }
+            }
+            _spriteBatch.End();
+        }
+
         public void draw_transitions_and_intro_text(SpriteBatch _spriteBatch) {
             //draw transition
             if (transition_active) {
@@ -4145,7 +4212,6 @@ namespace gate
         public void Draw(SpriteBatch _spriteBatch){
             Constant.profiler.start("world_draw");
             draw_floor_background_entities(_spriteBatch);
-            //drawlightshere
             draw_object_entities(_spriteBatch);
             draw_transitions_and_intro_text(_spriteBatch);
             Constant.profiler.end("world_draw");
@@ -4199,8 +4265,8 @@ namespace gate
         }
         
         #region lights
-        public void draw_lights2render_target(List<Light> lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
-            if (lights.Count == 0)
+        public void draw_lights2render_target(Dictionary<(int, int), List<Light>> chunked_lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
+            if (chunked_lights.Count == 0)
                 return;
             
             // spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.light_mask_effect);
@@ -4212,11 +4278,14 @@ namespace gate
 
             List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
 
-            foreach (Light light in lights) {
+            //pull only nearby lights to draw
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(player.get_base_position());
+            List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
+
+            foreach (Light light in nearby_lights) {
                 //calculate in range geometry for light
-                int light_chunk_x = (int)Math.Floor(light.get_center_position().X / Constant.collision_map_chunk_size);
-                int light_chunk_y = (int)Math.Floor(light.get_center_position().Y / Constant.collision_map_chunk_size);
-                List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities((light_chunk_x, light_chunk_y), 2);
+                (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
+                List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities(light_chunk_indices, 2);
                 light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
                 //calculate geometry of this light
                 List<(float, Vector2)> light_geometry = calculate_light_geometry(light, light.get_geometry_edges());

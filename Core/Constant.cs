@@ -811,5 +811,11 @@ namespace gate.Core
         public static Vector2 add_random_noise(Vector2 position, float noise_angle, float noise_radius) {
             return position + new Vector2((float)(Math.Sin(noise_angle) * noise_radius), (float)(Math.Cos(noise_angle) * noise_radius));
         }
+
+        public static (int, int) calculate_chunked_position_indices(Vector2 position) {
+            int chunk_x = (int)Math.Floor(position.X / collision_map_chunk_size);
+            int chunk_y = (int)Math.Floor(position.Y / collision_map_chunk_size);
+            return (chunk_x, chunk_y);
+        }
     }
 }
