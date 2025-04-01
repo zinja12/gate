@@ -417,6 +417,8 @@ namespace gate
             Constant.scanline2_effect = Content.Load<Effect>("fx/scanline2");
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
             Constant.light_mask_effect = Content.Load<Effect>("fx/light_shader");
+            Constant.light_effect2 = Content.Load<Effect>("fx/light_shader2");
+            Constant.light_effect2.Parameters["LightTexture"].SetValue(light_map_target);
             //load content not specific to an object
             Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
             Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");
@@ -3528,6 +3530,16 @@ namespace gate
             return visible_light_geometry;
         }
 
+        public bool light_cast_geometry_contains(Dictionary<Light, List<IEntity>> light_cast_geometry_map, IEntity e) {
+            foreach (KeyValuePair<Light, List<IEntity>> kv in light_cast_geometry_map) {
+                List<IEntity> geometry_list = kv.Value;
+                if (geometry_list.Contains(e)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void remove_floor_entity(int id){
             IEntity e = find_entity_by_id(id);
             if (!(e is FloorEntity)) {
@@ -4086,14 +4098,43 @@ namespace gate
             Constant.profiler.start("world_object_entities_draw");
             _spriteBatch.Begin(SpriteSortMode.Deferred,
                                 BlendState.AlphaBlend,
-                                SamplerState.PointClamp, null, null, null,
+                                SamplerState.PointClamp, null, null, Constant.light_effect2,
                                 camera.Transform);
 
             //draw entities list
+            List<IEntity> e_list = entities_list.get_entities();
+            Dictionary<Light, List<IEntity>> light_cast_entities = find_visible_light_cast_geometry(player.get_base_position());
             if (player_camera_tethered) {
-                entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
+                //entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
+                foreach (IEntity e in e_list) {
+                    if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < render_distance) {
+                        bool light_cast = light_cast_geometry_contains(light_cast_entities, e);
+                        if (light_cast) {
+                            _spriteBatch.End();
+                            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, null,
+                                camera.Transform);
+                        }
+
+                        e.Draw(_spriteBatch);
+
+                        if (light_cast) {
+                            _spriteBatch.End();
+                            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, Constant.light_effect2,
+                                camera.Transform);
+                        }
+                    }
+                }
             } else {
-                entities_list.Draw(_spriteBatch, camera.get_camera_center(), render_distance);
+                //entities_list.Draw(_spriteBatch, camera.get_camera_center(), render_distance);
+                foreach (IEntity e in e_list) {
+                    if (Vector2.Distance(e.get_base_position(), camera.get_camera_center()) < render_distance) {
+                        e.Draw(_spriteBatch);
+                    }
+                }
             }
 
             /*PARTICLE SYSTEMS*/
@@ -4268,10 +4309,6 @@ namespace gate
         public void draw_lights2render_target(Dictionary<(int, int), List<Light>> chunked_lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
             if (chunked_lights.Count == 0)
                 return;
-            
-            // spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.light_mask_effect);
-            // spriteBatch.Draw(light_map_target, Vector2.Zero, Color.White);
-            // spriteBatch.End();
 
             _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
             _graphics.GraphicsDevice.Clear(Color.Black);

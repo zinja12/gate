@@ -145,6 +145,12 @@
 /processorParam:DebugMode=Auto
 /build:fx/light_shader.fx
 
+#begin fx/light_shader2.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:fx/light_shader2.fx
+
 #begin fx/pixelate.fx
 /importer:EffectImporter
 /processor:EffectProcessor

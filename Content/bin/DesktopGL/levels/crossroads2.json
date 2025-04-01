@@ -16551,9 +16551,9 @@
             "y_position": 170.34445,
             "scale": 1,
             "sign_messages": [
-                "\u003C- Sword Shrine",
-                "Bow Shrine -\u003E",
-                "Town -^"
+                "Left - Sword Shrine",
+                "Right -Bow Shrine",
+                "Ahead - Town"
             ],
             "canopy": false,
             "width": 0,
