@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "crossroads2.json", current_level_id;
+        public string load_file_name = "dd1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -3514,14 +3514,15 @@ namespace gate
             foreach (Light light in nearby_lights) {
                 if (Vector2.Distance(light.get_center_position(), player.get_base_position()) <= render_distance*1.5f) {
                     (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
-                    List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities(light_chunk_indices, 3);
+                    List<IEntity> nearby_light_entities = get_nearby_chunk_geometry_entities(light_chunk_indices, 3);
+                    nearby_light_entities.Add(player);
                     //loop over that geomery and check distance for visibility
-                    foreach (IEntity geometry_entity in nearby_light_geometry) {
-                        if (Vector2.Distance(light.get_center_position(), geometry_entity.get_base_position()) <= light.get_radius()) {
+                    foreach (IEntity e in nearby_light_entities) {
+                        if (Vector2.Distance(light.get_center_position(), e.get_base_position()) <= light.get_radius()) {
                             if (visible_light_geometry.ContainsKey(light)) {
-                                visible_light_geometry[light].Add(geometry_entity);
+                                visible_light_geometry[light].Add(e);
                             } else {
-                                visible_light_geometry.Add(light, new List<IEntity> { geometry_entity });
+                                visible_light_geometry.Add(light, new List<IEntity> { e });
                             }
                         }
                     }
