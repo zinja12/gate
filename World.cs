@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "dd1.json", current_level_id;
+        public string load_file_name = "crossroads2.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -4098,14 +4098,13 @@ namespace gate
             Constant.profiler.start("world_object_entities_draw");
             _spriteBatch.Begin(SpriteSortMode.Deferred,
                                 BlendState.AlphaBlend,
-                                SamplerState.PointClamp, null, null, Constant.light_effect2,
+                                SamplerState.PointClamp, null, null, lights_enabled && chunked_lights.Count > 0 ? Constant.light_effect2 : null,
                                 camera.Transform);
 
             //draw entities list
             List<IEntity> e_list = entities_list.get_entities();
             Dictionary<Light, List<IEntity>> light_cast_entities = find_visible_light_cast_geometry(player.get_base_position());
             if (player_camera_tethered) {
-                //entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
                 foreach (IEntity e in e_list) {
                     if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < render_distance) {
                         bool light_cast = light_cast_geometry_contains(light_cast_entities, e);
@@ -4123,7 +4122,7 @@ namespace gate
                             _spriteBatch.End();
                             _spriteBatch.Begin(SpriteSortMode.Deferred,
                                 BlendState.AlphaBlend,
-                                SamplerState.PointClamp, null, null, Constant.light_effect2,
+                                SamplerState.PointClamp, null, null, lights_enabled && chunked_lights.Count > 0 ? Constant.light_effect2 : null,
                                 camera.Transform);
                         }
                     }

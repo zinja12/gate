@@ -84,7 +84,6 @@ namespace gate
 
             //generate and pull light target from world
             world.draw_lights_to_render_target(spriteBatch);
-            RenderTarget2D light_render_target = world.light_map_target;
 
             RenderTarget2D intermediate_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
             graphics_device.SetRenderTarget(intermediate_target1);
@@ -95,7 +94,9 @@ namespace gate
             spriteBatch.End();
             //draw lights render target
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.light_mask_effect);
-            spriteBatch.Draw(light_render_target, Vector2.Zero, Color.White * 0.3f);
+            if (world.lights_enabled) {
+                spriteBatch.Draw(world.light_map_target, Vector2.Zero, Color.White * 0.3f);
+            }
             spriteBatch.End();
             world.draw_object_entities(spriteBatch);
             //world.draw_light_cast_entities(spriteBatch);
