@@ -24,7 +24,10 @@ struct VertexShaderOutput
 //pixel shader
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
+	//pull original color
 	float4 original_color = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+	
+	//if the color is not black, set it to transparent
 	if (original_color.r != 0 || original_color.g != 0 || original_color.b != 0) {
 		original_color.rgba = 0;
 	}

@@ -430,6 +430,7 @@ namespace gate
             Constant.green_tree = Content.Load<Texture2D>("sprites/green_tree1_1_26");
             Constant.read_interact_tex = Content.Load<Texture2D>("sprites/read_interact");
             Constant.crystal_tex = Content.Load<Texture2D>("sprites/crystal2");
+            Constant.light_tex = Content.Load<Texture2D>("sprites/light_tex1");
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
@@ -3512,7 +3513,7 @@ namespace gate
             List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
             //loop over that geomery and check distance for visibility
             foreach (Light light in nearby_lights) {
-                if (Vector2.Distance(light.get_center_position(), player.get_base_position()) <= render_distance*1.5f) {
+                if (Vector2.Distance(light.get_center_position(), player.get_base_position()) <= render_distance) {
                     (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
                     List<IEntity> nearby_light_entities = get_nearby_chunk_geometry_entities(light_chunk_indices, 3);
                     nearby_light_entities.Add(player);
@@ -4086,13 +4087,14 @@ namespace gate
         }
 
         public void draw_lights_to_render_target(SpriteBatch _spriteBatch) {
-            _spriteBatch.Begin();
+            //_spriteBatch.Begin();
             // /* LIGHTING PASS */
             if (lights_enabled) {
                 //draw lights over top of the scene if lights are enabled
-                draw_lights2render_target(chunked_lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+                //draw_lights2render_target(chunked_lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+                draw_light_shadow_render_target(chunked_lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
             }
-            _spriteBatch.End();
+            //_spriteBatch.End();
         }
 
         public void draw_object_entities(SpriteBatch _spriteBatch) {
@@ -4306,6 +4308,78 @@ namespace gate
         }
         
         #region lights
+        public void draw_light_shadow_render_target(Dictionary<(int, int), List<Light>> chunked_lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
+            if (chunked_lights.Count == 0) return;
+
+            _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
+            _graphics.GraphicsDevice.Clear(Color.Black);
+
+            //pull only nearby lights to draw
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(player.get_base_position());
+            List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
+            
+            //draw lights to screen
+            spriteBatch.Begin(blendState: BlendState.Additive);
+            foreach (Light light in nearby_lights) {
+                //draw nearby lights
+                Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
+                spriteBatch.Draw(Constant.light_tex, light_screen_space - new Vector2(300, 300), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            }
+            spriteBatch.End();
+
+            List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
+            
+            //loop over lights again and calculate shadow geometry
+            foreach (Light light in nearby_lights) {
+                //find nearby light geometry
+                (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
+                List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities(light_chunk_indices, 2);
+                light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
+                List<(Vector2, Vector2, Vector2, Vector2)> shadow_geometry = calculate_shadow_geometry(light, light.get_geometry_edges());
+
+                for (int i = 0; i < shadow_geometry.Count; i++) {
+                    (Vector2, Vector2, Vector2, Vector2) shadow_quad = shadow_geometry[i];
+                    //convert to screen space
+                    Vector2 p1 = Vector2.Transform(shadow_quad.Item1, camera.Transform);
+                    Vector2 p2 = Vector2.Transform(shadow_quad.Item2, camera.Transform);
+                    Vector2 p3 = Vector2.Transform(shadow_quad.Item3, camera.Transform);
+                    Vector2 p4 = Vector2.Transform(shadow_quad.Item4, camera.Transform);
+                    //add to vertex list by creating two triangles
+                    //tri1
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p1, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p2, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Black));
+                    //tri2
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p1, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p4, 0), Color.Black));
+                }
+            }
+
+            if (vertex_list.Count == 0) return;
+
+            //create and set vertex buffer
+            if (vertexBuffer == null || vertexBuffer.VertexCount < vertex_list.Count) {
+                vertexBuffer?.Dispose(); //dispose the old buffer if it exists
+                vertexBuffer = new VertexBuffer(_graphics.GraphicsDevice, typeof(VertexPositionColor), vertex_list.Count, BufferUsage.WriteOnly);
+            }
+            vertexBuffer.SetData(vertex_list.ToArray());
+            _graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
+
+            //set up the BasicEffect
+            basicEffect.World = Matrix.Identity;
+            basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), Vector3.Up);
+            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, 0, 0.1f, 100f);
+            
+            _graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) {
+                pass.Apply();
+                _graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, vertex_list.Count / 3);
+            }
+
+            _graphics.GraphicsDevice.SetRenderTarget(null);
+        }
+
         public void draw_lights2render_target(Dictionary<(int, int), List<Light>> chunked_lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
             if (chunked_lights.Count == 0)
                 return;
@@ -4375,112 +4449,6 @@ namespace gate
             }
 
             _graphics.GraphicsDevice.SetRenderTarget(null);
-        }
-        //TODO: add exclusionary entities to lights
-        //lights should not affect the entity they are being cast by
-        //right now if we put a light on a lamppost it will factor in the lamp post into the algorithm to block that light
-        //need to add an exclusionary list so if an edge or endpoint of a segment is found in that list or as a part of an entity in that list, then it is ignored from the algorithm
-        //also need to add the option to pass in npcs and signs and other non collision objects to affect light and cast shadows
-        //they have hurtboxes so we should be able to leverage that geometry to cast shadows as well
-        public void draw_lights(List<Light> lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
-            //only render if we have lights
-            if (lights.Count > 0) {
-                //lights
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
-                spriteBatch.Draw(light_map_target, Vector2.Zero, Color.White);
-                spriteBatch.End();
-
-                _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
-                _graphics.GraphicsDevice.Clear(Color.Black * 0.25f);
-
-                spriteBatch.Begin(SpriteSortMode.Immediate, Constant.subtract_blend, SamplerState.PointClamp);
-                foreach (Light light in lights) {
-                    //calculate in range geometry for light
-                    int light_chunk_x = (int)Math.Floor(light.get_center_position().X / Constant.collision_map_chunk_size);
-                    int light_chunk_y = (int)Math.Floor(light.get_center_position().Y / Constant.collision_map_chunk_size);
-                    List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities((light_chunk_x, light_chunk_y), 2);
-                    light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
-                    //calculate geometry of this light
-                    List<(float, Vector2)> light_geometry = calculate_light_geometry(light, light.get_geometry_edges());
-                    Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
-                    //convert vector into screen space
-                    for (int i = 0; i < light_geometry.Count - 1; i++) {
-                        Vector2 ray1 = light_geometry[i].Item2;
-                        Vector2 ray2 = light_geometry[i+1].Item2;
-                        Vector2 ray1_vector_screen_space = Vector2.Transform(ray1, camera.Transform);
-                        Vector2 ray2_vector_screen_space = Vector2.Transform(ray2, camera.Transform);
-                        Renderer.DrawTri(
-                            spriteBatch,
-                            light_screen_space,
-                            ray1_vector_screen_space,
-                            ray2_vector_screen_space,
-                            light.get_color() * light.get_intensity(),
-                            1f
-                        );
-                    }
-                    //draw last triangle between first and last point (also screen space)
-                    Vector2 ray_first_screen_space = Vector2.Transform(light_geometry[0].Item2, camera.Transform);
-                    Vector2 ray_last_screen_space = Vector2.Transform(light_geometry[light_geometry.Count-1].Item2, camera.Transform);
-                    Renderer.DrawTri(
-                        spriteBatch,
-                        light_screen_space,
-                        ray_first_screen_space,
-                        ray_last_screen_space,
-                        light.get_color() * light.get_intensity(),
-                        1f
-                    );
-                }
-                spriteBatch.End();
-
-                // Set back to the default render target (screen)
-                _graphics.GraphicsDevice.SetRenderTarget(null);
-            }
-        }
-        
-        public void draw_lights_world_space(List<Light> lights, List<IEntity> geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
-            //loop over lights and calculate geometry per light with shadow casters
-            foreach (Light light in lights) {
-                //calculate in range geometry for light
-                light.calculate_in_range_geometry(geometry_shadow_casters, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
-                //calculate geometry of this light
-                List<(float, Vector2)> light_rays = calculate_light_geometry(light, light.get_geometry_edges());
-                //draw rays themselves
-                foreach ((float, Vector2) ray in light_rays) {
-                    Renderer.DrawALine(
-                        spriteBatch, 
-                        Constant.pixel,
-                        2f,
-                        Color.Red,
-                        1f,
-                        light.get_center_position(),
-                        ray.Item2
-                    );
-                }
-
-                //iterate through all rays and draw triangles between rays
-                for (int i = 0; i < light_rays.Count - 1; i++) {
-                    Vector2 ray1 = light_rays[i].Item2;
-                    Vector2 ray2 = light_rays[i+1].Item2;
-                    //fill triangles
-                    Renderer.DrawTri(
-                        spriteBatch, 
-                        light.get_center_position(),
-                        ray1,
-                        ray2,
-                        Color.White,
-                        0.1f
-                    );
-                }
-                //draw last triangle between first and last point
-                // Renderer.DrawTri(
-                //     spriteBatch,
-                //     light.get_center_position(),
-                //     light_rays[0].Item2,
-                //     light_rays[light_rays.Count-1].Item2,
-                //     Color.White,
-                //     0.1f
-                // );
-            }
         }
         
         //function to calculate light map geometry
@@ -4564,6 +4532,45 @@ namespace gate
             
             //return the rays (they are in clockwise order at this point)
             return rays;
+        }
+        
+        //list of shadow quads
+        //list of (p1,p2,p3,p4)
+        public List<(Vector2, Vector2, Vector2, Vector2)> calculate_shadow_geometry(Light light, List<(Vector2, Vector2)> edges) {
+            List<(Vector2, Vector2, Vector2, Vector2)> shadow_quads = new List<(Vector2, Vector2, Vector2, Vector2)>();
+            
+            float max_distance = 250f;
+            
+            //edges are ordered start-end in clockwise order
+            //should only need to extrude edges where the dot product of the normal of the edge with the vector from the light to the edge is negative
+
+            //iterate over all edges given
+            foreach ((Vector2 start, Vector2 end) in edges) {
+                //calculate edge direction
+                Vector2 edge_direction = end - start;
+                //calculate edge normal
+                Vector2 edge_normal = new Vector2(-edge_direction.Y, edge_direction.X);
+                edge_normal.Normalize();
+                //calculate light to edge direction
+                Vector2 to_edge = ((start + end) / 2) - light.get_center_position();
+                
+                //if the edge normal is facing away from the light, calculate the quad
+                if (Vector2.Dot(edge_normal, to_edge) > 0) {
+                    //normalized directions of light to start and end of edges
+                    Vector2 shadow_direction_start = start - light.get_center_position();
+                    shadow_direction_start.Normalize();
+                    Vector2 shadow_direction_end = end - light.get_center_position();
+                    shadow_direction_end.Normalize();
+                    //calculate the distance from the light to each of the points and then subtract radius to find by how much the point should be extruded by
+                    //extrude points using shadow directions
+                    Vector2 extruded_start = start + shadow_direction_start * max_distance;
+                    Vector2 extruded_end = end + shadow_direction_end * max_distance;
+
+                    shadow_quads.Add((start, end, extruded_end, extruded_start));
+                }
+            }
+
+            return shadow_quads;
         }
         #endregion
         #endregion

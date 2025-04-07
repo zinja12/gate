@@ -9,6 +9,7 @@ using gate.Core;
 
 namespace gate.Collision
 {
+    //NOTE: vertices/edges for rrect are clockwise wound (clockwise winding)
     public class RRect
     {
         public Vector2 position; //position to denote center of rectangle
