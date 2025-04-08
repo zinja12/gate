@@ -4087,14 +4087,11 @@ namespace gate
         }
 
         public void draw_lights_to_render_target(SpriteBatch _spriteBatch) {
-            //_spriteBatch.Begin();
             // /* LIGHTING PASS */
             if (lights_enabled) {
-                //draw lights over top of the scene if lights are enabled
-                //draw_lights2render_target(chunked_lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+                //draw lights + shadows if lights are enabled
                 draw_light_shadow_render_target(chunked_lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
             }
-            //_spriteBatch.End();
         }
 
         public void draw_object_entities(SpriteBatch _spriteBatch) {
@@ -4375,160 +4372,6 @@ namespace gate
             }
             
             _graphics.GraphicsDevice.SetRenderTarget(null);
-        }
-
-        public void draw_lights2render_target(Dictionary<(int, int), List<Light>> chunked_lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
-            if (chunked_lights.Count == 0)
-                return;
-
-            _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
-            _graphics.GraphicsDevice.Clear(Color.Black);
-
-            List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
-
-            //pull only nearby lights to draw
-            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(player.get_base_position());
-            List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
-
-            foreach (Light light in nearby_lights) {
-                //calculate in range geometry for light
-                (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
-                List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities(light_chunk_indices, 2);
-                light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
-                //calculate geometry of this light
-                List<(float, Vector2)> light_geometry = calculate_light_geometry(light, light.get_geometry_edges());
-
-                Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
-                Vector3 light_screen_space_v3 = new Vector3(light_screen_space, 0);
-
-                Color light_color = light.get_color() * light.get_intensity();
-
-                for (int i = 0; i < light_geometry.Count - 1; i++) {
-                    Vector2 ray1 = light_geometry[i].Item2;
-                    Vector2 ray2 = light_geometry[i+1].Item2;
-                    Vector2 ray1_vector_screen_space = Vector2.Transform(ray1, camera.Transform);
-                    Vector2 ray2_vector_screen_space = Vector2.Transform(ray2, camera.Transform);
-                    Vector3 ray1_screen_space_v3 = new Vector3(ray1_vector_screen_space, 0);
-                    Vector3 ray2_screen_space_v3 = new Vector3(ray2_vector_screen_space, 0);
-                    vertex_list.Add(new VertexPositionColor(light_screen_space_v3, light_color));
-                    vertex_list.Add(new VertexPositionColor(ray1_screen_space_v3, light_color));
-                    vertex_list.Add(new VertexPositionColor(ray2_screen_space_v3, light_color));
-                }
-                //draw last triangle between first and last point (also screen space)
-                Vector2 ray_first_screen_space = Vector2.Transform(light_geometry[0].Item2, camera.Transform);
-                Vector2 ray_last_screen_space = Vector2.Transform(light_geometry[light_geometry.Count-1].Item2, camera.Transform);
-                Vector3 ray_first_screen_space_v3 = new Vector3(ray_first_screen_space, 0);
-                Vector3 ray_last_screen_space_v3 = new Vector3(ray_last_screen_space, 0);
-                vertex_list.Add(new VertexPositionColor(light_screen_space_v3, light_color));
-                vertex_list.Add(new VertexPositionColor(ray_last_screen_space_v3, light_color));
-                vertex_list.Add(new VertexPositionColor(ray_first_screen_space_v3, light_color));
-            }
-
-            if (vertex_list.Count == 0)
-                return;
-
-            // create and set vertex buffer
-            if (vertexBuffer == null || vertexBuffer.VertexCount < vertex_list.Count) {
-                vertexBuffer?.Dispose(); // Dispose the old buffer if it exists
-                vertexBuffer = new VertexBuffer(_graphics.GraphicsDevice, typeof(VertexPositionColor), vertex_list.Count, BufferUsage.WriteOnly);
-            }
-            vertexBuffer.SetData(vertex_list.ToArray());
-            _graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
-
-            // set up the BasicEffect
-            basicEffect.World = Matrix.Identity;
-            basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), Vector3.Up);
-            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, 0, 0.1f, 100f);
-
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) {
-                pass.Apply();
-                _graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, vertex_list.Count / 3);
-            }
-
-            _graphics.GraphicsDevice.SetRenderTarget(null);
-        }
-        
-        //function to calculate light map geometry
-        public List<(float, Vector2)> calculate_light_geometry(Light light, List<(Vector2, Vector2)> edges) {
-            List<(float, Vector2)> rays = new List<(float, Vector2)>();
-            HashSet<float> unique_angles = new HashSet<float>();
-
-            float max_distance = 250f;
-            float offset_angle = 0.01f;
-            // min rays to cast out for when there is not enough geometry in the scene, but we still have lights
-            int min_rays = 100;
-            
-            //loop over all the edges we are calculating light against
-            foreach ((Vector2, Vector2) edge in edges) {
-                Vector2 p1 = edge.Item1;
-                Vector2 p2 = edge.Item2;
-
-                float angle1 = (float)Math.Atan2(p1.Y - light.get_center_position().Y, p1.X - light.get_center_position().X);
-                float angle2 = (float)Math.Atan2(p2.Y - light.get_center_position().Y, p2.X - light.get_center_position().X);
-                
-                //add to unique angles
-                unique_angles.Add(angle1);
-                unique_angles.Add(angle1 + offset_angle);
-                unique_angles.Add(angle1 - offset_angle);
-
-                unique_angles.Add(angle2);
-                unique_angles.Add(angle2 + offset_angle);
-                unique_angles.Add(angle2 - offset_angle);
-            }
-
-            if (unique_angles.Count < min_rays) {
-                int remaining_rays = min_rays - unique_angles.Count;
-                //evenly distribute remaining rays
-                float angle_increment = MathHelper.TwoPi / remaining_rays;
-
-                for (int i = 0; i < remaining_rays; i++) {
-                    float additional_angle = i * angle_increment;
-                    unique_angles.Add(additional_angle);
-                }
-            }
-            
-            List<float> sorted_angles = unique_angles.OrderBy(a => a).ToList(); //sort clockwise order
-            
-            //ensure there are no large gaps between consecutive angles
-            //this works to keep the light circular as we exit places with higher entity density to cast light off of
-            //otherwise the light ends up looking fairly polygonal which kind of destroys the effect
-            for (int i = 0; i < sorted_angles.Count - 1; i++) {
-                float angle1 = sorted_angles[i];
-                float angle2 = sorted_angles[i+1];
-
-                if (angle2 - angle1 > (MathHelper.TwoPi / min_rays)) {
-                    float new_angle = (angle1 + angle2) / 2;
-                    //add if we don't already have an angle for this value
-                    if (!unique_angles.Contains(new_angle)) {
-                        unique_angles.Add(new_angle);
-                    }
-                }
-            }
-            
-            sorted_angles = unique_angles.OrderBy(a => a).ToList();
-            //cast rays at each unique angle
-            foreach (float angle in sorted_angles) {
-                Vector2 ray_direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                Vector2 closest_intersection = light.get_center_position() + ray_direction * max_distance;
-                float closest_distance = max_distance;
-
-                //check for intersection with each edge
-                foreach ((Vector2, Vector2) edge in edges) {
-                    Vector2 intersection;
-                    if (RRect.ray_intersects_edge(light.get_center_position(), ray_direction, edge.Item1, edge.Item2, out intersection)) {
-                        float distance = Vector2.Distance(light.get_center_position(), intersection);
-                        if (distance < closest_distance) {
-                            closest_distance = distance;
-                            closest_intersection = intersection;
-                        }
-                    }
-                }
-
-                rays.Add((angle, closest_intersection));
-            }
-            
-            //return the rays (they are in clockwise order at this point)
-            return rays;
         }
         
         //list of shadow quads
