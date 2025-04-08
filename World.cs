@@ -4319,23 +4319,20 @@ namespace gate
             List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
             
             //draw lights to screen
-            spriteBatch.Begin(blendState: BlendState.Additive);
             foreach (Light light in nearby_lights) {
                 //draw nearby lights
+                spriteBatch.Begin(blendState: BlendState.Additive);
                 Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
                 spriteBatch.Draw(Constant.light_tex, light_screen_space - new Vector2(300, 300), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
-            }
-            spriteBatch.End();
-
-            List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
-            
-            //loop over lights again and calculate shadow geometry
-            foreach (Light light in nearby_lights) {
-                //find nearby light geometry
+                spriteBatch.End();
+                
+                //calculate shadow geometry
                 (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
                 List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities(light_chunk_indices, 2);
                 light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
                 List<(Vector2, Vector2, Vector2, Vector2)> shadow_geometry = calculate_shadow_geometry(light, light.get_geometry_edges());
+
+                List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
 
                 for (int i = 0; i < shadow_geometry.Count; i++) {
                     (Vector2, Vector2, Vector2, Vector2) shadow_quad = shadow_geometry[i];
@@ -4354,29 +4351,29 @@ namespace gate
                     vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Black));
                     vertex_list.Add(new VertexPositionColor(new Vector3(p4, 0), Color.Black));
                 }
+
+                if (vertex_list.Count == 0) return;
+
+                //create and set vertex buffer
+                if (vertexBuffer == null || vertexBuffer.VertexCount < vertex_list.Count) {
+                    vertexBuffer?.Dispose(); //dispose the old buffer if it exists
+                    vertexBuffer = new VertexBuffer(_graphics.GraphicsDevice, typeof(VertexPositionColor), vertex_list.Count, BufferUsage.WriteOnly);
+                }
+                vertexBuffer.SetData(vertex_list.ToArray());
+                _graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
+
+                //set up the BasicEffect
+                basicEffect.World = Matrix.Identity;
+                basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), Vector3.Up);
+                basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, 0, 0.1f, 100f);
+
+                _graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) {
+                    pass.Apply();
+                    _graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, vertex_list.Count / 3);
+                }
             }
-
-            if (vertex_list.Count == 0) return;
-
-            //create and set vertex buffer
-            if (vertexBuffer == null || vertexBuffer.VertexCount < vertex_list.Count) {
-                vertexBuffer?.Dispose(); //dispose the old buffer if it exists
-                vertexBuffer = new VertexBuffer(_graphics.GraphicsDevice, typeof(VertexPositionColor), vertex_list.Count, BufferUsage.WriteOnly);
-            }
-            vertexBuffer.SetData(vertex_list.ToArray());
-            _graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
-
-            //set up the BasicEffect
-            basicEffect.World = Matrix.Identity;
-            basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), Vector3.Up);
-            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, 0, 0.1f, 100f);
             
-            _graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) {
-                pass.Apply();
-                _graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, vertex_list.Count / 3);
-            }
-
             _graphics.GraphicsDevice.SetRenderTarget(null);
         }
 
@@ -4539,8 +4536,6 @@ namespace gate
         public List<(Vector2, Vector2, Vector2, Vector2)> calculate_shadow_geometry(Light light, List<(Vector2, Vector2)> edges) {
             List<(Vector2, Vector2, Vector2, Vector2)> shadow_quads = new List<(Vector2, Vector2, Vector2, Vector2)>();
             
-            float max_distance = 250f;
-            
             //edges are ordered start-end in clockwise order
             //should only need to extrude edges where the dot product of the normal of the edge with the vector from the light to the edge is negative
 
@@ -4561,10 +4556,12 @@ namespace gate
                     shadow_direction_start.Normalize();
                     Vector2 shadow_direction_end = end - light.get_center_position();
                     shadow_direction_end.Normalize();
+                    float start_distance = light.get_radius() - Vector2.Distance(light.get_center_position(), start);
+                    float end_distance = light.get_radius() - Vector2.Distance(light.get_center_position(), end);
                     //calculate the distance from the light to each of the points and then subtract radius to find by how much the point should be extruded by
                     //extrude points using shadow directions
-                    Vector2 extruded_start = start + shadow_direction_start * max_distance;
-                    Vector2 extruded_end = end + shadow_direction_end * max_distance;
+                    Vector2 extruded_start = start + shadow_direction_start * start_distance;
+                    Vector2 extruded_end = end + shadow_direction_end * end_distance;
 
                     shadow_quads.Add((start, end, extruded_end, extruded_start));
                 }
