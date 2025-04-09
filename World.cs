@@ -72,7 +72,7 @@ namespace gate
         Dictionary<IEntity, bool> collision_tile_map;
         List<IEntity> switches;
         SoundManager sound_manager;
-        List<Light> lights;
+        Dictionary<(int, int), List<Light>> chunked_lights;
         List<IEntity> light_excluded_entities;
         Dictionary<string, bool> condition_tags;
         List<(IEntity, Vector2, float)> explosion_list;
@@ -165,8 +165,11 @@ namespace gate
         private List<ParticleSystem> dead_particle_systems;
 
         //Lights
-        private bool lights_enabled = true;
-        RenderTarget2D light_map_target;
+        public bool lights_enabled = true;
+        public RenderTarget2D light_map_target;
+
+        private VertexBuffer vertexBuffer;
+        private BasicEffect basicEffect;
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content) {
             //set game objects
@@ -176,8 +179,8 @@ namespace gate
             this.Content = Content;
 
             //set up camera to draw with
-            camera = new Camera(_graphics.GraphicsDevice.Viewport, Vector2.Zero);
-            camera.Zoom = 1.75f;
+            camera = new Camera(new Viewport(0, 0, Constant.internal_resolution_width, Constant.internal_resolution_height), Vector2.Zero);
+            camera.Zoom = 1.35f;
 
             //set up mouse hitbox
             mouse_hitbox = new RRect(Vector2.Zero, 10, 10);
@@ -220,8 +223,8 @@ namespace gate
             switches = new List<IEntity>();
             //sound manager
             sound_manager = new SoundManager(this, Content);
-            //list for lights
-            lights = new List<Light>();
+            //chunked dictionary for lights
+            chunked_lights = new Dictionary<(int, int), List<Light>>();
             light_excluded_entities = new List<IEntity>();
             //condition tags
             condition_tags = new Dictionary<string, bool>();
@@ -248,7 +251,7 @@ namespace gate
 
             //light resources
             //set up light render target
-            light_map_target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height);
+            this.light_map_target = new RenderTarget2D(_graphics.GraphicsDevice, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None);
 
             //load first level
             load_level(content_root_directory, _graphics, load_file_name);
@@ -258,6 +261,10 @@ namespace gate
 
             //run first sort so everything looks good initially
             entities_list.sort_list_by_depth(camera.Rotation, player.get_base_position(), render_distance);
+
+            basicEffect = new BasicEffect(_graphics.GraphicsDevice) {
+                VertexColorEnabled = true
+            };
         }
 
         public World(Game1 game, GraphicsDeviceManager _graphics, string content_root_directory, ContentManager Content, string level_id) : this(game, _graphics, content_root_directory, Content) {
@@ -409,6 +416,9 @@ namespace gate
             Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors3.Length);
             Constant.scanline2_effect = Content.Load<Effect>("fx/scanline2");
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
+            Constant.light_effect2 = Content.Load<Effect>("fx/light_shader2");
+            Constant.light_effect2.Parameters["LightTexture"].SetValue(light_map_target);
+            Constant.c_light_effect = Content.Load<Effect>("fx/c_light_shader");
             //load content not specific to an object
             Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
             Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");
@@ -420,6 +430,7 @@ namespace gate
             Constant.green_tree = Content.Load<Texture2D>("sprites/green_tree1_1_26");
             Constant.read_interact_tex = Content.Load<Texture2D>("sprites/read_interact");
             Constant.crystal_tex = Content.Load<Texture2D>("sprites/crystal2");
+            Constant.light_tex = Content.Load<Texture2D>("sprites/light_tex1");
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
@@ -666,7 +677,7 @@ namespace gate
                             //check if object has light assigned
                             if (w_obj.light != null) {
                                 Light light = new Light(l.get_base_position(), 250f, 0.45f, Color.White, l);
-                                lights.Add(light);
+                                add_chunked_light(light);
                                 if (w_obj.light_excluded) {
                                     light_excluded_entities.Add(l);
                                 }
@@ -1281,7 +1292,7 @@ namespace gate
             collision_geometry_map.Clear();
             collision_tile_map.Clear();
             switches.Clear();
-            lights.Clear();
+            chunked_lights.Clear();
             light_excluded_entities.Clear();
             condition_tags.Clear();
             dropped_items.Clear();
@@ -2035,8 +2046,11 @@ namespace gate
             //update_camera_bounds();
 
             //keep the lights on lol
-            foreach (Light light in lights) {
-                light.Update(gameTime, camera.Rotation);
+            foreach (KeyValuePair<(int, int), List<Light>> kv in chunked_lights) {
+                List<Light> chunk_lights = kv.Value;
+                foreach (Light l in chunk_lights) {
+                    l.Update(gameTime, camera.Rotation);
+                }
             }
 
             //intro text timer update
@@ -2080,7 +2094,7 @@ namespace gate
                     Lamppost l = new Lamppost(create_position, 1f, editor_object_idx);
                     Light light = new Light(l.get_base_position(), 250f, 0.45f, Color.White, l);
                     //add light + light excluded
-                    lights.Add(light);
+                    add_chunked_light(light);
                     light_excluded_entities.Add(l);
                     entities_list.Add(l);
                     Console.WriteLine($"added light");
@@ -2609,8 +2623,11 @@ namespace gate
             //build dictionary with entity ids
             //see comments below about performance and runtime
             Dictionary<Light, int> light_entity_ids = new Dictionary<Light, int>();
-            foreach (Light light in lights) {
-                light_entity_ids.Add(light, light.get_parent_entity().get_obj_ID_num());
+            foreach (KeyValuePair<(int, int), List<Light>> kv in chunked_lights) {
+                List<Light> chunk_lights = kv.Value;
+                foreach (Light l in chunk_lights) {
+                    light_entity_ids.Add(l, l.get_parent_entity().get_obj_ID_num());
+                }
             }
             //iterate over dictionary and set lights for game world objs
             foreach (GameWorldObject gwo in sorted_world_objs) {
@@ -2719,14 +2736,24 @@ namespace gate
         //add to chunked collision map
         public void add_chunked_collision_geometry(IEntity e) {
             //calculate chunk_position
-            int chunk_x = (int)Math.Floor(e.get_base_position().X / Constant.collision_map_chunk_size);
-            int chunk_y = (int)Math.Floor(e.get_base_position().Y / Constant.collision_map_chunk_size);
-            if (chunked_collision_geometry.ContainsKey((chunk_x, chunk_y))) {
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(e.get_base_position());
+            if (chunked_collision_geometry.ContainsKey(chunk_indices)) {
                 //add to existing list
-                chunked_collision_geometry[(chunk_x, chunk_y)].Add(e);
+                chunked_collision_geometry[chunk_indices].Add(e);
             } else {
                 //add to map with new list
-                chunked_collision_geometry.Add((chunk_x, chunk_y), new List<IEntity>{e});
+                chunked_collision_geometry.Add(chunk_indices, new List<IEntity>{e});
+            }
+        }
+
+        public void add_chunked_light(Light light) {
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
+            if (chunked_lights.ContainsKey(chunk_indices)) {
+                //add to existing list
+                chunked_lights[chunk_indices].Add(light);
+            } else {
+                //add to map with new list
+                chunked_lights.Add(chunk_indices, new List<Light>{ light });
             }
         }
 
@@ -2740,6 +2767,18 @@ namespace gate
                 }
             }
             return nearby_geometry;
+        }
+
+        public List<Light> get_nearby_chunk_lights((int, int) chunk_indices, int n_x_n_size) {
+            List<Light> nearby_lights = new List<Light>();
+            List<(int, int)> chunk_indices_list = get_chunk_indicies(chunk_indices, n_x_n_size);
+            foreach ((int, int) chunk_index in chunk_indices_list) {
+                if (chunked_lights.ContainsKey(chunk_index)) {
+                    //add range to nearby lights
+                    nearby_lights.AddRange(chunked_lights[chunk_index]);
+                }
+            }
+            return nearby_lights;
         }
 
         //function to generate the coordinate pairs for grid chunk traversal
@@ -3004,12 +3043,10 @@ namespace gate
                             Sign s = (Sign)e;
                             bool collision = player.check_hurtbox_collisions(s.get_interaction_box());
                             if (collision) {
-                                //calculate screen textbox position
-                                Vector2 textbox_screen_position = Constant.world_position_to_screen_position(s.get_overhead_position(), camera);
-                                textbox_screen_position *= game.get_game_canvas().get_current_scale();
-                                textbox_screen_position += new Vector2(game.get_game_canvas().get_destination_rectangle().X, game.get_game_canvas().get_destination_rectangle().Y);
-                                //set textbox screen position
-                                s.get_textbox().set_position(textbox_screen_position);
+                                //calculate screen textbox position with native resolution
+                                s.get_textbox().set_position(
+                                    Constant.native_resolution_world_to_screen_position(s.get_overhead_position(), _graphics.GraphicsDevice, camera)
+                                );
                                 //set sign to display
                                 s.display_textbox();
                                 //set current textbox to correct instance
@@ -3023,18 +3060,14 @@ namespace gate
                                 if (collision) {
                                     //orient npc to target for speaking
                                     npc.orient_to_target(player.get_base_position(), camera.Rotation);
-                                    //calculate screen textbox position from overhead position of npc
-                                    Vector2 screen_position = Vector2.Transform(npc.get_overhead_position(), camera.Transform);
-                                    //scale position by current canvas scale
-                                    screen_position *= game.get_game_canvas().get_current_scale();
-                                    //offset position based on desination rectangle
-                                    screen_position += new Vector2(game.get_game_canvas().get_destination_rectangle().X, game.get_game_canvas().get_destination_rectangle().Y);
                                     //find first matching tag
                                     string tag = npc.find_first_matching_tag(condition_tags);
                                     //filter npc textbox based on tag
                                     npc.get_textbox().filter_messages_on_tag(tag);
                                     //set textbox position
-                                    npc.get_textbox().set_position(screen_position);
+                                    npc.get_textbox().set_position(
+                                        Constant.native_resolution_world_to_screen_position(npc.get_overhead_position(), _graphics.GraphicsDevice, camera)
+                                    );
                                     //set npc to display
                                     npc.display_textbox();
                                     //set current textbox to correct instance
@@ -3474,6 +3507,41 @@ namespace gate
             return null;
         }
 
+        public Dictionary<Light, List<IEntity>> find_visible_light_cast_geometry(Vector2 position) {
+            Dictionary<Light, List<IEntity>> visible_light_geometry = new Dictionary<Light, List<IEntity>>();
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(position);
+            List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
+            //loop over that geomery and check distance for visibility
+            foreach (Light light in nearby_lights) {
+                if (Vector2.Distance(light.get_center_position(), player.get_base_position()) <= render_distance) {
+                    (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
+                    List<IEntity> nearby_light_entities = get_nearby_chunk_geometry_entities(light_chunk_indices, 3);
+                    nearby_light_entities.Add(player);
+                    //loop over that geomery and check distance for visibility
+                    foreach (IEntity e in nearby_light_entities) {
+                        if (Vector2.Distance(light.get_center_position(), e.get_base_position()) <= light.get_radius()) {
+                            if (visible_light_geometry.ContainsKey(light)) {
+                                visible_light_geometry[light].Add(e);
+                            } else {
+                                visible_light_geometry.Add(light, new List<IEntity> { e });
+                            }
+                        }
+                    }
+                }
+            }
+            return visible_light_geometry;
+        }
+
+        public bool light_cast_geometry_contains(Dictionary<Light, List<IEntity>> light_cast_geometry_map, IEntity e) {
+            foreach (KeyValuePair<Light, List<IEntity>> kv in light_cast_geometry_map) {
+                List<IEntity> geometry_list = kv.Value;
+                if (geometry_list.Contains(e)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void remove_floor_entity(int id){
             IEntity e = find_entity_by_id(id);
             if (!(e is FloorEntity)) {
@@ -3875,7 +3943,7 @@ namespace gate
             }
             //update camera viewport
             camera.set_camera_offset(Vector2.Zero);
-            camera.update_viewport(_graphics.GraphicsDevice.Viewport, Constant.rotate_point(player.base_position, -camera.Rotation, 0f, Constant.direction_down));
+            camera.update_viewport(new Viewport(0, 0, Constant.internal_resolution_width, Constant.internal_resolution_height), Constant.rotate_point(player.base_position, -camera.Rotation, 0f, Constant.direction_down));
         }
 
         private void set_camera_shake(float shake_milliseconds, float angle, float radius) {
@@ -3956,19 +4024,31 @@ namespace gate
             return player;
         }
 
-        public void update_textbox_scale(Canvas canvas) {
+        public void update_textbox_scale() {
             //scale ui elements
             //to be used in Game1 class on window scaling
             //textboxes
             List<TextBox> textboxes = get_all_textboxes();
             foreach (TextBox t in textboxes) {
                 if (t != null) {
+                    float res_scale = Constant.get_res_scale(_graphics.GraphicsDevice);
                     t.set_width(
-                        t.get_original_width()*canvas.get_current_scale()
+                        t.get_original_width() * res_scale
                     );
                     t.set_height(
-                        t.get_original_height()*canvas.get_current_scale()
+                        t.get_original_height() * res_scale
                     );
+                    if (current_npc != null) {
+                        t.set_position(
+                            Constant.native_resolution_world_to_screen_position(current_npc.get_overhead_position(), _graphics.GraphicsDevice, camera)
+                        );
+                    }
+                    if (current_sign != null) {
+                        t.set_position(
+                            Constant.native_resolution_world_to_screen_position(current_sign.get_overhead_position(), _graphics.GraphicsDevice, camera)
+                        );
+                    }
+                    t.recompute_msg_screens(t.get_width(), t.get_height());
                 }
             }
         }
@@ -3980,14 +4060,13 @@ namespace gate
         #endregion
         
         #region draw
-        public void Draw(SpriteBatch _spriteBatch){
+        public void draw_floor_background_entities(SpriteBatch _spriteBatch) {
             Constant.profiler.start("world_entities_draw");
-            // TODO: Add drawing code here
-
             _spriteBatch.Begin(SpriteSortMode.Deferred,
                                 BlendState.AlphaBlend,
                                 SamplerState.PointClamp, null, null, null,
                                 camera.Transform);
+
             //draw floor itself
             //note: this draws entities in order, meaning our sorting after 
             //insertion should yield the proper back to front ordering that needs to be drawn
@@ -4003,11 +4082,58 @@ namespace gate
                 }
             }
 
+            _spriteBatch.End();
+            Constant.profiler.end("world_entities_draw");
+        }
+
+        public void draw_lights_to_render_target(SpriteBatch _spriteBatch) {
+            // /* LIGHTING PASS */
+            if (lights_enabled) {
+                //draw lights + shadows if lights are enabled
+                draw_light_shadow_render_target(chunked_lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
+            }
+        }
+
+        public void draw_object_entities(SpriteBatch _spriteBatch) {
+            Constant.profiler.start("world_object_entities_draw");
+            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, lights_enabled && chunked_lights.Count > 0 ? Constant.light_effect2 : null,
+                                camera.Transform);
+
             //draw entities list
+            List<IEntity> e_list = entities_list.get_entities();
+            Dictionary<Light, List<IEntity>> light_cast_entities = find_visible_light_cast_geometry(player.get_base_position());
             if (player_camera_tethered) {
-                entities_list.Draw(_spriteBatch, player.get_base_position(), render_distance);
+                foreach (IEntity e in e_list) {
+                    if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < render_distance) {
+                        bool light_cast = light_cast_geometry_contains(light_cast_entities, e);
+                        if (light_cast) {
+                            _spriteBatch.End();
+                            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, null,
+                                camera.Transform);
+                        }
+
+                        e.Draw(_spriteBatch);
+
+                        if (light_cast) {
+                            _spriteBatch.End();
+                            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, lights_enabled && chunked_lights.Count > 0 ? Constant.light_effect2 : null,
+                                camera.Transform);
+                        }
+                    }
+                }
             } else {
-                entities_list.Draw(_spriteBatch, camera.get_camera_center(), render_distance);
+                //entities_list.Draw(_spriteBatch, camera.get_camera_center(), render_distance);
+                foreach (IEntity e in e_list) {
+                    if (Vector2.Distance(e.get_base_position(), camera.get_camera_center()) < render_distance) {
+                        e.Draw(_spriteBatch);
+                    }
+                }
             }
 
             /*PARTICLE SYSTEMS*/
@@ -4038,16 +4164,6 @@ namespace gate
             foreach (ForegroundEntity f in foreground_entities) {
                 f.Draw(_spriteBatch);
             }
-            
-            //draw camera bounds
-            // if (camera_bounds != null && debug_triggers) {
-            //     //draw bounds rectangle
-            //     camera_bounds.draw(_spriteBatch);
-            //     //draw viewport boundary points
-            //     foreach (Vector2 v in camera.get_viewport_boundary_points()) {
-            //         Renderer.FillRectangle(_spriteBatch, v, 10, 10, Color.Blue);
-            //     }
-            // }
 
             //draw editor elements
             if (editor_active) {
@@ -4077,17 +4193,27 @@ namespace gate
                 //draw sound effects in editor
                 sound_manager.Draw(_spriteBatch);
             }
-            
-            //draw_lights_world_space(lights, collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
 
             _spriteBatch.End();
-            
-            /* LIGHTING PASS */
-            if (lights_enabled) {
-                //draw lights over top of the scene if lights are enabled
-                draw_lights(lights, chunked_collision_geometry, collision_entities, light_excluded_entities, _spriteBatch);
-            }
+            Constant.profiler.end("world_object_entities_draw");
+        }
 
+        public void draw_light_cast_entities(SpriteBatch _spriteBatch) {
+            Dictionary<Light, List<IEntity>> light_cast_entities = find_visible_light_cast_geometry(player.get_base_position());
+            _spriteBatch.Begin(SpriteSortMode.Deferred,
+                                BlendState.AlphaBlend,
+                                SamplerState.PointClamp, null, null, null,
+                                camera.Transform);
+            foreach (KeyValuePair<Light, List<IEntity>> kv in light_cast_entities) {
+                List<IEntity> light_cast_geometry = kv.Value;
+                foreach (IEntity e in light_cast_geometry) {
+                    e.Draw(_spriteBatch);
+                }
+            }
+            _spriteBatch.End();
+        }
+
+        public void draw_transitions_and_intro_text(SpriteBatch _spriteBatch) {
             //draw transition
             if (transition_active) {
                 _spriteBatch.Begin();
@@ -4101,7 +4227,6 @@ namespace gate
                 }
                 _spriteBatch.End();
             }
-            Constant.profiler.end("world_entities_draw");
 
             if (intro_text_playing) {
                 _spriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
@@ -4117,11 +4242,19 @@ namespace gate
                 //calculate and return index based on percentage of message length
                 int intro_tex_idx = (int)(percentage * (intro_text.Count - 1));
                 for (int i = 0; i <= intro_tex_idx; i++) {
-                    //_spriteBatch.DrawString(Constant.pxf_thin, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), Color.White * intro_text_opacity);
                     Renderer.DrawCustomString(_spriteBatch, Constant.pixel_font1, Constant.pixelfont_char_map, intro_text[i], Vector2.Zero + new Vector2(0, i * 50), 5f, Color.White * intro_text_opacity);
                 }
                 _spriteBatch.End();
             }
+        }
+
+
+        public void Draw(SpriteBatch _spriteBatch){
+            Constant.profiler.start("world_draw");
+            draw_floor_background_entities(_spriteBatch);
+            draw_object_entities(_spriteBatch);
+            draw_transitions_and_intro_text(_spriteBatch);
+            Constant.profiler.end("world_draw");
         }
 
         public void DrawTextOverlays(SpriteBatch _spriteBatch) {
@@ -4147,21 +4280,20 @@ namespace gate
             _spriteBatch.DrawString(Constant.pxf_font, $"${player.get_money()}", Constant.dash_charge_ui_screen_position + new Vector2(-64, 32*5), Color.White);
 
             //draw text overlays
-            _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, "camera_rotation: " + camera.Rotation, new Vector2(0, 17*2), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, "camera_zoom:" + camera.Zoom, new Vector2(0, 17*3), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, "editor:" + editor_active, new Vector2(0, 17*4), Color.Black);
-            //_spriteBatch.DrawString(Constant.arial_small, "selected_object:" + selected_object, new Vector2(0, 17*5), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"selected_object:{selected_object},obj_id:{obj_map[selected_object].get_id()}", new Vector2(0, 17*5), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}-{editor_tool_name_map[editor_tool_idx]}", new Vector2(0, 17*6), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.Black);
-            _spriteBatch.DrawString(Constant.arial_small, $"editor_tile_idx:{editor_tile_idx}", new Vector2(0, 17*9), Color.Black);
+            _spriteBatch.DrawString(Constant.arial_small, "fps:" + fps, new Vector2(0, 17), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, "camera_rotation: " + camera.Rotation, new Vector2(0, 17*2), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, "camera_zoom:" + camera.Zoom, new Vector2(0, 17*3), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, "editor:" + editor_active, new Vector2(0, 17*4), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"selected_object:{selected_object},obj_id:{obj_map[selected_object].get_id()}", new Vector2(0, 17*5), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_tool:{editor_tool_idx}-{editor_tool_name_map[editor_tool_idx]}", new Vector2(0, 17*6), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_layer:{editor_layer}", new Vector2(0, 17*7), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_selected_object_rotation:{editor_object_rotation}", new Vector2(0, 17*8), Color.White);
+            _spriteBatch.DrawString(Constant.arial_small, $"editor_tile_idx:{editor_tile_idx}", new Vector2(0, 17*9), Color.White);
             _spriteBatch.End();
             Constant.profiler.end("world_text_overlays_draw");
         }
 
-        public void draw_textbox(SpriteBatch spriteBatch) {
+        public void draw_textbox(SpriteBatch spriteBatch, float position_scale_factor) {
             //draw textboxes without camera matrix (screen positioning)
             //draw also without point filtering applied
             spriteBatch.Begin(blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
@@ -4173,194 +4305,112 @@ namespace gate
         }
         
         #region lights
-        //TODO: add exclusionary entities to lights
-        //lights should not affect the entity they are being cast by
-        //right now if we put a light on a lamppost it will factor in the lamp post into the algorithm to block that light
-        //need to add an exclusionary list so if an edge or endpoint of a segment is found in that list or as a part of an entity in that list, then it is ignored from the algorithm
-        //also need to add the option to pass in npcs and signs and other non collision objects to affect light and cast shadows
-        //they have hurtboxes so we should be able to leverage that geometry to cast shadows as well
-        public void draw_lights(List<Light> lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
-            //only render if we have lights
-            if (lights.Count > 0) {
-                //lights
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
-                spriteBatch.Draw(light_map_target, Vector2.Zero, Color.White);
-                spriteBatch.End();
+        public void draw_light_shadow_render_target(Dictionary<(int, int), List<Light>> chunked_lights, Dictionary<(int, int), List<IEntity>> chunked_geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
+            if (chunked_lights.Count == 0) return;
 
-                _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
-                _graphics.GraphicsDevice.Clear(Color.Black * 0.25f);
+            _graphics.GraphicsDevice.SetRenderTarget(light_map_target);
+            _graphics.GraphicsDevice.Clear(Color.Black);
 
-                spriteBatch.Begin(SpriteSortMode.Immediate, Constant.subtract_blend, SamplerState.PointClamp);
-                foreach (Light light in lights) {
-                    //calculate in range geometry for light
-                    int light_chunk_x = (int)Math.Floor(light.get_center_position().X / Constant.collision_map_chunk_size);
-                    int light_chunk_y = (int)Math.Floor(light.get_center_position().Y / Constant.collision_map_chunk_size);
-                    List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities((light_chunk_x, light_chunk_y), 2);
-                    light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
-                    //calculate geometry of this light
-                    List<(float, Vector2)> light_geometry = calculate_light_geometry(light, light.get_geometry_edges());
-                    Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
-                    //convert vector into screen space
-                    for (int i = 0; i < light_geometry.Count - 1; i++) {
-                        Vector2 ray1 = light_geometry[i].Item2;
-                        Vector2 ray2 = light_geometry[i+1].Item2;
-                        Vector2 ray1_vector_screen_space = Vector2.Transform(ray1, camera.Transform);
-                        Vector2 ray2_vector_screen_space = Vector2.Transform(ray2, camera.Transform);
-                        Renderer.DrawTri(
-                            spriteBatch,
-                            light_screen_space,
-                            ray1_vector_screen_space,
-                            ray2_vector_screen_space,
-                            light.get_color() * light.get_intensity(),
-                            1f
-                        );
-                    }
-                    //draw last triangle between first and last point (also screen space)
-                    Vector2 ray_first_screen_space = Vector2.Transform(light_geometry[0].Item2, camera.Transform);
-                    Vector2 ray_last_screen_space = Vector2.Transform(light_geometry[light_geometry.Count-1].Item2, camera.Transform);
-                    Renderer.DrawTri(
-                        spriteBatch,
-                        light_screen_space,
-                        ray_first_screen_space,
-                        ray_last_screen_space,
-                        light.get_color() * light.get_intensity(),
-                        1f
-                    );
-                }
-                spriteBatch.End();
+            //pull only nearby lights to draw
+            (int, int) chunk_indices = Constant.calculate_chunked_position_indices(player.get_base_position());
+            List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
 
-                // Set back to the default render target (screen)
-                _graphics.GraphicsDevice.SetRenderTarget(null);
-            }
-        }
-        
-        public void draw_lights_world_space(List<Light> lights, List<IEntity> geometry_shadow_casters, List<IEntity> collision_entity_shadow_casters, List<IEntity> light_excluded_entities, SpriteBatch spriteBatch) {
-            //loop over lights and calculate geometry per light with shadow casters
-            foreach (Light light in lights) {
-                //calculate in range geometry for light
-                light.calculate_in_range_geometry(geometry_shadow_casters, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
-                //calculate geometry of this light
-                List<(float, Vector2)> light_rays = calculate_light_geometry(light, light.get_geometry_edges());
-                //draw rays themselves
-                foreach ((float, Vector2) ray in light_rays) {
-                    Renderer.DrawALine(
-                        spriteBatch, 
-                        Constant.pixel,
-                        2f,
-                        Color.Red,
-                        1f,
-                        light.get_center_position(),
-                        ray.Item2
-                    );
-                }
-
-                //iterate through all rays and draw triangles between rays
-                for (int i = 0; i < light_rays.Count - 1; i++) {
-                    Vector2 ray1 = light_rays[i].Item2;
-                    Vector2 ray2 = light_rays[i+1].Item2;
-                    //fill triangles
-                    Renderer.DrawTri(
-                        spriteBatch, 
-                        light.get_center_position(),
-                        ray1,
-                        ray2,
-                        Color.White,
-                        0.1f
-                    );
-                }
-                //draw last triangle between first and last point
-                // Renderer.DrawTri(
-                //     spriteBatch,
-                //     light.get_center_position(),
-                //     light_rays[0].Item2,
-                //     light_rays[light_rays.Count-1].Item2,
-                //     Color.White,
-                //     0.1f
-                // );
-            }
-        }
-        
-        //function to calculate light map geometry
-        public List<(float, Vector2)> calculate_light_geometry(Light light, List<(Vector2, Vector2)> edges) {
-            List<(float, Vector2)> rays = new List<(float, Vector2)>();
-            HashSet<float> unique_angles = new HashSet<float>();
-
-            float max_distance = 250f;
-            float offset_angle = 0.01f;
-            // min rays to cast out for when there is not enough geometry in the scene, but we still have lights
-            int min_rays = 100;
+            List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
             
-            //loop over all the edges we are calculating light against
-            foreach ((Vector2, Vector2) edge in edges) {
-                Vector2 p1 = edge.Item1;
-                Vector2 p2 = edge.Item2;
-
-                float angle1 = (float)Math.Atan2(p1.Y - light.get_center_position().Y, p1.X - light.get_center_position().X);
-                float angle2 = (float)Math.Atan2(p2.Y - light.get_center_position().Y, p2.X - light.get_center_position().X);
+            //draw lights to screen
+            foreach (Light light in nearby_lights) {
+                //draw nearby lights
+                spriteBatch.Begin(blendState: BlendState.Additive);
+                Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
+                spriteBatch.Draw(Constant.light_tex, light_screen_space - new Vector2(300, 300), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+                spriteBatch.End();
                 
-                //add to unique angles
-                unique_angles.Add(angle1);
-                unique_angles.Add(angle1 + offset_angle);
-                unique_angles.Add(angle1 - offset_angle);
+                //calculate shadow geometry
+                (int, int) light_chunk_indices = Constant.calculate_chunked_position_indices(light.get_center_position());
+                List<IEntity> nearby_light_geometry = get_nearby_chunk_geometry_entities(light_chunk_indices, 2);
+                light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
+                List<(Vector2, Vector2, Vector2, Vector2)> shadow_geometry = calculate_shadow_geometry(light, light.get_geometry_edges());
 
-                unique_angles.Add(angle2);
-                unique_angles.Add(angle2 + offset_angle);
-                unique_angles.Add(angle2 - offset_angle);
-            }
-
-            if (unique_angles.Count < min_rays) {
-                int remaining_rays = min_rays - unique_angles.Count;
-                //evenly distribute remaining rays
-                float angle_increment = MathHelper.TwoPi / remaining_rays;
-
-                for (int i = 0; i < remaining_rays; i++) {
-                    float additional_angle = i * angle_increment;
-                    unique_angles.Add(additional_angle);
+                for (int i = 0; i < shadow_geometry.Count; i++) {
+                    (Vector2, Vector2, Vector2, Vector2) shadow_quad = shadow_geometry[i];
+                    //convert to screen space
+                    Vector2 p1 = Vector2.Transform(shadow_quad.Item1, camera.Transform);
+                    Vector2 p2 = Vector2.Transform(shadow_quad.Item2, camera.Transform);
+                    Vector2 p3 = Vector2.Transform(shadow_quad.Item3, camera.Transform);
+                    Vector2 p4 = Vector2.Transform(shadow_quad.Item4, camera.Transform);
+                    //add to vertex list by creating two triangles
+                    //tri1
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p1, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p2, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Transparent));
+                    //tri2
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p1, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Transparent));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p4, 0), Color.Transparent));
                 }
             }
-            
-            List<float> sorted_angles = unique_angles.OrderBy(a => a).ToList(); //sort clockwise order
-            
-            //ensure there are no large gaps between consecutive angles
-            //this works to keep the light circular as we exit places with higher entity density to cast light off of
-            //otherwise the light ends up looking fairly polygonal which kind of destroys the effect
-            for (int i = 0; i < sorted_angles.Count - 1; i++) {
-                float angle1 = sorted_angles[i];
-                float angle2 = sorted_angles[i+1];
 
-                if (angle2 - angle1 > (MathHelper.TwoPi / min_rays)) {
-                    float new_angle = (angle1 + angle2) / 2;
-                    //add if we don't already have an angle for this value
-                    if (!unique_angles.Contains(new_angle)) {
-                        unique_angles.Add(new_angle);
-                    }
-                }
+            if (vertex_list.Count == 0) return;
+
+            //create and set vertex buffer
+            if (vertexBuffer == null || vertexBuffer.VertexCount < vertex_list.Count) {
+                vertexBuffer?.Dispose(); //dispose the old buffer if it exists
+                vertexBuffer = new VertexBuffer(_graphics.GraphicsDevice, typeof(VertexPositionColor), vertex_list.Count, BufferUsage.WriteOnly);
+            }
+            vertexBuffer.SetData(vertex_list.ToArray());
+            _graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
+
+            //set up the BasicEffect
+            basicEffect.World = Matrix.Identity;
+            basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), Vector3.Up);
+            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, 0, 0.1f, 100f);
+
+            _graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) {
+                pass.Apply();
+                _graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, vertex_list.Count / 3);
             }
             
-            sorted_angles = unique_angles.OrderBy(a => a).ToList();
-            //cast rays at each unique angle
-            foreach (float angle in sorted_angles) {
-                Vector2 ray_direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                Vector2 closest_intersection = light.get_center_position() + ray_direction * max_distance;
-                float closest_distance = max_distance;
-
-                //check for intersection with each edge
-                foreach ((Vector2, Vector2) edge in edges) {
-                    Vector2 intersection;
-                    if (RRect.ray_intersects_edge(light.get_center_position(), ray_direction, edge.Item1, edge.Item2, out intersection)) {
-                        float distance = Vector2.Distance(light.get_center_position(), intersection);
-                        if (distance < closest_distance) {
-                            closest_distance = distance;
-                            closest_intersection = intersection;
-                        }
-                    }
-                }
-
-                rays.Add((angle, closest_intersection));
-            }
+            _graphics.GraphicsDevice.SetRenderTarget(null);
+        }
+        
+        //list of shadow quads
+        //list of (p1,p2,p3,p4)
+        public List<(Vector2, Vector2, Vector2, Vector2)> calculate_shadow_geometry(Light light, List<(Vector2, Vector2)> edges) {
+            List<(Vector2, Vector2, Vector2, Vector2)> shadow_quads = new List<(Vector2, Vector2, Vector2, Vector2)>();
             
-            //return the rays (they are in clockwise order at this point)
-            return rays;
+            //edges are ordered start-end in clockwise order
+            //should only need to extrude edges where the dot product of the normal of the edge with the vector from the light to the edge is negative
+
+            //iterate over all edges given
+            foreach ((Vector2 start, Vector2 end) in edges) {
+                //calculate edge direction
+                Vector2 edge_direction = end - start;
+                //calculate edge normal
+                Vector2 edge_normal = new Vector2(-edge_direction.Y, edge_direction.X);
+                edge_normal.Normalize();
+                //calculate light to edge direction
+                Vector2 to_edge = ((start + end) / 2) - light.get_center_position();
+                
+                //if the edge normal is facing away from the light, calculate the quad
+                if (Vector2.Dot(edge_normal, to_edge) > 0) {
+                    //normalized directions of light to start and end of edges
+                    Vector2 shadow_direction_start = start - light.get_center_position();
+                    shadow_direction_start.Normalize();
+                    Vector2 shadow_direction_end = end - light.get_center_position();
+                    shadow_direction_end.Normalize();
+                    float start_distance = light.get_radius() - Vector2.Distance(light.get_center_position(), start);
+                    float end_distance = light.get_radius() - Vector2.Distance(light.get_center_position(), end);
+                    //calculate the distance from the light to each of the points and then subtract radius to find by how much the point should be extruded by
+                    //extrude points using shadow directions
+                    Vector2 extruded_start = start + shadow_direction_start * start_distance;
+                    Vector2 extruded_end = end + shadow_direction_end * end_distance;
+
+                    shadow_quads.Add((start, end, extruded_end, extruded_start));
+                }
+            }
+
+            return shadow_quads;
         }
         #endregion
         #endregion

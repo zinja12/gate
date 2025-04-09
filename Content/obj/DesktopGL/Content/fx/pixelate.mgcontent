@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fx/pixelate.fx</SourceFile>
-  <SourceTime>2024-08-23T15:41:32.0389648-04:00</SourceTime>
-  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/Content/fx/pixelate.xnb</DestFile>
-  <DestTime>2025-03-21T17:58:47.9234768-04:00</DestTime>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/fx/pixelate.fx</SourceFile>
+  <SourceTime>2024-10-15T17:32:09.3987299-04:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fx/pixelate.xnb</DestFile>
+  <DestTime>2025-03-30T17:28:24.4413006-04:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>EffectProcessor</Processor>

@@ -31,6 +31,8 @@ namespace gate.Core
         //screen width and height
         public static float window_width = 1280f;
         public static float window_height = 720f;
+        public static int internal_resolution_width = 640;
+        public static int internal_resolution_height = 360;
 
         //textures, colors and fonts
         public static Texture2D tile_tex;
@@ -118,6 +120,8 @@ namespace gate.Core
         public static Effect scanline_effect;
         public static Effect scanline2_effect;
         public static Effect white_transparent_effect;
+        public static Effect light_effect2;
+        public static Effect c_light_effect;
         
         //subtract blend state for lights
         public static BlendState subtract_blend = new BlendState() {
@@ -164,7 +168,7 @@ namespace gate.Core
         //position of textboxes on the screen
         //NOTE: this Vector changes based on the size of the window
         public static Vector2 textbox_screen_position = new Vector2(10, window_height - (window_height/3));
-        public static float textbox_width = 500, textbox_height = 150;
+        public static float textbox_width = 250, textbox_height = 50;
 
         /*UI CONSTANTS CONFIG*/
         public static int dash_charge_ui_size = 30;
@@ -642,6 +646,25 @@ namespace gate.Core
             return Vector2.Transform(position, camera.Transform);
         }
 
+        //world to screen position THROUGH native resolution
+        public static Vector2 native_resolution_world_to_screen_position(Vector2 position, GraphicsDevice graphics_device, Camera camera) {
+            //transform to view space (screen) through camera transform
+            Vector2 screen_position = Vector2.Transform(position, camera.Transform);
+            //convert to native resolution (base resolution)
+            float position_scale = get_res_scale(graphics_device);
+            Vector2 screen_offset_position = new Vector2(
+                (graphics_device.Viewport.Width - (Constant.internal_resolution_width * position_scale)) / 2,
+                (graphics_device.Viewport.Height - (Constant.internal_resolution_height * position_scale)) / 2);
+            //return new position
+            return screen_offset_position + (screen_position * position_scale);
+        }
+
+        public static float get_res_scale(GraphicsDevice graphics_device) {
+            float scale_x = (float)graphics_device.Viewport.Width / internal_resolution_width; 
+            float scale_y = (float)graphics_device.Viewport.Height / internal_resolution_height;
+            return Math.Min(scale_x, scale_y); // maintain aspect ratio
+        }
+
         public static void update_ui_positions_on_screen_size_change() {
             dash_charge_ui_screen_position = new Vector2(window_width - (dash_charge_ui_size*2) - 10f, 10f);
             textbox_screen_position = new Vector2(10, window_height - (window_height/3));
@@ -788,6 +811,12 @@ namespace gate.Core
 
         public static Vector2 add_random_noise(Vector2 position, float noise_angle, float noise_radius) {
             return position + new Vector2((float)(Math.Sin(noise_angle) * noise_radius), (float)(Math.Cos(noise_angle) * noise_radius));
+        }
+
+        public static (int, int) calculate_chunked_position_indices(Vector2 position) {
+            int chunk_x = (int)Math.Floor(position.X / collision_map_chunk_size);
+            int chunk_y = (int)Math.Floor(position.Y / collision_map_chunk_size);
+            return (chunk_x, chunk_y);
         }
     }
 }

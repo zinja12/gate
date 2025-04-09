@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/fx/c_light_shader.fx</SourceFile>
+  <SourceTime>2020-08-10T12:17:28-04:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/fx/c_light_shader.xnb</DestFile>
+  <DestTime>2025-04-07T21:42:54.5212886-04:00</DestTime>
+  <Importer>EffectImporter</Importer>
+  <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
+  <Processor>EffectProcessor</Processor>
+  <ProcessorTime>2020-08-10T12:17:54-04:00</ProcessorTime>
+  <Parameters>
+    <Key>DebugMode</Key>
+    <Value>Auto</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

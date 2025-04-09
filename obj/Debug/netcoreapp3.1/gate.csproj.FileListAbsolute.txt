@@ -339,3 +339,8 @@ C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_attacks_spritesheet6.xnb
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\test_player_spritesheet7.xnb
 C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\torii_gate_43.xnb
+C:\Users\x3zin\Documents\monogame_projects\gate\bin\Debug\netcoreapp3.1\Content\fx\light_shader.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\levels\dd1.json
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\fx\light_shader2.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\fx\c_light_shader.xnb
+C:\Users\Shaan\Documents\test_projects\gate\bin\Debug\netcoreapp3.1\Content\sprites\light_tex2.xnb

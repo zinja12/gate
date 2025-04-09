@@ -1319,7 +1319,7 @@
             "light_excluded": false
         },
         {
-            "object_identifier": "marker",
+            "object_identifier": "lamp",
             "object_id_num": 73,
             "x_position": 79.431274,
             "y_position": -10.502945,
@@ -1333,7 +1333,11 @@
             "goal_rotation": 0,
             "npc_path_entity_ids": null,
             "npc_conversation_file_id": null,
-            "light": null,
+            "light": {
+                "light_center_x": 79.431274,
+                "light_center_y": -10.502945,
+                "radius": 250
+            },
             "light_excluded": false
         },
         {
