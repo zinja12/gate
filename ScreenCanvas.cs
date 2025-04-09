@@ -93,7 +93,6 @@ namespace gate
             spriteBatch.Draw(world_render_target, Vector2.Zero, Color.White);
             spriteBatch.End();
             Constant.c_light_effect.Parameters["SceneTexture"].SetValue(world_render_target);
-            //Constant.c_light_effect.Parameters["LightTexture"].SetValue(world.light_map_target);
             //draw lights render target
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.c_light_effect);
             if (world.lights_enabled) {
@@ -101,7 +100,6 @@ namespace gate
             }
             spriteBatch.End();
             world.draw_object_entities(spriteBatch);
-            //world.draw_light_cast_entities(spriteBatch);
             //draw world objects on top
             
             world.draw_transitions_and_intro_text(spriteBatch);
