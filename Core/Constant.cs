@@ -122,16 +122,6 @@ namespace gate.Core
         public static Effect white_transparent_effect;
         public static Effect light_effect2;
         public static Effect c_light_effect;
-        
-        //subtract blend state for lights
-        public static BlendState subtract_blend = new BlendState() {
-            ColorSourceBlend = Blend.One, // Use full source color
-            ColorDestinationBlend = Blend.One, // Use full destination color
-            ColorBlendFunction = BlendFunction.ReverseSubtract, // Subtract source from destination
-            AlphaSourceBlend = Blend.One,
-            AlphaDestinationBlend = Blend.One,
-            AlphaBlendFunction = BlendFunction.ReverseSubtract // Subtract source alpha from destination alpha
-        };
 
         /*Particle parameters*/
         public static List<Color> green_particles = new List<Color>() {Color.White, Color.Green, Color.Black};

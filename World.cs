@@ -676,7 +676,7 @@ namespace gate
                             Lamppost l = new Lamppost(obj_position, w_obj.scale, w_obj.object_id_num);
                             //check if object has light assigned
                             if (w_obj.light != null) {
-                                Light light = new Light(l.get_base_position(), 250f, 0.45f, Color.White, l);
+                                Light light = new Light(l.get_base_position(), 250f, 0.45f, new Color(w_obj.light.color_r, w_obj.light.color_g, w_obj.light.color_b), l);
                                 add_chunked_light(light);
                                 if (w_obj.light_excluded) {
                                     light_excluded_entities.Add(l);
@@ -2639,7 +2639,10 @@ namespace gate
                         gwo.light = new GameWorldLight {
                             light_center_x = light.get_center_position().X,
                             light_center_y = light.get_center_position().Y,
-                            radius = light.get_radius()
+                            radius = light.get_radius(),
+                            color_r = light.get_color().R,
+                            color_g = light.get_color().G,
+                            color_b = light.get_color().B
                         };
                     }
                 }
@@ -4322,7 +4325,7 @@ namespace gate
                 //draw nearby lights
                 spriteBatch.Begin(blendState: BlendState.Additive);
                 Vector2 light_screen_space = Vector2.Transform(light.get_center_position(), camera.Transform);
-                spriteBatch.Draw(Constant.light_tex, light_screen_space - new Vector2(300, 300), null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(Constant.light_tex, light_screen_space - new Vector2(300, 300), null, light.get_color(), 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
                 spriteBatch.End();
                 
                 //calculate shadow geometry

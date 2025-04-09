@@ -13,5 +13,8 @@ namespace gate.Serialize
         public float light_center_x { get; set; }
         public float light_center_y { get; set; }
         public float radius { get; set; }
+        public int color_r { get; set; }
+        public int color_g { get; set; }
+        public int color_b { get; set; }
     }
 }

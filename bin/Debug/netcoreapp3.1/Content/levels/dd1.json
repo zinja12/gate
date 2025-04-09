@@ -7,8 +7,8 @@
         {
             "object_identifier": "player_chip",
             "object_id_num": 0,
-            "x_position": 901.16818,
-            "y_position": 553.60237,
+            "x_position": 901.16815,
+            "y_position": 553.60236,
             "scale": 1,
             "sign_messages": null,
             "canopy": false,
@@ -1334,9 +1334,12 @@
             "npc_path_entity_ids": null,
             "npc_conversation_file_id": null,
             "light": {
-                "light_center_x": 79.431274,
-                "light_center_y": -10.502945,
-                "radius": 250
+                "light_center_x": 63.431274,
+                "light_center_y": -26.502945,
+                "radius": 250,
+                "color_r": 255,
+                "color_g": 232,
+                "color_b": 139
             },
             "light_excluded": false
         },
@@ -6505,6 +6508,56 @@
             "npc_conversation_file_id": null,
             "light": null,
             "light_excluded": false
+        },
+        {
+            "object_identifier": "lamp",
+            "object_id_num": 361,
+            "x_position": 385.27185,
+            "y_position": 27.15895,
+            "scale": 1,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "npc_path_entity_ids": null,
+            "npc_conversation_file_id": null,
+            "light": {
+                "light_center_x": 369.27185,
+                "light_center_y": 11.158951,
+                "radius": 250,
+                "color_r": 255,
+                "color_g": 0,
+                "color_b": 0
+            },
+            "light_excluded": true
+        },
+        {
+            "object_identifier": "lamp",
+            "object_id_num": 362,
+            "x_position": 0.08669281,
+            "y_position": 152.34413,
+            "scale": 1,
+            "sign_messages": null,
+            "canopy": false,
+            "width": 0,
+            "height": 0,
+            "level_id": null,
+            "rotation": 0,
+            "goal_rotation": 0,
+            "npc_path_entity_ids": null,
+            "npc_conversation_file_id": null,
+            "light": {
+                "light_center_x": -15.913307,
+                "light_center_y": 136.34413,
+                "radius": 250,
+                "color_r": 0,
+                "color_g": 0,
+                "color_b": 255
+            },
+            "light_excluded": true
         }
     ],
     "world_triggers": [],
