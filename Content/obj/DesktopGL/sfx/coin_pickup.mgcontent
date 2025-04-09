@@ -3,7 +3,7 @@
   <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/coin_pickup.ogg</SourceFile>
   <SourceTime>2024-12-06T17:27:47.1268112-05:00</SourceTime>
   <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sfx/coin_pickup.xnb</DestFile>
-  <DestTime>2025-03-31T21:57:56.4769344-04:00</DestTime>
+  <DestTime>2025-04-09T14:17:23.5691434-04:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>

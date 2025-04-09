@@ -120,8 +120,8 @@ namespace gate.Core
         public static Effect scanline_effect;
         public static Effect scanline2_effect;
         public static Effect white_transparent_effect;
-        public static Effect light_mask_effect;
         public static Effect light_effect2;
+        public static Effect c_light_effect;
         
         //subtract blend state for lights
         public static BlendState subtract_blend = new BlendState() {

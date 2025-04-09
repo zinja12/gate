@@ -416,9 +416,9 @@ namespace gate
             Constant.color_palette_effect.Parameters["PaletteSize"].SetValue(Constant.palette_colors3.Length);
             Constant.scanline2_effect = Content.Load<Effect>("fx/scanline2");
             Constant.scanline2_effect.Parameters["screen_height"].SetValue(Constant.window_height);
-            Constant.light_mask_effect = Content.Load<Effect>("fx/light_shader");
             Constant.light_effect2 = Content.Load<Effect>("fx/light_shader2");
             Constant.light_effect2.Parameters["LightTexture"].SetValue(light_map_target);
+            Constant.c_light_effect = Content.Load<Effect>("fx/c_light_shader");
             //load content not specific to an object
             Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
             Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");
@@ -4314,6 +4314,8 @@ namespace gate
             //pull only nearby lights to draw
             (int, int) chunk_indices = Constant.calculate_chunked_position_indices(player.get_base_position());
             List<Light> nearby_lights = get_nearby_chunk_lights(chunk_indices, 3);
+
+            List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
             
             //draw lights to screen
             foreach (Light light in nearby_lights) {
@@ -4329,8 +4331,6 @@ namespace gate
                 light.calculate_in_range_geometry(nearby_light_geometry, collision_entity_shadow_casters, light_excluded_entities, player.get_base_position(), render_distance);
                 List<(Vector2, Vector2, Vector2, Vector2)> shadow_geometry = calculate_shadow_geometry(light, light.get_geometry_edges());
 
-                List<VertexPositionColor> vertex_list = new List<VertexPositionColor>();
-
                 for (int i = 0; i < shadow_geometry.Count; i++) {
                     (Vector2, Vector2, Vector2, Vector2) shadow_quad = shadow_geometry[i];
                     //convert to screen space
@@ -4342,33 +4342,33 @@ namespace gate
                     //tri1
                     vertex_list.Add(new VertexPositionColor(new Vector3(p1, 0), Color.Black));
                     vertex_list.Add(new VertexPositionColor(new Vector3(p2, 0), Color.Black));
-                    vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Transparent));
                     //tri2
                     vertex_list.Add(new VertexPositionColor(new Vector3(p1, 0), Color.Black));
-                    vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Black));
-                    vertex_list.Add(new VertexPositionColor(new Vector3(p4, 0), Color.Black));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p3, 0), Color.Transparent));
+                    vertex_list.Add(new VertexPositionColor(new Vector3(p4, 0), Color.Transparent));
                 }
+            }
 
-                if (vertex_list.Count == 0) return;
+            if (vertex_list.Count == 0) return;
 
-                //create and set vertex buffer
-                if (vertexBuffer == null || vertexBuffer.VertexCount < vertex_list.Count) {
-                    vertexBuffer?.Dispose(); //dispose the old buffer if it exists
-                    vertexBuffer = new VertexBuffer(_graphics.GraphicsDevice, typeof(VertexPositionColor), vertex_list.Count, BufferUsage.WriteOnly);
-                }
-                vertexBuffer.SetData(vertex_list.ToArray());
-                _graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
+            //create and set vertex buffer
+            if (vertexBuffer == null || vertexBuffer.VertexCount < vertex_list.Count) {
+                vertexBuffer?.Dispose(); //dispose the old buffer if it exists
+                vertexBuffer = new VertexBuffer(_graphics.GraphicsDevice, typeof(VertexPositionColor), vertex_list.Count, BufferUsage.WriteOnly);
+            }
+            vertexBuffer.SetData(vertex_list.ToArray());
+            _graphics.GraphicsDevice.SetVertexBuffer(vertexBuffer);
 
-                //set up the BasicEffect
-                basicEffect.World = Matrix.Identity;
-                basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), Vector3.Up);
-                basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, 0, 0.1f, 100f);
+            //set up the BasicEffect
+            basicEffect.World = Matrix.Identity;
+            basicEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), Vector3.Up);
+            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, _graphics.GraphicsDevice.Viewport.Width, _graphics.GraphicsDevice.Viewport.Height, 0, 0.1f, 100f);
 
-                _graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-                foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) {
-                    pass.Apply();
-                    _graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, vertex_list.Count / 3);
-                }
+            _graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) {
+                pass.Apply();
+                _graphics.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, vertex_list.Count / 3);
             }
             
             _graphics.GraphicsDevice.SetRenderTarget(null);

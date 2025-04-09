@@ -92,8 +92,10 @@ namespace gate
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp);
             spriteBatch.Draw(world_render_target, Vector2.Zero, Color.White);
             spriteBatch.End();
+            Constant.c_light_effect.Parameters["SceneTexture"].SetValue(world_render_target);
+            //Constant.c_light_effect.Parameters["LightTexture"].SetValue(world.light_map_target);
             //draw lights render target
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.light_mask_effect);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: Constant.c_light_effect);
             if (world.lights_enabled) {
                 spriteBatch.Draw(world.light_map_target, Vector2.Zero, Color.White * 0.3f);
             }
