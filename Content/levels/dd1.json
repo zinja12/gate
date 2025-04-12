@@ -1337,9 +1337,9 @@
                 "light_center_x": 63.431274,
                 "light_center_y": -26.502945,
                 "radius": 250,
-                "color_r": 255,
-                "color_g": 232,
-                "color_b": 139
+                "color_r": 238,
+                "color_g": 205,
+                "color_b": 86
             },
             "light_excluded": false
         },
@@ -6528,9 +6528,9 @@
                 "light_center_x": 369.27185,
                 "light_center_y": 11.158951,
                 "radius": 250,
-                "color_r": 255,
-                "color_g": 0,
-                "color_b": 0
+                "color_r": 160,
+                "color_g": 44,
+                "color_b": 66
             },
             "light_excluded": true
         },
@@ -6553,9 +6553,9 @@
                 "light_center_x": -15.913307,
                 "light_center_y": 136.34413,
                 "radius": 250,
-                "color_r": 0,
-                "color_g": 0,
-                "color_b": 255
+                "color_r": 76,
+                "color_g": 117,
+                "color_b": 194
             },
             "light_excluded": true
         }

@@ -544,9 +544,9 @@ namespace gate
                             check_and_load_tex(ref Constant.sword_icon, "sprites/sword_icon");
                             check_and_load_tex(ref Constant.bow_icon, "sprites/bow_icon");
                             //load textures for player
-                            check_and_load_tex(ref Constant.player_tex, "sprites/test_player_spritesheet7");
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_penguin_duck_player_spritesheet9");
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
-                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet6");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
                             check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
@@ -1050,9 +1050,9 @@ namespace gate
                 foreach (string i in unloaded_objects) {
                     switch (i) {
                         case "player":
-                            check_and_load_tex(ref Constant.player_tex, "sprites/test_player_spritesheet7");
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_penguin_duck_player_spritesheet9");
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
-                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet6");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
                             check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
@@ -1164,9 +1164,9 @@ namespace gate
                             //load player chip
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
                             //load player assets because they will be needed later
-                            check_and_load_tex(ref Constant.player_tex, "sprites/test_player_spritesheet7");
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_penguin_duck_player_spritesheet9");
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
-                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet6");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
                             check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");

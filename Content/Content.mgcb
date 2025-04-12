@@ -967,7 +967,7 @@
 /processorParam:TextureFormat=Color
 /build:sprites/test_nightmare_spritesheet2.png
 
-#begin sprites/test_player_attacks_spritesheet6.png
+#begin sprites/test_penguin_duck_player_spritesheet9.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -977,7 +977,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/test_player_attacks_spritesheet6.png
+/build:sprites/test_penguin_duck_player_spritesheet9.png
+
+#begin sprites/test_player_attacks_spritesheet8_penguin_duck.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/test_player_attacks_spritesheet8_penguin_duck.png
 
 #begin sprites/test_player_bow_aim_spritesheet1.png
 /importer:TextureImporter
@@ -1026,18 +1038,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/test_player_heavy_attack_spritesheet1.png
-
-#begin sprites/test_player_spritesheet7.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/test_player_spritesheet7.png
 
 #begin sprites/tile_tan1.png
 /importer:TextureImporter
