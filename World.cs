@@ -548,8 +548,8 @@ namespace gate
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
                             check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
-                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
-                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/penguin_duck_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/penguin_duck_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
                             check_and_load_tex(ref Constant.grenade_tex, "sprites/tnt1");
@@ -1054,8 +1054,8 @@ namespace gate
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
                             check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
-                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
-                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/penguin_duck_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/penguin_duck_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.dash_icon, "sprites/dash_icon");
                             check_and_load_tex(ref Constant.sword_icon, "sprites/sword_icon");
@@ -1168,8 +1168,8 @@ namespace gate
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
                             check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
-                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/test_player_charging_spritesheet1");
-                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/test_player_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/penguin_duck_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/penguin_duck_bow_aim_spritesheet1");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             break;
                         case "bow":

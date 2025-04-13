@@ -655,6 +655,30 @@
 /processorParam:TextureFormat=Color
 /build:sprites/orange_tree4_6_26.png
 
+#begin sprites/penguin_duck_bow_aim_spritesheet1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/penguin_duck_bow_aim_spritesheet1.png
+
+#begin sprites/penguin_duck_charging_spritesheet1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/penguin_duck_charging_spritesheet1.png
+
 #begin sprites/player_chip.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -990,18 +1014,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/test_player_attacks_spritesheet8_penguin_duck.png
-
-#begin sprites/test_player_bow_aim_spritesheet1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/test_player_bow_aim_spritesheet1.png
 
 #begin sprites/test_player_charging_spritesheet1.png
 /importer:TextureImporter

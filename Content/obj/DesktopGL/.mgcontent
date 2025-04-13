@@ -60,6 +60,8 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/light_tex1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/marker_spritesheet5.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/orange_tree4_6_26.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/penguin_duck_bow_aim_spritesheet1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/penguin_duck_charging_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/player_chip.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/read_interact.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock1.png</File>
@@ -88,7 +90,6 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_nightmare_spritesheet2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_penguin_duck_player_spritesheet9.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_attacks_spritesheet8_penguin_duck.png</File>
-    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_bow_aim_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_charging_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_dash_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_heavy_attack_spritesheet1.png</File>
@@ -110,6 +111,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
