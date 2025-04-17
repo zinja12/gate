@@ -431,6 +431,7 @@ namespace gate
             Constant.read_interact_tex = Content.Load<Texture2D>("sprites/read_interact");
             Constant.crystal_tex = Content.Load<Texture2D>("sprites/crystal2");
             Constant.light_tex = Content.Load<Texture2D>("sprites/light_tex1");
+            Constant.diamond_expand_tex = Content.Load<Texture2D>("sprites/expand1");
             //load fonts
             Constant.arial = Content.Load<SpriteFont>("fonts/arial");
             Constant.arial_small = Content.Load<SpriteFont>("fonts/arial_small");
@@ -875,9 +876,10 @@ namespace gate
                             collision_entities.Add(bow);
                             break;
                         case "haunter":
-                            check_and_load_tex(ref Constant.haunter_tex, "sprites/haunter1");
+                            check_and_load_tex(ref Constant.haunter_tex, "sprites/specter_walk");
+                            check_and_load_tex(ref Constant.haunter_charge_tex, "sprites/specter_charging");
+                            check_and_load_tex(ref Constant.haunter_charge_hold_tex, "sprites/specter_charging2");
                             check_and_load_tex(ref Constant.hex1_tex, "sprites/hex1");
-                            check_and_load_tex(ref Constant.haunter_attack_tex, "sprites/haunter_attack1");
                             Haunter haunter = new Haunter(Constant.haunter_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier, this);
                             entities_list.Add(haunter);
                             collision_entities.Add(haunter);
@@ -1176,9 +1178,10 @@ namespace gate
                             check_and_load_tex(ref Constant.bow_pickup_tex, "sprites/bow_pickup");
                             break;
                         case "haunter":
-                            check_and_load_tex(ref Constant.haunter_tex, "sprites/haunter1");
+                            check_and_load_tex(ref Constant.haunter_tex, "sprites/specter_walk");
+                            check_and_load_tex(ref Constant.haunter_charge_tex, "sprites/specter_charging");
+                            check_and_load_tex(ref Constant.haunter_charge_hold_tex, "sprites/specter_charging2");
                             check_and_load_tex(ref Constant.hex1_tex, "sprites/hex1");
-                            check_and_load_tex(ref Constant.haunter_attack_tex, "sprites/haunter_attack1");
                             break;
                         case "checkpoint":
                             check_and_load_tex(ref Constant.checkpoint_marker_spritesheet, "sprites/checkpoint_spritesheet1_15");
