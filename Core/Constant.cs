@@ -85,7 +85,8 @@ namespace gate.Core
         public static Texture2D player_chip_tex;
         public static Texture2D bow_pickup_tex;
         public static Texture2D haunter_tex;
-        public static Texture2D haunter_attack_tex;
+        public static Texture2D haunter_charge_tex;
+        public static Texture2D haunter_charge_hold_tex;
         public static Texture2D hex1_tex;
         public static Texture2D grenade_tex;
         public static Texture2D crystal_tex;
@@ -101,6 +102,7 @@ namespace gate.Core
         public static Texture2D green_wall_tex;
         public static Texture2D torii_spritesheet;
         public static Texture2D light_tex;
+        public static Texture2D diamond_expand_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
 
