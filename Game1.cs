@@ -92,7 +92,7 @@ namespace gate
                 Exit();
                 //environment exit to avoid openAL hanging and preventing the application from properly closing all the way
                 //this does throw a warning or a console out message saying "AL lib: (EE) alc_cleanup: 1 device not closed", but the application does successfully exit so it's probably fine
-                Environment.Exit(0);
+                //Environment.Exit(0);
             }
 
             //world update

@@ -19,7 +19,7 @@ namespace gate
         private Color back_buffer_color;
 
         private List<Effect> postprocessing_effects;
-        private RenderTarget2D render_target1;
+        private RenderTarget2D render_target1, intermediate_target1, second_render_target;
 
         private World world;
 
@@ -32,6 +32,8 @@ namespace gate
 
             this.world_render_target = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
             this.render_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
+            this.intermediate_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
+            this.second_render_target = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
 
             this.postprocessing_effects = new List<Effect>();
         }
@@ -67,6 +69,8 @@ namespace gate
 
             this.world_render_target = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
             this.render_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
+            this.intermediate_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
+            this.second_render_target = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
@@ -85,7 +89,7 @@ namespace gate
             //generate and pull light target from world
             world.draw_lights_to_render_target(spriteBatch);
 
-            RenderTarget2D intermediate_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
+            intermediate_target1 = new RenderTarget2D(this.graphics_device, this.base_width+1, this.base_height+1);
             graphics_device.SetRenderTarget(intermediate_target1);
             graphics_device.Clear(Color.Transparent);
             //draw floor render target
@@ -110,7 +114,6 @@ namespace gate
             //PING PONG RENDER TARGET BUFFERS TO APPLY SHADERS
             //**************************************************************************
             RenderTarget2D first_render_target = intermediate_target1;
-            RenderTarget2D second_render_target = new RenderTarget2D(this.graphics_device, this.base_width, this.base_height); ;
 
             foreach(Effect e in postprocessing_effects) {
                 graphics_device.SetRenderTarget(second_render_target);
