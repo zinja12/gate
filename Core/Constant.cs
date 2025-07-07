@@ -103,6 +103,15 @@ namespace gate.Core
         public static Texture2D torii_spritesheet;
         public static Texture2D light_tex;
         public static Texture2D diamond_expand_tex;
+        public static Texture2D large_rock_tex;
+        public static Texture2D small_rock_tex;
+        public static Texture2D barrel_tex;
+        public static Texture2D monstera_tex;
+        public static Texture2D monstera_short_tex;
+        public static Texture2D dark_grass_tile;
+        public static Texture2D mid_grass_tile;
+        public static Texture2D light_grass_tile;
+        public static Texture2D checker_wall_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
 
@@ -339,49 +348,59 @@ namespace gate.Core
         };
 
         /*EDITOR*/
+        public static List<string> identifiers = new List<string> {
+            "player",
+            "tree",
+            "grass",
+            "sign",
+            "ghastly",
+            "marker",
+            "lamp",
+            "big_tile",
+            "cracked_tile",
+            "reg_tile",
+            "round_tile",
+            "nightmare",
+            "wall",
+            "fence",
+            "tan_tile",
+            "grass_tile",
+            "orange_tree",
+            "yellow_tree",
+            "green_tree",
+            "flower",
+            "grass2",
+            "trail_tile",
+            "sand_tile",
+            "sword",
+            "box",
+            "house",
+            "scarecrow",
+            "ghost",
+            "hitswitch",
+            "dash_cloak",
+            "cracked_rocks",
+            "player_chip",
+            "bow",
+            "haunter",
+            "checkpoint",
+            "skeleton",
+            "shadowknight",
+            "gate",
+            "stone_tile",
+            "green_wall",
+            "torii",
+            "large_rock",
+            "small_rock",
+            "barrel",
+            "monstera",
+            "dark_grass_tile",
+            "mid_grass_tile",
+            "light_grass_tile",
+            "checker_wall"
+        };
+
         public static List<string> get_object_identifiers() {
-            List<string> identifiers = new List<string>();
-            identifiers.Add("player");
-            identifiers.Add("tree");
-            identifiers.Add("grass");
-            identifiers.Add("sign");
-            identifiers.Add("ghastly");
-            identifiers.Add("marker");
-            identifiers.Add("lamp");
-            identifiers.Add("big_tile");
-            identifiers.Add("cracked_tile");
-            identifiers.Add("reg_tile");
-            identifiers.Add("round_tile");
-            identifiers.Add("nightmare");
-            identifiers.Add("wall");
-            identifiers.Add("fence");
-            identifiers.Add("tan_tile");
-            identifiers.Add("grass_tile");
-            identifiers.Add("orange_tree");
-            identifiers.Add("yellow_tree");
-            identifiers.Add("green_tree");
-            identifiers.Add("flower");
-            identifiers.Add("grass2");
-            identifiers.Add("trail_tile");
-            identifiers.Add("sand_tile");
-            identifiers.Add("sword");
-            identifiers.Add("box");
-            identifiers.Add("house");
-            identifiers.Add("scarecrow");
-            identifiers.Add("ghost");
-            identifiers.Add("hitswitch");
-            identifiers.Add("dash_cloak");
-            identifiers.Add("cracked_rocks");
-            identifiers.Add("player_chip");
-            identifiers.Add("bow");
-            identifiers.Add("haunter");
-            identifiers.Add("checkpoint");
-            identifiers.Add("skeleton");
-            identifiers.Add("shadowknight");
-            identifiers.Add("gate");
-            identifiers.Add("stone_tile");
-            identifiers.Add("green_wall");
-            identifiers.Add("torii");
             return identifiers;
         }
 

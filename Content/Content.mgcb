@@ -181,6 +181,9 @@
 #begin levels/demo1_v2_ids.json
 /copy:levels/demo1_v2_ids.json
 
+#begin levels/fl1.json
+/copy:levels/fl1.json
+
 #begin levels/level_saves_test.json
 /copy:levels/level_saves_test.json
 
@@ -283,6 +286,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/attack_sprites2.png
 
+#begin sprites/barrel1_26.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/barrel1_26.png
+
 #begin sprites/bow_icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -331,6 +346,30 @@
 /processorParam:TextureFormat=Color
 /build:sprites/box1_2_18.png
 
+#begin sprites/checkered_box_8.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/checkered_box_8.png
+
+#begin sprites/checkered_tile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/checkered_tile.png
+
 #begin sprites/checkpoint_spritesheet1_15.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -378,6 +417,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/crystal2.png
+
+#begin sprites/dark_grass2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/dark_grass2.png
 
 #begin sprites/dash_cloak_pickup.png
 /importer:TextureImporter
@@ -607,6 +658,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/lamppost_spritesheet3.png
 
+#begin sprites/light_grass1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/light_grass1.png
+
 #begin sprites/light_tex1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -630,6 +693,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/marker_spritesheet5.png
+
+#begin sprites/mid_grass1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/mid_grass1.png
 
 #begin sprites/orange_tree4_6_26.png
 /importer:TextureImporter
@@ -667,6 +742,30 @@
 /processorParam:TextureFormat=Color
 /build:sprites/penguin_duck_charging_spritesheet1.png
 
+#begin sprites/plant1_10.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/plant1_10.png
+
+#begin sprites/plant1_short_5.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/plant1_short_5.png
+
 #begin sprites/player_chip.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -702,6 +801,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/rock1.png
+
+#begin sprites/rock2_10.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/rock2_10.png
+
+#begin sprites/rock3_small_7.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/rock3_small_7.png
 
 #begin sprites/sand1.png
 /importer:TextureImporter
@@ -906,18 +1029,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/stone_tile3.png
-
-#begin sprites/stone_tile4_gray.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/stone_tile4_gray.png
 
 #begin sprites/switch2_active_8.png
 /importer:TextureImporter

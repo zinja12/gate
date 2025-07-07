@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "dd1.json", current_level_id;
+        public string load_file_name = "fl1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -340,6 +340,14 @@ namespace gate
             obj_map.Add(41, new StackedObject("gate", Constant.gate_spritesheet, Vector2.Zero, 1f, 32, 32, 28, Constant.stack_distance1, 0f, -1));
             obj_map.Add(42, new StackedObject("green_wall", Constant.green_wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
             obj_map.Add(43, new StackedObject("torii", Constant.torii_spritesheet, Vector2.Zero, 1f, 64, 64, 43, Constant.stack_distance, 0f, -1));
+            obj_map.Add(44, new StackedObject("large_rock", Constant.large_rock_tex, Vector2.Zero, 1f, 32, 32, 10, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(45, new StackedObject("small_rock", Constant.small_rock_tex, Vector2.Zero, 1f, 16, 16, 7, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(46, new StackedObject("barrel", Constant.barrel_tex, Vector2.Zero, 1f, 32, 32, 26, 16, 16, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(47, new StackedObject("monstera", Constant.monstera_tex, Vector2.Zero, 1f, 16, 16, 10, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(48, new Tile(Vector2.Zero, 2f, Constant.dark_grass_tile, "dark_grass_tile", (int)DrawWeight.LightMedium, -1));
+            obj_map.Add(49, new Tile(Vector2.Zero, 2f, Constant.mid_grass_tile, "mid_grass_tile", (int)DrawWeight.Medium, -1));
+            obj_map.Add(50, new Tile(Vector2.Zero, 2f, Constant.light_grass_tile, "light_grass_tile", (int)DrawWeight.MediumHeavy, -1));
+            obj_map.Add(51, new StackedObject("checker_wall", Constant.checker_wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
         }
         #endregion
 
@@ -795,7 +803,7 @@ namespace gate
                             }
                             break;
                         case "stone_tile":
-                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile4_gray");
+                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/checkered_tile");
                             Tile st_tile = new Tile(obj_position, w_obj.scale, Constant.stone_tile_tex, w_obj.object_identifier, (int)DrawWeight.Heavy, w_obj.object_id_num);
                             add_floor_entity(st_tile);
                             if (editor_enabled && !editor_floor_tile_map.ContainsKey(obj_position)) {
@@ -916,6 +924,57 @@ namespace gate
                             entities_list.Add(torii);
                             //not adding to collision geometry because we essentially are going to hide a trigger under it
                             //basically just for decoration
+                            break;
+                        case "large_rock":
+                            check_and_load_tex(ref Constant.large_rock_tex, "sprites/rock2_10");
+                            StackedObject large_rock = new StackedObject(w_obj.object_identifier, Constant.large_rock_tex, obj_position, w_obj.scale, 32, 32, 10, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(large_rock);
+                            add_chunked_collision_geometry(large_rock);
+                            collision_geometry_map[large_rock] = false;
+                            break;
+                        case "small_rock":
+                            check_and_load_tex(ref Constant.small_rock_tex, "sprites/rock3_small_7");
+                            StackedObject small_rock = new StackedObject(w_obj.object_identifier, Constant.small_rock_tex, obj_position, w_obj.scale, 16, 16, 7, 8, 8, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(small_rock);
+                            add_chunked_collision_geometry(small_rock);
+                            collision_geometry_map[small_rock] = false;
+                            break;
+                        case "barrel":
+                            check_and_load_tex(ref Constant.barrel_tex, "sprites/barrel1_26");
+                            StackedObject barrel = new StackedObject(w_obj.object_identifier, Constant.barrel_tex, obj_position, w_obj.scale, 32, 32, 26, 16, 16, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(barrel);
+                            add_chunked_collision_geometry(barrel);
+                            collision_geometry_map[barrel] = false;
+                            break;
+                        case "monstera":
+                            check_and_load_tex(ref Constant.monstera_tex, "sprites/plant1_10");
+                            check_and_load_tex(ref Constant.monstera_short_tex, "sprites/plant1_short_5");
+                            StackedObject monstera = new StackedObject(w_obj.object_identifier, Constant.monstera_tex, obj_position, w_obj.scale, 16, 16, 10, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            monstera.set_sway(true);
+                            entities_list.Add(monstera);
+                            plants.Add(monstera);
+                            break;
+                        case "dark_grass_tile":
+                            check_and_load_tex(ref Constant.dark_grass_tile, "sprites/dark_grass2");
+                            Tile dark_grass_tile = new Tile(obj_position, w_obj.scale, Constant.dark_grass_tile, w_obj.object_identifier, (int)DrawWeight.LightMedium, w_obj.object_id_num);
+                            add_floor_entity(dark_grass_tile);
+                            break;
+                        case "mid_grass_tile":
+                            check_and_load_tex(ref Constant.mid_grass_tile, "sprites/mid_grass1");
+                            Tile mid_grass_tile = new Tile(obj_position, w_obj.scale, Constant.mid_grass_tile, w_obj.object_identifier, (int)DrawWeight.Medium, w_obj.object_id_num);
+                            add_floor_entity(mid_grass_tile);
+                            break;
+                        case "light_grass_tile":
+                            check_and_load_tex(ref Constant.light_grass_tile, "sprites/light_grass1");
+                            Tile light_grass_tile = new Tile(obj_position, w_obj.scale, Constant.light_grass_tile, w_obj.object_identifier, (int)DrawWeight.MediumHeavy, w_obj.object_id_num);
+                            add_floor_entity(light_grass_tile);
+                            break;
+                        case "checker_wall":
+                            check_and_load_tex(ref Constant.checker_wall_tex, "sprites/checkered_box_8");
+                            StackedObject cw = new StackedObject(w_obj.object_identifier, Constant.checker_wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(cw);
+                            add_chunked_collision_geometry(cw);
+                            collision_geometry_map[cw] = false;
                             break;
                         default:
                             break;
@@ -1121,7 +1180,7 @@ namespace gate
                             check_and_load_tex(ref Constant.grass_tile_tex, "sprites/grass_tile1");
                             break;
                         case "stone_tile":
-                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/stone_tile4_gray");
+                            check_and_load_tex(ref Constant.stone_tile_tex, "sprites/checkered_tile");
                             break;
                         case "flower":
                             check_and_load_tex(ref Constant.flower_tex, "sprites/flower1_1_12");
@@ -1204,6 +1263,31 @@ namespace gate
                             break;
                         case "torii":
                             check_and_load_tex(ref Constant.torii_spritesheet, "sprites/torii_gate_43");
+                            break;
+                        case "large_rock":
+                            check_and_load_tex(ref Constant.large_rock_tex, "sprites/rock2_10");
+                            break;
+                        case "small_rock":
+                            check_and_load_tex(ref Constant.small_rock_tex, "sprites/rock3_small_7");
+                            break;
+                        case "barrel":
+                            check_and_load_tex(ref Constant.barrel_tex, "sprites/barrel1_26");
+                            break;
+                        case "monstera":
+                            check_and_load_tex(ref Constant.monstera_tex, "sprites/plant1_10");
+                            check_and_load_tex(ref Constant.monstera_short_tex, "sprites/plant1_short_5");
+                            break;
+                        case "dark_grass_tile":
+                            check_and_load_tex(ref Constant.dark_grass_tile, "sprites/dark_grass2");
+                            break;
+                        case "mid_grass_tile":
+                            check_and_load_tex(ref Constant.mid_grass_tile, "sprites/mid_grass1");
+                            break;
+                        case "light_grass_tile":
+                            check_and_load_tex(ref Constant.light_grass_tile, "sprites/light_grass1");
+                            break;
+                        case "checker_wall":
+                            check_and_load_tex(ref Constant.checker_wall_tex, "sprites/checkered_box_8");
                             break;
                         default:
                             //don't load anything
@@ -2354,6 +2438,59 @@ namespace gate
                     entities_list.Add(torii);
                     Console.WriteLine("torii," + create_position.X + "," + create_position.Y + ",1");
                     break;
+                case 44:
+                    StackedObject large_rock = new StackedObject("large_rock", Constant.large_rock_tex, create_position, 1f, 32, 32, 10, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    large_rock.Update(gameTime, rotation);
+                    entities_list.Add(large_rock);
+                    add_chunked_collision_geometry(large_rock);
+                    collision_geometry_map[large_rock] = false;
+                    Console.WriteLine("large_rock," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 45:
+                    StackedObject small_rock = new StackedObject("small_rock", Constant.small_rock_tex, create_position, 1f, 16, 16, 7, 8, 8, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    small_rock.Update(gameTime, rotation);
+                    entities_list.Add(small_rock);
+                    add_chunked_collision_geometry(small_rock);
+                    collision_geometry_map[small_rock] = false;
+                    Console.WriteLine("small_rock," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 46:
+                    check_and_load_tex(ref Constant.barrel_tex, "sprites/barrel1_26");
+                    StackedObject barrel = new StackedObject("barrel", Constant.barrel_tex, create_position, 1f, 32, 32, 26, 16, 16, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    entities_list.Add(barrel);
+                    add_chunked_collision_geometry(barrel);
+                    collision_geometry_map[barrel] = false;
+                    Console.WriteLine("barrel," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 47:
+                    StackedObject monstera = new StackedObject("monstera", Constant.monstera_tex, create_position, 1f, 16, 16, 10, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    plants.Add(monstera);
+                    entities_list.Add(monstera);
+                    Console.WriteLine("monstera," + create_position.X + "," + create_position.Y + ",1");
+                    break;
+                case 48:
+                    Tile dark_grass_tile = new Tile(create_position, editor_object_scale, Constant.dark_grass_tile, "dark_grass_tile", (int)DrawWeight.LightMedium, editor_object_idx);
+                    add_floor_entity(dark_grass_tile);
+                    Console.WriteLine("dark_grass_tile," + create_position.X + "," + create_position.Y + ",2");
+                    break;
+                case 49:
+                    Tile mid_grass_tile = new Tile(create_position, editor_object_scale, Constant.mid_grass_tile, "mid_grass_tile", (int)DrawWeight.Medium, editor_object_idx);
+                    add_floor_entity(mid_grass_tile);
+                    Console.WriteLine("mid_grass_tile," + create_position.X + "," + create_position.Y + ",2");
+                    break;
+                case 50:
+                    Tile light_grass_tile = new Tile(create_position, editor_object_scale, Constant.light_grass_tile, "light_grass_tile", (int)DrawWeight.MediumHeavy, editor_object_idx);
+                    add_floor_entity(light_grass_tile);
+                    Console.WriteLine("light_grass_tile," + create_position.X + "," + create_position.Y + ",2");
+                    break;
+                case 51:
+                    StackedObject cw = new StackedObject("checker_wall", Constant.checker_wall_tex, create_position, 1f, 32, 32, 8, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
+                    cw.Update(gameTime, rotation);
+                    entities_list.Add(cw);
+                    add_chunked_collision_geometry(cw);
+                    collision_geometry_map[cw] = false;
+                    Console.WriteLine("checker_wall," + create_position.X + "," + create_position.Y + ",1");
+                    break;
                 default:
                     break;
             }
@@ -3185,7 +3322,7 @@ namespace gate
                             //don't need to check if hurtbox is active, it's an inanimate object, it should always be active
                             bool hitbox_collision = player.check_hitbox_collisions(ic.get_hurtbox());
                             if (hitbox_collision) {
-                                if (e.get_id().Equals("box")) {
+                                if (e.get_id().Equals("box") || e.get_id().Equals("barrel")) {
                                     //add particles for effect
                                     particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex }));
                                     //remove box
@@ -3345,22 +3482,27 @@ namespace gate
                 if (Vector2.Distance(player.get_base_position(), e.get_base_position()) <= render_distance && player.hitbox_active()) {
                     if (e is ICollisionEntity) {
                         ICollisionEntity ic = (ICollisionEntity)e;
-                        if (e.get_id().Equals("grass2")) {
+                        if (e.get_id().Equals("grass2") || e.get_id().Equals("monstera")) {
                             StackedObject so = (StackedObject)e;
                             bool collision = player.check_hitbox_collisions(ic.get_hurtbox());
-                            if (collision && so.get_texture() != Constant.short_grass_tex) {
-                                //player has "cut" the grass so set the stack texture to the short grass texture
-                                so.set_texture(Constant.short_grass_tex, 32, 32, 4, Constant.stack_distance1);
-                                particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
-                                //random chance to drop money (16% chance)
-                                if (random.Next(0, 6) == 1) {
-                                    add_dropped_item(
-                                        new AnimatedSprite(Constant.crystal_tex, e.get_base_position(), 0.8f, 
-                                            150f, 9, 0, 0, 16, 16, //animation variables
-                                            "crystal_money", get_editor_object_idx()
-                                        ),
-                                        0f
-                                    );
+                            if (collision) {
+                                if (e.get_id().Equals("grass2") && so.get_texture() != Constant.short_grass_tex) {
+                                    //player has "cut" the grass so set the stack texture to the short grass texture
+                                    so.set_texture(Constant.short_grass_tex, 32, 32, 4, Constant.stack_distance1);
+                                    particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 500f, 1, 5, 1, 3, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
+                                    //random chance to drop money (16% chance)
+                                    if (random.Next(0, 6) == 1) {
+                                        add_dropped_item(
+                                            new AnimatedSprite(Constant.crystal_tex, e.get_base_position(), 0.8f, 
+                                                150f, 9, 0, 0, 16, 16, //animation variables
+                                                "crystal_money", get_editor_object_idx()
+                                            ),
+                                            0f
+                                        );
+                                    }
+                                } else if (e.get_id().Equals("monstera") && so.get_texture() != Constant.monstera_short_tex) {
+                                    so.set_texture(Constant.monstera_short_tex, 16, 16, 5, Constant.stack_distance1);
+                                    particle_systems.Add(new ParticleSystem(true, Constant.rotate_point(e.get_base_position(), camera.Rotation, 1f, Constant.direction_up), 2, 300f, 1, 3, 1, 2, Constant.green_particles, new List<Texture2D>() { Constant.footprint_tex }));
                                 }
                             }
                         }

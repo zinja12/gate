@@ -29,14 +29,18 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/anxiety.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/arrow1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/attack_sprites2.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/barrel1_26.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/bow_icon.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/bow_pickup.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/box_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/box1_2_18.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/checkered_box_8.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/checkered_tile.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/checkpoint_spritesheet1_15.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/closed_gate1_28.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/cracked_rocks_4.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/crystal2.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/dark_grass2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/dash_cloak_pickup.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/dash_icon.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/expand1.png</File>
@@ -56,14 +60,20 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/hit_confirm_spritesheet.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/house2_1_54.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/lamppost_spritesheet3.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/light_grass1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/light_tex1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/marker_spritesheet5.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/mid_grass1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/orange_tree4_6_26.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/penguin_duck_bow_aim_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/penguin_duck_charging_spritesheet1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/plant1_10.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/plant1_short_5.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/player_chip.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/read_interact.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock2_10.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock3_small_7.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/sand1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/scarecrow1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/shadow_knight_attacks_spritesheet1.png</File>
@@ -81,7 +91,6 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/specter_charging2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/specter_walk.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/stone_tile3.png</File>
-    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/stone_tile4_gray.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/switch2_active_8.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/switch2_inactive_8.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/sword_icon.png</File>
@@ -113,6 +122,15 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

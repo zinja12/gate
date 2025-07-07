@@ -14,7 +14,9 @@ namespace gate.Entities
     //floor tile draw weights
     public enum DrawWeight {
         Light = 1,
+        LightMedium = 3,
         Medium = 5,
+        MediumHeavy = 8,
         Heavy = 10
     }
 

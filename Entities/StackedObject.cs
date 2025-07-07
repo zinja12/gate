@@ -94,6 +94,11 @@ namespace gate.Entities
             }
         }
 
+        public StackedObject(string id, Texture2D texture, Vector2 base_position, float scale, float width, float height, int stack_frame_count, int hitbox_width, int hitbox_height, int stack_distance, float rotation_degrees, int ID, bool interaction = false, Texture2D custom_interaction_tex = null) 
+            : this (id, texture, base_position, scale, width, height, stack_frame_count, stack_distance, rotation_degrees, ID, interaction, custom_interaction_tex) {
+            this.hitbox = new RRect(this.draw_position, hitbox_width, hitbox_height);
+        }
+
         public virtual void Update(GameTime gameTime, float rotation) {
             this.rotation = -rotation;
             depth_sort_position = draw_position + 1 * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
