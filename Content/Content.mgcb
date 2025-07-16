@@ -286,6 +286,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/attack_sprites2.png
 
+#begin sprites/automaton_bow_aim_spritesheet2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/automaton_bow_aim_spritesheet2.png
+
 #begin sprites/barrel1_26.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -718,30 +730,6 @@
 /processorParam:TextureFormat=Color
 /build:sprites/orange_tree4_6_26.png
 
-#begin sprites/penguin_duck_bow_aim_spritesheet1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/penguin_duck_bow_aim_spritesheet1.png
-
-#begin sprites/penguin_duck_charging_spritesheet1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/penguin_duck_charging_spritesheet1.png
-
 #begin sprites/plant1_10.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1126,30 +1114,6 @@
 /processorParam:TextureFormat=Color
 /build:sprites/test_nightmare_spritesheet2.png
 
-#begin sprites/test_penguin_duck_player_spritesheet9.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/test_penguin_duck_player_spritesheet9.png
-
-#begin sprites/test_player_attacks_spritesheet8_penguin_duck.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/test_player_attacks_spritesheet8_penguin_duck.png
-
 #begin sprites/test_player_charging_spritesheet1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1185,6 +1149,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/test_player_heavy_attack_spritesheet1.png
+
+#begin sprites/test_worker_attacks_spritesheet8_automaton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/test_worker_attacks_spritesheet8_automaton.png
+
+#begin sprites/test_worker_spritesheet8_automaton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/test_worker_spritesheet8_automaton.png
 
 #begin sprites/tile_tan1.png
 /importer:TextureImporter

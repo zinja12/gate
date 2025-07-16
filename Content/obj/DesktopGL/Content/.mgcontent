@@ -29,6 +29,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/anxiety.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/arrow1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/attack_sprites2.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/automaton_bow_aim_spritesheet2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/barrel1_26.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/bow_icon.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/bow_pickup.png</File>
@@ -104,6 +105,8 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_charging_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_dash_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_heavy_attack_spritesheet1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_worker_attacks_spritesheet8_automaton.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_worker_spritesheet8_automaton.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile_tan1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile3.png</File>
@@ -122,6 +125,9 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

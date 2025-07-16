@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/penguin_duck_bow_aim_spritesheet1.png</SourceFile>
-  <SourceTime>2025-04-28T21:11:19.0241914-04:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sprites/penguin_duck_bow_aim_spritesheet1.xnb</DestFile>
-  <DestTime>2025-05-02T09:48:54.4631013-04:00</DestTime>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_worker_attacks_spritesheet8_automaton.png</SourceFile>
+  <SourceTime>2025-07-15T17:37:51.152544-04:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sprites/test_worker_attacks_spritesheet8_automaton.xnb</DestFile>
+  <DestTime>2025-07-16T17:47:00.8684393-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

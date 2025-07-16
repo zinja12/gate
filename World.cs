@@ -1111,12 +1111,12 @@ namespace gate
                 foreach (string i in unloaded_objects) {
                     switch (i) {
                         case "player":
-                            check_and_load_tex(ref Constant.player_tex, "sprites/test_penguin_duck_player_spritesheet9");
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_worker_spritesheet8_automaton");
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
-                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_worker_attacks_spritesheet8_automaton");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
                             check_and_load_tex(ref Constant.player_charging_tex, "sprites/penguin_duck_charging_spritesheet1");
-                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/penguin_duck_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/automaton_bow_aim_spritesheet2");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.dash_icon, "sprites/dash_icon");
                             check_and_load_tex(ref Constant.sword_icon, "sprites/sword_icon");
@@ -1225,12 +1225,12 @@ namespace gate
                             //load player chip
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
                             //load player assets because they will be needed later
-                            check_and_load_tex(ref Constant.player_tex, "sprites/test_penguin_duck_player_spritesheet9");
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_worker_spritesheet9_automaton");
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
-                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_worker_attacks_spritesheet8_automaton");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
                             check_and_load_tex(ref Constant.player_charging_tex, "sprites/penguin_duck_charging_spritesheet1");
-                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/penguin_duck_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/automaton_bow_aim_spritesheet2");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             break;
                         case "bow":
@@ -1655,28 +1655,28 @@ namespace gate
             previous_scroll_value = Mouse.GetState().ScrollWheelValue;
 
             //flag to allow or disallow players rotating the camera
-            if (player_camera_rotate_enabled) {
-                if (!GamePad.GetState(PlayerIndex.One).IsConnected) { //keyboard camera rotation control
-                    if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
-                        camera.Rotation += 0.02f;
-                        previous_key = Keys.Left;
-                    } else if (Keyboard.GetState().IsKeyDown(Keys.Right)) {
-                        camera.Rotation -= 0.02f;
-                        previous_key = Keys.Right;
-                    }
-                } else {
-                    //gamepad connected
-                    //pull gamepad right thumbstick value
-                    camera_gamepad_h_input = GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X;
-                    //clamp to range between -0.02f and +0.02f
-                    camera_gamepad_h_input *= 0.02f;
-                    //add to rotation
-                    camera.Rotation -= camera_invert ? -camera_gamepad_h_input : camera_gamepad_h_input;
-                    //set previous key for editor
-                    if (camera_gamepad_h_input < 0) previous_key = Keys.Left;
-                    else if (camera_gamepad_h_input > 0) previous_key = Keys.Right;
-                }
-            }
+            // if (player_camera_rotate_enabled) {
+            //     if (!GamePad.GetState(PlayerIndex.One).IsConnected) { //keyboard camera rotation control
+            //         if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
+            //             camera.Rotation += 0.02f;
+            //             previous_key = Keys.Left;
+            //         } else if (Keyboard.GetState().IsKeyDown(Keys.Right)) {
+            //             camera.Rotation -= 0.02f;
+            //             previous_key = Keys.Right;
+            //         }
+            //     } else {
+            //         //gamepad connected
+            //         //pull gamepad right thumbstick value
+            //         camera_gamepad_h_input = GamePad.GetState(PlayerIndex.One).ThumbSticks.Right.X;
+            //         //clamp to range between -0.02f and +0.02f
+            //         camera_gamepad_h_input *= 0.02f;
+            //         //add to rotation
+            //         camera.Rotation -= camera_invert ? -camera_gamepad_h_input : camera_gamepad_h_input;
+            //         //set previous key for editor
+            //         if (camera_gamepad_h_input < 0) previous_key = Keys.Left;
+            //         else if (camera_gamepad_h_input > 0) previous_key = Keys.Right;
+            //     }
+            // }
 
             //update animations outside of camera rotations
             foreach (IEntity plant in plants){
