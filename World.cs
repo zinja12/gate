@@ -123,8 +123,7 @@ namespace gate
         private float shake_angle = 1f;
         private float shake_radius = 5f;
         private List<int> viewport_points_outside_collider = new List<int>();
-        float camera_gamepad_h_input = 0f;
-        private bool player_camera_rotate_enabled = true, camera_invert = false;
+        private bool player_camera_rotate_enabled = true;
         public bool player_camera_tethered = true;
 
         //intro text variables
@@ -553,12 +552,12 @@ namespace gate
                             check_and_load_tex(ref Constant.sword_icon, "sprites/sword_icon");
                             check_and_load_tex(ref Constant.bow_icon, "sprites/bow_icon");
                             //load textures for player
-                            check_and_load_tex(ref Constant.player_tex, "sprites/test_penguin_duck_player_spritesheet9");
+                            check_and_load_tex(ref Constant.player_tex, "sprites/test_worker_spritesheet8_automaton");
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
-                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_player_attacks_spritesheet8_penguin_duck");
+                            check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_worker_attacks_spritesheet8_automaton");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
-                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/penguin_duck_charging_spritesheet1");
-                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/penguin_duck_bow_aim_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/automaton_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_aim_tex, "sprites/automaton_bow_aim_spritesheet2");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.player_chip_tex, "sprites/player_chip");
                             check_and_load_tex(ref Constant.grenade_tex, "sprites/tnt1");
@@ -1115,7 +1114,7 @@ namespace gate
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
                             check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_worker_attacks_spritesheet8_automaton");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
-                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/penguin_duck_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/automaton_charging_spritesheet1");
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/automaton_bow_aim_spritesheet2");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             check_and_load_tex(ref Constant.dash_icon, "sprites/dash_icon");
@@ -1229,7 +1228,7 @@ namespace gate
                             check_and_load_tex(ref Constant.player_dash_tex, "sprites/test_player_dash_spritesheet1");
                             check_and_load_tex(ref Constant.player_attack_tex, "sprites/test_worker_attacks_spritesheet8_automaton");
                             check_and_load_tex(ref Constant.player_heavy_attack_tex, "sprites/test_player_heavy_attack_spritesheet1");
-                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/penguin_duck_charging_spritesheet1");
+                            check_and_load_tex(ref Constant.player_charging_tex, "sprites/automaton_charging_spritesheet1");
                             check_and_load_tex(ref Constant.player_aim_tex, "sprites/automaton_bow_aim_spritesheet2");
                             check_and_load_tex(ref Constant.arrow_tex, "sprites/arrow1");
                             break;
