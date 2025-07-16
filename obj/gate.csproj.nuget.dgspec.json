@@ -53,6 +53,10 @@
             "Monogame.Extended": {
               "target": "Package",
               "version": "[3.8.0, )"
+            },
+            "Myra": {
+              "target": "Package",
+              "version": "[1.5.9, )"
             }
           },
           "imports": [
