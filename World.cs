@@ -1490,9 +1490,9 @@ namespace gate
             if ((current_sign != null || current_npc != null) && current_textbox != null) {
                 //update the current sign (which will update the current textbox)
                 if (current_sign != null) {
-                    current_sign.Update(gameTime, camera.Rotation);
+                    current_sign.Update(gameTime);
                 } else if (current_npc != null) {
-                    current_npc.Update(gameTime, camera.Rotation);
+                    current_npc.Update(gameTime);
                 }
                 player.update_animation(gameTime);
                 player.update_particle_systems(gameTime, camera.Rotation);
@@ -1519,7 +1519,7 @@ namespace gate
             for (int i = 0; i < entities_list.get_entities().Count; i++) {
                 IEntity e = entities_list.get_entities()[i];
                 if (e.get_flag().Equals(Constant.ENTITY_ACTIVE)) {
-                    e.Update(gameTime, camera.Rotation);
+                    e.Update(gameTime);
                 }
             }
             Constant.profiler.end("world_entities_update");
@@ -1564,7 +1564,7 @@ namespace gate
             foreach (KeyValuePair<(int, int), List<IEntity>> collision_geometry_chunk in chunked_collision_geometry) {
                 foreach (IEntity g in collision_geometry_chunk.Value) {
                     if (g is InvisibleObject) {
-                        g.Update(gameTime, camera.Rotation);
+                        g.Update(gameTime);
                     }
                 }
             }
@@ -1629,10 +1629,10 @@ namespace gate
                 camera.Rotation += 0.0005f;
                 //keep the plants updated (watered lol)
                 for (int i = 0; i < plants.Count; i++){
-                    plants[i].Update(gameTime, camera.Rotation);
+                    plants[i].Update(gameTime);
                 }
                 foreach (ForegroundEntity f in foreground_entities) {
-                    f.Update(gameTime, camera.Rotation);
+                    f.Update(gameTime);
                 }
                 //calculate rotation in degrees
                 rotation = MathHelper.ToDegrees(MathHelper.WrapAngle(camera.Rotation));
@@ -1756,7 +1756,7 @@ namespace gate
                 } else {
                     selected_entity.set_base_position(mouse_world_position);
                 }
-                selected_entity.Update(gameTime, camera.Rotation);
+                selected_entity.Update(gameTime);
                 
                 //scroll through available editor tools
                 if (Keyboard.GetState().IsKeyDown(Keys.D1) && selection_elapsed >= selection_cooldown) {
@@ -2219,7 +2219,7 @@ namespace gate
                     break;
                 case 12:
                     StackedObject w = new StackedObject("wall", Constant.wall_tex, create_position, 1f, 32, 32, 8, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    w.Update(gameTime, rotation);
+                    w.Update(gameTime);
                     entities_list.Add(w);
                     add_chunked_collision_geometry(w);
                     collision_geometry_map[w] = false;
@@ -2227,7 +2227,7 @@ namespace gate
                     break;
                 case 13:
                     StackedObject f = new StackedObject("fence", Constant.fence_spritesheet, create_position, 1f, 32, 32, 18, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    f.Update(gameTime, rotation);
+                    f.Update(gameTime);
                     entities_list.Add(f);
                     add_chunked_collision_geometry(f);
                     collision_geometry_map[f] = false;
@@ -2236,7 +2236,7 @@ namespace gate
                 case 14:
                     InvisibleObject io = new InvisibleObject("deathbox", create_position, 1f, 48, 48, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
                     io.set_debug(true);
-                    io.Update(gameTime, rotation);
+                    io.Update(gameTime);
                     add_chunked_collision_geometry(io);
                     collision_geometry_map[io] = false;
                     Console.WriteLine($"deathbox,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
@@ -2310,7 +2310,7 @@ namespace gate
                     break;
                 case 26:
                     StackedObject box = new StackedObject("box", Constant.box_spritesheet, create_position, 1f, 32, 32, 18, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    box.Update(gameTime, rotation);
+                    box.Update(gameTime);
                     entities_list.Add(box);
                     add_chunked_collision_geometry(box);
                     collision_geometry_map[box] = false;
@@ -2318,7 +2318,7 @@ namespace gate
                     break;
                 case 27:
                     StackedObject house = new StackedObject("house", Constant.house_spritesheet, create_position, 1f, 128, 128, 54, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    house.Update(gameTime, rotation);
+                    house.Update(gameTime);
                     entities_list.Add(house);
                     add_chunked_collision_geometry(house);
                     collision_geometry_map[house] = false;
@@ -2349,7 +2349,7 @@ namespace gate
                     break;
                 case 31:
                     HitSwitch hs = new HitSwitch("hitswitch", Constant.switch_active, Constant.switch_inactive, create_position, 1f, 16, 16, 8, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    hs.Update(gameTime, rotation);
+                    hs.Update(gameTime);
                     entities_list.Add(hs);
                     collision_entities.Add(hs);
                     add_chunked_collision_geometry(hs);
@@ -2417,7 +2417,7 @@ namespace gate
                     break;
                 case 41:
                     StackedObject closedgate = new StackedObject("gate", Constant.gate_spritesheet, create_position, 1f, 32, 32, 28, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    closedgate.Update(gameTime, rotation);
+                    closedgate.Update(gameTime);
                     entities_list.Add(closedgate);
                     add_chunked_collision_geometry(closedgate);
                     collision_geometry_map[closedgate] = false;
@@ -2425,7 +2425,7 @@ namespace gate
                     break;
                 case 42:
                     StackedObject gw = new StackedObject("green_wall", Constant.green_wall_tex, create_position, 1f, 32, 32, 8, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    gw.Update(gameTime, rotation);
+                    gw.Update(gameTime);
                     entities_list.Add(gw);
                     add_chunked_collision_geometry(gw);
                     collision_geometry_map[gw] = false;
@@ -2433,13 +2433,13 @@ namespace gate
                     break;
                 case 43:
                     StackedObject torii = new StackedObject("torii", Constant.torii_spritesheet, create_position, 1f, 64, 64, 43, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    torii.Update(gameTime, rotation);
+                    torii.Update(gameTime);
                     entities_list.Add(torii);
                     Console.WriteLine("torii," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 44:
                     StackedObject large_rock = new StackedObject("large_rock", Constant.large_rock_tex, create_position, 1f, 32, 32, 10, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    large_rock.Update(gameTime, rotation);
+                    large_rock.Update(gameTime);
                     entities_list.Add(large_rock);
                     add_chunked_collision_geometry(large_rock);
                     collision_geometry_map[large_rock] = false;
@@ -2447,7 +2447,7 @@ namespace gate
                     break;
                 case 45:
                     StackedObject small_rock = new StackedObject("small_rock", Constant.small_rock_tex, create_position, 1f, 16, 16, 7, 8, 8, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    small_rock.Update(gameTime, rotation);
+                    small_rock.Update(gameTime);
                     entities_list.Add(small_rock);
                     add_chunked_collision_geometry(small_rock);
                     collision_geometry_map[small_rock] = false;
@@ -2484,7 +2484,7 @@ namespace gate
                     break;
                 case 51:
                     StackedObject cw = new StackedObject("checker_wall", Constant.checker_wall_tex, create_position, 1f, 32, 32, 8, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
-                    cw.Update(gameTime, rotation);
+                    cw.Update(gameTime);
                     entities_list.Add(cw);
                     add_chunked_collision_geometry(cw);
                     collision_geometry_map[cw] = false;
@@ -2834,10 +2834,10 @@ namespace gate
         //function to update forest / plant / foreground geometry (basically to populate camera rotation to all these objects in order to get the rotations correct)
         public void update_forest_geometry(GameTime gameTime, float rotation) {
             for (int i = 0; i < plants.Count; i++) {
-                plants[i].Update(gameTime, rotation);
+                plants[i].Update(gameTime);
             }
             foreach (ForegroundEntity f in foreground_entities) {
-                f.Update(gameTime, rotation);
+                f.Update(gameTime);
             }
         }
 
@@ -2857,7 +2857,7 @@ namespace gate
         //update temp tiles
         public void update_temp_tiles(GameTime gameTime, float rotation) {
             foreach (TempTile t in temp_tiles) {
-                t.Update(gameTime, rotation);
+                t.Update(gameTime);
                 //set up removal
                 if (t.is_finished()) {
                     clear_entity(t);

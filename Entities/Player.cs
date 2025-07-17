@@ -252,10 +252,10 @@ namespace gate.Entities
             this.world = world;
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public void Update(GameTime gameTime) {
             Constant.profiler.start("player_update");
             // set rotation
-            this.rotation = rotation;
+            this.rotation = 0f;
             
             //NOTE: make sure to use math.wrapangle before converting rotation radians to degrees
 
@@ -343,7 +343,7 @@ namespace gate.Entities
             if (arrow != null) {
                 Arrow a = (Arrow)arrow;
                 a.update_aim(aim_orbit, aim_orbit - draw_position);
-                arrow.Update(gameTime, rotation);
+                arrow.Update(gameTime);
             }
             if (_aim > 0 && arrow_charge > 0 && bow_attribute) {
                 aiming = true;
@@ -1088,7 +1088,7 @@ namespace gate.Entities
 
             //update footprints and reap footprints
             foreach (Footprints f in footprints) {
-                f.Update(gameTime, this.rotation);
+                f.Update(gameTime);
                 if (f.reap) {
                     reap_footprints.Add(f);
                 }

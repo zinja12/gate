@@ -70,8 +70,8 @@ namespace gate.Entities
             trail_particle_system = new ParticleSystem(true, draw_position, 2, 250f, 2, 1, 3, Constant.white_particles, new List<Texture2D>() { Constant.footprint_tex });
         }
 
-        public void Update(GameTime gameTime, float rotation) {
-            this.rotation = rotation;
+        public void Update(GameTime gameTime) {
+            this.rotation = 0f;
             depth_sort_position = Constant.rotate_point(draw_position, rotation, (texture.Height/2), Constant.direction_down);
 
             //handle grenade movement once fired

@@ -44,8 +44,8 @@ namespace gate.Entities
             this.ID = ID;
         }
 
-        public void Update(GameTime gameTime, float rotation) {
-            this.rotation = rotation;
+        public void Update(GameTime gameTime) {
+            this.rotation = 0f;
             depth_sort_position = Constant.rotate_point(draw_position, rotation, (Constant.tall_grass_tex.Height/2), Constant.direction_down);
         }
 

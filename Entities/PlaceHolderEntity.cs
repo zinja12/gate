@@ -28,7 +28,7 @@ namespace gate.Entities
             this.id_label = id_label;
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public void Update(GameTime gameTime) {
         }
 
         public void update_animation(GameTime gameTime) {

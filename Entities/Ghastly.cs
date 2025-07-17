@@ -77,8 +77,8 @@ namespace gate.Entities
             this.ID = ID;
         }
 
-        public void Update(GameTime gameTime, float rotation) {
-            this.rotation = rotation;
+        public void Update(GameTime gameTime) {
+            this.rotation = 0f;
             particle_system.set_position(Constant.rotate_point(draw_position, rotation, 1f, Constant.direction_up));
             particle_system.Update(gameTime, rotation);
             depth_sort_position = draw_position + (texture.Height/2) * new Vector2(Constant.direction_down.X * (float)Math.Cos(-rotation) - Constant.direction_down.Y * (float)Math.Sin(-rotation), Constant.direction_down.Y * (float)Math.Cos(-rotation) + Constant.direction_down.X * (float)Math.Sin(-rotation));
