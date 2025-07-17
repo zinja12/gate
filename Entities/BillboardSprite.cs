@@ -64,8 +64,8 @@ namespace gate.Entities
             }
         }
 
-        public virtual void Update(GameTime gameTime, float rotation) {
-            this.rotation = rotation;
+        public virtual void Update(GameTime gameTime) {
+            this.rotation = 0f;
             depth_sort_position = Constant.rotate_point(draw_position, rotation, (texture.Height/2), Constant.direction_down);
             this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-Constant.read_interact_tex.Height), Constant.direction_down);
 

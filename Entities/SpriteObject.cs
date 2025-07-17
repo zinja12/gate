@@ -12,7 +12,7 @@ using gate.Collision;
 
 namespace gate.Entities
 {
-    public class StackedObject : IEntity, ICollisionEntity
+    public class SpriteObject : IEntity, ICollisionEntity
     {
         public Vector2 base_position;
         public Vector2 draw_position;
@@ -31,7 +31,6 @@ namespace gate.Entities
         protected float object_height = 32;
 
         protected int stack_count = 18, stack_distance = 1;
-        protected List<Rectangle> sprite_rectangles;
         protected Vector2 rotation_factor;
 
         //collision information
@@ -39,9 +38,7 @@ namespace gate.Entities
         protected List<Vector2> hitbox_normals;
         
         protected bool update_once = false;
-
-        private bool sway = false;
-        private float sway_elapsed0, sway_elapsed1, sway_elapsed2, sway_threshold = 3000f;
+        
         private Random random;
 
         protected RRect interaction_box;
@@ -52,7 +49,7 @@ namespace gate.Entities
         protected string id;
         protected int ID;
 
-        public StackedObject(string id, Texture2D texture, Vector2 base_position, float scale, float width, float height, int stack_frame_count, int stack_distance, float rotation_degrees, int ID, bool interaction = false, Texture2D custom_interaction_tex = null) {
+        public SpriteObject(string id, Texture2D texture, Vector2 base_position, float scale, float width, float height, int stack_frame_count, int stack_distance, float rotation_degrees, int ID, bool interaction = false, Texture2D custom_interaction_tex = null) {
             this.object_width = width;
             this.object_height = height;
             this.texture = texture;
@@ -68,7 +65,6 @@ namespace gate.Entities
             this.rotation_point = new Vector2(object_width / 2, object_height / 2);
 
             //generate sprite rectangles for stack
-            sprite_rectangles = Constant.generate_rectangles_for_stack(this.texture, stack_count);
             this.rotation_factor = this.draw_position;
 
             this.hitbox = new RRect(this.draw_position, width, height);
@@ -79,9 +75,6 @@ namespace gate.Entities
             set_rotation_offset(rotation_degrees);
             
             random = new Random();
-            sway_elapsed0 = (float)random.Next(0, (int)sway_threshold*2);
-            sway_elapsed1 = (float)random.Next(0, (int)sway_threshold*2);
-            sway_elapsed2 = (float)random.Next(0, (int)sway_threshold*2);
 
             if (interaction) {
                 Console.WriteLine("setting up interaction box");
@@ -94,14 +87,13 @@ namespace gate.Entities
             }
         }
 
-        public StackedObject(string id, Texture2D texture, Vector2 base_position, float scale, float width, float height, int stack_frame_count, int hitbox_width, int hitbox_height, int stack_distance, float rotation_degrees, int ID, bool interaction = false, Texture2D custom_interaction_tex = null) 
+        public SpriteObject(string id, Texture2D texture, Vector2 base_position, float scale, float width, float height, int stack_frame_count, int hitbox_width, int hitbox_height, int stack_distance, float rotation_degrees, int ID, bool interaction = false, Texture2D custom_interaction_tex = null) 
             : this (id, texture, base_position, scale, width, height, stack_frame_count, stack_distance, rotation_degrees, ID, interaction, custom_interaction_tex) {
             this.hitbox = new RRect(this.draw_position, hitbox_width, hitbox_height);
         }
 
         public virtual void Update(GameTime gameTime) {
-            this.rotation = 0f;
-            depth_sort_position = draw_position + 1 * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
+            depth_sort_position = draw_position;
             //update collision once to properly instantiate for rotation and then don't update anymore
             if (update_once) {
                 hitbox.update(rotation, draw_position);
@@ -112,16 +104,6 @@ namespace gate.Entities
             if (interaction) {
                 this.interaction_display_position = Constant.rotate_point(draw_position, rotation, (-object_height*1.5f), Constant.direction_down);
                 interaction_box.update(rotation, draw_position);
-            }
-            
-            //handle sway elapsed
-            if (sway) {
-                sway_elapsed0 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                sway_elapsed1 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                sway_elapsed2 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                if (sway_elapsed0 >= sway_threshold*2) { sway_elapsed0 = 0f; }
-                if (sway_elapsed1 >= sway_threshold*2) { sway_elapsed1 = 0f; }
-                if (sway_elapsed2 >= sway_threshold*2) { sway_elapsed2 = 0f; }
             }
         }
 
@@ -169,10 +151,6 @@ namespace gate.Entities
 
         public int get_obj_ID_num() {
             return this.ID;
-        }
-
-        public void set_sway(bool value) {
-            this.sway = value;
         }
 
         public bool check_hitbox_collisions(RRect collision_rect) {
@@ -231,8 +209,6 @@ namespace gate.Entities
                                             base_position.Y - object_height);
             this.depth_sort_position = this.draw_position + new Vector2(0, object_height / 2);
             this.rotation_point = new Vector2(object_width / 2, object_height / 2);
-            //regenerate the stack rectangles
-            sprite_rectangles = Constant.generate_rectangles_for_stack(this.texture, stack_count);
         }
 
         public Texture2D get_texture() {
@@ -240,43 +216,8 @@ namespace gate.Entities
         }
 
         public virtual void Draw(SpriteBatch spriteBatch) {
-            //calculate the number of sprites that will be moving (round down to make sure we don't try to access any sprites that are out of bounds)
-            int stack_div3 = (int)Math.Floor((double)stack_count/3);
-            //update draw positions so that everything draws in the right direction
-            Vector2 offset = Vector2.Zero;
-            for (int i = 0; i < sprite_rectangles.Count; i++) {
-                if (sway) {
-                    if (i < stack_div3) { //first third of the stack
-                        if (sway_elapsed0 < sway_threshold) {
-                            //set offset left
-                            offset.X = 1;
-                        } else if (sway_elapsed0 >= sway_threshold) {
-                            //set offset right
-                            offset.X = -1;
-                        }
-                    } else if (i >= stack_div3 && i < stack_div3*2) { //second third of the stack
-                        if (sway_elapsed1 < sway_threshold) {
-                            //set offset right
-                            offset.X = 1;
-                        } else if (sway_elapsed1 >= sway_threshold) {
-                            //set offset left
-                            offset.X = -1;
-                        }
-                    } else { //last third of the stack
-                        if (sway_elapsed2 < sway_threshold) {
-                            //set offset right
-                            offset.X = -2;
-                        } else if (sway_elapsed2 >= sway_threshold) {
-                            //set offset left
-                            offset.X = 2;
-                        }
-                    }
-                }
-                Vector2 dir = new Vector2(0, -i*stack_distance);
-                Vector2 draw_pos = draw_position + new Vector2(dir.X*(float)Math.Cos(rotation) - dir.Y*(float)Math.Sin(rotation), dir.Y*(float)Math.Cos(rotation) + dir.X*(float)Math.Sin(rotation));
-                float rotation_calc = (-rotation + rotation_offset)/1000;
-                spriteBatch.Draw(texture, draw_pos+offset, sprite_rectangles[i], Color.White, rotation_calc, rotation_point, scale, SpriteEffects.None, 0f);
-            }
+            //draw
+            spriteBatch.Draw(texture, draw_position, null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
             if (display_interaction) {
                 if (interaction_texture != null) {
@@ -297,8 +238,6 @@ namespace gate.Entities
                 Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Pink, 1f, draw_position + rotation_point, draw_position + rotation_point + new Vector2(0, -10));
                 spriteBatch.DrawString(Constant.arial, $"ID:{this.ID}", draw_position + new Vector2(0, 20), Color.White, -rotation, Vector2.Zero, 0.12f, SpriteEffects.None, 0f);
             }
-        
-            //spriteBatch.DrawString(Constant.arial, "depth: " + depth, draw_position, Color.White);
         }
     }
 }

@@ -77,9 +77,9 @@ namespace gate.Entities
             this.world = world;
         }
 
-        public override void Update(GameTime gameTime, float rotation) {
+        public override void Update(GameTime gameTime) {
             gt = gameTime;
-            this.rotation = rotation;
+            this.rotation = 0f;
             depth_sort_position = draw_position + (size/2) * new Vector2(Constant.direction_down.X * (float)Math.Cos(-rotation) - Constant.direction_down.Y * (float)Math.Sin(-rotation), Constant.direction_down.Y * (float)Math.Cos(-rotation) + Constant.direction_down.X * (float)Math.Sin(-rotation));
             
             //update collision

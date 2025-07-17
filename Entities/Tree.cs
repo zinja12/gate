@@ -11,7 +11,7 @@ using gate.Core;
 namespace gate.Entities
 {
     public interface ForegroundEntity {
-        void Update(GameTime gameTime, float rotation);
+        void Update(GameTime gameTime);
         void Draw(SpriteBatch spriteBatch);
     }
     
@@ -61,8 +61,8 @@ namespace gate.Entities
             this.tree_identifier = tree_identifier;
         }
 
-        public void Update(GameTime gameTime, float rotation) {
-            this.rotation = -rotation;
+        public void Update(GameTime gameTime) {
+            this.rotation = 0f;
             depth_sort_position = draw_position + (tree_height/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
         }
 

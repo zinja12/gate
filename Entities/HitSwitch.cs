@@ -42,8 +42,8 @@ namespace gate.Entities
             this.inactive_texture = inactive_texture;
         }
 
-        public override void Update(GameTime gameTime, float rotation) {
-            this.rotation = -rotation;
+        public override void Update(GameTime gameTime) {
+            this.rotation = 0f;
             depth_sort_position = draw_position + 1 * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
             //update collision once to properly instantiate for rotation and then don't update anymore
             if (update_once) {

@@ -76,9 +76,9 @@ namespace gate.Entities
             random = new Random();
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public void Update(GameTime gameTime) {
             if (!fired) {
-                this.rotation = rotation;
+                this.rotation = 0f;
             }
             depth_sort_position = Constant.rotate_point(draw_position, rotation, (texture.Height/2), Constant.direction_down);
 
@@ -89,7 +89,7 @@ namespace gate.Entities
                 
                 //update footprints and reap footprints
                 foreach (Footprints f in footprints) {
-                    f.Update(gameTime, this.rotation);
+                    f.Update(gameTime);
                     if (f.reap) {
                         reap_footprints.Add(f);
                     }

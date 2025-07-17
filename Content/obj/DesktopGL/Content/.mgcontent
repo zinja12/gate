@@ -118,10 +118,16 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tree_spritesheet5.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tree4.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/void_essence1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/wall_block1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/wall_block2.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/wall_block3.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/white_pixel.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
