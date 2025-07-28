@@ -25,7 +25,7 @@ namespace gate.Entities
         protected Vector2 direction_down = new Vector2(0, 1);
         protected Vector2 direction_up = new Vector2(0, -1);
 
-        public static bool debug = false;
+        public static bool debug = true;
 
         protected float object_width = 32;
         protected float object_height = 32;
@@ -67,7 +67,7 @@ namespace gate.Entities
             //generate sprite rectangles for stack
             this.rotation_factor = this.draw_position;
 
-            this.hitbox = new RRect(this.draw_position, width, height);
+            this.hitbox = new RRect(this.draw_position + new Vector2(width/2, 0), width, height);
             this.hitbox_normals = new List<Vector2>();
 
             this.ID = ID;
@@ -96,7 +96,7 @@ namespace gate.Entities
             depth_sort_position = draw_position;
             //update collision once to properly instantiate for rotation and then don't update anymore
             if (update_once) {
-                hitbox.update(rotation, draw_position);
+                hitbox.update(rotation, draw_position + new Vector2(object_width/2, object_height - object_width/2));
                 update_once = false;
             }
 

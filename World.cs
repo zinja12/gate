@@ -40,7 +40,7 @@ namespace gate
         //bool loading = false;
         bool debug_triggers = true;
 
-        public string load_file_name = "fl1.json", current_level_id;
+        public string load_file_name = "dd1.json", current_level_id;
         public string player_attribute_file_name = "player_attributes.json";
         string save_file_name = "untitled_sandbox.json";
 
@@ -347,6 +347,10 @@ namespace gate
             obj_map.Add(49, new Tile(Vector2.Zero, 2f, Constant.mid_grass_tile, "mid_grass_tile", (int)DrawWeight.Medium, -1));
             obj_map.Add(50, new Tile(Vector2.Zero, 2f, Constant.light_grass_tile, "light_grass_tile", (int)DrawWeight.MediumHeavy, -1));
             obj_map.Add(51, new StackedObject("checker_wall", Constant.checker_wall_tex, Vector2.Zero, 1f, 32, 32, 8, Constant.stack_distance, 0f, -1));
+            obj_map.Add(52, new SpriteObject("wall1", Constant.wall1_tex, Vector2.Zero, 1f, 64, 192, 1, Constant.stack_distance1, 0f, -1));
+            obj_map.Add(53, new Specter(Constant.specter_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, -1, "specter", this));
+            Specter specter1 = (Specter)obj_map[53];
+            specter1.set_behavior_enabled(false);
         }
         #endregion
 
@@ -430,6 +434,7 @@ namespace gate
             Constant.tile_tex = Content.Load<Texture2D>("sprites/tile3");
             Constant.pixel = Content.Load<Texture2D>("sprites/white_pixel");
             Constant.footprint_tex = Content.Load<Texture2D>("sprites/footprint");
+            Constant.red_black_particle_tex = Content.Load<Texture2D>("sprites/red_black_particle");
             Constant.attack_sprites_tex = Content.Load<Texture2D>("sprites/attack_sprites2");
             Constant.hit_confirm_spritesheet = Content.Load<Texture2D>("sprites/hit_confirm_spritesheet");
             Constant.slash_confirm_spritesheet = Content.Load<Texture2D>("sprites/slash_confirm_spritesheet");
@@ -975,6 +980,21 @@ namespace gate
                             add_chunked_collision_geometry(cw);
                             collision_geometry_map[cw] = false;
                             break;
+                        case "wall1":
+                            check_and_load_tex(ref Constant.wall1_tex, "sprites/wall_block1");
+                            SpriteObject sobject_wall = new SpriteObject(w_obj.object_identifier, Constant.wall1_tex, obj_position, w_obj.scale, 64, 192, 1, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(sobject_wall);
+                            add_chunked_collision_geometry(sobject_wall);
+                            collision_geometry_map[sobject_wall] = false;
+                            break;
+                        case "specter":
+                            check_and_load_tex(ref Constant.specter_tex, "sprites/ghastly3");
+                            check_and_load_tex(ref Constant.red_circle, "sprites/red_circle");
+                            Specter specter = new Specter(Constant.specter_tex, obj_position, w_obj.scale, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, w_obj.object_id_num, w_obj.object_identifier, this);
+                            entities_list.Add(specter);
+                            collision_entities.Add(specter);
+                            enemies.Add(specter);
+                            break;
                         default:
                             break;
                     }
@@ -1287,6 +1307,13 @@ namespace gate
                             break;
                         case "checker_wall":
                             check_and_load_tex(ref Constant.checker_wall_tex, "sprites/checkered_box_8");
+                            break;
+                        case "wall1":
+                            check_and_load_tex(ref Constant.wall1_tex, "sprites/wall_block1");
+                            break;
+                        case "specter":
+                            check_and_load_tex(ref Constant.specter_tex, "sprites/ghastly3");
+                            check_and_load_tex(ref Constant.red_circle, "sprites/red_circle");
                             break;
                         default:
                             //don't load anything
@@ -2490,6 +2517,22 @@ namespace gate
                     collision_geometry_map[cw] = false;
                     Console.WriteLine("checker_wall," + create_position.X + "," + create_position.Y + ",1");
                     break;
+                case 52:
+                    SpriteObject sobject_wall = new SpriteObject("wall1", Constant.wall1_tex, create_position, 1f, 64, 192, 1, Constant.stack_distance1, 0f, editor_object_idx);
+                    entities_list.Add(sobject_wall);
+                    add_chunked_collision_geometry(sobject_wall);
+                    collision_geometry_map[sobject_wall] = false;
+                    break;
+                case 53:
+                    Specter specter = new Specter(Constant.specter_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "specter", this);
+                    specter.set_behavior_enabled(false);
+                    specter.set_placement_source(placement_source);
+                    entities_list.Add(specter);
+                    collision_entities.Add(specter);
+                    enemies.Add(specter);
+                    set_ai_entities_for_all_ais();
+                    Console.WriteLine($"specter,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
+                    break;
                 default:
                     break;
             }
@@ -3379,6 +3422,21 @@ namespace gate
                                 set_transition(true, current_level_id, null);
                             }
                         }
+                    }
+
+                    if (e is SpriteObject) {
+                        SpriteObject obj = (SpriteObject)e;
+                        bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
+
+                        //check and set interaction box
+                        if (obj.get_interaction_box() != null) {
+                            //interaction is enabled for this stacked object so set display interaction accordingly
+                            bool interaction_collision = obj.get_interaction_box().collision(player.get_hurtbox());
+                            obj.set_display_interaction(interaction_collision);
+                        }
+
+                        //default for sprite objects, just set the collision in the map
+                        collision_geometry_map[e] = collision;
                     }
                 } else {
                     if (e is StackedObject) {

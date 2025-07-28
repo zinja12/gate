@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/wall_block3.png</SourceFile>
-  <SourceTime>2025-07-16T21:39:06.545533-04:00</SourceTime>
+  <SourceTime>2025-07-27T09:47:13.2983736-04:00</SourceTime>
   <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/sprites/wall_block3.xnb</DestFile>
-  <DestTime>2025-07-16T21:47:30.4935902-04:00</DestTime>
+  <DestTime>2025-07-27T16:42:13.7672123-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
