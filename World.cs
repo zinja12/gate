@@ -68,7 +68,7 @@ namespace gate
         List<IAiEntity> npcs;
         List<IEntity> projectiles;
         ConditionManager condition_manager;
-        Dictionary<IEntity, bool> collision_geometry_map;
+        Dictionary<IEntity, bool> collision_geometry_map_x, collision_geometry_map_y;
         Dictionary<IEntity, bool> collision_tile_map;
         List<IEntity> switches;
         SoundManager sound_manager;
@@ -216,7 +216,8 @@ namespace gate
             //create conditions manager
             condition_manager = new ConditionManager(this);
             //create dict for collision map for level geometry
-            collision_geometry_map = new Dictionary<IEntity, bool>();
+            collision_geometry_map_x = new Dictionary<IEntity, bool>();
+            collision_geometry_map_y = new Dictionary<IEntity, bool>();
             collision_tile_map = new Dictionary<IEntity, bool>();
             //list for switches
             switches = new List<IEntity>();
@@ -674,14 +675,16 @@ namespace gate
                             StackedObject m = new StackedObject(w_obj.object_identifier, Constant.marker_spritesheet, obj_position, w_obj.scale, 32, 32, 15, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(m);
                             add_chunked_collision_geometry(m);
-                            collision_geometry_map[m] = false;
+                            collision_geometry_map_x[m] = false;
+                            collision_geometry_map_y[m] = false;
                             break;
                         case "checkpoint":
                             check_and_load_tex(ref Constant.checkpoint_marker_spritesheet, "sprites/checkpoint_spritesheet1_15");
                             StackedObject cpm = new StackedObject(w_obj.object_identifier, Constant.checkpoint_marker_spritesheet, obj_position, w_obj.scale, 32, 32, 15, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num, true);
                             entities_list.Add(cpm);
                             add_chunked_collision_geometry(cpm);
-                            collision_geometry_map[cpm] = false;
+                            collision_geometry_map_x[cpm] = false;
+                            collision_geometry_map_y[cpm] = false;
                             break;
                         case "lamp":
                             //load texture
@@ -769,28 +772,32 @@ namespace gate
                             StackedObject w = new StackedObject(w_obj.object_identifier, Constant.wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(w);
                             add_chunked_collision_geometry(w);
-                            collision_geometry_map[w] = false;
+                            collision_geometry_map_x[w] = false;
+                            collision_geometry_map_y[w] = false;
                             break;
                         case "fence":
                             check_and_load_tex(ref Constant.fence_spritesheet, "sprites/fence1");
                             StackedObject f = new StackedObject(w_obj.object_identifier, Constant.fence_spritesheet, obj_position, w_obj.scale, 32, 32, 18, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(f);
                             add_chunked_collision_geometry(f);
-                            collision_geometry_map[f] = false;
+                            collision_geometry_map_x[f] = false;
+                            collision_geometry_map_y[f] = false;
                             break;
                         case "gate":
                             check_and_load_tex(ref Constant.gate_spritesheet, "sprites/closed_gate1_28");
                             StackedObject closedgate = new StackedObject(w_obj.object_identifier, Constant.gate_spritesheet, obj_position, w_obj.scale, 32, 32, 28, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(closedgate);
                             add_chunked_collision_geometry(closedgate);
-                            collision_geometry_map[closedgate] = false;
+                            collision_geometry_map_x[closedgate] = false;
+                            collision_geometry_map_y[closedgate] = false;
                             break;
                         case "box":
                             check_and_load_tex(ref Constant.box_spritesheet, "sprites/box1_2_18");
                             StackedObject box = new StackedObject(w_obj.object_identifier, Constant.box_spritesheet, obj_position, w_obj.scale, 32, 32, 18, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(box);
                             add_chunked_collision_geometry(box);
-                            collision_geometry_map[box] = false;
+                            collision_geometry_map_x[box] = false;
+                            collision_geometry_map_y[box] = false;
                             break;
                         case "tan_tile":
                             check_and_load_tex(ref Constant.tan_tile_tex, "sprites/tile_tan1");
@@ -856,7 +863,8 @@ namespace gate
                             StackedObject house = new StackedObject(w_obj.object_identifier, Constant.house_spritesheet, obj_position, w_obj.scale, 128, 128, 54, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(house);
                             add_chunked_collision_geometry(house);
-                            collision_geometry_map[house] = false;
+                            collision_geometry_map_x[house] = false;
+                            collision_geometry_map_y[house] = false;
                             break;
                         case "hitswitch":
                             check_and_load_tex(ref Constant.switch_active, "sprites/switch2_active_8");
@@ -865,7 +873,8 @@ namespace gate
                             entities_list.Add(hs);
                             collision_entities.Add(hs);
                             add_chunked_collision_geometry(hs);
-                            collision_geometry_map[hs] = false;
+                            collision_geometry_map_x[hs] = false;
+                            collision_geometry_map_y[hs] = false;
                             switches.Add(hs);
                             break;
                         case "dash_cloak":
@@ -879,7 +888,8 @@ namespace gate
                             StackedObject cracked_rocks = new StackedObject(w_obj.object_identifier, Constant.cracked_rocks_spritesheet, obj_position, w_obj.scale, 32, 32, 4, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(cracked_rocks);
                             add_chunked_collision_geometry(cracked_rocks);
-                            collision_geometry_map[cracked_rocks] = false;
+                            collision_geometry_map_x[cracked_rocks] = false;
+                            collision_geometry_map_y[cracked_rocks] = false;
                             break;
                         case "bow":
                             check_and_load_tex(ref Constant.bow_pickup_tex, "sprites/bow_pickup");
@@ -920,7 +930,8 @@ namespace gate
                             StackedObject gw = new StackedObject(w_obj.object_identifier, Constant.green_wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(gw);
                             add_chunked_collision_geometry(gw);
-                            collision_geometry_map[gw] = false;
+                            collision_geometry_map_x[gw] = false;
+                            collision_geometry_map_y[gw] = false;
                             break;
                         case "torii":
                             check_and_load_tex(ref Constant.torii_spritesheet, "sprites/torii_gate_43");
@@ -934,21 +945,24 @@ namespace gate
                             StackedObject large_rock = new StackedObject(w_obj.object_identifier, Constant.large_rock_tex, obj_position, w_obj.scale, 32, 32, 10, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(large_rock);
                             add_chunked_collision_geometry(large_rock);
-                            collision_geometry_map[large_rock] = false;
+                            collision_geometry_map_x[large_rock] = false;
+                            collision_geometry_map_y[large_rock] = false;
                             break;
                         case "small_rock":
                             check_and_load_tex(ref Constant.small_rock_tex, "sprites/rock3_small_7");
                             StackedObject small_rock = new StackedObject(w_obj.object_identifier, Constant.small_rock_tex, obj_position, w_obj.scale, 16, 16, 7, 8, 8, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(small_rock);
                             add_chunked_collision_geometry(small_rock);
-                            collision_geometry_map[small_rock] = false;
+                            collision_geometry_map_x[small_rock] = false;
+                            collision_geometry_map_y[small_rock] = false;
                             break;
                         case "barrel":
                             check_and_load_tex(ref Constant.barrel_tex, "sprites/barrel1_26");
                             StackedObject barrel = new StackedObject(w_obj.object_identifier, Constant.barrel_tex, obj_position, w_obj.scale, 32, 32, 26, 16, 16, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(barrel);
                             add_chunked_collision_geometry(barrel);
-                            collision_geometry_map[barrel] = false;
+                            collision_geometry_map_x[barrel] = false;
+                            collision_geometry_map_y[barrel] = false;
                             break;
                         case "monstera":
                             check_and_load_tex(ref Constant.monstera_tex, "sprites/plant1_10");
@@ -978,14 +992,16 @@ namespace gate
                             StackedObject cw = new StackedObject(w_obj.object_identifier, Constant.checker_wall_tex, obj_position, w_obj.scale, 32, 32, 8, Constant.stack_distance, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(cw);
                             add_chunked_collision_geometry(cw);
-                            collision_geometry_map[cw] = false;
+                            collision_geometry_map_x[cw] = false;
+                            collision_geometry_map_y[cw] = false;
                             break;
                         case "wall1":
                             check_and_load_tex(ref Constant.wall1_tex, "sprites/wall_block1");
                             SpriteObject sobject_wall = new SpriteObject(w_obj.object_identifier, Constant.wall1_tex, obj_position, w_obj.scale, 64, 192, 1, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
                             entities_list.Add(sobject_wall);
                             add_chunked_collision_geometry(sobject_wall);
-                            collision_geometry_map[sobject_wall] = false;
+                            collision_geometry_map_x[sobject_wall] = false;
+                            collision_geometry_map_y[sobject_wall] = false;
                             break;
                         case "specter":
                             check_and_load_tex(ref Constant.specter_tex, "sprites/ghastly3");
@@ -1402,7 +1418,8 @@ namespace gate
             enemies.Clear();
             projectiles.Clear();
             condition_manager.clear_conditions();
-            collision_geometry_map.Clear();
+            collision_geometry_map_x.Clear();
+            collision_geometry_map_y.Clear();
             collision_tile_map.Clear();
             switches.Clear();
             chunked_lights.Clear();
@@ -2200,7 +2217,8 @@ namespace gate
                     StackedObject m = new StackedObject("marker", Constant.marker_spritesheet, create_position, 1f, 32, 32, 15, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
                     entities_list.Add(m);
                     add_chunked_collision_geometry(m);
-                    collision_geometry_map[m] = false;
+                    collision_geometry_map_x[m] = false;
+                    collision_geometry_map_y[m] = false;
                     Console.WriteLine("marker," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 5:
@@ -2249,7 +2267,8 @@ namespace gate
                     w.Update(gameTime);
                     entities_list.Add(w);
                     add_chunked_collision_geometry(w);
-                    collision_geometry_map[w] = false;
+                    collision_geometry_map_x[w] = false;
+                    collision_geometry_map_y[w] = false;
                     Console.WriteLine("wall," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 13:
@@ -2257,7 +2276,8 @@ namespace gate
                     f.Update(gameTime);
                     entities_list.Add(f);
                     add_chunked_collision_geometry(f);
-                    collision_geometry_map[f] = false;
+                    collision_geometry_map_x[f] = false;
+                    collision_geometry_map_y[f] = false;
                     Console.WriteLine("fence," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 14:
@@ -2265,7 +2285,8 @@ namespace gate
                     io.set_debug(true);
                     io.Update(gameTime);
                     add_chunked_collision_geometry(io);
-                    collision_geometry_map[io] = false;
+                    collision_geometry_map_x[io] = false;
+                    collision_geometry_map_y[io] = false;
                     Console.WriteLine($"deathbox,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
                     break;
                 case 15:
@@ -2340,7 +2361,8 @@ namespace gate
                     box.Update(gameTime);
                     entities_list.Add(box);
                     add_chunked_collision_geometry(box);
-                    collision_geometry_map[box] = false;
+                    collision_geometry_map_x[box] = false;
+                    collision_geometry_map_y[box] = false;
                     Console.WriteLine("box," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 27:
@@ -2348,7 +2370,8 @@ namespace gate
                     house.Update(gameTime);
                     entities_list.Add(house);
                     add_chunked_collision_geometry(house);
-                    collision_geometry_map[house] = false;
+                    collision_geometry_map_x[house] = false;
+                    collision_geometry_map_y[house] = false;
                     Console.WriteLine("house," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 28:
@@ -2380,7 +2403,8 @@ namespace gate
                     entities_list.Add(hs);
                     collision_entities.Add(hs);
                     add_chunked_collision_geometry(hs);
-                    collision_geometry_map[hs] = false;
+                    collision_geometry_map_x[hs] = false;
+                    collision_geometry_map_y[hs] = false;
                     switches.Add(hs);
                     break;
                 case 32:
@@ -2397,7 +2421,8 @@ namespace gate
                     StackedObject cracked_rocks = new StackedObject("cracked_rocks", Constant.cracked_rocks_spritesheet, create_position, 1f, 32, 32, 4, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
                     entities_list.Add(cracked_rocks);
                     add_chunked_collision_geometry(cracked_rocks);
-                    collision_geometry_map[cracked_rocks] = false;
+                    collision_geometry_map_x[cracked_rocks] = false;
+                    collision_geometry_map_y[cracked_rocks] = false;
                     break;
                 case 35:
                     BillboardSprite player_chip = new BillboardSprite(Constant.player_chip_tex, create_position, 1f, "player_chip", editor_object_idx);
@@ -2421,7 +2446,8 @@ namespace gate
                     StackedObject cpm = new StackedObject("checkpoint", Constant.checkpoint_marker_spritesheet, create_position, 1f, 32, 32, 15, Constant.stack_distance, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx, true);
                     entities_list.Add(cpm);
                     add_chunked_collision_geometry(cpm);
-                    collision_geometry_map[cpm] = false;
+                    collision_geometry_map_x[cpm] = false;
+                    collision_geometry_map_y[cpm] = false;
                     Console.WriteLine("checkpoint," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 39:
@@ -2447,7 +2473,8 @@ namespace gate
                     closedgate.Update(gameTime);
                     entities_list.Add(closedgate);
                     add_chunked_collision_geometry(closedgate);
-                    collision_geometry_map[closedgate] = false;
+                    collision_geometry_map_x[closedgate] = false;
+                    collision_geometry_map_y[closedgate] = false;
                     Console.WriteLine("gate," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 42:
@@ -2455,7 +2482,8 @@ namespace gate
                     gw.Update(gameTime);
                     entities_list.Add(gw);
                     add_chunked_collision_geometry(gw);
-                    collision_geometry_map[gw] = false;
+                    collision_geometry_map_x[gw] = false;
+                    collision_geometry_map_y[gw] = false;
                     Console.WriteLine("green_wall," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 43:
@@ -2469,7 +2497,8 @@ namespace gate
                     large_rock.Update(gameTime);
                     entities_list.Add(large_rock);
                     add_chunked_collision_geometry(large_rock);
-                    collision_geometry_map[large_rock] = false;
+                    collision_geometry_map_x[large_rock] = false;
+                    collision_geometry_map_y[large_rock] = false;
                     Console.WriteLine("large_rock," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 45:
@@ -2477,7 +2506,8 @@ namespace gate
                     small_rock.Update(gameTime);
                     entities_list.Add(small_rock);
                     add_chunked_collision_geometry(small_rock);
-                    collision_geometry_map[small_rock] = false;
+                    collision_geometry_map_x[small_rock] = false;
+                    collision_geometry_map_y[small_rock] = false;
                     Console.WriteLine("small_rock," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 46:
@@ -2485,7 +2515,8 @@ namespace gate
                     StackedObject barrel = new StackedObject("barrel", Constant.barrel_tex, create_position, 1f, 32, 32, 26, 16, 16, Constant.stack_distance1, MathHelper.ToDegrees(editor_object_rotation), editor_object_idx);
                     entities_list.Add(barrel);
                     add_chunked_collision_geometry(barrel);
-                    collision_geometry_map[barrel] = false;
+                    collision_geometry_map_x[barrel] = false;
+                    collision_geometry_map_y[barrel] = false;
                     Console.WriteLine("barrel," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 47:
@@ -2514,14 +2545,16 @@ namespace gate
                     cw.Update(gameTime);
                     entities_list.Add(cw);
                     add_chunked_collision_geometry(cw);
-                    collision_geometry_map[cw] = false;
+                    collision_geometry_map_x[cw] = false;
+                    collision_geometry_map_y[cw] = false;
                     Console.WriteLine("checker_wall," + create_position.X + "," + create_position.Y + ",1");
                     break;
                 case 52:
                     SpriteObject sobject_wall = new SpriteObject("wall1", Constant.wall1_tex, create_position, 1f, 64, 192, 1, Constant.stack_distance1, 0f, editor_object_idx);
                     entities_list.Add(sobject_wall);
                     add_chunked_collision_geometry(sobject_wall);
-                    collision_geometry_map[sobject_wall] = false;
+                    collision_geometry_map_x[sobject_wall] = false;
+                    collision_geometry_map_y[sobject_wall] = false;
                     break;
                 case 53:
                     Specter specter = new Specter(Constant.specter_tex, create_position, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, editor_object_idx, "specter", this);
@@ -3340,7 +3373,8 @@ namespace gate
                 if (Vector2.Distance(e.get_base_position(), player.get_base_position()) < (render_distance/2) && !editor_active) {
                     if (e is StackedObject) {
                         StackedObject obj = (StackedObject)e;
-                        bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
+                        bool collision_x = obj.check_hitbox_collisions(player.get_future_hurtbox_x());
+                        bool collision_y = obj.check_hitbox_collisions(player.get_future_hurtbox_y());
 
                         //check and set interaction box
                         if (obj.get_interaction_box() != null) {
@@ -3350,12 +3384,14 @@ namespace gate
                         }
 
                         //specific check for cracked rocks / objects player can dash through
-                        if (collision && e.get_id().Equals("cracked_rocks") && player.is_dashing()) {
+                        if ((collision_y || collision_y) && e.get_id().Equals("cracked_rocks") && player.is_dashing()) {
                             //if there is a collision with cracked rocks specifically and the player is dashing, ignore the collision
-                            collision_geometry_map[e] = false;
+                            collision_geometry_map_x[e] = false;
+                            collision_geometry_map_y[e] = false;
                         } else {
                             //default for stacked objects, just set the collision in the map
-                            collision_geometry_map[e] = collision;
+                            collision_geometry_map_x[e] = collision_x;
+                            collision_geometry_map_y[e] = collision_y;
                         }
 
                         //player hitbox active
@@ -3426,7 +3462,8 @@ namespace gate
 
                     if (e is SpriteObject) {
                         SpriteObject obj = (SpriteObject)e;
-                        bool collision = obj.check_hitbox_collisions(player.get_future_hurtbox());
+                        bool collision_x = obj.check_hitbox_collisions(player.get_future_hurtbox_x());
+                        bool collision_y = obj.check_hitbox_collisions(player.get_future_hurtbox_y());
 
                         //check and set interaction box
                         if (obj.get_interaction_box() != null) {
@@ -3436,15 +3473,22 @@ namespace gate
                         }
 
                         //default for sprite objects, just set the collision in the map
-                        collision_geometry_map[e] = collision;
+                        collision_geometry_map_x[e] = collision_x;
+                        collision_geometry_map_y[e] = collision_y;
                     }
                 } else {
                     if (e is StackedObject) {
-                        collision_geometry_map[e] = false;
+                        collision_geometry_map_x[e] = false;
+                        collision_geometry_map_y[e] = false;
+                    }
+                    
+                    if (e is SpriteObject) {
+                        collision_geometry_map_x[e] = false;
+                        collision_geometry_map_y[e] = false;
                     }
                 }
             }
-            player.set_collision_geometry_map(collision_geometry_map, collision_tile_map);
+            player.set_collision_geometry_map(collision_geometry_map_x, collision_geometry_map_y, collision_tile_map);
             Constant.profiler.end("world_check_entity_collisions_player_geometry_collision");
 
             //check projectile collision against geometry
@@ -3971,8 +4015,11 @@ namespace gate
                 if (nearby_chunk_entity_geometry.Contains(e)) {
                     clear_chunked_entity(e, (chunk_x, chunk_y));
                 }
-                if (collision_geometry_map.ContainsKey(e)) {
-                    collision_geometry_map.Remove(e);
+                if (collision_geometry_map_x.ContainsKey(e)) {
+                    collision_geometry_map_x.Remove(e);
+                }
+                if (collision_geometry_map_y.ContainsKey(e)) {
+                    collision_geometry_map_y.Remove(e);
                 }
                 //remove from collision entities
                 if (collision_entities.Contains(e)) {

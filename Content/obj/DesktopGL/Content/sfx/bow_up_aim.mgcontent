@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/bow_up_aim.ogg</SourceFile>
-  <SourceTime>2024-10-09T18:39:26.0870516-04:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/sfx/bow_up_aim.xnb</DestFile>
-  <DestTime>2025-04-28T21:26:10.2267044-04:00</DestTime>
+  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sfx/bow_up_aim.ogg</SourceFile>
+  <SourceTime>2024-11-06T10:19:56.1261029-05:00</SourceTime>
+  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/Content/sfx/bow_up_aim.xnb</DestFile>
+  <DestTime>2025-07-31T19:11:21.0184486-04:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>

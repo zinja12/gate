@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/fx/scanline2.fx</SourceFile>
-  <SourceTime>2024-11-12T22:00:38.5557014-05:00</SourceTime>
-  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fx/scanline2.xnb</DestFile>
-  <DestTime>2025-04-28T21:26:10.1003057-04:00</DestTime>
+  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fx/scanline2.fx</SourceFile>
+  <SourceTime>2025-07-03T22:46:58.5476895-04:00</SourceTime>
+  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/Content/fx/scanline2.xnb</DestFile>
+  <DestTime>2025-07-31T19:11:20.5479501-04:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>EffectProcessor</Processor>
