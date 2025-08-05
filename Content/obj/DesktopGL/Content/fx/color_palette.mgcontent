@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/fx/color_palette.fx</SourceFile>
-  <SourceTime>2025-07-03T22:46:58.5446968-04:00</SourceTime>
-  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/Content/fx/color_palette.xnb</DestFile>
-  <DestTime>2025-07-31T19:11:19.6213133-04:00</DestTime>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/fx/color_palette.fx</SourceFile>
+  <SourceTime>2025-04-09T21:47:32.4923313-04:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/fx/color_palette.xnb</DestFile>
+  <DestTime>2025-08-04T19:59:35.894873-04:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>EffectProcessor</Processor>

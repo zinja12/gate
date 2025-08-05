@@ -296,6 +296,9 @@ ToDo List:
     -while we reassign the ids to those entities we also keep the data structure updated with the new ids
     -after the reassignment process, we hot swap the lists the conditions are listening and deleting so they have the updated ids for the entities
     -then we can just save the conditions as normal
+[DONE](BUG)fix collision with multiple entities at once
+    -this might just be as simple as just ignoring the movement rather than moving the player back on their line
+    -fix was to use isolating movement to separate directions
 [](BUG)lighting frame rate drops
     -having lights in the scenes with many other objects tanks the frame rate
     -this is most likely due to re-calculating the level geometry every frame
@@ -307,8 +310,6 @@ ToDo List:
 [](BUG)fix flashing on level transitions
     -this might be because we need to set the opacity of the black texture back to initial value on completion
 [](BUG)constant emission static positioned particle systems do not properly rotate position when camera rotates
-[](BUG)fix collision with multiple entities at once
-    -this might just be as simple as just ignoring the movement rather than moving the player back on their line
 [](NICE-TO-HAVE)enable file/object diffing for saves
     -right now we save a modified version of the level file off to load later when a player makes a modification to the level like picking up an item
     -we do not necessarily have to re-save the entire level, we can probably just save what has been removed and use that to reconstruct the modified level

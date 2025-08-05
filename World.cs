@@ -58,6 +58,7 @@ namespace gate
         List<IEntity> plants;
         RenderList entities_list;
         List<IEntity> collision_entities;
+        List<IEntity> shadow_collision_entities;
         List<ForegroundEntity> foreground_entities;
         List<BackgroundEntity> background_entities;
         List<FloorEntity> floor_entities;
@@ -195,6 +196,8 @@ namespace gate
             plants = new List<IEntity>();
             //create list of collision entities
             collision_entities = new List<IEntity>();
+            //create list of collision entities for shadow casting
+            shadow_collision_entities = new List<IEntity>();
             //create list of collision geometry
             chunked_collision_geometry = new Dictionary<(int, int), List<IEntity>>();
             //create list of foreground objects to be used as tree tops, etc

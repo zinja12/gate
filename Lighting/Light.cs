@@ -80,9 +80,18 @@ namespace gate.Lighting
                 }
                 if (Vector2.Distance(center_position, player_position) < render_distance/2 && Vector2.Distance(center_position, e.get_base_position()) < Constant.light_distance*1.5) {
                     if (e is ICollisionEntity) {
-                        //convert to collision entity for access to geometry data
-                        ICollisionEntity ce = (ICollisionEntity)e;
-                        foreach (KeyValuePair<Vector2, Vector2> kv in ce.get_hurtbox().edges) {
+                        Dictionary<Vector2, Vector2> edges;
+                        if (e is Player) {
+                            //pull shadow cast box instead of general hurtbox (hitbox at feet instead of full body)
+                            Player p = (Player)e;
+                            edges = p.get_shadowcast_box().edges;
+                        } else {
+                            //convert to collision entity for access to geometry data
+                            ICollisionEntity ce = (ICollisionEntity)e;
+                            edges = ce.get_hurtbox().edges;
+                        }
+                        
+                        foreach (KeyValuePair<Vector2, Vector2> kv in edges) {
                             //add to geometry map
                             geometry_edges.Add((kv.Key, kv.Value));
                         }

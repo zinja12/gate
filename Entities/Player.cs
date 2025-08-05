@@ -101,6 +101,7 @@ namespace gate.Entities
         private RRect future_hurtbox;
         private RRect future_hurtbox_x;
         private RRect future_hurtbox_y;
+        private RRect shadowcast_box;
         private Vector2 hitbox_center;
         private Vector2 hitbox_draw_position;
         private float hitbox_center_distance = player_size/2;
@@ -232,6 +233,7 @@ namespace gate.Entities
             hitbox = new RRect(this.draw_position, player_size*hitbox_scale_factor, player_size*hitbox_scale_factor);
             hitbox_center = this.draw_position + new Vector2(hitbox_center_distance, 0);
             hitbox_draw_position = hitbox_center + new Vector2(-player_size/2, -player_size/2);
+            shadowcast_box = new RRect(this.draw_position, player_size/4, player_size);
 
             //test particle system code
             this.particle_systems = new List<ParticleSystem>();
@@ -639,6 +641,7 @@ namespace gate.Entities
             hitbox.update(rotation, hitbox_center);
             future_hurtbox_x = get_future_hurtbox_x();
             future_hurtbox_y = get_future_hurtbox_y();
+            shadowcast_box.update(rotation, depth_sort_position);
 
             //update emotion state
             update_emotion_state(gameTime);
@@ -1600,6 +1603,10 @@ namespace gate.Entities
             return hurtbox;
         }
 
+        public RRect get_shadowcast_box() {
+            return shadowcast_box;
+        }
+
         public RRect get_hitbox() {
             return hitbox;
         }
@@ -1788,6 +1795,8 @@ namespace gate.Entities
                 future_hurtbox_x.draw(spriteBatch);
                 future_hurtbox_y.set_color(Color.Purple);
                 future_hurtbox_y.draw(spriteBatch);
+                shadowcast_box.set_color(Color.Orange);
+                shadowcast_box.draw(spriteBatch);
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Orange, 1f, draw_position, draw_position + new Vector2(0, -20));
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Red, 1f, hitbox_center, hitbox_center + new Vector2(0, -5));
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Gold, 1f, hitbox_draw_position, hitbox_draw_position + new Vector2(0, -5));

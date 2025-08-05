@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/sfx/coin_pickup.ogg</SourceFile>
-  <SourceTime>2024-12-17T20:41:02.2633269-05:00</SourceTime>
-  <DestFile>C:/Users/x3zin/Documents/monogame_projects/gate/Content/bin/DesktopGL/Content/sfx/coin_pickup.xnb</DestFile>
-  <DestTime>2025-07-31T19:11:21.3329236-04:00</DestTime>
+  <SourceFile>C:/Users/Shaan/Documents/test_projects/gate/Content/sfx/coin_pickup.ogg</SourceFile>
+  <SourceTime>2024-12-06T17:27:47.1268112-05:00</SourceTime>
+  <DestFile>C:/Users/Shaan/Documents/test_projects/gate/Content/bin/DesktopGL/Content/sfx/coin_pickup.xnb</DestFile>
+  <DestTime>2025-08-04T19:59:37.1174229-04:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2020-08-10T12:17:54-04:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>
