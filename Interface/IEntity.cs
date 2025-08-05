@@ -21,7 +21,7 @@ namespace gate.Interface
         float get_rotation_offset();
         void set_rotation_offset(float rotation_offset_degrees);
         GameWorldObject to_world_level_object();
-        void Update(GameTime gameTime, float rotation);
+        void Update(GameTime gameTime);
         void update_animation(GameTime gameTime);
         void Draw(SpriteBatch spriteBatch);
         //NOTE: get_obj_ID_num is inherited from one level above in IGameObject

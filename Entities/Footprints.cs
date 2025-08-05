@@ -68,7 +68,7 @@ namespace gate.Entities
             this.color = color;
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public void Update(GameTime gameTime) {
             //subtract from lifecycle and check for time to reap
             lifecycle -= decay_rate;
             if (lifecycle <= 0) {
@@ -76,7 +76,7 @@ namespace gate.Entities
             }
 
             //update rotation and depth
-            this.rotation = rotation;
+            this.rotation = 0f;
             this.rotation += rotation_offset;
             depth_sort_position = draw_position + (this.texture.Height/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
         }

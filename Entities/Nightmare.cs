@@ -208,11 +208,11 @@ namespace gate.Entities
             this.chunked_collision_geometry = chunked_collision_geometry;
         }
 
-        public virtual void Update(GameTime gameTime, float rotation) {
+        public virtual void Update(GameTime gameTime) {
             if (is_dead()) return;
 
             gt = gameTime;
-            this.rotation = rotation;
+            this.rotation = 0f;
             depth_sort_position = draw_position + (nightmare_size/2) * new Vector2(Constant.direction_down.X * (float)Math.Cos(-rotation) - Constant.direction_down.Y * (float)Math.Sin(-rotation), Constant.direction_down.Y * (float)Math.Cos(-rotation) + Constant.direction_down.X * (float)Math.Sin(-rotation));
 
             //update collision

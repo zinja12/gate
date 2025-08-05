@@ -118,7 +118,7 @@ namespace gate.Entities
             };
         }
 
-        public virtual void Update(GameTime gameTime, float rotation) {}
+        public virtual void Update(GameTime gameTime) {}
 
         public void update_animation(GameTime gameTime) {}
     }
@@ -168,11 +168,11 @@ namespace gate.Entities
             return opacity;
         }
 
-        public override void Update(GameTime gameTime, float rotation) {
+        public override void Update(GameTime gameTime) {
             //only update if not finished
             if (!is_finished()) {
                 //update hurtbox
-                hurtbox.update(rotation, center);
+                hurtbox.update(0f, center);
 
                 //handle fading
                 if (fade) {

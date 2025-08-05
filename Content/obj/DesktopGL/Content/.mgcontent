@@ -52,6 +52,7 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/footprint.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/ghastly2.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/ghastly2_downed.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/ghastly3.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_0.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_redo_7.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/grass_tile1.png</File>
@@ -71,6 +72,8 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/plant1_short_5.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/player_chip.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/read_interact.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/red_black_particle.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/red_circle.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock2_10.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/rock3_small_7.png</File>
@@ -103,7 +106,9 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_dash_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_player_heavy_attack_spritesheet1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_worker_attacks_spritesheet8_automaton.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_worker_attacks_spritesheet8_automaton2222.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_worker_spritesheet8_automaton.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/test_worker_spritesheet8_automaton222.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile_tan1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile1.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tile3.png</File>
@@ -118,10 +123,21 @@
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tree_spritesheet5.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/tree4.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/void_essence1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/wall_block1.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/wall_block2.png</File>
+    <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/wall_block3.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/white_pixel.png</File>
     <File>C:/Users/Shaan/Documents/test_projects/gate/Content/sprites/yellow_tree1_4_26.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

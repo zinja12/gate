@@ -99,6 +99,9 @@ namespace gate.Entities
         private RRect hurtbox;
         private RRect hitbox;
         private RRect future_hurtbox;
+        private RRect future_hurtbox_x;
+        private RRect future_hurtbox_y;
+        private RRect shadowcast_box;
         private Vector2 hitbox_center;
         private Vector2 hitbox_draw_position;
         private float hitbox_center_distance = player_size/2;
@@ -126,7 +129,7 @@ namespace gate.Entities
         private float noise_radius = 10f;
         private float noise_angle = 1f;
 
-        Dictionary<IEntity, bool> collision_geometry_map;
+        Dictionary<IEntity, bool> collision_geometry_map_x, collision_geometry_map_y;
         Dictionary<IEntity, bool> collision_tile_map;
 
         //attack vars
@@ -205,6 +208,8 @@ namespace gate.Entities
             this.heavy_attack_animation = new Animation(attack_animation_duration, 5, (int)player_size*2 * 1, 0, (int)player_size*2, (int)player_size*2);
             this.charging_animation_rect = new Rectangle((int)player_size*2*0, (int)player_size*2*0, (int)player_size*2, (int)player_size*2);
             this.aiming_animation_rect = new Rectangle((int)player_size*0, (int)player_size*0, (int)player_size, (int)player_size);
+
+            this.direction = Vector2.Zero;
             
             //footprints init
             this.footprints = new List<Footprints>();
@@ -228,6 +233,7 @@ namespace gate.Entities
             hitbox = new RRect(this.draw_position, player_size*hitbox_scale_factor, player_size*hitbox_scale_factor);
             hitbox_center = this.draw_position + new Vector2(hitbox_center_distance, 0);
             hitbox_draw_position = hitbox_center + new Vector2(-player_size/2, -player_size/2);
+            shadowcast_box = new RRect(this.draw_position, player_size/4, player_size);
 
             //test particle system code
             this.particle_systems = new List<ParticleSystem>();
@@ -244,7 +250,8 @@ namespace gate.Entities
 
             this.random = new Random();
 
-            collision_geometry_map = new Dictionary<IEntity, bool>();
+            collision_geometry_map_x = new Dictionary<IEntity, bool>();
+            collision_geometry_map_y = new Dictionary<IEntity, bool>();
             collision_tile_map = new Dictionary<IEntity, bool>();
             resultant = Vector2.Zero;
 
@@ -252,10 +259,10 @@ namespace gate.Entities
             this.world = world;
         }
 
-        public void Update(GameTime gameTime, float rotation) {
+        public void Update(GameTime gameTime) {
             Constant.profiler.start("player_update");
             // set rotation
-            this.rotation = rotation;
+            this.rotation = 0f;
             
             //NOTE: make sure to use math.wrapangle before converting rotation radians to degrees
 
@@ -343,7 +350,7 @@ namespace gate.Entities
             if (arrow != null) {
                 Arrow a = (Arrow)arrow;
                 a.update_aim(aim_orbit, aim_orbit - draw_position);
-                arrow.Update(gameTime, rotation);
+                arrow.Update(gameTime);
             }
             if (_aim > 0 && arrow_charge > 0 && bow_attribute) {
                 aiming = true;
@@ -508,42 +515,38 @@ namespace gate.Entities
             #region Movement
             if (!movement_disabled && !hitstun_active) {
                 //check for future collision
-                (List<IEntity>, bool) fcd = future_collision_detected();
+                (List<IEntity>, bool) fcdx = future_collision_detected_x();
+                (List<IEntity>, bool) fcdy = future_collision_detected_y();
+
                 //normal movement code
                 if (!dash_active && !attack_active && !heavy_attack_active && !charging_active && !charging_arrow && !aiming) {
                     /*Update player position*/
-                    if (_v != 0 || _h != 0){
-                        //Set direction to unit vector of (horizontal input, vertical input)
-                        direction = Vector2.Zero + new Vector2(_h, _v);
-                        //update last direction
-                        last_direction.X = direction.X;
-                        last_direction.Y = direction.Y;
-                        moving = true;
-                    } else {
+                    if (_v == 0 && _h == 0) {
                         //zero out direction
                         direction = Vector2.Zero;
                         moving = false;
+                    } else {
+                        moving = true;
+                        direction = new Vector2(_h, _v);
+                        last_direction.X = direction.X;
+                        last_direction.Y = direction.Y;
                     }
 
-                    // rotate direction vector around the origin based on the current camera rotation
-                    float x = direction.X * (float)Math.Cos(-rotation) - direction.Y * (float)Math.Sin(-rotation);
-                    float y = direction.Y * (float)Math.Cos(-rotation) + direction.X * (float)Math.Sin(-rotation);
+                    if (direction != Vector2.Zero) { direction.Normalize(); }
 
-                    direction = new Vector2(x, y);
-                    //direction.Normalize();
-                    
-                    if (!fcd.Item2) {
-                        //alter the position based on direction and movement speed
-                        base_position += direction * movement_speed;
-                        draw_position += direction * movement_speed;
-                    } else {
-                        //collision, need to calculate resultant direction from the collision object and the player
-                        resultant = calculate_resultant_vector(fcd.Item1, direction);
-                        //Vector2 res = calculate_resultant_vector2(fcd.Item1, direction);
-                        Vector2 res = (resultant+(direction*-1)) / 2;
-                        //move the player slowing along the result direction from the collision
-                        base_position += ((resultant)) * 0.05f;//movement_speed * 0.5f;
-                        draw_position += ((resultant)) * 0.05f;//movement_speed * 0.5f;
+                    //separate direction components for applying movement to achieve sliding along walls for collision
+                    if (!fcdy.Item2) {
+                        if (_v != 0) {
+                            //apply vertical
+                            apply_movement(direction, false);
+                        }
+                    }
+
+                    if (!fcdx.Item2) {
+                        if (_h != 0) {
+                            //apply horizontal
+                            apply_movement(direction, true);
+                        }
                     }
                     //change depth sort position based on draw position regardless of camera rotation
                     depth_sort_position = draw_position + (player_size/2) * new Vector2(direction_down.X * (float)Math.Cos(-rotation) - direction_down.Y * (float)Math.Sin(-rotation), direction_down.Y * (float)Math.Cos(-rotation) + direction_down.X * (float)Math.Sin(-rotation));
@@ -560,7 +563,7 @@ namespace gate.Entities
                     dash_direction.Normalize();
 
                     //transform player position
-                    if (!fcd.Item2) {
+                    if (!fcdx.Item2 && !fcdy.Item2) {
                         base_position += dash_direction * dash_speed;
                         draw_position += dash_direction * dash_speed;
                         attack_draw_position += dash_direction * dash_speed;
@@ -600,7 +603,7 @@ namespace gate.Entities
 
                     //transform player position
                     float attack_speed_multiplier = Constant.player_attack_movement_speed;
-                    if (fcd.Item2) {
+                    if (fcdx.Item2 && fcdy.Item2) {
                         attack_speed_multiplier = 0f;
                     }
                     //transform positions with correct speed based on collision scenario
@@ -636,7 +639,9 @@ namespace gate.Entities
             //if the attack is active lock the hurtbox from moving
             update_hitbox_position(gameTime, _v, _h);
             hitbox.update(rotation, hitbox_center);
-            future_hurtbox = get_future_hurtbox();
+            future_hurtbox_x = get_future_hurtbox_x();
+            future_hurtbox_y = get_future_hurtbox_y();
+            shadowcast_box.update(rotation, depth_sort_position);
 
             //update emotion state
             update_emotion_state(gameTime);
@@ -660,6 +665,22 @@ namespace gate.Entities
             this.emotion_display_position = Constant.rotate_point(draw_position, rotation, -(player_size/2), Constant.direction_down);
 
             Constant.profiler.end("player_update");
+        }
+
+        private void apply_movement(Vector2 direction, bool x) {
+            if (x) {
+                //alter the x position based on direction and movement speed
+                Vector2 move_dir_x = new Vector2(direction.X, 0);
+
+                base_position += move_dir_x * movement_speed;
+                draw_position += move_dir_x * movement_speed;
+            } else {
+                //alter the y position based on direction and movement speed
+                Vector2 move_dir_y = new Vector2(0, direction.Y);
+
+                base_position += move_dir_y * movement_speed;
+                draw_position += move_dir_y * movement_speed;
+            }
         }
 
         public void update_particle_systems(GameTime gameTime, float rotation) {
@@ -1088,7 +1109,7 @@ namespace gate.Entities
 
             //update footprints and reap footprints
             foreach (Footprints f in footprints) {
-                f.Update(gameTime, this.rotation);
+                f.Update(gameTime);
                 if (f.reap) {
                     reap_footprints.Add(f);
                 }
@@ -1249,24 +1270,45 @@ namespace gate.Entities
         }
 
         public RRect get_future_hurtbox() {
-            //need to update this to factor in dash direction and attack dash direction
             Vector2 draw = draw_position + direction * movement_speed*3f;
-            // if (!dash_active && !attack_active) {
-            //     draw = draw_position + direction * movement_speed;
-            // } else if (dash_active) {
-            //     draw = draw_position + dash_direction * movement_speed;
-            // } else if (attack_active) {
-            //     draw = draw_position + dash_direction * movement_speed;
-            // }
+            
             future_hurtbox = new RRect(draw, player_size/2, player_size);
             future_hurtbox.update(rotation, draw);
             return future_hurtbox;
         }
 
-        public (List<IEntity>, bool) future_collision_detected() {
+        public RRect get_future_hurtbox_x() {
+            Vector2 draw = draw_position + new Vector2(direction.X, 0) * movement_speed*3f;
+
+            future_hurtbox_x = new RRect(draw, player_size/2, player_size);
+            future_hurtbox_x.update(0f, draw);
+            return future_hurtbox_x;
+        }
+
+        public RRect get_future_hurtbox_y() {
+            Vector2 draw = draw_position + new Vector2(0, direction.Y) * movement_speed*3f;
+
+            future_hurtbox_y = new RRect(draw, player_size/2, player_size);
+            future_hurtbox_y.update(0f, draw);
+            return future_hurtbox_y;
+        }
+
+        public (List<IEntity>, bool) future_collision_detected_x() {
             List<IEntity> collisions = new List<IEntity>();
             bool collision = false;
-            foreach (KeyValuePair<IEntity, bool> kv in collision_geometry_map) {
+            foreach (KeyValuePair<IEntity, bool> kv in collision_geometry_map_x) {
+                if (kv.Value) {
+                    collisions.Add(kv.Key);
+                    collision = kv.Value;
+                }
+            }
+            return (collisions, collision);
+        }
+
+        public (List<IEntity>, bool) future_collision_detected_y() {
+            List<IEntity> collisions = new List<IEntity>();
+            bool collision = false;
+            foreach (KeyValuePair<IEntity, bool> kv in collision_geometry_map_y) {
                 if (kv.Value) {
                     collisions.Add(kv.Key);
                     collision = kv.Value;
@@ -1346,8 +1388,9 @@ namespace gate.Entities
             return sum / resultants.Count;
         }
 
-        public void set_collision_geometry_map(Dictionary<IEntity, bool> geometry_map, Dictionary<IEntity, bool> tile_map) {
-            this.collision_geometry_map = geometry_map;
+        public void set_collision_geometry_map(Dictionary<IEntity, bool> geometry_map_x, Dictionary<IEntity, bool> geometry_map_y, Dictionary<IEntity, bool> tile_map) {
+            this.collision_geometry_map_x = geometry_map_x;
+            this.collision_geometry_map_y = geometry_map_y;
             this.collision_tile_map = tile_map;
         }
 
@@ -1560,6 +1603,10 @@ namespace gate.Entities
             return hurtbox;
         }
 
+        public RRect get_shadowcast_box() {
+            return shadowcast_box;
+        }
+
         public RRect get_hitbox() {
             return hitbox;
         }
@@ -1744,8 +1791,12 @@ namespace gate.Entities
                 //Draw collision information
                 hurtbox.draw(spriteBatch);
                 //hitbox.draw(spriteBatch);
-                future_hurtbox.set_color(Color.Pink);
-                future_hurtbox.draw(spriteBatch);
+                future_hurtbox_x.set_color(Color.Pink);
+                future_hurtbox_x.draw(spriteBatch);
+                future_hurtbox_y.set_color(Color.Purple);
+                future_hurtbox_y.draw(spriteBatch);
+                shadowcast_box.set_color(Color.Orange);
+                shadowcast_box.draw(spriteBatch);
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Orange, 1f, draw_position, draw_position + new Vector2(0, -20));
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Red, 1f, hitbox_center, hitbox_center + new Vector2(0, -5));
                 //Renderer.DrawALine(spriteBatch, Constant.pixel, 2, Color.Gold, 1f, hitbox_draw_position, hitbox_draw_position + new Vector2(0, -5));

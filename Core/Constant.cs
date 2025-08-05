@@ -112,6 +112,10 @@ namespace gate.Core
         public static Texture2D mid_grass_tile;
         public static Texture2D light_grass_tile;
         public static Texture2D checker_wall_tex;
+        public static Texture2D wall1_tex;
+        public static Texture2D red_circle;
+        public static Texture2D specter_tex;
+        public static Texture2D red_black_particle_tex;
 
         public static Texture2D fear_tex, anxiety_tex;
 
@@ -397,7 +401,9 @@ namespace gate.Core
             "dark_grass_tile",
             "mid_grass_tile",
             "light_grass_tile",
-            "checker_wall"
+            "checker_wall",
+            "wall1",
+            "specter"
         };
 
         public static List<string> get_object_identifiers() {
