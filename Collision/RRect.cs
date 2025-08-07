@@ -156,6 +156,28 @@ namespace gate.Collision
         }
 
         public bool collision(Vector2 point) {
+            float left = top_left_position.X;
+            float right = top_right_position.X;
+            float top = top_left_position.Y;
+            float bottom = bottom_left_position.Y;
+            
+            return point.X >= left && point.X <= right &&
+                point.Y >= top && point.Y <= bottom;
+        }
+
+        public bool collision(Vector2 start, Vector2 end) {
+            float step_distance = 8f;
+            Vector2 direction = end - start;
+            if (direction != Vector2.Zero) direction.Normalize();
+            float distance = Vector2.Distance(start, end);
+
+            for (float d = 0; d < distance; d += step_distance) {
+                Vector2 line_point_sample = start + direction * d;
+                if (collision(line_point_sample)) {
+                    return true;
+                }
+            }
+            
             return false;
         }
 
