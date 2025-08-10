@@ -25,7 +25,7 @@ namespace gate.Entities
         protected Vector2 direction_down = new Vector2(0, 1);
         protected Vector2 direction_up = new Vector2(0, -1);
 
-        public static bool debug = true;
+        public static bool debug = false;
 
         protected float object_width = 32;
         protected float object_height = 32;
