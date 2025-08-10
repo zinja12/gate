@@ -3196,6 +3196,15 @@ namespace gate
                                 player.take_hit(sk, sk.get_damage());
                                 set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
                             }
+                        } else if (e.get_id().Equals("specter")) {
+                            Specter specter = (Specter)e;
+                            if (player.is_hurtbox_active()) {
+                                bool collision = player.check_hurtbox_collisions(specter.get_hurtbox());
+                                if (collision) {
+                                    player.take_hit(specter, specter.get_damage());
+                                    set_camera_shake(Constant.camera_shake_milliseconds, Constant.camera_shake_angle, Constant.camera_shake_hit_radius);
+                                }
+                            }
                         }
                     } else if (e is TempTile) {
                         TempTile tt = (TempTile)e;

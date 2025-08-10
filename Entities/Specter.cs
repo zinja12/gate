@@ -32,6 +32,9 @@ namespace gate.Entities
             particle_systems.Add(fx_particle_system);
 
             single_sprite_source_rect = new Rectangle(0, 0, (int)nightmare_size, (int)nightmare_size);
+
+            this.hurtbox = this.hurtbox = new RRect(this.draw_position, nightmare_size/2, nightmare_size/2);
+            this.striking_distance = 20f;
         }
 
         public override void update_movement(float rotation) {
@@ -159,6 +162,11 @@ namespace gate.Entities
                     //idle
                     spriteBatch.Draw(texture, draw_position, single_sprite_source_rect, draw_color, -rotation + rotation_offset, rotation_point, scale, SpriteEffects.None, 0f);
                 }
+            }
+
+            if (DEBUG) {
+                hurtbox.draw(spriteBatch);
+                hitbox.draw(spriteBatch);
             }
         }
     }
