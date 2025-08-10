@@ -20,5 +20,14 @@ namespace gate.Navigation
             this.neighbors = neighbors;
             this.cost = cost;
         }
+
+        public void Draw(SpriteBatch spriteBatch) {
+            //draw line to each neighbor
+            foreach (NavNode n in neighbors) {
+                Renderer.DrawALine(spriteBatch, Constant.pixel, 1f, Color.Pink, 1f, position, n.position);
+            }
+            //draw rect for current position
+            Renderer.FillRectangle(spriteBatch, position, 3, 3, Color.Purple, 1f);
+        }
     }
 }

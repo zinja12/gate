@@ -19,6 +19,7 @@ using gate.Collision;
 using gate.Conditions;
 using gate.Sounds;
 using gate.Lighting;
+using gate.Navigation;
 
 namespace gate
 {
@@ -77,6 +78,7 @@ namespace gate
         Dictionary<string, bool> condition_tags;
         List<(IEntity, Vector2, float)> explosion_list;
         Dictionary<IEntity, float> dropped_items; //entity -> elapsed time
+        NavGraph ai_navmesh;
         //editor ONLY objects
         List<IEntity> editor_only_objects;
 
@@ -1364,6 +1366,9 @@ namespace gate
             foreach (KeyValuePair<string, int> kv in level_loaded_map) {
                 Console.WriteLine($"{kv.Key}-{kv.Value}");
             }
+
+            //set up navmesh
+            ai_navmesh = new NavGraph(this, floor_entities, chunked_collision_geometry);
         }
 
         public void set_ai_entities_for_all_ais() {
@@ -1430,6 +1435,8 @@ namespace gate
             switches.Clear();
             //do not need to clear or nullify world script parser as it is set to a new object on every level load
             explosion_list.Clear();
+            //clear navgraph
+            ai_navmesh.clear();
 
             //clear editor only objects
             editor_only_objects.Clear();
@@ -4410,6 +4417,8 @@ namespace gate
                     }
                 }
             }
+
+            //ai_navmesh.Draw(_spriteBatch);
 
 
             //draw foreground objects

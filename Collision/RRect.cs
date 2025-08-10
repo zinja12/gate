@@ -166,7 +166,7 @@ namespace gate.Collision
         }
 
         public bool collision(Vector2 start, Vector2 end) {
-            float step_distance = 8f;
+            float step_distance = 2f;
             Vector2 direction = end - start;
             if (direction != Vector2.Zero) direction.Normalize();
             float distance = Vector2.Distance(start, end);

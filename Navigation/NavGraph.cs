@@ -61,12 +61,16 @@ namespace gate.Navigation
                             if (ng is ICollisionEntity) {
                                 ICollisionEntity ce = (ICollisionEntity)ng;
                                 //if the points do collide with any nearby geometry, add them to removal list
-                                if (!ce.get_hurtbox().collision(point)) {
-                                    removal_list.Add(point);
+                                if (ce.get_hurtbox().collision(point)) {
+                                    if (!removal_list.Contains(point)) {
+                                        removal_list.Add(point);
+                                    }
                                 }
                             }
                         }
                     }
+
+                    Console.WriteLine($"Removal list count: {removal_list.Count}");
                     
                     //remove points from list
                     foreach (Vector2 remove_point in removal_list) {
@@ -83,7 +87,7 @@ namespace gate.Navigation
             }
 
             //connect nodes
-            float connection_radius = 64f;
+            float connection_radius = 35f;
             for (int i = 0; i < nodes.Count; i++) {
                 NavNode nodeA = nodes[i];
                 for (int j = 0; j < nodes.Count; j++) {
@@ -106,8 +110,12 @@ namespace gate.Navigation
                                 ICollisionEntity ce = (ICollisionEntity)ng;
                                 if (!ce.get_hurtbox().collision(nodeA.position, nodeB.position)) {
                                     //add neighbors
-                                    nodeA.neighbors.Add(nodeB);
-                                    nodeB.neighbors.Add(nodeA);
+                                    if (!nodeA.neighbors.Contains(nodeB)) {
+                                        nodeA.neighbors.Add(nodeB);
+                                    }
+                                    if (!nodeB.neighbors.Contains(nodeA)) {
+                                        nodeB.neighbors.Add(nodeA);
+                                    }
                                 }
                             }
                         }
@@ -115,7 +123,22 @@ namespace gate.Navigation
                 }
             }
 
+            Console.WriteLine("BUILT NAV GRAPHHHHHHHHHHHHH");
+            foreach (NavNode n in nodes) {
+                Console.WriteLine($"n:{n.position}, {n.neighbors.Count}");
+            }
+
             return nodes;
+        }
+
+        public void clear() {
+            nodes.Clear();
+        }
+
+        public void Draw(SpriteBatch spriteBatch) {
+            foreach (NavNode n in nodes) {
+                n.Draw(spriteBatch);
+            }
         }
     }
 }
