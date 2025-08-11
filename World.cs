@@ -355,6 +355,7 @@ namespace gate
             obj_map.Add(53, new Specter(Constant.specter_tex, Vector2.Zero, 1f, Constant.hit_confirm_spritesheet, player, chunked_collision_geometry, -1, "specter", this));
             Specter specter1 = (Specter)obj_map[53];
             specter1.set_behavior_enabled(false);
+            obj_map.Add(54, new SpriteObject("fire", Constant.pixel, Vector2.Zero, 1f, 32, 32, 1, Constant.stack_distance1, 0f, -1));
         }
         #endregion
 
@@ -1014,6 +1015,13 @@ namespace gate
                             collision_entities.Add(specter);
                             enemies.Add(specter);
                             break;
+                        case "fire":
+                            SpriteObject fire = new SpriteObject(w_obj.object_identifier, Constant.pixel, obj_position, w_obj.scale, 32, 32, 1, Constant.stack_distance1, w_obj.rotation, w_obj.object_id_num);
+                            entities_list.Add(fire);
+                            collision_entities.Add(fire);
+                            ParticleSystem ps = new ParticleSystem(true, create_position, 1, 800, 5, 2, 4, Constant.red_particles, new List<Texture2D>() { Constant.footprint_tex });
+                            particle_systems.Add(ps);
+                            break;
                         default:
                             break;
                     }
@@ -1433,6 +1441,7 @@ namespace gate
             switches.Clear();
             //do not need to clear or nullify world script parser as it is set to a new object on every level load
             explosion_list.Clear();
+            particle_systems.Clear();
 
             //clear editor only objects
             editor_only_objects.Clear();
@@ -2568,6 +2577,13 @@ namespace gate
                     enemies.Add(specter);
                     set_ai_entities_for_all_ais();
                     Console.WriteLine($"specter,{create_position.X},{create_position.Y},1,{MathHelper.ToDegrees(editor_object_rotation)}");
+                    break;
+                case 54:
+                    SpriteObject fire = new SpriteObject("fire", Constant.pixel, create_position, 1f, 32, 32, 1, Constant.stack_distance1, 0f, editor_object_idx);
+                    entities_list.Add(fire);
+                    collision_entities.Add(fire);
+                    ParticleSystem fire_ps = new ParticleSystem(true, create_position, 1, 800, 5, 2, 4, Constant.red_particles, new List<Texture2D>() { Constant.footprint_tex });
+                    particle_systems.Add(fire_ps);
                     break;
                 default:
                     break;
