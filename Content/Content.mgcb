@@ -157,6 +157,9 @@
 /processorParam:DebugMode=Auto
 /build:fx/scanline2.fx
 
+#begin levels/00.json
+/copy:levels/00.json
+
 #begin levels/arena_v1_ids.json
 /copy:levels/arena_v1_ids.json
 
